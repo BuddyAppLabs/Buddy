@@ -29,6 +29,8 @@
   "license": "MIT",
   "files": [
     "dist",
-    "views"
+    "views",
+    "README.md",
+    "README-zh.md"
   ]
 }
