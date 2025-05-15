@@ -87,6 +87,7 @@ jobs:
       - name: Commit changes
         run: |
           cd packages/plugin-sample
+          git pull
           git add package.json
           git commit -m "chore(plugin-sample): bump version to ${{ steps.version.outputs.new_version }}"
           git tag "plugin-sample/v${{ steps.version.outputs.new_version }}"

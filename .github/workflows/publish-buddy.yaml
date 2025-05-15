@@ -89,6 +89,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
 
           # 提交更改
+          git pull
           git add package.json
           git commit -m "🔖 Bump version to $NEW_VERSION [skip-bump]"
           git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
