@@ -9,9 +9,7 @@ import {
     router,
     type ElectronAppConfig
 } from '@coffic/cosy';
-import { LogServiceProvider, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider, PluginServiceProvider, AppServiceProvider } from '@coffic/buddy-foundation';
-import { Plugin } from '../facades/Plugin.js';
-import { LogFacade } from '../facades/LogFacade.js';
+import { LogServiceProvider, Plugin, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider, PluginServiceProvider, AppServiceProvider, Log } from '@coffic/buddy-foundation';
 import { appManager } from '../managers/AppManager.js';
 import { WindowServiceProvider } from '../providers/WindowServiceProvider.js';
 
@@ -112,7 +110,7 @@ export async function bootApplication(): Promise<void> {
         const application = await bootElectronApp(config);
 
         // 初始化Facades
-        LogFacade.setApp(application);
+        Log.setApp(application);
 
         // 注册路由
         registerRoutes();
