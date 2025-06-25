@@ -107,11 +107,10 @@ export class AppManager {
 
   /**
    * 启动应用
+   * 注意：Electron app.whenReady() 已经在 bootApplication 中处理
    */
   public async start(): Promise<void> {
     this.setupEventListeners();
-
-    await app.whenReady();
     await this.initialize();
   }
 

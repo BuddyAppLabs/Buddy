@@ -10,7 +10,10 @@ import {
     type ElectronAppConfig
 } from '@coffic/electron-laravel-framework';
 import { PluginServiceProvider } from '../providers/PluginServiceProvider.js';
+import { AppServiceProvider } from '../providers/AppServiceProvider.js';
+import { LogServiceProvider } from '../providers/LogServiceProvider.js';
 import { Plugin } from '../facades/Plugin.js';
+import { Log } from '../facades/Log.js';
 
 // 应用配置
 const config: ElectronAppConfig = {
@@ -19,6 +22,8 @@ const config: ElectronAppConfig = {
     env: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     debug: process.env.NODE_ENV !== 'production',
     providers: [
+        LogServiceProvider,
+        AppServiceProvider,
         PluginServiceProvider
     ],
     middleware: {
@@ -101,6 +106,9 @@ export async function bootApplication(): Promise<any> {
 
         // 使用框架启动应用
         const app = await bootElectronApp(config);
+
+        // 初始化Facades
+        Log.setApp(app);
 
         // 注册路由
         registerRoutes();
