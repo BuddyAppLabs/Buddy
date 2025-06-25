@@ -27,6 +27,7 @@
     "@ai-sdk/vue": "^1.2.4",
     "@coffic/active-app-monitor": "^1.0.2",
     "@coffic/buddy-types": "workspace:*",
+    "@coffic/electron-laravel-framework": "workspace:*",
     "@coffic/key-listener": "^1.0.3",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
