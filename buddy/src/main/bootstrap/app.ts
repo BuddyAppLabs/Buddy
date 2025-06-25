@@ -8,7 +8,7 @@ import {
     bootElectronApp,
     router,
     type ElectronAppConfig
-} from '@coffic/electron-laravel-framework';
+} from '@coffic/cosy';
 import { PluginServiceProvider } from '../providers/PluginServiceProvider.js';
 import { AppServiceProvider } from '../providers/AppServiceProvider.js';
 import { LogServiceProvider } from '../providers/LogServiceProvider.js';
@@ -18,6 +18,7 @@ import { WindowServiceProvider } from '../providers/WindowServiceProvider.js';
 import { appManager } from '../managers/AppManager.js';
 import { KeyServiceProvider } from '../providers/KeyServiceProvider.js';
 import { McpServiceProvider } from '../providers/McpServiceProvider.js';
+import { MarketServiceProvider } from '../providers/MarketServiceProvider.js';
 
 // 应用配置
 const config: ElectronAppConfig = {
@@ -31,7 +32,8 @@ const config: ElectronAppConfig = {
         PluginServiceProvider,
         WindowServiceProvider,
         KeyServiceProvider,
-        McpServiceProvider
+        McpServiceProvider,
+        MarketServiceProvider
     ],
     middleware: {
         errorHandling: true,

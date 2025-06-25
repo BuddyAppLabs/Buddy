@@ -3,7 +3,7 @@
  * 负责将日志服务注册到依赖注入容器中
  * 参考Laravel的设计模式
  */
-import { ServiceProvider } from '@coffic/electron-laravel-framework';
+import { ServiceProvider } from '@coffic/cosy';
 import { LogManager } from '../logging/LogManager.js';
 import { LogManagerContract, LogConfig, LogLevel } from '../contracts/LogContract.js';
 

@@ -2,7 +2,7 @@
  * 插件服务提供者
  * 负责注册插件相关的服务
  */
-import { ServiceProvider } from '@coffic/electron-laravel-framework';
+import { ServiceProvider } from '@coffic/cosy';
 import { pluginManager } from '../managers/PluginManager.js';
 
 export class PluginServiceProvider extends ServiceProvider {

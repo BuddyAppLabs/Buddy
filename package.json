@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "pnpm -r build",
-    "build:framework": "pnpm --filter @coffic/electron-laravel-framework build",
+    "build:cosy": "pnpm --filter @coffic/cosy build",
     "build:buddy:mac": "pnpm build:buddy-types && pnpm --filter buddy build:mac",
     "build:buddy-types": "pnpm --filter buddy-types build",
     "dev": "pnpm dev:buddy",

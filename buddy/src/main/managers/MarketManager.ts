@@ -1,22 +1,33 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { logger } from './LogManager.js';
-import { userPluginDB } from '../repo/PluginRepoUser.js';
-import { packageDownloaderDB } from '../service/Downloader.js';
+import { BaseManager } from './BaseManager.js';
+import { MarketContract, MarketRepositoryContract, MarketDownloaderContract } from '../contracts/MarketContract.js';
 
 /**
  * 插件市场管理器
  * 负责处理插件的下载、安装、卸载等操作
  */
-export class MarketManager {
+export class MarketManager extends BaseManager implements MarketContract {
+    private repository: MarketRepositoryContract;
+    private downloader: MarketDownloaderContract;
+
+    constructor(repository: MarketRepositoryContract, downloader: MarketDownloaderContract) {
+        super({
+            name: 'MarketManager',
+            enableLogging: true,
+            logLevel: 'info'
+        });
+        this.repository = repository;
+        this.downloader = downloader;
+    }
+
     /**
      * 下载并安装插件
      * @param pluginId 插件ID
-     * @returns 安装是否成功
      */
     public async downloadAndInstallPlugin(pluginId: string): Promise<void> {
         try {
-            const userPluginDir = userPluginDB.getRootDir();
+            const userPluginDir = this.repository.getRootDir();
             if (!fs.existsSync(userPluginDir)) {
                 fs.mkdirSync(userPluginDir, { recursive: true });
             }
@@ -28,34 +39,24 @@ export class MarketManager {
                 fs.mkdirSync(pluginDir, { recursive: true });
             }
 
-            logger.info(`开始下载插件`, pluginId);
-
-            await packageDownloaderDB.downloadAndExtractPackage(pluginId, pluginDir);
-            await userPluginDB.getAllPlugins();
+            await this.downloader.downloadAndExtractPackage(pluginId, pluginDir);
+            await this.repository.getAllPlugins();
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            logger.error('下载插件失败', {
-                error: errorMessage,
-                pluginId: pluginId,
-            });
-            throw error;
+            this.handleError(error, '下载插件失败', true);
         }
     }
 
     /**
      * 卸载插件
      * @param pluginId 插件ID
-     * @returns 卸载是否成功
      */
     public async uninstallPlugin(pluginId: string): Promise<void> {
         try {
-            logger.info(`准备卸载插件: ${pluginId}`);
-
             if (!pluginId) {
                 throw new Error('插件ID不能为空');
             }
 
-            const plugin = await userPluginDB.find(pluginId);
+            const plugin = await this.repository.find(pluginId);
 
             if (!plugin) {
                 throw new Error(`找不到插件: ${pluginId}`);
@@ -63,12 +64,14 @@ export class MarketManager {
 
             plugin.delete();
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            logger.error(`卸载插件失败: ${errorMessage}`, { pluginId });
-            throw error;
+            this.handleError(error, '卸载插件失败', true);
         }
     }
-}
 
-// 导出单例实例
-export const marketManager = new MarketManager(); 
+    /**
+     * 清理资源
+     */
+    public cleanup(): void {
+        // 目前没有需要清理的资源
+    }
+}

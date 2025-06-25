@@ -2,7 +2,7 @@
  * 键盘管理服务提供者
  * 负责注册键盘管理相关的服务
  */
-import { ServiceProvider } from '@coffic/electron-laravel-framework';
+import { ServiceProvider } from '@coffic/cosy';
 import { KeyContract } from '../contracts/KeyContract.js';
 import { KeyManager } from '../managers/KeyManager.js';
 

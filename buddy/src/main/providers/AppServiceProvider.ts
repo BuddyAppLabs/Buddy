@@ -2,7 +2,7 @@
  * 应用服务提供者
  * 负责注册应用管理器相关的服务
  */
-import { ServiceProvider } from '@coffic/electron-laravel-framework';
+import { ServiceProvider } from '@coffic/cosy';
 import { appManager } from '../managers/AppManager.js';
 
 export class AppServiceProvider extends ServiceProvider {

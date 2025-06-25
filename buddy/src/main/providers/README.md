@@ -2,17 +2,6 @@
 
 服务提供者是应用的引导中心，负责将服务绑定到服务容器中。参考 Laravel 的服务提供者模式设计。
 
-## 📁 目录结构
-
-```
-providers/
-├── ServiceProvider.ts      # 服务提供者基类
-├── AppServiceProvider.ts   # 应用服务提供者 (待实现)
-├── PluginServiceProvider.ts # 插件服务提供者
-├── ViewServiceProvider.ts  # 视图服务提供者 (待实现)
-└── EventServiceProvider.ts # 事件服务提供者 (待实现)
-```
-
 ## 🎯 设计理念
 
 ### 什么是服务提供者？

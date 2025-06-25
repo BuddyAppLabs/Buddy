@@ -35,7 +35,7 @@ appManager.start().then(() => {
 **新代码**:
 
 ```typescript
-import { bootElectronApp } from '@coffic/electron-laravel-framework';
+import { bootElectronApp } from '@coffic/cosy';
 import { PluginServiceProvider } from './providers/PluginServiceProvider.js';
 import { registerRoutes } from './bootstrap/routes.js';
 
@@ -61,7 +61,7 @@ registerRoutes();
 **创建** `buddy/src/main/providers/PluginServiceProvider.ts`:
 
 ```typescript
-import { ServiceProvider } from '@coffic/electron-laravel-framework';
+import { ServiceProvider } from '@coffic/cosy';
 import { PluginManager } from '../managers/PluginManager.js';
 
 export class PluginServiceProvider extends ServiceProvider {
@@ -92,12 +92,9 @@ export class PluginServiceProvider extends ServiceProvider {
 **创建** `buddy/src/main/bootstrap/routes.ts`:
 
 ```typescript
-import { router } from '@coffic/electron-laravel-framework';
+import { router } from '@coffic/cosy';
 import { PluginController } from '../controllers/PluginController.js';
-import {
-  LoggingMiddleware,
-  ErrorHandlingMiddleware,
-} from '@coffic/electron-laravel-framework';
+import { LoggingMiddleware, ErrorHandlingMiddleware } from '@coffic/cosy';
 
 export function registerRoutes(): void {
   const pluginController = new PluginController();
@@ -128,8 +125,8 @@ export function registerRoutes(): void {
 **创建** `buddy/src/main/controllers/BaseController.ts`:
 
 ```typescript
-import { IPCRequest, IPCResponse } from '@coffic/electron-laravel-framework';
-import { app } from '@coffic/electron-laravel-framework';
+import { IPCRequest, IPCResponse } from '@coffic/cosy';
+import { app } from '@coffic/cosy';
 
 export abstract class BaseController {
   protected app = app();
@@ -172,7 +169,7 @@ export const actionRoutes = [
 **新控制器** (`buddy/src/main/controllers/ActionController.ts`):
 
 ```typescript
-import { IPCRequest, IPCResponse } from '@coffic/electron-laravel-framework';
+import { IPCRequest, IPCResponse } from '@coffic/cosy';
 import { BaseController } from './BaseController.js';
 import { ActionManager } from '../managers/ActionManager.js';
 
@@ -198,10 +195,7 @@ export class ActionController extends BaseController {
 **创建** `buddy/src/main/middleware/ValidationMiddleware.ts`:
 
 ```typescript
-import {
-  ValidationMiddleware,
-  IPCRequest,
-} from '@coffic/electron-laravel-framework';
+import { ValidationMiddleware, IPCRequest } from '@coffic/cosy';
 
 export class PluginIdValidation extends ValidationMiddleware {
   protected validate(request: IPCRequest): {
@@ -237,7 +231,7 @@ router.register('plugin:install', pluginController.install, [
 **创建** `buddy/src/main/facades/Plugin.ts`:
 
 ```typescript
-import { BaseFacade, createFacade } from '@coffic/electron-laravel-framework';
+import { BaseFacade, createFacade } from '@coffic/cosy';
 import { PluginManager } from '../managers/PluginManager.js';
 
 class PluginFacade extends BaseFacade {

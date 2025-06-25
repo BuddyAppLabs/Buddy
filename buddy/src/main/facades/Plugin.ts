@@ -3,7 +3,7 @@
  * 使用框架包的门面系统
  * 提供简洁的插件 API 访问
  */
-import { BaseFacade, createFacade } from '@coffic/electron-laravel-framework';
+import { BaseFacade, createFacade } from '@coffic/cosy';
 
 export interface PluginManagerInterface {
     getPlugins(): Promise<any[]>;

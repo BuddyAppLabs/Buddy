@@ -23,7 +23,7 @@ pnpm add @coffic/electron-laravel-framework
 ### 1. 创建应用
 
 ```typescript
-import { bootElectronApp } from '@coffic/electron-laravel-framework';
+import { bootElectronApp } from '@coffic/cosy';
 
 const app = await bootElectronApp({
   name: 'MyElectronApp',
@@ -39,7 +39,7 @@ const app = await bootElectronApp({
 ### 2. 创建服务提供者
 
 ```typescript
-import { ServiceProvider } from '@coffic/electron-laravel-framework';
+import { ServiceProvider } from '@coffic/cosy';
 
 export class PluginServiceProvider extends ServiceProvider {
   public register(): void {
@@ -57,7 +57,7 @@ export class PluginServiceProvider extends ServiceProvider {
 ### 3. 注册路由
 
 ```typescript
-import { router } from '@coffic/electron-laravel-framework';
+import { router } from '@coffic/cosy';
 
 // 注册 IPC 路由
 router.register('plugin:list', async (request) => {
@@ -70,7 +70,7 @@ router.register('plugin:list', async (request) => {
 ### 4. 使用中间件
 
 ```typescript
-import { ValidationMiddleware } from '@coffic/electron-laravel-framework';
+import { ValidationMiddleware } from '@coffic/cosy';
 
 class PluginValidation extends ValidationMiddleware {
   protected validate(request: IPCRequest) {
@@ -88,7 +88,7 @@ router.register('plugin:install', handler, [new PluginValidation()]);
 ### 5. 创建门面
 
 ```typescript
-import { BaseFacade, createFacade } from '@coffic/electron-laravel-framework';
+import { BaseFacade, createFacade } from '@coffic/cosy';
 
 class PluginFacade extends BaseFacade {
   public getFacadeAccessor(): string {
@@ -126,7 +126,7 @@ Service Layer
 ### 依赖注入容器
 
 ```typescript
-import { container } from '@coffic/electron-laravel-framework';
+import { container } from '@coffic/cosy';
 
 // 绑定服务
 container.singleton('logger', () => new Logger());

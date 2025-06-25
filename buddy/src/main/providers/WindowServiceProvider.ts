@@ -2,7 +2,7 @@
  * 窗口服务提供者
  * 负责注册窗口管理相关的服务
  */
-import { ServiceProvider } from '@coffic/electron-laravel-framework';
+import { ServiceProvider } from '@coffic/cosy';
 import { WindowConfig, WindowManagerContract } from '../contracts/WindowContract.js';
 import { createWindowManager } from '../managers/WindowManager.js';
 

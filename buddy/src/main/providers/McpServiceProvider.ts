@@ -2,7 +2,7 @@
  * MCP 服务提供者
  * 负责注册 MCP 相关的服务
  */
-import { ServiceProvider } from '@coffic/electron-laravel-framework';
+import { ServiceProvider } from '@coffic/cosy';
 
 export class McpServiceProvider extends ServiceProvider {
     /**
