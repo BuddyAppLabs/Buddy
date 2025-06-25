@@ -306,15 +306,15 @@ export class LogManager {
 // 这些导出主要用于向后兼容
 
 // 从Facade导入logger实例 - 向后兼容
-export { logger } from '../facades/Log.js';
+export { logger } from '../facades/LogFacade.js';
 
 // 便捷的日志通道访问 - 通过Facade
-import { Log } from '../facades/Log.js';
+import { LogFacade } from '../facades/LogFacade.js';
 
 // 创建便捷的通道访问函数
-export const getAppLogger = () => Log.channel('app');
-export const getDebugLogger = () => Log.channel('debug');
-export const getErrorLogger = () => Log.channel('error');
-export const getPluginLogger = () => Log.channel('plugin');
-export const getSecurityLogger = () => Log.channel('security');
-export const getPerformanceLogger = () => Log.channel('performance');
+export const getAppLogger = () => LogFacade.channel('app');
+export const getDebugLogger = () => LogFacade.channel('debug');
+export const getErrorLogger = () => LogFacade.channel('error');
+export const getPluginLogger = () => LogFacade.channel('plugin');
+export const getSecurityLogger = () => LogFacade.channel('security');
+export const getPerformanceLogger = () => LogFacade.channel('performance');

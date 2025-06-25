@@ -5,7 +5,7 @@
  */
 import { LogManagerContract, LogChannelContract, LogContext, ContextualLoggerContract } from '../contracts/LogContract.js';
 
-export class Log {
+export class LogFacade {
     private static app: any;
 
     /**
@@ -111,12 +111,12 @@ export class Log {
 
 // 导出便捷的logger实例 - 向后兼容
 export const logger = {
-    debug: (message: string, context?: LogContext) => Log.debug(message, context),
-    info: (message: string, context?: LogContext) => Log.info(message, context),
-    warn: (message: string, context?: LogContext) => Log.warn(message, context),
-    error: (message: string, context?: LogContext) => Log.error(message, context),
+    debug: (message: string, context?: LogContext) => LogFacade.debug(message, context),
+    info: (message: string, context?: LogContext) => LogFacade.info(message, context),
+    warn: (message: string, context?: LogContext) => LogFacade.warn(message, context),
+    error: (message: string, context?: LogContext) => LogFacade.error(message, context),
 
     // Laravel风格的通道访问
-    channel: (name?: string) => Log.channel(name),
-    withContext: (context: LogContext) => Log.withContext(context)
+    channel: (name?: string) => LogFacade.channel(name),
+    withContext: (context: LogContext) => LogFacade.withContext(context)
 }; 

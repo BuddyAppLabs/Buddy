@@ -4,8 +4,7 @@
  */
 import { app, BrowserWindow } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
-import { logger } from './LogManager.js';
-import { windowManager } from './WindowManager.js';
+import { Window } from '../facades/Window.js';
 import { pluginManager } from './PluginManager.js';
 import { commandKeyManager } from './KeyManager.js';
 import { pluginViewManager } from './PluginViewManager.js';
@@ -20,8 +19,8 @@ export class AppManager {
   private setupEventListeners(): void {
     // 处理第二个实例启动
     app.on('second-instance', () => {
-      logger.info('检测到第二个应用实例启动，激活主窗口');
-      this.mainWindow = windowManager.getMainWindow();
+      console.info('检测到第二个应用实例启动，激活主窗口');
+      this.mainWindow = Window.getMainWindow();
       if (this.mainWindow) {
         if (this.mainWindow.isMinimized()) this.mainWindow.restore();
         this.mainWindow.show();
@@ -31,31 +30,31 @@ export class AppManager {
 
     // 窗口创建事件
     app.on('browser-window-created', (_, window) => {
-      logger.debug('新窗口创建，设置窗口快捷键监听');
+      console.debug('新窗口创建，设置窗口快捷键监听');
       optimizer.watchWindowShortcuts(window);
     });
 
     // macOS 激活事件
     app.on('activate', () => {
-      logger.info('应用被激活');
+      console.info('应用被激活');
       if (BrowserWindow.getAllWindows().length === 0) {
-        logger.info('没有活动窗口，创建新窗口');
-        this.mainWindow = windowManager.createWindow();
+        console.info('没有活动窗口，创建新窗口');
+        this.mainWindow = Window.createWindow();
       }
     });
 
     // 窗口全部关闭事件
     app.on('window-all-closed', () => {
-      logger.info('所有窗口已关闭');
+      console.info('所有窗口已关闭');
       if (process.platform !== 'darwin') {
-        logger.info('非macOS平台，退出应用');
+        console.info('非macOS平台，退出应用');
         app.quit();
       }
     });
 
     // 应用退出前事件
     app.on('will-quit', () => {
-      logger.info('应用即将退出，执行清理工作');
+      console.info('应用即将退出，执行清理工作');
       this.cleanup();
     });
   }
@@ -68,7 +67,7 @@ export class AppManager {
     electronApp.setAppUserModelId('com.electron');
 
     // 创建主窗口
-    this.mainWindow = windowManager.createWindow();
+    this.mainWindow = Window.createWindow();
 
     updateManager.initialize(this.mainWindow);
 
@@ -76,13 +75,13 @@ export class AppManager {
     if (process.platform === 'darwin') {
       const result = await commandKeyManager.setupCommandKeyListener();
       if (result.success == false) {
-        logger.warn('Command键双击监听器设置失败', {
+        console.warn('Command键双击监听器设置失败', {
           error: result.error,
         });
       }
     }
 
-    windowManager.setupGlobalShortcut();
+    Window.setupGlobalShortcut();
 
     await pluginManager.initialize();
 
@@ -93,16 +92,16 @@ export class AppManager {
    * 清理资源
    */
   private cleanup(): void {
-    logger.debug('清理窗口管理器资源');
-    windowManager.cleanup();
+    console.debug('清理窗口管理器资源');
+    Window.cleanup();
 
-    logger.debug('清理Command键监听器');
+    console.debug('清理Command键监听器');
     // commandKeyManager.cleanup();
 
-    logger.debug('关闭所有插件视图窗口');
+    console.debug('关闭所有插件视图窗口');
     pluginViewManager.closeAllViews();
 
-    logger.info('应用清理完成，准备退出');
+    console.info('应用清理完成，准备退出');
   }
 
   /**

@@ -3,10 +3,11 @@
  * 负责处理macOS平台按键的监听和响应
  */
 import { KeyListener } from '@coffic/key-listener';
-import { logger } from './LogManager.js';
-import { windowManager } from './WindowManager.js';
+import { Window } from '../facades/Window.js';
 import { is } from '@electron-toolkit/utils';
 import { app } from 'electron';
+
+const logger = console;
 
 class KeyManager {
   private static instance: KeyManager;
@@ -71,7 +72,7 @@ class KeyManager {
 
         // 检查是否是双击（两次按键间隔小于阈值）
         if (now - lastTime < KeyManager.DOUBLE_PRESS_THRESHOLD) {
-          windowManager.toggleMainWindow();
+          Window.toggleMainWindow();
         }
 
         // 更新最后按键时间
