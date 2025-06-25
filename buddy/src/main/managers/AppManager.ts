@@ -5,8 +5,7 @@
 import { app, BrowserWindow } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
 import { Window } from '../facades/Window.js';
-import { pluginManager } from './PluginManager.js';
-// import { commandKeyManager } from './KeyManager.js';
+// import { pluginManager } from './PluginManager.js';
 import { pluginViewManager } from './PluginViewManager.js';
 import { updateManager } from './UpdateManager.js';
 
@@ -73,8 +72,6 @@ export class AppManager {
 
     Window.setupGlobalShortcut();
 
-    await pluginManager.initialize();
-
     this.setupContextMenu();
   }
 
@@ -84,9 +81,6 @@ export class AppManager {
   private cleanup(): void {
     console.debug('清理窗口管理器资源');
     Window.cleanup();
-
-    console.debug('清理Command键监听器');
-    // commandKeyManager.cleanup();
 
     console.debug('关闭所有插件视图窗口');
     pluginViewManager.closeAllViews();
