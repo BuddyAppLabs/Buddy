@@ -1,11 +1,11 @@
 import { readPackageJson, hasPackageJson } from '../utils/PackageUtils.js';
-import { logger } from '../managers/LogManager.js';
 import { PluginType, ValidationResult } from '@coffic/buddy-types';
 import { PluginEntity } from './PluginEntity.js';
 import { PackageJson } from '@/types/package-json.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 
 const verbose = false;
+const logger = console;
 
 /**
  * 插件包实体类

@@ -4,7 +4,7 @@
  * 负责处理配置相关的IPC请求
  */
 
-import { IpcRoute } from '../provider/RouterService.js'
+import { IpcRoute } from '../providers/RouterService.js'
 import { configManager } from '../managers/ConfigManager.js'
 import { logger } from '../managers/LogManager.js'
 import { IpcResponse } from '@coffic/buddy-types'

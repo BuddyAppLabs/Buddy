@@ -1,10 +1,9 @@
-import { IpcRoute } from '@/main/provider/RouterService.js';
-import { userPluginDB } from '@/main/repo/PluginRepoUser.js';
+import { IpcRoute } from '@/main/providers/RouterService.js';
+import { userPluginDB, devPluginDB } from '@coffic/buddy-foundation';
 import { remotePluginDB } from '@/main/repo/PluginRepoRemote.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
-import { marketManager } from '@/main/managers/MarketManager.js';
+import { Market } from '@coffic/buddy-foundation';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
-import { devPluginDB } from '../repo/PluginRepoDev.js';
 
 export const marketHandler: IpcRoute[] = [
     {
@@ -34,7 +33,7 @@ export const marketHandler: IpcRoute[] = [
     {
         channel: IPC_METHODS.DOWNLOAD_PLUGIN,
         handler: async (_, pluginId: string): Promise<void> => {
-            await marketManager.downloadAndInstallPlugin(pluginId);
+            await Market.install(pluginId);
         },
     },
     {
@@ -46,7 +45,7 @@ export const marketHandler: IpcRoute[] = [
     {
         channel: IPC_METHODS.UNINSTALL_PLUGIN,
         handler: async (_, pluginId: string): Promise<void> => {
-            await marketManager.uninstallPlugin(pluginId);
+            await Market.uninstall(pluginId);
         },
     },
 ];

@@ -14,3 +14,14 @@ export * from './mcp/index.js';
 
 // 日志模块
 export * from './log/index.js';
+
+// 插件模块
+export * from './plugin/index.js';
+
+// 应用模块
+export * from './app/index.js';
+
+// 导出所有服务提供者
+export { AppServiceProvider } from './app/AppServiceProvider.js';
+
+export * from './window/index.js';

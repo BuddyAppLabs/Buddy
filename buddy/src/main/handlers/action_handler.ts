@@ -1,4 +1,4 @@
-import { IpcRoute } from '../provider/RouterService.js';
+import { IpcRoute } from '../providers/RouterService.js';
 import { IpcResponse, SuperAction } from '@coffic/buddy-types';
 import { actionManager } from '../managers/ActionManager.js';
 import { logger } from '../managers/LogManager.js';

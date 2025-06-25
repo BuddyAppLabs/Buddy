@@ -6,6 +6,7 @@
     "src/preload/**/*",
     "src/types/**/*",
     "native/**/*",
+    "../packages/buddy-foundation/src/window/contracts/WindowContract.ts",
   ],
   "compilerOptions": {
     "composite": true,

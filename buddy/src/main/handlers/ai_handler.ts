@@ -1,5 +1,5 @@
 
-import { IpcRoute } from '../provider/RouterService.js';
+import { IpcRoute } from '../providers/RouterService.js';
 import { logger } from '../managers/LogManager.js';
 import { aiManager, type ChatMessage } from '../managers/AIManager.js';
 import { v4 as uuidv4 } from 'uuid';

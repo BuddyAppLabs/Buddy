@@ -9,9 +9,7 @@ import {
     router,
     type ElectronAppConfig
 } from '@coffic/cosy';
-import { PluginServiceProvider } from '../providers/PluginServiceProvider.js';
-import { AppServiceProvider } from '../providers/AppServiceProvider.js';
-import { LogServiceProvider, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider } from '@coffic/buddy-foundation';
+import { LogServiceProvider, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider, PluginServiceProvider, AppServiceProvider } from '@coffic/buddy-foundation';
 import { Plugin } from '../facades/Plugin.js';
 import { LogFacade } from '../facades/LogFacade.js';
 import { appManager } from '../managers/AppManager.js';

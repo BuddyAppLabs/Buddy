@@ -3,8 +3,8 @@
  * 负责注册窗口管理相关的服务
  */
 import { ServiceProvider } from '@coffic/cosy';
-import { WindowConfig, WindowManagerContract } from '../contracts/WindowContract.js';
 import { createWindowManager } from '../managers/WindowManager.js';
+import { WindowConfig, WindowManagerContract } from '@coffic/buddy-foundation';
 
 export class WindowServiceProvider extends ServiceProvider {
     /**

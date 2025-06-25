@@ -1,5 +1,5 @@
 
-import { IpcRoute } from '../provider/RouterService.js';
+import { IpcRoute } from '../providers/RouterService.js';
 import { shell } from 'electron';
 import { logger } from '../managers/LogManager.js';
 import { viewManager } from '../managers/ViewManager.js';

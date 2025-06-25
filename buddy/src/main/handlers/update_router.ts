@@ -4,7 +4,7 @@
  */
 import { BrowserWindow } from 'electron';
 import { updateManager } from '../managers/UpdateManager.js';
-import { IpcRoute } from '../provider/RouterService.js';
+import { IpcRoute } from '../providers/RouterService.js';
 
 // 导出路由配置
 export const routes: IpcRoute[] = [

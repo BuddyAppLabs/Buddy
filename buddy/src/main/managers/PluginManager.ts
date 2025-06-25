@@ -3,9 +3,7 @@
  * 负责插件的加载、管理和通信
  */
 import { BaseManager } from './BaseManager.js';
-import { PluginEntity } from '../entities/PluginEntity.js';
-import { userPluginDB } from '../repo/PluginRepoUser.js';
-import { devPluginDB } from '../repo/PluginRepoDev.js';
+import { Plugin } from '@coffic/buddy-foundation';
 
 class PluginManager extends BaseManager {
     private static instance: PluginManager;
@@ -30,18 +28,18 @@ class PluginManager extends BaseManager {
      */
     async initialize(): Promise<void> {
         try {
-            await userPluginDB.ensureRepoDirs();
+            await Plugin.initialize();
         } catch (error) {
             this.handleError(error, '插件系统初始化失败', true);
         }
     }
 
-    async getPlugins(): Promise<PluginEntity[]> {
-        return [...await userPluginDB.getAllPlugins(), ...await devPluginDB.getAllPlugins()];
+    async getPlugins(): Promise<any[]> {
+        return await Plugin.getPlugins();
     }
 
-    async getPlugin(pluginId: string): Promise<PluginEntity | null> {
-        return await userPluginDB.find(pluginId) || await devPluginDB.find(pluginId);
+    async getPlugin(pluginId: string): Promise<any | null> {
+        return await Plugin.getPlugin(pluginId);
     }
 
     /**
@@ -64,6 +62,7 @@ class PluginManager extends BaseManager {
      */
     public cleanup(): void {
         try {
+            Plugin.cleanup();
             this.removeAllListeners();
         } catch (error) {
             this.handleError(error, '插件系统清理失败');

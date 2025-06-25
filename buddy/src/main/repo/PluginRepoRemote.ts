@@ -2,7 +2,6 @@
  * 远程插件数据库
  * 负责从远程 npm registry 获取插件并缓存
  */
-import { logger } from '../managers/LogManager.js';
 import { npmRegistryService } from '../service/NpmRegistryService.js';
 import { PackageEntity } from '../entities/PackageEntity.js';
 import { PackageJson } from '@/types/package-json.js';
@@ -10,6 +9,7 @@ import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PluginEntity } from '../entities/PluginEntity.js';
 
 const verbose = false;
+const logger = console;
 
 /**
  * 远程插件仓库
