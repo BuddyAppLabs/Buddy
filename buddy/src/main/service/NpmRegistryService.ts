@@ -3,10 +3,10 @@
  * 负责与npm registry交互，包括搜索包、获取元数据等功能
  */
 import axios from 'axios';
-import { logger } from '../managers/LogManager.js';
 import { NpmPackageMetadata, PackageJson } from '@/types/package-json.js';
 
 const verbose = false;
+const logger = console;
 
 export class NpmRegistryService {
     private static instance: NpmRegistryService;

@@ -1,9 +1,10 @@
 import { IpcRoute } from '../providers/RouterService.js';
 import { IpcResponse, SuperAction } from '@coffic/buddy-types';
 import { actionManager } from '../managers/ActionManager.js';
-import { logger } from '../managers/LogManager.js';
 import { pluginManager } from '../managers/PluginManager.js';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
+
+const logger = console;
 /**
  * 插件动作相关的IPC路由配置
  */

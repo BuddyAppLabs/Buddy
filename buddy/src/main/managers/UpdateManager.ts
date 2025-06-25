@@ -5,7 +5,7 @@
 import pkg from 'electron-updater';
 import { dialog, BrowserWindow } from 'electron';
 
-import { sendUpdateEvent } from '../handlers/update_router.js';
+import { sendUpdateEvent } from '../controllers/update_router.js';
 
 const logger = console;
 
