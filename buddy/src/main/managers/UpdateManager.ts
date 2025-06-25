@@ -4,8 +4,10 @@
  */
 import pkg from 'electron-updater';
 import { dialog, BrowserWindow } from 'electron';
-import { logger } from './LogManager.js';
+
 import { sendUpdateEvent } from '../handlers/update_router.js';
+
+const logger = console;
 
 const verbose = false;
 const autoUpdater = pkg.autoUpdater

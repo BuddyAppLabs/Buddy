@@ -4,8 +4,8 @@
  * 参考Laravel的设计模式
  */
 import { ServiceProvider } from '@coffic/cosy';
-import { LogManager } from '../logging/LogManager.js';
-import { LogManagerContract, LogConfig, LogLevel } from '../contracts/LogContract.js';
+import { LogManager } from './LogManager.js';
+import { LogManagerContract, LogConfig, LogLevel } from './contracts/LogContract.js';
 
 export class LogServiceProvider extends ServiceProvider {
     public register(): void {

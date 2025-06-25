@@ -1,11 +1,12 @@
 import { join } from 'path';
 import fs from 'fs';
 import { PluginEntity } from '../entities/PluginEntity.js';
-import { logger } from '../managers/LogManager.js';
 import { PluginType } from '@coffic/buddy-types';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 
 const verbose = true;
+
+const logger = console;
 
 /**
  * 插件仓库

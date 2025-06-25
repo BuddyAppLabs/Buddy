@@ -3,10 +3,8 @@
  * 负责注册插件市场相关的服务
  */
 import { ServiceProvider } from '@coffic/cosy';
-import { MarketContract, MarketRepositoryContract, MarketDownloaderContract } from '../contracts/MarketContract.js';
-import { MarketManager } from '../managers/MarketManager.js';
-import { userPluginDB } from '../repo/PluginRepoUser.js';
-import { packageDownloaderDB } from '../service/Downloader.js';
+import { MarketContract, MarketRepositoryContract, MarketDownloaderContract } from './contracts/MarketContract.js';
+import { MarketManager } from './MarketManager.js';
 
 export class MarketServiceProvider extends ServiceProvider {
     /**
@@ -14,12 +12,6 @@ export class MarketServiceProvider extends ServiceProvider {
      */
     public register(): void {
         console.log('🚀 MarketServiceProvider register');
-
-        // 注册插件仓储服务
-        this.app.container().instance('market.repository', userPluginDB);
-
-        // 注册下载器服务
-        this.app.container().instance('market.downloader', packageDownloaderDB);
 
         // 注册插件市场服务
         this.app.container().singleton('market', () => {
@@ -41,6 +33,6 @@ export class MarketServiceProvider extends ServiceProvider {
      * 获取提供的服务
      */
     public provides(): string[] {
-        return ['market', 'market.repository', 'market.downloader'];
+        return ['market'];
     }
 } 

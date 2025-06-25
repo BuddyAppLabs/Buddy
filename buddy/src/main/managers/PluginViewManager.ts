@@ -11,13 +11,14 @@ import { join } from 'path';
 import { Window } from '../facades/Window.js';
 import { actionManager } from './ActionManager.js';
 import { BaseManager } from './BaseManager.js';
-import { logger } from './LogManager.js';
 import {
   PluginViewOptions,
   ViewBounds,
   ViewMode,
   WebContentOptions,
 } from '@coffic/buddy-types';
+
+const logger = console;
 
 class PluginViewManager extends BaseManager {
   private static instance: PluginViewManager;

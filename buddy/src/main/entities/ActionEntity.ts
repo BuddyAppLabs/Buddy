@@ -1,8 +1,9 @@
 import { ActionStatus, SuperAction, ValidationResult, ViewMode } from "@coffic/buddy-types";
-import { logger } from "../managers/LogManager.js";
 import { pluginManager } from "../managers/PluginManager.js";
 import { PluginEntity } from "./PluginEntity.js";
 import { SendableAction } from "@/types/sendable-action.js";
+
+const logger = console;
 
 /**
  * 插件动作实体类

@@ -5,7 +5,8 @@
 import { pluginManager } from './PluginManager.js';
 import { BaseManager } from './BaseManager.js';
 import { ActionEntity } from '../entities/ActionEntity.js';
-import { logger } from './LogManager.js';
+
+const logger = console;
 
 const verbose = false;
 

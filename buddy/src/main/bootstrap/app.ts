@@ -11,14 +11,11 @@ import {
 } from '@coffic/cosy';
 import { PluginServiceProvider } from '../providers/PluginServiceProvider.js';
 import { AppServiceProvider } from '../providers/AppServiceProvider.js';
-import { LogServiceProvider } from '../providers/LogServiceProvider.js';
+import { LogServiceProvider, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider } from '@coffic/buddy-foundation';
 import { Plugin } from '../facades/Plugin.js';
 import { LogFacade } from '../facades/LogFacade.js';
-import { WindowServiceProvider } from '../providers/WindowServiceProvider.js';
 import { appManager } from '../managers/AppManager.js';
-import { KeyboardServiceProvider } from '@coffic/buddy-foundation';
-import { McpServiceProvider } from '../providers/McpServiceProvider.js';
-import { MarketServiceProvider } from '../providers/MarketServiceProvider.js';
+import { WindowServiceProvider } from '../providers/WindowServiceProvider.js';
 
 // 应用配置
 const config: ElectronAppConfig = {
@@ -28,10 +25,10 @@ const config: ElectronAppConfig = {
     debug: process.env.NODE_ENV !== 'production',
     providers: [
         LogServiceProvider,
+        KeyboardServiceProvider,
         AppServiceProvider,
         PluginServiceProvider,
         WindowServiceProvider,
-        KeyboardServiceProvider,
         McpServiceProvider,
         MarketServiceProvider
     ],
