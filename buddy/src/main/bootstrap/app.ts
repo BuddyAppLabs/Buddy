@@ -16,7 +16,7 @@ import { Plugin } from '../facades/Plugin.js';
 import { LogFacade } from '../facades/LogFacade.js';
 import { WindowServiceProvider } from '../providers/WindowServiceProvider.js';
 import { appManager } from '../managers/AppManager.js';
-import { KeyServiceProvider } from '../providers/KeyServiceProvider.js';
+import { KeyboardServiceProvider } from '@coffic/buddy-foundation';
 import { McpServiceProvider } from '../providers/McpServiceProvider.js';
 import { MarketServiceProvider } from '../providers/MarketServiceProvider.js';
 
@@ -31,7 +31,7 @@ const config: ElectronAppConfig = {
         AppServiceProvider,
         PluginServiceProvider,
         WindowServiceProvider,
-        KeyServiceProvider,
+        KeyboardServiceProvider,
         McpServiceProvider,
         MarketServiceProvider
     ],

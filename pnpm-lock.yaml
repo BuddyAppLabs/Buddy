@@ -45,6 +45,9 @@ importers:
       '@coffic/active-app-monitor':
         specifier: ^1.0.2
         version: 1.0.2
+      '@coffic/buddy-foundation':
+        specifier: workspace:*
+        version: link:../packages/buddy-foundation
       '@coffic/buddy-types':
         specifier: workspace:*
         version: link:../packages/buddy-types
@@ -184,6 +187,16 @@ importers:
       vue-tsc:
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.8.2)
+
+  packages/buddy-foundation:
+    dependencies:
+      '@coffic/cosy':
+        specifier: workspace:*
+        version: link:../cosy
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.3
 
   packages/buddy-types: {}
 
