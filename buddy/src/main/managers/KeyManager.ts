@@ -6,10 +6,11 @@ import { KeyListener } from '@coffic/key-listener';
 import { Window } from '../facades/Window.js';
 import { is } from '@electron-toolkit/utils';
 import { app } from 'electron';
+import { KeyContract } from '../contracts/KeyContract.js';
 
 const logger = console;
 
-class KeyManager {
+export class KeyManager implements KeyContract {
   private static instance: KeyManager;
   // 记录每个keyCode上次按下的时间
   private lastPressTime: { [key: number]: number } = {};
@@ -58,43 +59,45 @@ class KeyManager {
    * 2. 在生产环境使用符合直觉的 Command 键
    */
   async setupCommandKeyListener(): Promise<{ success: boolean; error?: string }> {
-    const keyCodes = this.keycodesToMonitor;
-    const keyNames = !app.isPackaged ? 'Option' : 'Command';
+    try {
+      const keyCodes = this.keycodesToMonitor;
+      const keyNames = !app.isPackaged ? 'Option' : 'Command';
 
-    // 创建监听器实例
-    const listener = new KeyListener();
+      // 创建监听器实例
+      const listener = new KeyListener();
 
-    // 监听键盘事件
-    listener.on('keypress', (event) => {
-      if (keyCodes.includes(event.keyCode)) {
-        const now = Date.now();
-        const lastTime = this.lastPressTime[event.keyCode] || 0;
+      // 监听键盘事件
+      listener.on('keypress', (event) => {
+        if (keyCodes.includes(event.keyCode)) {
+          const now = Date.now();
+          const lastTime = this.lastPressTime[event.keyCode] || 0;
 
-        // 检查是否是双击（两次按键间隔小于阈值）
-        if (now - lastTime < KeyManager.DOUBLE_PRESS_THRESHOLD) {
-          Window.toggleMainWindow();
+          // 检查是否是双击（两次按键间隔小于阈值）
+          if (now - lastTime < KeyManager.DOUBLE_PRESS_THRESHOLD) {
+            Window.toggleMainWindow();
+          }
+
+          // 更新最后按键时间
+          this.lastPressTime[event.keyCode] = now;
         }
+      });
 
-        // 更新最后按键时间
-        this.lastPressTime[event.keyCode] = now;
+      // 启动监听器
+      const success = await listener.start();
+      if (!success) {
+        const error = `${keyNames}键监听器启动失败`;
+        logger.error(error);
+        return { success: false, error };
       }
-    });
 
-    // 启动监听器（返回Promise）
-    listener.start().then(success => {
-      if (success == false) {
-        logger.error(`${keyNames}键监听器启动失败`);
-      }
-    });
-
-    // ... 应用其他逻辑 ...
-
-    // 停止监听（不再需要时）
-    // listener.stop();
-
-    return {
-      success: false
-    };
+      return { success: true };
+    } catch (error) {
+      logger.error('键盘监听器设置失败:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '未知错误'
+      };
+    }
   }
 }
 

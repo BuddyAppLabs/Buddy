@@ -16,6 +16,7 @@ import { Plugin } from '../facades/Plugin.js';
 import { LogFacade } from '../facades/LogFacade.js';
 import { WindowServiceProvider } from '../providers/WindowServiceProvider.js';
 import { appManager } from '../managers/AppManager.js';
+import { KeyServiceProvider } from '../providers/KeyServiceProvider.js';
 
 // 应用配置
 const config: ElectronAppConfig = {
@@ -27,7 +28,8 @@ const config: ElectronAppConfig = {
         LogServiceProvider,
         AppServiceProvider,
         PluginServiceProvider,
-        WindowServiceProvider
+        WindowServiceProvider,
+        KeyServiceProvider
     ],
     middleware: {
         errorHandling: true,

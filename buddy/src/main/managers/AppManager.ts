@@ -6,7 +6,7 @@ import { app, BrowserWindow } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
 import { Window } from '../facades/Window.js';
 import { pluginManager } from './PluginManager.js';
-import { commandKeyManager } from './KeyManager.js';
+// import { commandKeyManager } from './KeyManager.js';
 import { pluginViewManager } from './PluginViewManager.js';
 import { updateManager } from './UpdateManager.js';
 
@@ -70,16 +70,6 @@ export class AppManager {
     this.mainWindow = Window.createWindow();
 
     updateManager.initialize(this.mainWindow);
-
-    // macOS特定配置
-    if (process.platform === 'darwin') {
-      const result = await commandKeyManager.setupCommandKeyListener();
-      if (result.success == false) {
-        console.warn('Command键双击监听器设置失败', {
-          error: result.error,
-        });
-      }
-    }
 
     Window.setupGlobalShortcut();
 
