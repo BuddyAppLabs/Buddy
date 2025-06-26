@@ -28,8 +28,6 @@ export function createElectronApp(config: ElectronAppConfig): Application {
         ConfigServiceProvider,
     ];
 
-    console.log(`${EMOJI} [Bootstrap] 创建 Electron 应用，内置的服务提供者：\n    ➡️  ${defaultProviders.map(provider => provider.name).join('\n')}`);
-
     const finalConfig = {
         ...config,
         providers: [...defaultProviders, ...(config.providers || [])],
@@ -50,7 +48,6 @@ export function createElectronApp(config: ElectronAppConfig): Application {
 
     // 注册服务提供者
     if (finalConfig.providers) {
-        console.log(`${EMOJI} [Bootstrap] 注册服务提供者`, finalConfig.providers);
         finalConfig.providers.forEach(provider => {
             app.register(provider);
         });

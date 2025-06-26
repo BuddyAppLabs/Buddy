@@ -8,8 +8,31 @@ export class WindowServiceProvider extends ServiceProvider {
      * 注册窗口管理服务
      */
     public register(): void {
-        // 注册默认窗口配置
-        Config.set('window', {
+        // 在注册阶段只创建一个基本的窗口管理器实例
+        this.app.container().singleton('window.manager', () => {
+            return createWindowManager({
+                showTrafficLights: false,
+                showDebugToolbar: false,
+                debugToolbarPosition: 'right',
+                hotkey: 'Option+Space',
+                size: {
+                    width: 1200,
+                    height: 600,
+                },
+                alwaysOnTop: true,
+                opacity: 0.99,
+            } as WindowConfig);
+        });
+
+        this.app.container().alias('WindowManager', 'window.manager');
+    }
+
+    /**
+     * 启动窗口管理服务
+     */
+    public async boot(): Promise<void> {
+        // 在启动阶段设置配置
+        const windowConfig = {
             showTrafficLights: false,
             showDebugToolbar: process.env.NODE_ENV === 'development',
             debugToolbarPosition: 'right',
@@ -20,23 +43,14 @@ export class WindowServiceProvider extends ServiceProvider {
             },
             alwaysOnTop: true,
             opacity: 0.99,
-        } as WindowConfig);
+        } as WindowConfig;
 
-        // 注册窗口管理器
-        this.app.container().instance(
-            'window.manager',
-            createWindowManager(Config.get<WindowConfig>('window')!)
-        );
+        // 设置全局配置
+        Config.set('window', windowConfig);
 
-        this.app.container().alias('WindowManager', 'window.manager');
-    }
-
-    /**
-     * 启动窗口管理服务
-     */
-    public async boot(): Promise<void> {
-        // 获取窗口管理器实例
+        // 获取窗口管理器实例并更新配置
         const windowManager = this.app.make<WindowManagerContract>('window.manager');
+        windowManager.updateConfig(windowConfig);
 
         // 设置全局快捷键
         windowManager.setupGlobalShortcut();

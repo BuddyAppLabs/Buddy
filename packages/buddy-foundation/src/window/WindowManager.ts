@@ -16,6 +16,37 @@ export class WindowManager implements WindowManagerContract {
     }
 
     /**
+     * 更新配置
+     */
+    public updateConfig(newConfig: Partial<WindowConfig>): void {
+        this.config = { ...this.config, ...newConfig };
+
+        // 如果窗口已经存在，应用新的配置
+        if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+            // 更新窗口大小
+            if (newConfig.size) {
+                this.mainWindow.setSize(newConfig.size.width, newConfig.size.height);
+            }
+
+            // 更新透明度
+            if (newConfig.opacity !== undefined) {
+                this.mainWindow.setOpacity(newConfig.opacity);
+            }
+
+            // 更新置顶状态
+            if (newConfig.alwaysOnTop !== undefined) {
+                this.mainWindow.setAlwaysOnTop(newConfig.alwaysOnTop);
+            }
+
+            // 更新窗口框架
+            if (newConfig.showTrafficLights !== undefined) {
+                // 注意：框架的更改可能需要重新创建窗口
+                console.warn('Window frame changes require window recreation');
+            }
+        }
+    }
+
+    /**
      * 获取主窗口实例
      */
     getMainWindow(): BrowserWindow | null {

@@ -39,6 +39,11 @@ export interface WindowManagerContract {
     setupGlobalShortcut(): void;
 
     /**
+     * 更新窗口配置
+     */
+    updateConfig(newConfig: Partial<WindowConfig>): void;
+
+    /**
      * 清理资源
      */
     cleanup(): void;
