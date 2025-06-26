@@ -17,15 +17,15 @@
  * ```
  */
 
-import { Facade } from '@coffic/cosy-framework';
-import { createFacade } from '@coffic/cosy-framework';
+import { createFacade } from '../../facades/createFacade.js';
+import { Facade } from '../../facades/Facade.js';
 import { ContractRouter } from '../contracts/ContractRouter.js';
 
 /**
  * 路由门面基类
  */
 class BaseFacade extends Facade {
-    protected static getFacadeAccessor(): string {
+    protected static override getFacadeAccessor(): string {
         return 'router';
     }
 }
