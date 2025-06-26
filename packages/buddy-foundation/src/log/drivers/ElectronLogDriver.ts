@@ -9,6 +9,7 @@ import {
     LogLevel,
     LogContext
 } from '../contracts/LogContract.js';
+import chalk from 'chalk';
 
 export class ElectronLogChannel implements LogChannelContract {
     private config: LogChannelConfig;
@@ -42,16 +43,16 @@ export class ElectronLogChannel implements LogChannelContract {
         // 根据日志级别调用对应的方法
         switch (level) {
             case LogLevel.DEBUG:
-                console.debug(formattedMessage);
+                console.debug(chalk.gray(formattedMessage));
                 break;
             case LogLevel.INFO:
-                console.info(formattedMessage);
+                console.info(chalk.green(formattedMessage));
                 break;
             case LogLevel.WARN:
-                console.warn(formattedMessage);
+                console.warn(chalk.yellow(formattedMessage));
                 break;
             case LogLevel.ERROR:
-                console.error(formattedMessage);
+                console.error(chalk.red(formattedMessage));
                 break;
         }
     }
