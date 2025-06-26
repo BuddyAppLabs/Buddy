@@ -6,7 +6,7 @@
 
 import { app } from 'electron';
 import { registerRoutes } from '../routes/index.js';
-import { LogServiceProvider, WindowServiceProvider, Plugin, KeyboardServiceProvider, AIServiceProvider, PluginServiceProvider, McpServiceProvider, MarketServiceProvider, Log } from '@coffic/buddy-foundation';
+import { LogServiceProvider, WindowServiceProvider, Plugin, KeyboardServiceProvider, AIServiceProvider, PluginServiceProvider, McpServiceProvider, MarketServiceProvider, LogFacade } from '@coffic/buddy-foundation';
 import { ElectronAppConfig, RouteFacade, createElectronApp, setupIPCHandlers } from '@coffic/cosy-framework';
 
 // 应用配置
@@ -42,7 +42,6 @@ export async function bootApplication(): Promise<void> {
         const application = await createElectronApp(config);
 
         // 初始化Facades
-        Log.setApp(application);
         Plugin.setApp(application);
 
         // 等待插件系统初始化完成

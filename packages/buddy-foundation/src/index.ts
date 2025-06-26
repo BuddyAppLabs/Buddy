@@ -27,3 +27,6 @@ export { WindowServiceProvider } from './window/WindowServiceProvider.js';
 
 // 导出所有服务提供者
 export { AIServiceProvider } from './ai/AIServiceProvider.js';
+
+// Facade
+export { LogFacade } from './log/facades/Log.js';

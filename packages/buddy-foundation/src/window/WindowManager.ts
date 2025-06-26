@@ -122,7 +122,7 @@ export class WindowManager implements WindowManagerContract {
         this.mainWindow.on('ready-to-show', () => {
             if (this.config.showDebugToolbar && this.mainWindow) {
                 this.mainWindow.webContents.openDevTools({
-                    mode: this.config.debugToolbarPosition || 'right',
+                    mode: 'detach'
                 });
             }
         });

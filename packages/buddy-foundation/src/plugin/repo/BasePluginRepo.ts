@@ -7,6 +7,7 @@ import fs from 'fs';
 import { PluginRepoContract } from '../contracts/PluginRepoContract.js';
 import { PluginEntity } from '../entities/PluginEntity.js';
 import { EMOJI } from '../../constants.js';
+import { LogFacade } from '../../log/facades/Log.js';
 
 const verbose = true;
 const logger = console;
@@ -70,7 +71,7 @@ export abstract class BasePluginRepo implements PluginRepoContract {
                 return [];
             } else {
                 if (verbose) {
-                    logger.info(`${EMOJI} [BasePluginRepo] 有效的插件数量`, validPlugins.length);
+                    LogFacade.info(`${EMOJI} [BasePluginRepo] 有效的插件数量` + validPlugins.length);
                 }
             }
 
