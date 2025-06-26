@@ -4,7 +4,7 @@
  */
 import { app, BrowserWindow } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
-import { Window } from '../facades/Window.js';
+import { WindowFacade } from '@coffic/buddy-foundation';
 // import { pluginManager } from './PluginManager.js';
 import { pluginViewManager } from './PluginViewManager.js';
 import { updateManager } from './UpdateManager.js';
@@ -19,7 +19,7 @@ export class AppManager {
     // 处理第二个实例启动
     app.on('second-instance', () => {
       console.info('检测到第二个应用实例启动，激活主窗口');
-      this.mainWindow = Window.getMainWindow();
+      this.mainWindow = WindowFacade.getMainWindow();
       if (this.mainWindow) {
         if (this.mainWindow.isMinimized()) this.mainWindow.restore();
         this.mainWindow.show();
@@ -37,7 +37,7 @@ export class AppManager {
       console.info('应用被激活');
       if (BrowserWindow.getAllWindows().length === 0) {
         console.info('没有活动窗口，创建新窗口');
-        this.mainWindow = Window.createWindow();
+        this.mainWindow = WindowFacade.createWindow();
       }
     });
 
@@ -65,11 +65,11 @@ export class AppManager {
     electronApp.setAppUserModelId('com.electron');
 
     // 创建主窗口
-    this.mainWindow = Window.createWindow();
+    this.mainWindow = WindowFacade.createWindow();
 
-    updateManager.initialize(this.mainWindow);
+    // updateManager.initialize(this.mainWindow);
 
-    Window.setupGlobalShortcut();
+    WindowFacade.setupGlobalShortcut();
 
     this.setupContextMenu();
   }
@@ -79,7 +79,7 @@ export class AppManager {
    */
   private cleanup(): void {
     console.debug('清理窗口管理器资源');
-    Window.cleanup();
+    WindowFacade.cleanup();
 
     console.debug('关闭所有插件视图窗口');
     pluginViewManager.closeAllViews();

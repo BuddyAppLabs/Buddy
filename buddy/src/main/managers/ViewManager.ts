@@ -3,7 +3,7 @@
  */
 import { WebContentsView } from 'electron';
 import { is } from '@electron-toolkit/utils';
-import { Window } from '../facades/Window.js';
+import { WindowFacade } from '@coffic/buddy-foundation';
 import { join } from 'path';
 import { ViewBounds } from '@coffic/buddy-types';
 import { createViewArgs } from '@/types/args.js';
@@ -28,7 +28,7 @@ export class ViewManager {
             logger.info('创建视图:', args);
         }
 
-        const mainWindow = Window.getMainWindow();
+        const mainWindow = WindowFacade.getMainWindow();
         if (!mainWindow) {
             throw new Error('主窗口不存在');
         }
@@ -122,7 +122,7 @@ export class ViewManager {
             return;
         }
 
-        const mainWindow = Window.getMainWindow();
+        const mainWindow = WindowFacade.getMainWindow();
         if (!mainWindow) return;
 
         mainWindow.contentView.removeChildView(view);

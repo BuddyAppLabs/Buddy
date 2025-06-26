@@ -8,7 +8,7 @@
 import { BrowserWindow, app, BrowserView, screen } from 'electron';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
-import { Window } from '../facades/Window.js';
+import { WindowFacade } from '@coffic/buddy-foundation';
 import { actionManager } from './ActionManager.js';
 import { BaseManager } from './BaseManager.js';
 import {
@@ -112,7 +112,7 @@ class PluginViewManager extends BaseManager {
       await this.destroyView(viewId);
     }
 
-    const mainWindow = Window.getMainWindow();
+    const mainWindow = WindowFacade.getMainWindow();
     if (!mainWindow) {
       throw new Error('主窗口不存在，无法创建插件视图');
     }
@@ -253,7 +253,7 @@ class PluginViewManager extends BaseManager {
     mainWindowBounds: ViewBounds,
     devToolsEnabled: boolean
   ): Promise<ViewBounds> {
-    const mainWindow = Window.getMainWindow();
+    const mainWindow = WindowFacade.getMainWindow();
     if (!mainWindow) {
       throw new Error('主窗口不存在');
     }
@@ -319,7 +319,7 @@ class PluginViewManager extends BaseManager {
 
     this.viewBrowserViews.set(viewId, view);
 
-    const mainWindow = Window.getMainWindow();
+    const mainWindow = WindowFacade.getMainWindow();
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('embedded-view-created', { viewId });
     }
@@ -400,7 +400,7 @@ class PluginViewManager extends BaseManager {
     const view = this.viewBrowserViews.get(viewId);
     if (view) {
       try {
-        const mainWindow = Window.getMainWindow();
+        const mainWindow = WindowFacade.getMainWindow();
         if (!mainWindow) {
           logger.error('主窗口不存在，无法显示嵌入式视图');
           return false;
@@ -520,7 +520,7 @@ class PluginViewManager extends BaseManager {
     const view = this.viewBrowserViews.get(viewId);
     if (view) {
       try {
-        const mainWindow = Window.getMainWindow();
+        const mainWindow = WindowFacade.getMainWindow();
         if (!mainWindow) {
           logger.error('主窗口不存在，无法隐藏嵌入式视图');
           return false;
@@ -580,7 +580,7 @@ class PluginViewManager extends BaseManager {
       try {
         // 销毁视图
         // BrowserView没有直接的destroy方法，需要先从主窗口移除
-        const mainWindow = Window.getMainWindow();
+        const mainWindow = WindowFacade.getMainWindow();
         if (mainWindow && !mainWindow.isDestroyed()) {
           // 从主窗口移除BrowserView
           mainWindow.removeBrowserView(view);

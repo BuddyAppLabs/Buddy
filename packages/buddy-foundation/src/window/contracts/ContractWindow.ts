@@ -23,7 +23,7 @@ export interface WindowConfig {
 /**
  * 窗口管理器契约
  */
-export interface WindowManagerContract {
+export interface ContractWindow {
     /**
      * 获取主窗口实例
      */
@@ -53,9 +53,9 @@ export interface WindowManagerContract {
 /**
  * 窗口管理器工厂契约
  */
-export interface WindowManagerFactoryContract {
+export interface ContractWindowFactory {
     /**
      * 创建窗口管理器实例
      */
-    createManager(config: WindowConfig): WindowManagerContract;
+    createManager(config: WindowConfig): ContractWindow;
 } 

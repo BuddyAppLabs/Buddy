@@ -2,7 +2,7 @@
  * Facade基类
  * 参考Laravel的Facade设计，提供静态代理访问服务的能力
  */
-import { Application } from '@coffic/cosy-framework';
+import { Application } from '../index.js';
 
 export abstract class Facade {
     /**

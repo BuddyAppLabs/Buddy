@@ -17,8 +17,8 @@
  * ```
  */
 
-import { Facade } from '../../facades/Facade.js';
-import { createFacade } from '../../facades/createFacade.js';
+import { Facade } from '@coffic/cosy-framework';
+import { createFacade } from '@coffic/cosy-framework';
 import { ContractRouter } from '../contracts/ContractRouter.js';
 
 /**
