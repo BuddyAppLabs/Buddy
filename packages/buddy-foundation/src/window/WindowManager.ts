@@ -2,7 +2,7 @@
  * 窗口管理器
  * 负责创建、管理主窗口以及处理窗口相关配置和事件
  */
-import { shell, BrowserWindow, screen, globalShortcut } from 'electron';
+import { shell, BrowserWindow, screen, globalShortcut, app } from 'electron';
 import { WindowConfig, WindowManagerContract } from '../contracts/window.js';
 import { EMOJI } from '../constants.js';
 import { is } from '@electron-toolkit/utils';
@@ -16,6 +16,15 @@ export class WindowManager implements WindowManagerContract {
 
     constructor(config: WindowConfig) {
         this.config = config;
+
+        // 监听 macOS 的 activate 事件
+        if (process.platform === 'darwin') {
+            app.on('activate', () => {
+                if (this.mainWindow && !this.mainWindow.isVisible()) {
+                    this.handleWindowShow();
+                }
+            });
+        }
     }
 
     /**
@@ -123,7 +132,7 @@ export class WindowManager implements WindowManagerContract {
      * 加载窗口内容
      */
     private loadWindowContent(): void {
-        console.log(`${EMOJI} [WindowManager] 加载窗口内容`, this.mainWindow);
+        console.log(`${EMOJI} [WindowManager] 加载窗口内容`);
         if (!this.mainWindow) return;
 
         if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
@@ -134,6 +143,14 @@ export class WindowManager implements WindowManagerContract {
             console.log(`${EMOJI} [WindowManager] 生产模式：加载本地HTML文件 -> ${htmlPath}`);
             this.mainWindow.loadFile(htmlPath);
         }
+
+        // 当内容加载完成后显示窗口
+        this.mainWindow.once('ready-to-show', () => {
+            console.log(`${EMOJI} [WindowManager] 窗口内容加载完成，显示窗口`);
+            if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+                this.mainWindow.show();
+            }
+        });
     }
 
     /**
@@ -176,6 +193,7 @@ export class WindowManager implements WindowManagerContract {
      * 处理窗口显示
      */
     private async handleWindowShow(): Promise<void> {
+        console.log(`${EMOJI} [WindowManager] 处理窗口显示`);
         if (!this.mainWindow || this.mainWindow.isDestroyed()) return;
 
         if (verbose) {

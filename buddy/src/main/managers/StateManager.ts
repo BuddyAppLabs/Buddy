@@ -9,6 +9,7 @@ import {
   getFrontmostApplication,
 } from '@coffic/active-app-monitor';
 import { AppEvents, SuperApp } from '@coffic/buddy-types';
+import { EMOJI } from '../constants.js';
 
 const logger = console;
 
@@ -58,7 +59,7 @@ class StateManager extends BaseManager {
   private setupAppStateListeners(): void {
     // 监听应用激活事件
     app.on('activate', () => {
-      logger.info('应用激活事件');
+      logger.info(`${EMOJI} [StateManager] 应用激活事件`);
       this.emitAndBroadcast(AppEvents.ActIVATED);
     });
 
