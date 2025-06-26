@@ -12,9 +12,6 @@ export * from './market/index.js';
 // MCP 模块
 export * from './mcp/index.js';
 
-// 日志模块
-export * from './log/index.js';
-
 // 插件模块
 export * from './plugin/index.js';
 
@@ -27,6 +24,3 @@ export { WindowServiceProvider } from './window/WindowServiceProvider.js';
 
 // 导出所有服务提供者
 export { AIServiceProvider } from './ai/AIServiceProvider.js';
-
-// Facade
-export { LogFacade } from './log/LogFacade.js';

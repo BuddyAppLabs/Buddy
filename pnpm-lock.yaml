@@ -193,9 +193,9 @@ importers:
       '@coffic/cosy-framework':
         specifier: workspace:*
         version: link:../cosy-framework
-      chalk:
-        specifier: ^5.4.1
-        version: 5.4.1
+      '@coffic/cosy-logger':
+        specifier: workspace:*
+        version: link:../cosy-logger
     devDependencies:
       typescript:
         specifier: ^5.8.3
@@ -235,6 +235,19 @@ importers:
         version: 29.4.0(@babel/core@7.26.10)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.10))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.17.30)(ts-node@10.9.2(@types/node@20.17.30)(typescript@5.8.3)))(typescript@5.8.3)
       typescript:
         specifier: ^5.0.0
+        version: 5.8.3
+
+  packages/cosy-logger:
+    dependencies:
+      '@coffic/cosy-framework':
+        specifier: workspace:*
+        version: link:../cosy-framework
+      chalk:
+        specifier: ^5.4.1
+        version: 5.4.1
+    devDependencies:
+      typescript:
+        specifier: ^5.8.3
         version: 5.8.3
 
   packages/plugin-counter-view:
@@ -7250,7 +7263,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.4.0
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -9044,7 +9057,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 2.0.0
       agent-base: 6.0.2
-      debug: 4.4.0
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -9063,7 +9076,7 @@ snapshots:
   https-proxy-agent@5.0.1:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.4.0
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -10743,7 +10756,7 @@ snapshots:
   socks-proxy-agent@7.0.0:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.4.0
+      debug: 4.4.1
       socks: 2.8.5
     transitivePeerDependencies:
       - supports-color

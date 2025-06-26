@@ -6,7 +6,6 @@
 import { ServiceProvider } from '@coffic/cosy-framework';
 import { LogManager } from './LogManager.js';
 import { LogManagerContract, LogConfig, LogLevel } from './contracts/index.js';
-import { EMOJI } from '../constants.js';
 
 export class LogServiceProvider extends ServiceProvider {
     public register(): void {

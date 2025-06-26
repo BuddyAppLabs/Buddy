@@ -1,7 +1,7 @@
 {
-  "name": "@coffic/buddy-foundation",
+  "name": "@coffic/cosy-logger",
   "version": "0.1.0",
-  "description": "Buddy 应用的基础服务提供者",
+  "description": "Cozy Framework 的日志系统",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@coffic/cosy-framework": "workspace:*",
-    "@coffic/cosy-logger": "workspace:*"
+    "chalk": "^5.4.1"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

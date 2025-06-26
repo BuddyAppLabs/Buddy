@@ -7,7 +7,7 @@ import fs from 'fs';
 import { PluginRepoContract } from '../contracts/PluginRepoContract.js';
 import { PluginEntity } from '../entities/PluginEntity.js';
 import { EMOJI } from '../../constants.js';
-import { LogFacade } from '../../log/LogFacade.js';
+import { LogFacade } from '@coffic/cosy-logger';
 
 const verbose = true;
 

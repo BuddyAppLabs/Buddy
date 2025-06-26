@@ -3,7 +3,7 @@ import { Config } from '@coffic/cosy-framework';
 import { createWindowManager } from './WindowManager.js';
 import { WindowConfig, WindowManagerContract } from '../contracts/window.js';
 import { EMOJI } from '../constants.js';
-import { LogFacade } from '../log/LogFacade.js';
+import { LogFacade } from '@coffic/cosy-logger';
 
 export class WindowServiceProvider extends ServiceProvider {
     /**

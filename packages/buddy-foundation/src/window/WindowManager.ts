@@ -7,7 +7,7 @@ import { WindowConfig, WindowManagerContract } from '../contracts/window.js';
 import { EMOJI } from '../constants.js';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
-import { LogFacade } from '../log/LogFacade.js';
+import { LogFacade } from '@coffic/cosy-logger';
 
 const verbose = false;
 

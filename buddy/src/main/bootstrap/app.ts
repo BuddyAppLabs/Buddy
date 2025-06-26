@@ -6,7 +6,8 @@
 
 import { app } from 'electron';
 import { registerRoutes } from '../routes/index.js';
-import { LogServiceProvider, WindowServiceProvider, Plugin, KeyboardServiceProvider, AIServiceProvider, PluginServiceProvider, McpServiceProvider, MarketServiceProvider, LogFacade } from '@coffic/buddy-foundation';
+import { WindowServiceProvider, Plugin, KeyboardServiceProvider, AIServiceProvider, PluginServiceProvider, McpServiceProvider, MarketServiceProvider } from '@coffic/buddy-foundation';
+import { LogServiceProvider } from '@coffic/cosy-logger';
 import { ElectronAppConfig, RouteFacade, createElectronApp, setupIPCHandlers } from '@coffic/cosy-framework';
 
 // 应用配置
