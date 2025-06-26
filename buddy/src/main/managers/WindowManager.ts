@@ -8,7 +8,7 @@ import { is } from '@electron-toolkit/utils';
 import icon from '../../../resources/icon.png?asset';
 import { appStateManager } from './StateManager.js';
 import { BaseManager } from './BaseManager.js';
-import { WindowConfig, WindowManagerContract } from '../../../../packages/cosy-foundation/src/window/contracts/WindowContract.js';
+import { WindowConfig, WindowManagerContract } from '@coffic/buddy-foundation';
 
 const verbose = false;
 

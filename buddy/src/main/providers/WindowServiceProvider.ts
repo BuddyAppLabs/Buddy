@@ -4,7 +4,7 @@
  */
 import { ServiceProvider } from '@coffic/cosy-framework';
 import { createWindowManager } from '../managers/WindowManager.js';
-import { WindowConfig, WindowManagerContract } from '../../../../packages/cosy-foundation/dist/index.js';
+import { WindowConfig, WindowManagerContract } from '@coffic/buddy-foundation';
 
 export class WindowServiceProvider extends ServiceProvider {
     /**
