@@ -6,6 +6,7 @@ import { Application, ApplicationConfig } from '../application/Application.js';
 import { Router } from '../router/Router.js';
 import { LoggingMiddleware, ErrorHandlingMiddleware } from '../middleware/builtins.js';
 import electron from 'electron';
+import { EMOJI, IPC_CHANNELS } from '../constants.js';
 const { ipcMain } = electron;
 
 export interface ElectronAppConfig extends ApplicationConfig {
@@ -22,7 +23,7 @@ export interface ElectronAppConfig extends ApplicationConfig {
  * @param config 应用配置
  */
 export function createElectronApp(config: ElectronAppConfig): Application {
-    console.log('🚀 创建 Electron 应用');
+    console.log(`${EMOJI} 创建 Electron 应用`);
     const app = Application.getInstance(config);
 
     // 注册全局中间件
@@ -39,7 +40,7 @@ export function createElectronApp(config: ElectronAppConfig): Application {
     // 注册服务提供者
     if (config.providers) {
         config.providers.forEach(provider => {
-            console.log('➕ 注册服务提供者', provider);
+            console.log(`${EMOJI} 注册服务提供者`, provider);
             app.register(provider);
         });
     }
@@ -68,15 +69,16 @@ export async function bootElectronApp(config: ElectronAppConfig): Promise<Applic
  * 设置 IPC 处理器
  */
 function setupIPCHandlers(): void {
+    console.log(`${EMOJI} 设置 IPC 处理器`);
     const router = Router.getInstance();
 
     // 处理所有 IPC 调用
-    ipcMain.handle('electron-laravel-framework:dispatch', async (event, channel: string, args: any[]) => {
+    ipcMain.handle(IPC_CHANNELS.DISPATCH, async (event, channel: string, args: any[]) => {
         return await router.dispatch(channel, args);
     });
 
     // 获取所有路由（用于调试）
-    ipcMain.handle('electron-laravel-framework:routes', () => {
+    ipcMain.handle(IPC_CHANNELS.ROUTES, () => {
         const routes = router.getRoutes();
         return Array.from(routes.entries()).map(([channel, route]) => ({
             channel,
