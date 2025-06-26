@@ -3,9 +3,6 @@
  * 提供 Buddy 应用的基础设施
  */
 
-// 键盘模块
-export * from './keyboard/index.js';
-
 // 市场模块
 export * from './market/index.js';
 

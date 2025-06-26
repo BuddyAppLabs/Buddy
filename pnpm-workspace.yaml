@@ -4,4 +4,10 @@ packages:
   - 'packages/*'
   - 'components/*'
   # exclude packages that are inside test directories
-  - '!**/test/**' 
+  - '!**/test/**'
+  - 'packages/plugin-time-view'
+  - 'packages/cosy'
+  - 'packages/cosy-framework'
+  - 'packages/cosy-logger'
+  - 'packages/cosy-keyboard'
+  - 'packages/vsc_extension' 

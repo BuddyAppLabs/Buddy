@@ -6,9 +6,17 @@
 
 import { app } from 'electron';
 import { registerRoutes } from '../routes/index.js';
-import { WindowServiceProvider, Plugin, KeyboardServiceProvider, AIServiceProvider, PluginServiceProvider, McpServiceProvider, MarketServiceProvider } from '@coffic/buddy-foundation';
+import {
+    WindowServiceProvider,
+    PluginServiceProvider,
+    McpServiceProvider,
+    MarketServiceProvider,
+    AIServiceProvider,
+    Plugin
+} from '@coffic/buddy-foundation';
 import { LogServiceProvider } from '@coffic/cosy-logger';
 import { ElectronAppConfig, RouteFacade, createElectronApp, setupIPCHandlers } from '@coffic/cosy-framework';
+import { KeyboardServiceProvider } from '@coffic/cosy-keyboard';
 
 // 应用配置
 const config: ElectronAppConfig = {

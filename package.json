@@ -12,6 +12,7 @@
     "build": "pnpm -r build",
     "build:foundation": "pnpm --filter @coffic/buddy-foundation build",
     "build:logger": "pnpm --filter @coffic/cosy-logger build",
+    "build:keyboard": "pnpm --filter @coffic/cosy-keyboard build",
     "build:cosy": "pnpm --filter @coffic/cosy-framework build",
     "build:buddy:mac": "pnpm build:buddy-types && pnpm --filter buddy build:mac",
     "build:buddy-types": "pnpm --filter buddy-types build",

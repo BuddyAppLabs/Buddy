@@ -193,6 +193,9 @@ importers:
       '@coffic/cosy-framework':
         specifier: workspace:*
         version: link:../cosy-framework
+      '@coffic/cosy-keyboard':
+        specifier: workspace:*
+        version: link:../cosy-keyboard
       '@coffic/cosy-logger':
         specifier: workspace:*
         version: link:../cosy-logger
@@ -235,6 +238,22 @@ importers:
         version: 29.4.0(@babel/core@7.26.10)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.10))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.17.30)(ts-node@10.9.2(@types/node@20.17.30)(typescript@5.8.3)))(typescript@5.8.3)
       typescript:
         specifier: ^5.0.0
+        version: 5.8.3
+
+  packages/cosy-keyboard:
+    dependencies:
+      '@coffic/cosy-framework':
+        specifier: workspace:*
+        version: link:../cosy-framework
+      '@coffic/cosy-logger':
+        specifier: workspace:*
+        version: link:../cosy-logger
+      electron:
+        specifier: ^31.0.2
+        version: 31.7.7
+    devDependencies:
+      typescript:
+        specifier: ^5.8.3
         version: 5.8.3
 
   packages/cosy-logger:
@@ -2687,6 +2706,11 @@ packages:
 
   electron@27.3.11:
     resolution: {integrity: sha512-E1SiyEoI8iW5LW/MigCr7tJuQe7+0105UjqY7FkmCD12e2O6vtUbQ0j05HaBh2YgvkcEVgvQ2A8suIq5b5m6Gw==}
+    engines: {node: '>= 12.20.55'}
+    hasBin: true
+
+  electron@31.7.7:
+    resolution: {integrity: sha512-HZtZg8EHsDGnswFt0QeV8If8B+et63uD6RJ7I4/xhcXqmTIbI08GoubX/wm+HdY0DwcuPe1/xsgqpmYvjdjRoA==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -8299,6 +8323,14 @@ snapshots:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 18.19.86
+      extract-zip: 2.0.1
+    transitivePeerDependencies:
+      - supports-color
+
+  electron@31.7.7:
+    dependencies:
+      '@electron/get': 2.0.3
+      '@types/node': 20.17.30
       extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
