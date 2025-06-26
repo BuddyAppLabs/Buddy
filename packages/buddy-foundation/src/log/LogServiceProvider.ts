@@ -36,8 +36,6 @@ export class LogServiceProvider extends ServiceProvider {
 
         // 扩展自定义驱动的示例
         this.registerCustomDrivers(manager);
-
-        console.log(`${EMOJI} [LogServiceProvider] 日志系统初始化完成`);
     }
 
     public async shutdown(): Promise<void> {
@@ -84,6 +82,12 @@ export class LogServiceProvider extends ServiceProvider {
                     driver: 'electron',
                     level: LogLevel.WARN,
                     format: 'json'
+                },
+                window: {
+                    driver: 'electron',
+                    level: LogLevel.INFO,
+                    format: 'structured',
+                    includeTimestamp: false
                 },
                 performance: {
                     driver: 'electron',

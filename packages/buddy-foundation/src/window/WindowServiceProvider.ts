@@ -3,6 +3,7 @@ import { Config } from '@coffic/cosy-framework';
 import { createWindowManager } from './WindowManager.js';
 import { WindowConfig, WindowManagerContract } from '../contracts/window.js';
 import { EMOJI } from '../constants.js';
+import { LogFacade } from '../log/LogFacade.js';
 
 export class WindowServiceProvider extends ServiceProvider {
     /**
@@ -32,7 +33,7 @@ export class WindowServiceProvider extends ServiceProvider {
      * 启动窗口管理服务
      */
     public async boot(): Promise<void> {
-        console.log(`${EMOJI} [WindowServiceProvider] 窗口管理服务启动完成`);
+        LogFacade.channel('window').info(`${EMOJI} [WindowServiceProvider] 窗口管理服务启动完成`);
         // 在启动阶段设置配置
         const windowConfig = {
             showTrafficLights: true,

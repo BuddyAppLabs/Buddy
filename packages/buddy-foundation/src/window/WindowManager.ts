@@ -6,14 +6,10 @@ import { shell, BrowserWindow, screen, globalShortcut, app } from 'electron';
 import { WindowConfig, WindowManagerContract } from '../contracts/window.js';
 import { EMOJI } from '../constants.js';
 import { is } from '@electron-toolkit/utils';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { join } from 'path';
+import { LogFacade } from '../log/LogFacade.js';
 
 const verbose = false;
-
-// 获取当前文件的目录路径
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 export class WindowManager implements WindowManagerContract {
     private mainWindow: BrowserWindow | null = null;
@@ -139,22 +135,22 @@ export class WindowManager implements WindowManagerContract {
      * 加载窗口内容
      */
     private loadWindowContent(): void {
-        console.log(`${EMOJI} [WindowManager] 加载窗口内容`);
+        LogFacade.channel('window').info(`${EMOJI} [WindowManager] 加载窗口内容`);
         if (!this.mainWindow) return;
 
         if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-            console.log(`${EMOJI} [WindowManager] 开发模式：加载开发服务器URL -> ${process.env['ELECTRON_RENDERER_URL']}`);
+            LogFacade.channel('window').info(`${EMOJI} [WindowManager] 开发模式：加载开发服务器URL -> ${process.env['ELECTRON_RENDERER_URL']}`);
             this.mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
         } else {
             // 在生产环境中，使用 app.getAppPath() 获取应用根目录
             const rendererPath = join(app.getAppPath(), 'dist/renderer/index.html');
-            console.log(`${EMOJI} [WindowManager] 生产模式：加载本地HTML文件 -> ${rendererPath}`);
+            LogFacade.channel('window').info(`${EMOJI} [WindowManager] 生产模式：加载本地HTML文件 -> ${rendererPath}`);
             this.mainWindow.loadFile(rendererPath);
         }
 
         // 当内容加载完成后显示窗口
         this.mainWindow.once('ready-to-show', () => {
-            console.log(`${EMOJI} [WindowManager] 窗口内容加载完成，显示窗口`);
+            LogFacade.channel('window').info(`${EMOJI} [WindowManager] 窗口内容加载完成，显示窗口`);
             if (this.mainWindow && !this.mainWindow.isDestroyed()) {
                 this.mainWindow.show();
             }
