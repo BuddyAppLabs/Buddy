@@ -8,9 +8,8 @@ import { app } from 'electron';
 
 import { bootElectronApp, type ElectronAppConfig } from '@coffic/cosy-framework';
 import { appManager } from '../managers/AppManager.js';
-import { WindowServiceProvider } from '../providers/WindowServiceProvider.js';
 import { registerRoutes } from '../routes/index.js';
-import { LogServiceProvider, RouteServiceProvider, Plugin, KeyboardServiceProvider, AppServiceProvider, AIServiceProvider, PluginServiceProvider, McpServiceProvider, MarketServiceProvider, Facade, Log } from '@coffic/buddy-foundation';
+import { LogServiceProvider, WindowServiceProvider, RouteServiceProvider, Plugin, KeyboardServiceProvider, AppServiceProvider, AIServiceProvider, PluginServiceProvider, McpServiceProvider, MarketServiceProvider, Facade, Log } from '@coffic/buddy-foundation';
 
 // 应用配置
 const config: ElectronAppConfig = {

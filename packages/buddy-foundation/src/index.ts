@@ -30,6 +30,10 @@ export * from './ai/index.js';
 // Facade
 export * from './facades/index.js';
 
+// 窗口模块
+export * from './window/index.js';
+export { WindowServiceProvider } from './window/WindowServiceProvider.js';
+
 // 导出所有服务提供者
 export { AppServiceProvider } from './app/AppServiceProvider.js';
 export { AIServiceProvider } from './ai/AIServiceProvider.js';
