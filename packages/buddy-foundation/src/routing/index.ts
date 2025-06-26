@@ -16,6 +16,7 @@ export * from './middleware/index.js';
 
 // 门面 (Facades)
 export * from './facades/index.js';
+export * from './RouteServiceProvider.js'
 
 // 导入Router类用于创建实例
 import { Router } from './Router.js';

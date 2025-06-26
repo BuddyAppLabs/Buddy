@@ -11,8 +11,6 @@ export class PluginServiceProvider extends ServiceProvider {
      * 注册插件服务
      */
     public register(): void {
-        console.log('🚀 PluginServiceProvider register');
-
         // 注册插件管理器
         this.app.container().singleton('plugin', () => {
             return new PluginManager();

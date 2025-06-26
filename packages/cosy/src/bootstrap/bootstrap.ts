@@ -1,6 +1,7 @@
 /**
  * Electron 应用启动助手
  */
+import { ServiceProvider } from '../providers/ServiceProvider.js';
 import { Application, ApplicationConfig } from '../application/Application.js';
 import { Router } from '../router/Router.js';
 import { LoggingMiddleware, ErrorHandlingMiddleware } from '../middleware/builtins.js';
@@ -8,7 +9,7 @@ import electron from 'electron';
 const { ipcMain } = electron;
 
 export interface ElectronAppConfig extends ApplicationConfig {
-    providers?: Array<new (app: Application) => any>;
+    providers?: Array<new (app: Application) => ServiceProvider>;
     middleware?: {
         global?: boolean;
         logging?: boolean;
@@ -21,6 +22,7 @@ export interface ElectronAppConfig extends ApplicationConfig {
  * @param config 应用配置
  */
 export function createElectronApp(config: ElectronAppConfig): Application {
+    console.log('🚀 创建 Electron 应用');
     const app = Application.getInstance(config);
 
     // 注册全局中间件
@@ -37,6 +39,7 @@ export function createElectronApp(config: ElectronAppConfig): Application {
     // 注册服务提供者
     if (config.providers) {
         config.providers.forEach(provider => {
+            console.log('➕ 注册服务提供者', provider);
             app.register(provider);
         });
     }

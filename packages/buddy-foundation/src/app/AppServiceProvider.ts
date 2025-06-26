@@ -11,8 +11,6 @@ export class AppServiceProvider extends ServiceProvider {
      * 注册应用服务
      */
     public register(): void {
-        console.log('🚀 AppServiceProvider register');
-
         // 注册应用管理器
         this.app.container().singleton('app', () => {
             return AppManager.getInstance();

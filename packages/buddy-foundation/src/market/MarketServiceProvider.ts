@@ -11,8 +11,6 @@ export class MarketServiceProvider extends ServiceProvider {
      * 注册插件市场服务
      */
     public register(): void {
-        console.log('🚀 MarketServiceProvider register');
-
         // 注册插件市场服务
         this.app.container().singleton('market', () => {
             const repository = this.app.container().resolve('market.repository') as MarketRepositoryContract;

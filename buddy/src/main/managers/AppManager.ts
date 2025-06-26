@@ -29,7 +29,6 @@ export class AppManager {
 
     // 窗口创建事件
     app.on('browser-window-created', (_, window) => {
-      console.debug('新窗口创建，设置窗口快捷键监听');
       optimizer.watchWindowShortcuts(window);
     });
 

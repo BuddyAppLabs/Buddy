@@ -6,9 +6,6 @@ import { bootApplication } from './bootstrap/app.js';
 
 // 启动应用
 bootApplication()
-  .then(() => {
-    console.log('🍋 Buddy 应用框架启动完成');
-  })
   .catch((error) => {
     console.error('❌ 应用启动失败:', error);
     process.exit(1);

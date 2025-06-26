@@ -44,14 +44,14 @@ export class Manager implements ConfigManager {
             this.initialized = true;
 
             console.log('✅ 配置系统初始化完成');
-            console.log(`📂 配置目录: ${options.configPath}`);
-            console.log(`🔗 环境文件: ${options.envPath || '未设置'}`);
-            console.log(`💾 缓存启用: ${options.cache?.enabled ? '是' : '否'}`);
+            console.log(`  ➡️ 配置目录: ${options.configPath}`);
+            console.log(`  ➡️ 环境文件: ${options.envPath || '未设置'}`);
+            console.log(`  ➡️ 缓存启用: ${options.cache?.enabled ? '是' : '否'}`);
 
             // 输出已加载的配置文件
             const configKeys = Object.keys(config);
             if (configKeys.length > 0) {
-                console.log(`📋 已加载配置: ${configKeys.join(', ')}`);
+                console.log(`  ➡️ 已加载配置: ${configKeys.join(', ')}`);
             }
         } catch (error) {
             console.error('❌ 配置系统初始化失败:', error);

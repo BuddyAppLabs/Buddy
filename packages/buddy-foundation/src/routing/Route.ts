@@ -63,6 +63,7 @@ export class Route {
      * 静态方法：创建新路由
      */
     static handle(channel: string, handler: RouteHandler): Route {
+        console.log('🌿 创建新路由', channel, handler);
         return new Route(channel, handler);
     }
 

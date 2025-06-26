@@ -12,8 +12,6 @@ export class KeyboardServiceProvider extends ServiceProvider {
      * 注册键盘服务
      */
     public register(): void {
-        console.log('🚀 KeyboardServiceProvider register');
-
         // 注册键盘管理器实例
         const keyboardManager = new KeyboardManager();
         this.app.container().instance('keyboard', keyboardManager);

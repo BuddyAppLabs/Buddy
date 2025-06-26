@@ -9,8 +9,6 @@ import { LogManagerContract, LogConfig, LogLevel } from './contracts/LogContract
 
 export class LogServiceProvider extends ServiceProvider {
     public register(): void {
-        console.log('🚀 LogServiceProvider register');
-
         // 注册日志配置
         this.app.container().singleton('log.config', () => {
             return this.getLogConfig();
@@ -38,7 +36,7 @@ export class LogServiceProvider extends ServiceProvider {
         // 扩展自定义驱动的示例
         this.registerCustomDrivers(manager);
 
-        console.log('🍋 日志系统初始化完成');
+        console.log('✅ 日志系统初始化完成');
     }
 
     public async shutdown(): Promise<void> {

@@ -62,8 +62,6 @@ export class ConfigServiceProvider extends ServiceProvider {
         try {
             // 初始化配置系统
             await manager.initialize(options);
-
-            console.log('✅ 配置服务已启动');
         } catch (error) {
             console.error('❌ 配置服务启动失败:', error);
 

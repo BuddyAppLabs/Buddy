@@ -30,7 +30,6 @@ export class AppManager implements AppContract {
      */
     public async start(): Promise<void> {
         // 这里可以添加应用启动时的初始化逻辑
-        console.log('🚀 应用启动');
     }
 
     /**

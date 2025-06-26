@@ -1,5 +1,7 @@
 @import 'tailwindcss';
-@plugin "daisyui";
+@plugin "daisyui" {
+  logs: false;
+}
 
 /* 基础样式 */
 body {

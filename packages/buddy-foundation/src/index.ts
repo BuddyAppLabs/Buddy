@@ -27,8 +27,13 @@ export * from './routing/index.js';
 // 配置模块
 export * from './config/index.js';
 
+// AI模块
+export * from './ai/index.js';
+
 // 导出所有服务提供者
 export { AppServiceProvider } from './app/AppServiceProvider.js';
 export { ConfigServiceProvider } from './config/ConfigServiceProvider.js';
+export { AIServiceProvider } from './ai/AIServiceProvider.js';
+export { RouteServiceProvider } from './routing/RouteServiceProvider.js';
 
 export * from './window/index.js';

@@ -10,8 +10,6 @@ export class McpServiceProvider extends ServiceProvider {
      * 注册 MCP 服务
      */
     public register(): void {
-        console.log('🚀 McpServiceProvider register');
-
         // 注册 MCP 服务
         this.app.container().singleton('mcp', () => {
             return new McpManager();

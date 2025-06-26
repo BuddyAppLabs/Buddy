@@ -3,10 +3,9 @@
  * 处理AI聊天和流式通信
  */
 
-import { Route } from '@coffic/buddy-foundation';
-import { aiManager, type ChatMessage } from '../managers/AIManager.js';
+import { AI, Route } from '@coffic/buddy-foundation';
 import { v4 as uuidv4 } from 'uuid';
-import { IpcResponse, StreamChunkResponse } from '@coffic/buddy-types';
+import { ChatMessage, IpcResponse, StreamChunkResponse } from '@coffic/buddy-types';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 
 const logger = console;
@@ -18,7 +17,7 @@ Route.handle(IPC_METHODS.AI_CHAT_SEND, async (event, messages: ChatMessage[]): P
         const requestId = uuidv4();
         logger.debug(`生成请求ID: ${requestId}`);
 
-        aiManager.sendChatMessage(messages,
+        AI.sendChatMessage(messages,
             (chunk: string) => {
                 logger.debug(`聊天数据块: ${chunk}`);
                 event.sender.send(IPC_METHODS.AI_CHAT_STREAM_CHUNK, {
@@ -65,7 +64,7 @@ Route.handle(IPC_METHODS.AI_CHAT_SEND, async (event, messages: ChatMessage[]): P
 Route.handle(IPC_METHODS.AI_CHAT_CANCEL, (_event, requestId: string, reason: string): IpcResponse<boolean> => {
     logger.debug(`取消AI聊天请求: ${requestId}，原因是：${reason}`);
     try {
-        const cancelled = aiManager.cancelRequest(requestId);
+        const cancelled = AI.cancelRequest(requestId);
         return { success: true, data: cancelled };
     } catch (error) {
         logger.error(`取消AI聊天请求失败:`, error);
