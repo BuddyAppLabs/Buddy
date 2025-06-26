@@ -13,30 +13,38 @@ export type RouteHandler = (event: IpcMainInvokeEvent, ...args: any[]) => Promis
 /**
  * 中间件函数类型
  */
-export type Middleware = (request: any, next: () => Promise<any>) => Promise<any>;
+export type Middleware = (event: IpcMainInvokeEvent, next: () => Promise<any>, ...args: any[]) => Promise<any> | any;
 
 /**
- * 验证规则类型
+ * 路由参数验证规则
  */
-export interface ValidationRules {
-    [param: string]: {
-        required?: boolean;
-        type?: string;
-        validator?: (value: any) => boolean | string;
-    };
+export interface ValidationRule {
+    required?: boolean;
+    type?: 'string' | 'number' | 'boolean' | 'object' | 'array';
+    validator?: (value: any) => boolean | string;
 }
 
 /**
- * 路由配置类型
+ * 路由参数验证配置
+ */
+export type ValidationRules = Record<string, ValidationRule>;
+
+/**
+ * 路由配置接口
  */
 export interface RouteConfig {
+    /** 路由通道名称 */
     channel: string;
+    /** 路由处理器 */
     handler: RouteHandler;
-    middleware: Middleware[];
-    validation: ValidationRules;
-    name?: string;
+    /** 中间件列表 */
+    middleware?: Middleware[];
+    /** 参数验证规则 */
+    validation?: ValidationRules;
+    /** 路由描述 */
     description?: string;
-    type?: 'get' | 'post' | 'put' | 'delete' | 'handle';
+    /** 路由分组 */
+    group?: string;
 }
 
 /**
@@ -59,31 +67,4 @@ export interface RouteGroup {
 export interface RouteMatch {
     route: RouteConfig;
     params: Record<string, any>;
-}
-
-/**
- * 路由注册器接口
- */
-export interface ContractRouteRegistrar {
-    middleware(...middleware: Middleware[]): this;
-    prefix(prefix: string): this;
-    name(name: string): this;
-    get(channel: string, handler: RouteHandler): any;
-    post(channel: string, handler: RouteHandler): any;
-    handle(channel: string, handler: RouteHandler): any;
-    group(config: { name?: string; description?: string; }, callback: () => void): void;
-}
-
-/**
- * 路由器接口
- */
-export interface ContractRouter {
-    register(route: any): void;
-    group(config: RouteGroup, callback: () => void): void;
-    prefix(prefix: string): ContractRouteRegistrar;
-    handle(channel: string, handler: RouteHandler): any;
-    get(channel: string, handler: RouteHandler): any;
-    post(channel: string, handler: RouteHandler): any;
-    getRoutes(): Map<string, RouteConfig>;
-    dispatch(channel: string, ...args: any[]): Promise<any>;
-}
+} 

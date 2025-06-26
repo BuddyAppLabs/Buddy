@@ -32,3 +32,6 @@ export { createFacade } from './facades/createFacade.js';
 
 // Constants
 export { IPC_CHANNELS } from './constants.js';
+
+// Facades
+export { RouteFacade } from './routing/facades/RouteFacade.js';

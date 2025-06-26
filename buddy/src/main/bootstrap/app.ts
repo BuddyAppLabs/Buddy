@@ -6,7 +6,7 @@
 
 import { app } from 'electron';
 import { registerRoutes } from '../routes/index.js';
-import { LogServiceProvider, WindowServiceProvider, RouteServiceProvider, Plugin, KeyboardServiceProvider, AIServiceProvider, PluginServiceProvider, McpServiceProvider, MarketServiceProvider, Log } from '@coffic/buddy-foundation';
+import { LogServiceProvider, WindowServiceProvider, Plugin, KeyboardServiceProvider, AIServiceProvider, PluginServiceProvider, McpServiceProvider, MarketServiceProvider, Log } from '@coffic/buddy-foundation';
 import { ElectronAppConfig, RouteFacade, createElectronApp, setupIPCHandlers } from '@coffic/cosy-framework';
 
 // 应用配置
@@ -17,7 +17,6 @@ const config: ElectronAppConfig = {
     debug: process.env.NODE_ENV !== 'production',
     providers: [
         LogServiceProvider,
-        RouteServiceProvider, // 路由服务应该在基础服务之后注册
         KeyboardServiceProvider,
         AIServiceProvider,
         PluginServiceProvider,
@@ -54,14 +53,10 @@ export async function bootApplication(): Promise<void> {
 
         setupIPCHandlers(application);
 
-        // 输出路由信息
-        console.log("\n=== 已注册的路由 ===");
-        console.log(RouteFacade.router.getRoutes());
-        console.log("==================\n");
-
         console.log('✅ 应用启动完成');
         console.log(`  ➡️ 环境: ${config.env}`);
         console.log(`  ➡️ 调试模式: ${config.debug}`);
+        console.log(`  ➡️ 已注册的路由: ${RouteFacade.router.getRoutes().size}`);
     } catch (error) {
         console.error('❌ 应用启动失败:', error);
         throw error;

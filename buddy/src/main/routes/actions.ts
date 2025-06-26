@@ -3,11 +3,11 @@
  * 处理插件动作的查询和执行
  */
 
-import { RouteFacade } from '@coffic/buddy-foundation';
 import { IpcResponse, SuperAction } from '@coffic/buddy-types';
 import { actionManager } from '../managers/ActionManager.js';
 import { pluginManager } from '../managers/PluginManager.js';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
+import { RouteFacade } from '@coffic/cosy-framework';
 
 const logger = console;
 

@@ -1,19 +1,26 @@
 /**
  * 路由器类
- * 提供路由注册和分发功能
+ * 负责管理路由集合、分组和路由注册，类似Laravel的Router
  */
 
-import { ContractRouter, ContractRouteRegistrar, RouteConfig, RouteGroup, RouteHandler, Middleware } from './types.js';
+import { ipcMain, IpcMainInvokeEvent } from 'electron';
+import { RouteConfig, RouteGroup, Middleware, RouteHandler } from './types.js';
 import { Route } from './Route.js';
 import { Validator } from './Validator.js';
+import { ContractRouter } from './contracts/ContractRouter.js';
+import { ContractRouteRegistrar } from './contracts/ContractRouteRegistrar.js';
 import { EMOJI } from '../constants.js';
 
+// 实现路由注册器
 class RouteRegistrar implements ContractRouteRegistrar {
-    private _prefix: string = '';
     private _middleware: Middleware[] = [];
+    private _prefix: string = '';
     private _name: string = '';
+    private router: Router;
 
-    constructor(private router: Router) { }
+    constructor(router: Router) {
+        this.router = router;
+    }
 
     middleware(...middleware: Middleware[]): this {
         this._middleware.push(...middleware);
@@ -38,11 +45,19 @@ class RouteRegistrar implements ContractRouteRegistrar {
         return this.router.post(this._prefix ? `${this._prefix}:${channel}` : channel, handler);
     }
 
+    put(channel: string, handler: RouteHandler): Route {
+        return this.router.put(this._prefix ? `${this._prefix}:${channel}` : channel, handler);
+    }
+
+    delete(channel: string, handler: RouteHandler): Route {
+        return this.router.delete(this._prefix ? `${this._prefix}:${channel}` : channel, handler);
+    }
+
     handle(channel: string, handler: RouteHandler): Route {
         return this.router.handle(this._prefix ? `${this._prefix}:${channel}` : channel, handler);
     }
 
-    group(config: { name: string; description?: string; }, callback: () => void): void {
+    group(config: { name?: string; description?: string; }, callback: () => void): void {
         this.router.group({
             ...config,
             prefix: this._prefix,
@@ -52,66 +67,49 @@ class RouteRegistrar implements ContractRouteRegistrar {
 }
 
 export class Router implements ContractRouter {
-    private static _instance: Router;
     private routes: Map<string, RouteConfig> = new Map();
     private groups: Map<string, RouteGroup> = new Map();
     private globalMiddleware: Middleware[] = [];
     private validator: Validator;
 
-    private constructor() {
+    constructor() {
         this.validator = new Validator();
     }
 
-    public static getInstance(): Router {
-        if (!Router._instance) {
-            Router._instance = new Router();
-        }
-        return Router._instance;
+    /**
+     * 注册 GET 类型的路由
+     */
+    get(channel: string, handler: RouteHandler): Route {
+        const route = new Route(channel, handler);
+        this.register(route);
+        return route;
     }
 
     /**
-     * 注册全局中间件
+     * 注册 POST 类型的路由
      */
-    use(middleware: Middleware): this {
-        this.globalMiddleware.push(middleware);
-        return this;
+    post(channel: string, handler: RouteHandler): Route {
+        const route = new Route(channel, handler);
+        this.register(route);
+        return route;
     }
 
     /**
-     * 注册路由
+     * 注册 PUT 类型的路由
      */
-    register(route: Route): void {
-        const config = route.getConfig();
-        this.routes.set(config.channel, {
-            ...config,
-            middleware: [...this.globalMiddleware, ...(config.middleware || [])]
-        });
+    put(channel: string, handler: RouteHandler): Route {
+        const route = new Route(channel, handler);
+        this.register(route);
+        return route;
     }
 
     /**
-     * 创建路由组
+     * 注册 DELETE 类型的路由
      */
-    group(config: RouteGroup, callback: () => void): void {
-        const currentMiddleware = [...this.globalMiddleware];
-        if (config.middleware) {
-            this.globalMiddleware.push(...config.middleware);
-        }
-
-        callback();
-
-        this.globalMiddleware = currentMiddleware;
-        if (config.name) {
-            this.groups.set(config.name, config);
-        }
-    }
-
-    /**
-     * 设置路由前缀
-     */
-    prefix(prefix: string): ContractRouteRegistrar {
-        const registrar = new RouteRegistrar(this);
-        registrar.prefix(prefix);
-        return registrar;
+    delete(channel: string, handler: RouteHandler): Route {
+        const route = new Route(channel, handler);
+        this.register(route);
+        return route;
     }
 
     /**
@@ -124,21 +122,77 @@ export class Router implements ContractRouter {
     }
 
     /**
-     * 注册GET类型路由
+     * 创建路由分组
      */
-    get(channel: string, handler: RouteHandler): Route {
-        const route = Route.get(channel, handler);
-        this.register(route);
-        return route;
+    group(config: {
+        prefix?: string;
+        middleware?: Middleware[];
+        name?: string;
+        description?: string;
+    }, callback: () => void): void {
+        const groupName = config.name || `group_${Date.now()}`;
+        this.groups.set(groupName, {
+            name: groupName,
+            prefix: config.prefix,
+            middleware: config.middleware,
+            description: config.description
+        });
+
+        callback();
     }
 
     /**
-     * 注册POST类型路由
+     * 添加中间件到路由
      */
-    post(channel: string, handler: RouteHandler): Route {
-        const route = Route.post(channel, handler);
-        this.register(route);
-        return route;
+    middleware(...middleware: Middleware[]): ContractRouteRegistrar {
+        const registrar = new RouteRegistrar(this);
+        registrar.middleware(...middleware);
+        return registrar;
+    }
+
+    /**
+     * 设置路由前缀
+     */
+    prefix(prefix: string): ContractRouteRegistrar {
+        const registrar = new RouteRegistrar(this);
+        registrar.prefix(prefix);
+        return registrar;
+    }
+
+    /**
+     * 设置路由名称
+     */
+    name(name: string): ContractRouteRegistrar {
+        const registrar = new RouteRegistrar(this);
+        registrar.name(name);
+        return registrar;
+    }
+
+    /**
+     * 注册路由
+     */
+    register(route: Route): void {
+        const config = route.getConfig();
+
+        // 应用分组配置
+        if (config.group && this.groups.has(config.group)) {
+            const group = this.groups.get(config.group)!;
+
+            // 添加分组前缀
+            if (group.prefix) {
+                config.channel = `${group.prefix}:${config.channel}`;
+            }
+
+            // 合并分组中间件
+            if (group.middleware) {
+                config.middleware = [...group.middleware, ...(config.middleware || [])];
+            }
+        }
+
+        // 添加全局中间件
+        config.middleware = [...this.globalMiddleware, ...(config.middleware || [])];
+
+        this.routes.set(config.channel, config);
     }
 
     /**
@@ -149,6 +203,13 @@ export class Router implements ContractRouter {
     }
 
     /**
+     * 添加全局中间件
+     */
+    use(middleware: Middleware): void {
+        this.globalMiddleware.push(middleware);
+    }
+
+    /**
      * 获取所有路由
      */
     getRoutes(): Map<string, RouteConfig> {
@@ -156,8 +217,63 @@ export class Router implements ContractRouter {
     }
 
     /**
-     * 分发请求
+     * 获取路由分组
      */
+    getGroups(): Map<string, RouteGroup> {
+        return new Map(this.groups);
+    }
+
+    /**
+     * 获取格式化的路由列表
+     */
+    listRoutes(): string[] {
+        const routes: string[] = [];
+        this.routes.forEach((config, channel) => {
+            const group = config.group ? this.groups.get(config.group) : undefined;
+            const description = config.description || 'No description';
+            const groupInfo = group ? ` (Group: ${config.group})` : '';
+            routes.push(`${channel} - ${description}${groupInfo}`);
+        });
+        return routes;
+    }
+
+    /**
+     * 初始化路由系统
+     */
+    initialize(): void {
+        this.routes.forEach((config, channel) => {
+            ipcMain.handle(channel, async (event: IpcMainInvokeEvent, ...args: any[]) => {
+                // 验证参数
+                if (config.validation) {
+                    const validationResult = this.validator.validate(args, config.validation);
+                    if (!validationResult.valid) {
+                        return {
+                            success: false,
+                            error: validationResult.errors.join(', ')
+                        };
+                    }
+                }
+
+                try {
+                    // 执行中间件链
+                    let result = await config.handler(event, ...args);
+                    return {
+                        success: true,
+                        data: result
+                    };
+                } catch (error) {
+                    return {
+                        success: false,
+                        error: error instanceof Error ? error.message : 'Unknown error'
+                    };
+                }
+            });
+        });
+    }
+
+    /**
+    * 分发请求
+    */
     async dispatch(channel: string, ...args: any[]): Promise<any> {
         const route = this.routes.get(channel);
         if (!route) {
@@ -167,26 +283,18 @@ export class Router implements ContractRouter {
             throw new Error(`[Router] Route [${channel}] not found`);
         }
 
-        // 验证参数
-        if (Object.keys(route.validation).length > 0) {
-            const validation = this.validator.validate(args, route.validation);
-            if (!validation.valid) {
-                throw new Error(`${EMOJI} ${validation.error}`);
-            }
-        }
+        return route.handler(args[0], ...args.slice(1));
+    }
 
-        // 构建中间件链
-        const middlewareChain = [...route.middleware];
-        let index = 0;
-
-        const next = async (): Promise<any> => {
-            if (index < middlewareChain.length) {
-                const middleware = middlewareChain[index++];
-                return middleware({ channel, args }, next);
-            }
-            return route.handler(args[0], ...args.slice(1));
-        };
-
-        return next();
+    /**
+     * 清空所有路由（用于测试）
+     */
+    clear(): void {
+        this.routes.clear();
+        this.groups.clear();
+        this.globalMiddleware = [];
     }
 }
+
+
+

@@ -39,7 +39,7 @@ export async function createElectronApp(config: ElectronAppConfig): Promise<Appl
     Facade.setFacadeApplication(app);
 
     // 注册全局中间件
-    const router = Router.getInstance();
+    const router = app.container().resolve<Router>('router');
 
     if (config.middleware?.errorHandling !== false) {
         router.use(ErrorHandlingMiddleware);
@@ -66,8 +66,9 @@ export async function createElectronApp(config: ElectronAppConfig): Promise<Appl
  */
 export function setupIPCHandlers(app: Application): void {
     console.log(`${EMOJI} [Bootstrap] 设置 IPC 处理器`);
-    const router = app.make<Router>('router');
+    const router = app.container().resolve<Router>('router');
     console.log(router)
+    console.log(`${EMOJI} [Bootstrap] 获取路由: ${router.getRoutes().size}`);
 
     // 处理所有 IPC 调用
     ipcMain.handle(IPC_CHANNELS.DISPATCH, async (event, channel: string, args: any[]) => {
@@ -79,18 +80,5 @@ export function setupIPCHandlers(app: Application): void {
             console.error(`${EMOJI} ❌ [Bootstrap] 处理 IPC 调用失败: \n ${error} \n`);
             throw new Error(`${error}`);
         }
-    });
-
-    // 获取所有路由（用于调试）
-    ipcMain.handle(IPC_CHANNELS.ROUTES, () => {
-        const routes = router.getRoutes();
-        return Array.from(routes.entries()).map((entry) => {
-            const [channel, route] = entry as [string, { name: string; middleware: any[] }];
-            return {
-                channel,
-                name: route.name,
-                middlewareCount: route.middleware.length,
-            };
-        });
     });
 } 

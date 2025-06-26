@@ -1,38 +1,109 @@
 /**
- * 路由验证器
- * 提供参数验证功能
+ * 参数验证器
+ * 提供路由参数的验证功能，类似Laravel的Validator
  */
 
-import { ValidationRules } from './types.js';
+import { ValidationRules, ValidationRule } from './types';
+
+export interface ValidationResult {
+    valid: boolean;
+    errors: string[];
+}
 
 export class Validator {
     /**
-     * 验证请求参数
+     * 验证参数
      */
-    validate(args: any[], rules: ValidationRules): { valid: boolean; error?: string } {
-        for (const [param, rule] of Object.entries(rules)) {
-            const index = parseInt(param);
-            const value = args[index];
+    validate(args: any[], rules: ValidationRules): ValidationResult {
+        const errors: string[] = [];
 
-            // 必填检查
-            if (rule.required && (value === undefined || value === null)) {
-                return { valid: false, error: `Parameter ${param} is required` };
-            }
+        // 检查每个规则
+        for (const [paramName, rule] of Object.entries(rules)) {
+            const paramIndex = parseInt(paramName);
+            const value = isNaN(paramIndex) ? undefined : args[paramIndex];
 
-            // 类型检查
-            if (rule.type && value !== undefined && typeof value !== rule.type) {
-                return { valid: false, error: `Parameter ${param} must be of type ${rule.type}` };
-            }
-
-            // 自定义验证
-            if (rule.validator && value !== undefined) {
-                const result = rule.validator(value);
-                if (result !== true) {
-                    return { valid: false, error: typeof result === 'string' ? result : `Validation failed for parameter ${param}` };
-                }
+            const error = this.validateParam(paramName, value, rule);
+            if (error) {
+                errors.push(error);
             }
         }
 
-        return { valid: true };
+        return {
+            valid: errors.length === 0,
+            errors
+        };
     }
-}
+
+    /**
+     * 验证单个参数
+     */
+    private validateParam(paramName: string, value: any, rule: ValidationRule): string | null {
+        // 检查必填
+        if (rule.required && (value === undefined || value === null)) {
+            return `参数 ${paramName} 是必填的`;
+        }
+
+        // 如果值为空且不是必填，跳过其他验证
+        if (value === undefined || value === null) {
+            return null;
+        }
+
+        // 检查类型
+        if (rule.type) {
+            const typeError = this.validateType(paramName, value, rule.type);
+            if (typeError) {
+                return typeError;
+            }
+        }
+
+        // 自定义验证器
+        if (rule.validator) {
+            const result = rule.validator(value);
+            if (typeof result === 'string') {
+                return `参数 ${paramName} 验证失败: ${result}`;
+            }
+            if (!result) {
+                return `参数 ${paramName} 验证失败`;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 验证参数类型
+     */
+    private validateType(paramName: string, value: any, expectedType: string): string | null {
+        const actualType = this.getValueType(value);
+
+        if (actualType !== expectedType) {
+            return `参数 ${paramName} 类型错误，期望 ${expectedType}，实际 ${actualType}`;
+        }
+
+        return null;
+    }
+
+    /**
+     * 获取值的类型
+     */
+    private getValueType(value: any): string {
+        if (Array.isArray(value)) {
+            return 'array';
+        }
+
+        if (value === null) {
+            return 'null';
+        }
+
+        const type = typeof value;
+        return type === 'object' ? 'object' : type;
+    }
+
+    /**
+     * 静态方法：快速验证
+     */
+    static validate(args: any[], rules: ValidationRules): ValidationResult {
+        const validator = new Validator();
+        return validator.validate(args, rules);
+    }
+} 

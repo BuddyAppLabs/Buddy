@@ -18,9 +18,6 @@ export * from './log/index.js';
 // 插件模块
 export * from './plugin/index.js';
 
-// 路由模块
-export * from './routing/index.js';
-
 // AI模块
 export * from './ai/index.js';
 
@@ -30,4 +27,3 @@ export { WindowServiceProvider } from './window/WindowServiceProvider.js';
 
 // 导出所有服务提供者
 export { AIServiceProvider } from './ai/AIServiceProvider.js';
-export { RouteServiceProvider } from './routing/RouteServiceProvider.js';
