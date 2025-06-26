@@ -6,6 +6,7 @@
 import { ServiceProvider } from '@coffic/cosy-framework';
 import { LogManager } from './LogManager.js';
 import { LogManagerContract, LogConfig, LogLevel } from './contracts/LogContract.js';
+import { EMOJI } from '../constants.js';
 
 export class LogServiceProvider extends ServiceProvider {
     public register(): void {
@@ -36,7 +37,7 @@ export class LogServiceProvider extends ServiceProvider {
         // 扩展自定义驱动的示例
         this.registerCustomDrivers(manager);
 
-        console.log('✅ 日志系统初始化完成');
+        console.log(`${EMOJI} [LogServiceProvider] 日志系统初始化完成`);
     }
 
     public async shutdown(): Promise<void> {

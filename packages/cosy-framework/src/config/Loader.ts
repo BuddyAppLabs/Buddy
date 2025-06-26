@@ -7,6 +7,7 @@ import { promises as fs } from 'fs';
 import { join, extname, basename } from 'path';
 import { ConfigLoader, ConfigLoaderOptions, ConfigCacheOptions, ConfigObject, ConfigFileDefinition } from './types.js';
 import { mergeConfig, generateCacheKey, parseEnvValue } from './utils.js';
+import { EMOJI } from '../constants.js';
 
 export class Loader implements ConfigLoader {
     /** 支持的配置文件扩展名 */
@@ -47,7 +48,7 @@ export class Loader implements ConfigLoader {
                 const fileConfig = await this.loadConfigFile(file);
                 config = mergeConfig(config, { [file.name]: fileConfig });
 
-                console.log(`📄 已加载配置文件: ${file.name}`);
+                console.log(`${EMOJI} [ConfigLoader] 已加载配置文件: ${file.name}`);
             } catch (error) {
                 const message = `加载配置文件失败: ${file.path}`;
 

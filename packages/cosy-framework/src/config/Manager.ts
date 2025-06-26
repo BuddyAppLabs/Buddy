@@ -34,7 +34,7 @@ export class Manager implements ConfigManager {
         try {
             this.options = options;
 
-            console.log('🔧 正在初始化配置系统...');
+            console.log(`${EMOJI} [ConfigManager] 正在初始化配置系统...`);
 
             // 加载配置
             const config = await this.loader.load(options);
@@ -44,7 +44,7 @@ export class Manager implements ConfigManager {
 
             this.initialized = true;
 
-            console.log('✅ 配置系统初始化完成');
+            console.log(`${EMOJI} [ConfigManager] 配置系统初始化完成`);
             console.log(`  ➡️ 配置目录: ${options.configPath}`);
             console.log(`  ➡️ 环境文件: ${options.envPath || '未设置'}`);
             console.log(`  ➡️ 缓存启用: ${options.cache?.enabled ? '是' : '否'}`);
@@ -55,7 +55,7 @@ export class Manager implements ConfigManager {
                 console.log(`  ➡️ 已加载配置: ${configKeys.join(', ')}`);
             }
         } catch (error) {
-            console.error('❌ 配置系统初始化失败:', error);
+            console.error(`${EMOJI} [ConfigManager] 配置系统初始化失败:`, error);
             throw error;
         }
     }

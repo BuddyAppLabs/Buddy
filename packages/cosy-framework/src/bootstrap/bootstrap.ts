@@ -8,6 +8,7 @@ import { LoggingMiddleware, ErrorHandlingMiddleware } from '../middleware/builti
 import electron from 'electron';
 import { EMOJI, IPC_CHANNELS } from '../constants.js';
 import { ConfigServiceProvider } from '../config/ConfigServiceProvider.js';
+import { Facade } from '../facades/Facade.js';
 const { ipcMain } = electron;
 
 export interface ElectronAppConfig extends ApplicationConfig {
@@ -34,6 +35,8 @@ export async function createElectronApp(config: ElectronAppConfig): Promise<Appl
     };
 
     const app = Application.getInstance(finalConfig);
+
+    Facade.setFacadeApplication(app);
 
     // 注册全局中间件
     const router = Router.getInstance();

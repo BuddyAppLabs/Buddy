@@ -9,6 +9,7 @@
  */
 import { ServiceProvider } from '@coffic/cosy-framework';
 import { Router } from './Router.js';
+import { EMOJI } from '../constants.js';
 
 export class RouteServiceProvider extends ServiceProvider {
     /**
@@ -33,7 +34,7 @@ export class RouteServiceProvider extends ServiceProvider {
      * 在这里可以执行一些路由服务启动时需要的初始化操作
      */
     public async boot(): Promise<void> {
-        console.log('✅ 路由服务启动完成');
+        console.log(`${EMOJI} [RouteServiceProvider] 路由服务启动完成`);
     }
 
     /**

@@ -40,9 +40,7 @@ export async function bootApplication(): Promise<void> {
         await app.whenReady();
 
         // 使用框架启动应用
-        const application = createElectronApp(config);
-
-        Facade.setFacadeApplication(application);
+        const application = await createElectronApp(config);
 
         // 初始化Facades
         Log.setApp(application);

@@ -4,6 +4,7 @@
  */
 import { shell, BrowserWindow, screen, globalShortcut } from 'electron';
 import { WindowConfig, WindowManagerContract } from '../contracts/window.js';
+import { EMOJI } from '../constants.js';
 
 const verbose = false;
 
@@ -57,7 +58,7 @@ export class WindowManager implements WindowManagerContract {
      * 创建主窗口
      */
     createWindow(): BrowserWindow {
-        console.log('🔧 createWindow', this.config);
+        console.log(`${EMOJI} [WindowManager] 创建主窗口`, this.config);
         try {
             // 创建浏览器窗口
             this.mainWindow = new BrowserWindow({
