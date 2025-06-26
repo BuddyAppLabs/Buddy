@@ -3,7 +3,7 @@
  * 处理AI聊天和流式通信
  */
 
-import { AI, Route } from '@coffic/buddy-foundation';
+import { AI, RouteFacade } from '@coffic/buddy-foundation';
 import { v4 as uuidv4 } from 'uuid';
 import { ChatMessage, IpcResponse, StreamChunkResponse } from '@coffic/buddy-types';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
@@ -11,9 +11,8 @@ import { IPC_METHODS } from '@/types/ipc-methods.js';
 const logger = console;
 
 export function registerAIRoutes(): void {
-
     // 启动流式AI聊天会话
-    Route.handle(IPC_METHODS.AI_CHAT_SEND, async (event, messages: ChatMessage[]): Promise<IpcResponse<string>> => {
+    RouteFacade.handle(IPC_METHODS.AI_CHAT_SEND, async (event, messages: ChatMessage[]): Promise<IpcResponse<string>> => {
         logger.debug(`启动流式AI聊天: ${messages.length}条消息`);
         try {
             const requestId = uuidv4();
@@ -63,7 +62,7 @@ export function registerAIRoutes(): void {
         .description('启动流式AI聊天会话');
 
     // 取消AI聊天请求
-    Route.handle(IPC_METHODS.AI_CHAT_CANCEL, (_event, requestId: string, reason: string): IpcResponse<boolean> => {
+    RouteFacade.handle(IPC_METHODS.AI_CHAT_CANCEL, (_event, requestId: string, reason: string): IpcResponse<boolean> => {
         logger.debug(`取消AI聊天请求: ${requestId}，原因是：${reason}`);
         try {
             const cancelled = AI.cancelRequest(requestId);

@@ -3,14 +3,14 @@
  * 处理应用更新检查等功能
  */
 
-import { Route } from '@coffic/buddy-foundation';
+import { RouteFacade } from '@coffic/buddy-foundation';
 import { BrowserWindow } from 'electron';
 import { updateManager } from '../managers/UpdateManager.js';
 
 export function registerUpdateRoutes(): void {
 
     // 检查更新
-    Route.handle('update:check', async (_event): Promise<void> => {
+    RouteFacade.handle('update:check', async (_event): Promise<void> => {
         updateManager.checkForUpdates();
     })
         .description('检查应用更新');

@@ -30,6 +30,9 @@ export * from './config/index.js';
 // AI模块
 export * from './ai/index.js';
 
+// Facade
+export * from './facades/index.js';
+
 // 导出所有服务提供者
 export { AppServiceProvider } from './app/AppServiceProvider.js';
 export { ConfigServiceProvider } from './config/ConfigServiceProvider.js';

@@ -15,11 +15,7 @@ export { Validator } from './Validator.js';
 export * from './middleware/index.js';
 
 // 门面 (Facades)
-export * from './facades/index.js';
-export * from './RouteServiceProvider.js'
+export { RouteFacade } from './facades/RouteFacade.js';
 
-// 导入Router类用于创建实例
-import { Router } from './Router.js';
-
-// 创建全局路由器实例
-export const router = new Router(); 
+// 服务提供者
+export { RouteServiceProvider } from './RouteServiceProvider.js';

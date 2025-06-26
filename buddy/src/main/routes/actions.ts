@@ -3,7 +3,7 @@
  * 处理插件动作的查询和执行
  */
 
-import { Route } from '@coffic/buddy-foundation';
+import { RouteFacade } from '@coffic/buddy-foundation';
 import { IpcResponse, SuperAction } from '@coffic/buddy-types';
 import { actionManager } from '../managers/ActionManager.js';
 import { pluginManager } from '../managers/PluginManager.js';
@@ -13,7 +13,7 @@ const logger = console;
 
 export function registerActionsRoutes(): void {
     // 获取插件动作列表
-    Route.handle(IPC_METHODS.GET_ACTIONS, async (_event, keyword = ''): Promise<IpcResponse<SuperAction[]>> => {
+    RouteFacade.handle(IPC_METHODS.GET_ACTIONS, async (_event, keyword = ''): Promise<IpcResponse<SuperAction[]>> => {
         try {
             const actions = await actionManager.getActions(keyword);
             return { success: true, data: actions };
@@ -33,7 +33,7 @@ export function registerActionsRoutes(): void {
         .description('获取插件动作列表，支持关键词搜索');
 
     // 执行插件动作
-    Route.handle(IPC_METHODS.EXECUTE_PLUGIN_ACTION, async (_event, actionId: string, keyword: string): Promise<IpcResponse<unknown>> => {
+    RouteFacade.handle(IPC_METHODS.EXECUTE_PLUGIN_ACTION, async (_event, actionId: string, keyword: string): Promise<IpcResponse<unknown>> => {
         return await pluginManager.executeAction(actionId, keyword);
     })
         .validation({
@@ -43,7 +43,7 @@ export function registerActionsRoutes(): void {
         .description('执行指定的插件动作');
 
     // 获取动作视图
-    Route.handle(IPC_METHODS.GET_ACTION_VIEW, async (_event, actionId: string): Promise<string> => {
+    RouteFacade.handle(IPC_METHODS.GET_ACTION_VIEW, async (_event, actionId: string): Promise<string> => {
         return await actionManager.getActionView(actionId);
     })
         .validation({

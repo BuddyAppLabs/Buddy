@@ -3,7 +3,7 @@
  * 处理基础的文件、视图操作等
  */
 
-import { Route } from '@coffic/buddy-foundation';
+import { RouteFacade } from '@coffic/buddy-foundation';
 import { shell } from 'electron';
 import { viewManager } from '../managers/ViewManager.js';
 import { IpcResponse } from '@coffic/buddy-types';
@@ -13,9 +13,8 @@ import { createViewArgs } from '@/types/args.js';
 const logger = console;
 
 export function registerCommonRoutes(): void {
-
     // 打开文件夹
-    Route.handle(IPC_METHODS.Open_Folder, (_event, directory: string): IpcResponse<string> => {
+    RouteFacade.handle(IPC_METHODS.Open_Folder, (_event, directory: string): IpcResponse<string> => {
         logger.debug(`打开: ${directory}`);
         try {
             shell.openPath(directory);
@@ -31,13 +30,13 @@ export function registerCommonRoutes(): void {
         .description('打开指定的文件夹');
 
     // 创建视图
-    Route.handle(IPC_METHODS.Create_View, (_event, bounds): Promise<unknown> => {
+    RouteFacade.handle(IPC_METHODS.Create_View, (_event, bounds): Promise<unknown> => {
         return viewManager.createView(bounds);
     })
         .description('创建新的视图');
 
     // 销毁视图
-    Route.handle(IPC_METHODS.Destroy_View, (_event, id): void => {
+    RouteFacade.handle(IPC_METHODS.Destroy_View, (_event, id): void => {
         return viewManager.destroyView(id);
     })
         .validation({
@@ -46,13 +45,13 @@ export function registerCommonRoutes(): void {
         .description('销毁指定的视图');
 
     // 销毁所有插件视图
-    Route.handle(IPC_METHODS.Destroy_Plugin_Views, (_event): void => {
+    RouteFacade.handle(IPC_METHODS.Destroy_Plugin_Views, (_event): void => {
         return viewManager.destroyAllViews();
     })
         .description('销毁所有插件视图');
 
     // 更新视图边界
-    Route.handle(IPC_METHODS.Update_View_Bounds, (_event, id, bounds): void => {
+    RouteFacade.handle(IPC_METHODS.Update_View_Bounds, (_event, id, bounds): void => {
         return viewManager.updateViewPosition(id, bounds);
     })
         .validation({
@@ -62,7 +61,7 @@ export function registerCommonRoutes(): void {
         .description('更新视图的位置和大小');
 
     // 更新或插入视图
-    Route.handle(IPC_METHODS.UPSERT_VIEW, (_event, args: createViewArgs): Promise<void> => {
+    RouteFacade.handle(IPC_METHODS.UPSERT_VIEW, (_event, args: createViewArgs): Promise<void> => {
         return viewManager.upsertView(args);
     })
         .validation({

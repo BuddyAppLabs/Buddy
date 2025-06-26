@@ -7,8 +7,65 @@ import { ipcMain, IpcMainInvokeEvent } from 'electron';
 import { RouteConfig, RouteGroup, Middleware, RouteHandler } from './types.js';
 import { Route } from './Route.js';
 import { Validator } from './Validator.js';
+import { ContractRouter } from './contracts/ContractRouter.js';
+import { ContractRouteRegistrar } from './contracts/ContractRouteRegistrar.js';
 
-export class Router {
+// 实现路由注册器
+class RouteRegistrar implements ContractRouteRegistrar {
+    private _middleware: Middleware[] = [];
+    private _prefix: string = '';
+    private _name: string = '';
+    private router: Router;
+
+    constructor(router: Router) {
+        this.router = router;
+    }
+
+    middleware(...middleware: Middleware[]): this {
+        this._middleware.push(...middleware);
+        return this;
+    }
+
+    prefix(prefix: string): this {
+        this._prefix = prefix;
+        return this;
+    }
+
+    name(name: string): this {
+        this._name = name;
+        return this;
+    }
+
+    get(channel: string, handler: RouteHandler): Route {
+        return this.router.get(this._prefix ? `${this._prefix}:${channel}` : channel, handler);
+    }
+
+    post(channel: string, handler: RouteHandler): Route {
+        return this.router.post(this._prefix ? `${this._prefix}:${channel}` : channel, handler);
+    }
+
+    put(channel: string, handler: RouteHandler): Route {
+        return this.router.put(this._prefix ? `${this._prefix}:${channel}` : channel, handler);
+    }
+
+    delete(channel: string, handler: RouteHandler): Route {
+        return this.router.delete(this._prefix ? `${this._prefix}:${channel}` : channel, handler);
+    }
+
+    handle(channel: string, handler: RouteHandler): Route {
+        return this.router.handle(this._prefix ? `${this._prefix}:${channel}` : channel, handler);
+    }
+
+    group(config: { name?: string; description?: string; }, callback: () => void): void {
+        this.router.group({
+            ...config,
+            prefix: this._prefix,
+            middleware: this._middleware
+        }, callback);
+    }
+}
+
+export class Router implements ContractRouter {
     private routes: Map<string, RouteConfig> = new Map();
     private groups: Map<string, RouteGroup> = new Map();
     private globalMiddleware: Middleware[] = [];
@@ -16,6 +73,99 @@ export class Router {
 
     constructor() {
         this.validator = new Validator();
+    }
+
+    /**
+     * 注册 GET 类型的路由
+     */
+    get(channel: string, handler: RouteHandler): Route {
+        const route = new Route(channel, handler);
+        this.register(route);
+        return route;
+    }
+
+    /**
+     * 注册 POST 类型的路由
+     */
+    post(channel: string, handler: RouteHandler): Route {
+        const route = new Route(channel, handler);
+        this.register(route);
+        return route;
+    }
+
+    /**
+     * 注册 PUT 类型的路由
+     */
+    put(channel: string, handler: RouteHandler): Route {
+        const route = new Route(channel, handler);
+        this.register(route);
+        return route;
+    }
+
+    /**
+     * 注册 DELETE 类型的路由
+     */
+    delete(channel: string, handler: RouteHandler): Route {
+        const route = new Route(channel, handler);
+        this.register(route);
+        return route;
+    }
+
+    /**
+     * 通用路由注册方法
+     */
+    handle(channel: string, handler: RouteHandler): Route {
+        console.log('🔧 handle', channel);
+        const route = new Route(channel, handler);
+        this.register(route);
+        return route;
+    }
+
+    /**
+     * 创建路由分组
+     */
+    group(config: {
+        prefix?: string;
+        middleware?: Middleware[];
+        name?: string;
+        description?: string;
+    }, callback: () => void): void {
+        const groupName = config.name || `group_${Date.now()}`;
+        this.groups.set(groupName, {
+            name: groupName,
+            prefix: config.prefix,
+            middleware: config.middleware,
+            description: config.description
+        });
+
+        callback();
+    }
+
+    /**
+     * 添加中间件到路由
+     */
+    middleware(...middleware: Middleware[]): ContractRouteRegistrar {
+        const registrar = new RouteRegistrar(this);
+        registrar.middleware(...middleware);
+        return registrar;
+    }
+
+    /**
+     * 设置路由前缀
+     */
+    prefix(prefix: string): ContractRouteRegistrar {
+        const registrar = new RouteRegistrar(this);
+        registrar.prefix(prefix);
+        return registrar;
+    }
+
+    /**
+     * 设置路由名称
+     */
+    name(name: string): ContractRouteRegistrar {
+        const registrar = new RouteRegistrar(this);
+        registrar.name(name);
+        return registrar;
     }
 
     /**
@@ -53,29 +203,9 @@ export class Router {
     }
 
     /**
-     * 创建路由分组
-     */
-    group(config: RouteGroup, callback: (router: Router) => void): void {
-        this.groups.set(config.name, config);
-
-        // 在分组上下文中执行回调
-        const groupRouter = new Router();
-        groupRouter.groups = this.groups;
-        groupRouter.globalMiddleware = this.globalMiddleware;
-
-        callback(groupRouter);
-
-        // 将分组路由添加到主路由器
-        groupRouter.routes.forEach((routeConfig, channel) => {
-            routeConfig.group = config.name;
-            this.routes.set(channel, routeConfig);
-        });
-    }
-
-    /**
      * 添加全局中间件
      */
-    middleware(middleware: Middleware): void {
+    use(middleware: Middleware): void {
         this.globalMiddleware.push(middleware);
     }
 
@@ -94,100 +224,51 @@ export class Router {
     }
 
     /**
-     * 初始化IPC路由
-     * 将所有注册的路由绑定到Electron的ipcMain
+     * 获取格式化的路由列表
      */
-    initialize(): void {
-        for (const [channel, config] of this.routes) {
-            const wrappedHandler = this.createWrappedHandler(config);
-            ipcMain.handle(channel, wrappedHandler);
-        }
+    listRoutes(): string[] {
+        const routes: string[] = [];
+        this.routes.forEach((config, channel) => {
+            const group = config.group ? this.groups.get(config.group) : undefined;
+            const description = config.description || 'No description';
+            const groupInfo = group ? ` (Group: ${config.group})` : '';
+            routes.push(`${channel} - ${description}${groupInfo}`);
+        });
+        return routes;
     }
 
     /**
-     * 创建包装的处理器，支持中间件和验证
+     * 初始化路由系统
      */
-    private createWrappedHandler(config: RouteConfig) {
-        return async (event: IpcMainInvokeEvent, ...args: any[]) => {
-            try {
-                // 参数验证
+    initialize(): void {
+        this.routes.forEach((config, channel) => {
+            ipcMain.handle(channel, async (event: IpcMainInvokeEvent, ...args: any[]) => {
+                // 验证参数
                 if (config.validation) {
                     const validationResult = this.validator.validate(args, config.validation);
                     if (!validationResult.valid) {
-                        throw new Error(`参数验证失败: ${validationResult.errors.join(', ')}`);
+                        return {
+                            success: false,
+                            error: validationResult.errors.join(', ')
+                        };
                     }
                 }
 
-                // 执行中间件链
-                if (config.middleware && config.middleware.length > 0) {
-                    return await this.executeMiddleware(config.middleware, event, config.handler, ...args);
+                try {
+                    // 执行中间件链
+                    let result = await config.handler(event, ...args);
+                    return {
+                        success: true,
+                        data: result
+                    };
+                } catch (error) {
+                    return {
+                        success: false,
+                        error: error instanceof Error ? error.message : 'Unknown error'
+                    };
                 }
-
-                // 直接执行处理器
-                return await config.handler(event, ...args);
-            } catch (error) {
-                console.error(`路由 ${config.channel} 执行错误:`, error);
-                throw error;
-            }
-        };
-    }
-
-    /**
-     * 执行中间件链
-     */
-    private async executeMiddleware(
-        middleware: Middleware[],
-        event: IpcMainInvokeEvent,
-        finalHandler: RouteHandler,
-        ...args: any[]
-    ): Promise<any> {
-        let index = 0;
-
-        const next = async (): Promise<any> => {
-            if (index >= middleware.length) {
-                return await finalHandler(event, ...args);
-            }
-
-            const currentMiddleware = middleware[index++];
-            return await currentMiddleware(event, next, ...args);
-        };
-
-        return await next();
-    }
-
-    /**
-     * 便捷方法：处理任意通道
-     */
-    handle(channel: string, handler: RouteHandler): Route {
-        return Route.handle(channel, handler);
-    }
-
-    /**
-     * 便捷方法：GET路由
-     */
-    get(channel: string, handler: RouteHandler): Route {
-        return Route.get(channel, handler);
-    }
-
-    /**
-     * 便捷方法：POST路由
-     */
-    post(channel: string, handler: RouteHandler): Route {
-        return Route.post(channel, handler);
-    }
-
-    /**
-     * 便捷方法：PUT路由
-     */
-    put(channel: string, handler: RouteHandler): Route {
-        return Route.put(channel, handler);
-    }
-
-    /**
-     * 便捷方法：DELETE路由
-     */
-    delete(channel: string, handler: RouteHandler): Route {
-        return Route.delete(channel, handler);
+            });
+        });
     }
 
     /**

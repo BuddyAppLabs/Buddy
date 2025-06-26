@@ -3,16 +3,15 @@
  * 使用新的配置系统处理应用配置
  */
 
-import { Route, Config } from '@coffic/buddy-foundation';
+import { RouteFacade, Config } from '@coffic/buddy-foundation';
 import { IpcResponse } from '@coffic/buddy-types';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 
 const logger = console;
 
 export function registerConfigRoutes(): void {
-
     // 获取所有配置
-    Route.handle(IPC_METHODS.CONFIG_GET_ALL, async (_event) => {
+    RouteFacade.handle(IPC_METHODS.CONFIG_GET_ALL, async (_event) => {
         try {
             return Config.all();
         } catch (error) {
@@ -23,7 +22,7 @@ export function registerConfigRoutes(): void {
         .description('获取所有配置项');
 
     // 获取单个配置
-    Route.handle(IPC_METHODS.CONFIG_GET, async (_event, key: string, defaultValue?: any) => {
+    RouteFacade.handle(IPC_METHODS.CONFIG_GET, async (_event, key: string, defaultValue?: any) => {
         try {
             return Config.get(key, defaultValue);
         } catch (error) {
@@ -37,7 +36,7 @@ export function registerConfigRoutes(): void {
         .description('获取指定配置项的值');
 
     // 设置配置
-    Route.handle(IPC_METHODS.CONFIG_SET, async (_event, key: string, value: any) => {
+    RouteFacade.handle(IPC_METHODS.CONFIG_SET, async (_event, key: string, value: any) => {
         try {
             Config.set(key, value);
             return true;
@@ -53,7 +52,7 @@ export function registerConfigRoutes(): void {
         .description('设置指定配置项的值');
 
     // 删除配置
-    Route.handle(IPC_METHODS.CONFIG_DELETE, async (_event, key: string) => {
+    RouteFacade.handle(IPC_METHODS.CONFIG_DELETE, async (_event, key: string) => {
         try {
             Config.forget(key);
             return true;
@@ -68,7 +67,7 @@ export function registerConfigRoutes(): void {
         .description('删除指定的配置项');
 
     // 重新加载配置
-    Route.handle(IPC_METHODS.CONFIG_RESET, async (_event) => {
+    RouteFacade.handle(IPC_METHODS.CONFIG_RESET, async (_event) => {
         try {
             await Config.reload();
             return true;
@@ -80,7 +79,7 @@ export function registerConfigRoutes(): void {
         .description('重新加载配置文件');
 
     // 获取配置系统状态
-    Route.handle(IPC_METHODS.CONFIG_GET_PATH, async (_event): Promise<IpcResponse<any>> => {
+    RouteFacade.handle(IPC_METHODS.CONFIG_GET_PATH, async (_event): Promise<IpcResponse<any>> => {
         try {
             const status = Config.getStatus();
             return {

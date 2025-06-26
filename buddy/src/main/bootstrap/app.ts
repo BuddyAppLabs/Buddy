@@ -6,7 +6,12 @@
 
 import { app } from 'electron';
 import { bootElectronApp, type ElectronAppConfig } from '@coffic/cosy';
-import { LogServiceProvider, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider, PluginServiceProvider, AppServiceProvider, ConfigServiceProvider, AIServiceProvider, Log, Config, AI, RouteServiceProvider, Router } from '@coffic/buddy-foundation';
+import {
+    LogServiceProvider, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider,
+    PluginServiceProvider, AppServiceProvider, ConfigServiceProvider, AIServiceProvider, Log, Router, AI, RouteServiceProvider,
+    Facade,
+    RouteFacade
+} from '@coffic/buddy-foundation';
 import { appManager } from '../managers/AppManager.js';
 import { WindowServiceProvider } from '../providers/WindowServiceProvider.js';
 import { registerRoutes } from '../routes/index.js';
@@ -46,6 +51,8 @@ export async function bootApplication(): Promise<void> {
         // 使用框架启动应用
         const application = await bootElectronApp(config);
 
+        Facade.setFacadeApplication(application);
+
         // 初始化Facades
         Log.setApp(application);
 
@@ -54,6 +61,11 @@ export async function bootApplication(): Promise<void> {
 
         // 注册所有路由
         registerRoutes();
+
+        // 输出路由信息
+        console.log("\n=== 已注册的路由 ===");
+        console.log(RouteFacade.listRoutes().join('\n'));
+        console.log("==================\n");
 
         console.log('✅ 应用启动完成');
         console.log(`  ➡️ 环境: ${config.env}`);
