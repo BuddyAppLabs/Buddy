@@ -60,7 +60,7 @@ export abstract class BasePluginRepo implements PluginRepoContract {
                     const plugin = await PluginEntity.fromDir(pluginPath, this.getPluginType());
                     plugins.push(plugin);
                 } catch (error) {
-                    logger.warn(`读取插件信息失败: ${pluginPath}`, error);
+                    logger.warn(`${EMOJI} [BasePluginRepo] 读取插件信息失败`, error instanceof Error ? error.message : String(error));
                 }
             }
 

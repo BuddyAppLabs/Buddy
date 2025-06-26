@@ -7,6 +7,7 @@ import { PackageEntity } from '../entities/PackageEntity.js';
 import { PackageJson } from '@/types/package-json.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PluginEntity } from '../entities/PluginEntity.js';
+import { EMOJI } from '../constants.js';
 
 const verbose = false;
 const logger = console;
@@ -62,7 +63,7 @@ export class PluginRepoRemote {
                 this.isRefreshingCache = false;
 
                 if (verbose) {
-                    logger.info(`远程包列表缓存已更新，数量`, this.cachedRemotePackages.length);
+                    logger.info(`${EMOJI} [PluginRepoRemote] 远程包列表缓存已更新，数量`, this.cachedRemotePackages.length);
                 }
 
                 return this.cachedRemotePackages;
@@ -128,13 +129,13 @@ export class PluginRepoRemote {
             if (packages && Array.isArray(packages) && packages.length > 0) {
                 this.cachedRemotePackages = packages;
                 this.lastCacheRefreshTime = Date.now();
-                logger.info(`远程包列表缓存已更新, count`, packages.length);
+                logger.info(`${EMOJI} [PluginRepoRemote] 远程包列表缓存已更新, count`, packages.length);
                 return;
             }
 
-            logger.warn('未能获取远程包列表');
+            logger.warn(`${EMOJI} [PluginRepoRemote] 未能获取远程包列表`);
         } catch (error) {
-            logger.error('刷新远程插件列表失败', {
+            logger.error(`${EMOJI} [PluginRepoRemote] 刷新远程插件列表失败`, {
                 error: error instanceof Error ? error.message : String(error),
             });
         }
