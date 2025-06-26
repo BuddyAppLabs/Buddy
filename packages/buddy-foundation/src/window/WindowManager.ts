@@ -5,6 +5,8 @@
 import { shell, BrowserWindow, screen, globalShortcut } from 'electron';
 import { WindowConfig, WindowManagerContract } from '../contracts/window.js';
 import { EMOJI } from '../constants.js';
+import { is } from '@electron-toolkit/utils';
+import { join } from 'path';
 
 const verbose = false;
 
@@ -121,10 +123,17 @@ export class WindowManager implements WindowManagerContract {
      * 加载窗口内容
      */
     private loadWindowContent(): void {
+        console.log(`${EMOJI} [WindowManager] 加载窗口内容`, this.mainWindow);
         if (!this.mainWindow) return;
 
-        // 这里需要由具体应用提供加载内容的实现
-        // this.emit('load-content', this.mainWindow);
+        if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+            console.log(`${EMOJI} [WindowManager] 开发模式：加载开发服务器URL -> ${process.env['ELECTRON_RENDERER_URL']}`);
+            this.mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
+        } else {
+            const htmlPath = join(__dirname, '../renderer/index.html');
+            console.log(`${EMOJI} [WindowManager] 生产模式：加载本地HTML文件 -> ${htmlPath}`);
+            this.mainWindow.loadFile(htmlPath);
+        }
     }
 
     /**
