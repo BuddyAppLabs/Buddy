@@ -2,7 +2,7 @@
  * 插件市场服务提供者
  * 负责注册插件市场相关的服务
  */
-import { ServiceProvider } from '@coffic/cosy';
+import { ServiceProvider } from '@coffic/cosy-framework';
 import { MarketContract, MarketRepositoryContract, MarketDownloaderContract } from './contracts/MarketContract.js';
 import { MarketManager } from './MarketManager.js';
 

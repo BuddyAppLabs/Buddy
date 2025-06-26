@@ -2,7 +2,7 @@
  * MCP 服务提供者
  * 负责注册和启动 MCP 服务
  */
-import { ServiceProvider } from '@coffic/cosy';
+import { ServiceProvider } from '@coffic/cosy-framework';
 import { McpManager } from './McpManager.js';
 
 export class McpServiceProvider extends ServiceProvider {

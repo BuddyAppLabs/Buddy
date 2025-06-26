@@ -6,7 +6,7 @@
 import { RouteFacade } from '@coffic/buddy-foundation';
 import { IpcResponse } from '@coffic/buddy-types';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
-import { Config } from '@coffic/cosy';
+import { Config } from '@coffic/cosy-framework';
 
 const logger = console;
 

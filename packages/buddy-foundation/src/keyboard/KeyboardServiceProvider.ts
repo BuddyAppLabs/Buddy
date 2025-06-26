@@ -2,7 +2,7 @@
  * 键盘服务提供者
  * 负责注册和启动键盘相关服务
  */
-import { ServiceProvider } from '@coffic/cosy';
+import { ServiceProvider } from '@coffic/cosy-framework';
 import { KeyboardContract } from './contracts/KeyboardContract.js';
 import { KeyboardManager } from './KeyboardManager.js';
 import { app } from 'electron';

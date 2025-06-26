@@ -33,7 +33,7 @@ packages/buddy-foundation/src/ai/
 在`buddy/src/main/bootstrap/app.ts`中注册AI服务提供者：
 
 ```typescript
-import { AIServiceProvider, AI } from '@coffic/buddy-foundation';
+import { AIServiceProvider, AI } from '@coffic/cosy-foundation';
 
 const config: ElectronAppConfig = {
     providers: [
@@ -71,7 +71,7 @@ async function initializeAIService(application: any): Promise<void> {
 ### 通过Facade访问（推荐）
 
 ```typescript
-import { AI } from '@coffic/buddy-foundation';
+import { AI } from '@coffic/cosy-foundation';
 
 // 发送聊天消息
 await AI.sendChatMessage(
@@ -102,7 +102,7 @@ AI.resetConfig();
 ### 通过容器访问
 
 ```typescript
-import { AIContract } from '@coffic/buddy-foundation';
+import { AIContract } from '@coffic/cosy-foundation';
 
 // 从容器中解析AI服务
 const aiManager = app.make<AIContract>('ai');
@@ -113,7 +113,7 @@ await aiManager.sendChatMessage(messages, onChunk, onFinish);
 ### 通过直接实例访问
 
 ```typescript
-import { AIManager } from '@coffic/buddy-foundation';
+import { AIManager } from '@coffic/cosy-foundation';
 
 const aiManager = AIManager.getInstance();
 // 需要先初始化

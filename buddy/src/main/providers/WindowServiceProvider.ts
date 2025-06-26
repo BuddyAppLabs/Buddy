@@ -2,9 +2,9 @@
  * 窗口服务提供者
  * 负责注册窗口管理相关的服务
  */
-import { ServiceProvider } from '@coffic/cosy';
+import { ServiceProvider } from '@coffic/cosy-framework';
 import { createWindowManager } from '../managers/WindowManager.js';
-import { WindowConfig, WindowManagerContract } from '@coffic/buddy-foundation';
+import { WindowConfig, WindowManagerContract } from '../../../../packages/cosy-foundation/dist/index.js';
 
 export class WindowServiceProvider extends ServiceProvider {
     /**

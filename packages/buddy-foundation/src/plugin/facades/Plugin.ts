@@ -2,7 +2,7 @@
  * 插件门面
  * 提供静态方法访问插件服务
  */
-import { Application } from '@coffic/cosy';
+import { Application } from '@coffic/cosy-framework';
 import { PluginContract } from '../contracts/PluginContract.js';
 
 export class Plugin {

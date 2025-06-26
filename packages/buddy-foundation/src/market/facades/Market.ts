@@ -2,7 +2,7 @@
  * 插件市场门面
  * 提供静态方法访问插件市场服务
  */
-import { Application } from '@coffic/cosy';
+import { Application } from '@coffic/cosy-framework';
 import { MarketContract } from '../contracts/MarketContract.js';
 
 export class Market {

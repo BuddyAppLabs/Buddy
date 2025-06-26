@@ -2,7 +2,7 @@
  * 应用服务提供者
  * 负责注册应用管理器相关的服务
  */
-import { ServiceProvider } from '@coffic/cosy';
+import { ServiceProvider } from '@coffic/cosy-framework';
 import { AppManager } from './AppManager.js';
 import { AppContract } from './contracts/AppContract.js';
 

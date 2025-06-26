@@ -1,5 +1,5 @@
 {
-  "name": "@coffic/cosy",
+  "name": "@coffic/cosy-framework",
   "version": "1.0.0",
   "description": "Laravel-inspired framework for Electron applications",
   "type": "module",

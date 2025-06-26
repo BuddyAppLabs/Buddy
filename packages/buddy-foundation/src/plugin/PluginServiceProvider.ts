@@ -2,7 +2,7 @@
  * 插件服务提供者
  * 负责注册插件相关的服务
  */
-import { ServiceProvider } from '@coffic/cosy';
+import { ServiceProvider } from '@coffic/cosy-framework';
 import { PluginManager } from './PluginManager.js';
 import { PluginContract } from './contracts/PluginContract.js';
 

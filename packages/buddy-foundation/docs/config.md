@@ -574,7 +574,7 @@ export const providers = [
 ### 容器解析
 
 ```typescript
-import { Application } from '@coffic/cosy';
+import { Application } from '@coffic/cosy-framework';
 
 // 从容器获取配置管理器
 const configManager = app.make('config');

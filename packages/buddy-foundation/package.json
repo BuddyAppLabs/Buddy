@@ -16,7 +16,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@coffic/cosy": "workspace:*"
+    "@coffic/cosy-framework": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

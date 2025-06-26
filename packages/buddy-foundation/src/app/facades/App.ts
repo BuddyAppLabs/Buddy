@@ -2,7 +2,7 @@
  * 应用门面
  * 提供静态方法访问应用服务
  */
-import { Application } from '@coffic/cosy';
+import { Application } from '@coffic/cosy-framework';
 import { AppContract } from '../contracts/AppContract.js';
 
 export class App {

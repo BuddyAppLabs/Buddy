@@ -3,7 +3,7 @@
  * 提供Laravel风格的统一日志访问接口
  * 通过服务容器解析实际的LogManager实例
  */
-import { Application } from '@coffic/cosy';
+import { Application } from '@coffic/cosy-framework';
 import {
     LogManagerContract,
     LogChannelContract,

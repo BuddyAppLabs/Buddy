@@ -67,7 +67,7 @@ packages/buddy-foundation/src/ai/
 
 ### 推荐方式：通过Facade
 ```typescript
-import { AI } from '@coffic/buddy-foundation';
+import { AI } from '@coffic/cosy-foundation';
 
 // 发送聊天消息
 await AI.sendChatMessage(messages, onChunk, onFinish);
@@ -81,7 +81,7 @@ AI.setDefaultModel({ type: 'openai', modelName: 'gpt-4' });
 
 ### 高级方式：通过容器
 ```typescript
-import { AIContract } from '@coffic/buddy-foundation';
+import { AIContract } from '@coffic/cosy-foundation';
 
 const aiManager = app.make<AIContract>('ai');
 await aiManager.sendChatMessage(messages, onChunk, onFinish);

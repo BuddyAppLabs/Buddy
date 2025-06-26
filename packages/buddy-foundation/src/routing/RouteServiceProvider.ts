@@ -7,7 +7,7 @@
  * 2. 提供 'router' 和 'Route' 两个服务标识符
  * 3. 确保路由实例为单例模式
  */
-import { ServiceProvider } from '@coffic/cosy';
+import { ServiceProvider } from '@coffic/cosy-framework';
 import { Router } from './Router.js';
 
 export class RouteServiceProvider extends ServiceProvider {

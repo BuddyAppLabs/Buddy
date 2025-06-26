@@ -2,7 +2,7 @@
  * 键盘门面
  * 提供静态方法访问键盘服务
  */
-import { Application } from '@coffic/cosy';
+import { Application } from '@coffic/cosy-framework';
 import { KeyboardContract } from '../contracts/KeyboardContract.js';
 
 export class Keyboard {

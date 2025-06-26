@@ -320,7 +320,7 @@ AI_SAVE_HISTORY=true
  */
 
 import { app } from 'electron';
-import { Application } from '@coffic/cosy';
+import { Application } from '@coffic/cosy-framework';
 import { 
     ConfigServiceProvider,
     AppServiceProvider,

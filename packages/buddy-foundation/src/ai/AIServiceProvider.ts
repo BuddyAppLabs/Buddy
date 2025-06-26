@@ -2,7 +2,7 @@
  * AI服务提供者
  * 负责注册AI管理器相关的服务
  */
-import { ServiceProvider } from '@coffic/cosy';
+import { ServiceProvider } from '@coffic/cosy-framework';
 import { AIManager } from './AIManager.js';
 import { AIContract } from './contracts/AIContract.js';
 
