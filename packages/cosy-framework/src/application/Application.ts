@@ -83,7 +83,7 @@ export class Application extends EventEmitter {
         // 启动所有服务提供者
         for (const provider of this._providers) {
             if (provider.boot) {
-                console.log(`${EMOJI} [Application] 启动服务提供者`, provider);
+                console.log(`${EMOJI} [Application] 启动服务提供者`, provider.constructor.name);
                 await provider.boot();
             }
         }

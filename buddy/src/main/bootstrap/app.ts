@@ -5,9 +5,8 @@
  */
 
 import { app } from 'electron';
-import { appManager } from '../managers/AppManager.js';
 import { registerRoutes } from '../routes/index.js';
-import { LogServiceProvider, WindowServiceProvider, RouteServiceProvider, Plugin, KeyboardServiceProvider, AppServiceProvider, AIServiceProvider, PluginServiceProvider, McpServiceProvider, MarketServiceProvider, Log } from '@coffic/buddy-foundation';
+import { LogServiceProvider, WindowServiceProvider, RouteServiceProvider, Plugin, KeyboardServiceProvider, AIServiceProvider, PluginServiceProvider, McpServiceProvider, MarketServiceProvider, Log } from '@coffic/buddy-foundation';
 import { ElectronAppConfig, Facade, createElectronApp } from '@coffic/cosy-framework';
 
 // 应用配置
@@ -20,7 +19,6 @@ const config: ElectronAppConfig = {
         LogServiceProvider,
         RouteServiceProvider, // 路由服务应该在基础服务之后注册
         KeyboardServiceProvider,
-        AppServiceProvider,
         AIServiceProvider,
         PluginServiceProvider,
         WindowServiceProvider,
@@ -49,9 +47,6 @@ export async function bootApplication(): Promise<void> {
         // 初始化Facades
         Log.setApp(application);
         Plugin.setApp(application);
-
-        // 启动应用管理器
-        // await appManager.start();
 
         // 等待插件系统初始化完成
         await Plugin.initialize();

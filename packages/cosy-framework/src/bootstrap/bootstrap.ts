@@ -23,7 +23,7 @@ export interface ElectronAppConfig extends ApplicationConfig {
  * 创建 Electron 应用
  * @param config 应用配置
  */
-export function createElectronApp(config: ElectronAppConfig): Application {
+export async function createElectronApp(config: ElectronAppConfig): Promise<Application> {
     const defaultProviders = [
         ConfigServiceProvider,
     ];
@@ -53,35 +53,18 @@ export function createElectronApp(config: ElectronAppConfig): Application {
         });
     }
 
+    setupIPCHandlers();
+
+    await app.boot();
+
     return app;
 }
-
-/**
- * 启动 Electron 应用
- * @param config 应用配置
- */
-// export async function bootElectronApp(config: ElectronAppConfig): Promise<Application> {
-//     console.log(`${EMOJI} [Bootstrap] 启动 Electron 应用`);
-
-//     const app = createElectronApp(config);
-
-//     await app.boot();
-
-//     console.log(`${EMOJI} [Bootstrap] 应用启动完成`);
-
-//     // 设置 IPC 处理器
-//     setupIPCHandlers();
-
-//     await app.run();
-
-//     return app;
-// }
 
 /**
  * 设置 IPC 处理器
  */
 function setupIPCHandlers(): void {
-    console.log(`${EMOJI} 设置 IPC 处理器`);
+    console.log(`${EMOJI} [Bootstrap] 设置 IPC 处理器`);
     const router = Router.getInstance();
 
     // 处理所有 IPC 调用

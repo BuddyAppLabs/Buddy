@@ -31,9 +31,10 @@ export class WindowServiceProvider extends ServiceProvider {
      * 启动窗口管理服务
      */
     public async boot(): Promise<void> {
+        console.log('🏢 boot window service provider');
         // 在启动阶段设置配置
         const windowConfig = {
-            showTrafficLights: false,
+            showTrafficLights: true,
             showDebugToolbar: process.env.NODE_ENV === 'development',
             debugToolbarPosition: 'right',
             hotkey: 'Option+Space',
@@ -54,5 +55,7 @@ export class WindowServiceProvider extends ServiceProvider {
 
         // 设置全局快捷键
         windowManager.setupGlobalShortcut();
+
+        windowManager.createWindow();
     }
 } 

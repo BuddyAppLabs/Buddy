@@ -18,9 +18,6 @@ export * from './log/index.js';
 // 插件模块
 export * from './plugin/index.js';
 
-// 应用模块
-export * from './app/index.js';
-
 // 路由模块
 export * from './routing/index.js';
 
@@ -32,6 +29,5 @@ export { WindowFacade } from './window/WindowFacade.js';
 export { WindowServiceProvider } from './window/WindowServiceProvider.js';
 
 // 导出所有服务提供者
-export { AppServiceProvider } from './app/AppServiceProvider.js';
 export { AIServiceProvider } from './ai/AIServiceProvider.js';
 export { RouteServiceProvider } from './routing/RouteServiceProvider.js';
