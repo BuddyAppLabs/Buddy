@@ -6,6 +6,7 @@
 import { EventEmitter } from 'events';
 import { ServiceContainer } from '../container/ServiceContainer.js';
 import { ServiceProvider } from '../providers/ServiceProvider.js';
+import { EMOJI } from '../constants.js';
 
 export interface ApplicationConfig {
     name: string;
@@ -24,6 +25,9 @@ export class Application extends EventEmitter {
 
     private constructor(config: ApplicationConfig) {
         super();
+
+        console.log(`${EMOJI} [Application] 创建应用实例`);
+
         this._config = config;
         this._container = ServiceContainer.getInstance();
         this.registerBaseBindings();
@@ -57,10 +61,10 @@ export class Application extends EventEmitter {
         const providerInstance = new provider(this);
         this._providers.push(providerInstance);
 
-        // 如果应用已启动，立即注册
-        if (this._booted) {
-            providerInstance.register();
-        }
+
+        console.log(`${EMOJI} [Application] 注册服务提供者`, provider.name);
+        providerInstance.register();
+
 
         return this;
     }
@@ -69,20 +73,17 @@ export class Application extends EventEmitter {
      * 启动应用
      */
     public async boot(): Promise<void> {
+        console.log(`${EMOJI} [Application] 启动应用`);
         if (this._booted) {
             return;
         }
 
         this.emit('booting');
 
-        // 注册所有服务提供者
-        for (const provider of this._providers) {
-            provider.register();
-        }
-
         // 启动所有服务提供者
         for (const provider of this._providers) {
             if (provider.boot) {
+                console.log(`${EMOJI} [Application] 启动服务提供者`, provider);
                 await provider.boot();
             }
         }

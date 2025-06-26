@@ -6,6 +6,7 @@
 import { ConfigManager, ConfigLoaderOptions, ConfigValue, ConfigObject, ConfigLoader } from './types.js';
 import { Repository } from './Repository.js';
 import { Loader } from './Loader.js';
+import { EMOJI } from '../constants.js';
 
 export class Manager implements ConfigManager {
     /** 配置仓库 */
@@ -251,7 +252,7 @@ export class Manager implements ConfigManager {
      */
     private ensureInitialized(): void {
         if (!this.initialized) {
-            throw new Error('配置系统尚未初始化，请先调用 initialize() 方法');
+            throw new Error(`${EMOJI} 配置系统尚未初始化，请先调用 initialize() 方法`);
         }
     }
 

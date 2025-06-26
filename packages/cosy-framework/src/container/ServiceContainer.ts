@@ -4,6 +4,8 @@
  * 负责管理应用中所有服务的注册、解析和生命周期
  */
 
+import { EMOJI } from '../constants.js';
+
 export type ServiceFactory<T = any> = (container: ServiceContainer) => T;
 export type ServiceResolver<T = any> = () => T;
 
@@ -85,7 +87,11 @@ export class ServiceContainer {
 
         const binding = this.bindings.get(realAbstract);
         if (!binding) {
-            throw new Error(`Service [${abstract}] not found in container.`);
+            console.log(`${EMOJI} [ServiceContainer] 所有绑定:`);
+            console.log(Array.from(this.bindings.entries())
+                .map(([key, value]) => `  🔗 ${key}: ${value.factory.name || '匿名函数'}`)
+                .join('\n'));
+            throw new Error(`${EMOJI} [ServiceContainer] 服务 [${abstract}] 未找到`);
         }
 
         // 如果是单例且已有实例，直接返回

@@ -2,7 +2,8 @@
  * 配置服务提供者
  */
 
-import { ServiceProvider, Application } from '../index.js';
+import { ServiceProvider } from '../providers/ServiceProvider.js';
+import { Application } from '../application/Application.js';
 import { ConfigManager, ConfigLoaderOptions } from './types.js';
 import { Manager } from './Manager.js';
 import { Config } from './facades/Config.js';

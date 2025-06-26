@@ -28,7 +28,7 @@ export function createElectronApp(config: ElectronAppConfig): Application {
         ConfigServiceProvider,
     ];
 
-    console.log(`${EMOJI} 创建 Electron 应用，内置的服务提供者：\n    ➡️  ${defaultProviders.map(provider => provider.name).join('\n')}`);
+    console.log(`${EMOJI} [Bootstrap] 创建 Electron 应用，内置的服务提供者：\n    ➡️  ${defaultProviders.map(provider => provider.name).join('\n')}`);
 
     const finalConfig = {
         ...config,
@@ -49,9 +49,9 @@ export function createElectronApp(config: ElectronAppConfig): Application {
     }
 
     // 注册服务提供者
-    if (config.providers) {
-        config.providers.forEach(provider => {
-            console.log(`${EMOJI} 注册服务提供者`, provider);
+    if (finalConfig.providers) {
+        console.log(`${EMOJI} [Bootstrap] 注册服务提供者`, finalConfig.providers);
+        finalConfig.providers.forEach(provider => {
             app.register(provider);
         });
     }
@@ -63,18 +63,22 @@ export function createElectronApp(config: ElectronAppConfig): Application {
  * 启动 Electron 应用
  * @param config 应用配置
  */
-export async function bootElectronApp(config: ElectronAppConfig): Promise<Application> {
-    const app = createElectronApp(config);
+// export async function bootElectronApp(config: ElectronAppConfig): Promise<Application> {
+//     console.log(`${EMOJI} [Bootstrap] 启动 Electron 应用`);
 
-    await app.boot();
+//     const app = createElectronApp(config);
 
-    // 设置 IPC 处理器
-    setupIPCHandlers();
+//     await app.boot();
 
-    await app.run();
+//     console.log(`${EMOJI} [Bootstrap] 应用启动完成`);
 
-    return app;
-}
+//     // 设置 IPC 处理器
+//     setupIPCHandlers();
+
+//     await app.run();
+
+//     return app;
+// }
 
 /**
  * 设置 IPC 处理器
