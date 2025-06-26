@@ -12,58 +12,61 @@ import { createViewArgs } from '@/types/args.js';
 
 const logger = console;
 
-// 打开文件夹
-Route.handle(IPC_METHODS.Open_Folder, (_event, directory: string): IpcResponse<string> => {
-    logger.debug(`打开: ${directory}`);
-    try {
-        shell.openPath(directory);
-        return { success: true, data: "打开成功" };
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        return { success: false, error: errorMessage };
-    }
-})
-    .validation({
-        '0': { required: true, type: 'string' }
+export function registerCommonRoutes(): void {
+
+    // 打开文件夹
+    Route.handle(IPC_METHODS.Open_Folder, (_event, directory: string): IpcResponse<string> => {
+        logger.debug(`打开: ${directory}`);
+        try {
+            shell.openPath(directory);
+            return { success: true, data: "打开成功" };
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            return { success: false, error: errorMessage };
+        }
     })
-    .description('打开指定的文件夹');
+        .validation({
+            '0': { required: true, type: 'string' }
+        })
+        .description('打开指定的文件夹');
 
-// 创建视图
-Route.handle(IPC_METHODS.Create_View, (_event, bounds): Promise<unknown> => {
-    return viewManager.createView(bounds);
-})
-    .description('创建新的视图');
-
-// 销毁视图
-Route.handle(IPC_METHODS.Destroy_View, (_event, id): void => {
-    return viewManager.destroyView(id);
-})
-    .validation({
-        '0': { required: true, type: 'string' }
+    // 创建视图
+    Route.handle(IPC_METHODS.Create_View, (_event, bounds): Promise<unknown> => {
+        return viewManager.createView(bounds);
     })
-    .description('销毁指定的视图');
+        .description('创建新的视图');
 
-// 销毁所有插件视图
-Route.handle(IPC_METHODS.Destroy_Plugin_Views, (_event): void => {
-    return viewManager.destroyAllViews();
-})
-    .description('销毁所有插件视图');
-
-// 更新视图边界
-Route.handle(IPC_METHODS.Update_View_Bounds, (_event, id, bounds): void => {
-    return viewManager.updateViewPosition(id, bounds);
-})
-    .validation({
-        '0': { required: true, type: 'string' },
-        '1': { required: true, type: 'object' }
+    // 销毁视图
+    Route.handle(IPC_METHODS.Destroy_View, (_event, id): void => {
+        return viewManager.destroyView(id);
     })
-    .description('更新视图的位置和大小');
+        .validation({
+            '0': { required: true, type: 'string' }
+        })
+        .description('销毁指定的视图');
 
-// 更新或插入视图
-Route.handle(IPC_METHODS.UPSERT_VIEW, (_event, args: createViewArgs): Promise<void> => {
-    return viewManager.upsertView(args);
-})
-    .validation({
-        '0': { required: true, type: 'object' }
+    // 销毁所有插件视图
+    Route.handle(IPC_METHODS.Destroy_Plugin_Views, (_event): void => {
+        return viewManager.destroyAllViews();
     })
-    .description('更新或插入视图'); 
+        .description('销毁所有插件视图');
+
+    // 更新视图边界
+    Route.handle(IPC_METHODS.Update_View_Bounds, (_event, id, bounds): void => {
+        return viewManager.updateViewPosition(id, bounds);
+    })
+        .validation({
+            '0': { required: true, type: 'string' },
+            '1': { required: true, type: 'object' }
+        })
+        .description('更新视图的位置和大小');
+
+    // 更新或插入视图
+    Route.handle(IPC_METHODS.UPSERT_VIEW, (_event, args: createViewArgs): Promise<void> => {
+        return viewManager.upsertView(args);
+    })
+        .validation({
+            '0': { required: true, type: 'object' }
+        })
+        .description('更新或插入视图');
+}

@@ -7,8 +7,11 @@ import { Route } from '@coffic/buddy-foundation';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { appStateManager } from '../managers/StateManager.js';
 
-// 获取当前覆盖的应用
-Route.handle(IPC_METHODS.Get_Current_App, (_event) => {
-    return appStateManager.getOverlaidApp();
-})
-    .description('获取当前被覆盖的应用信息'); 
+export function registerStateRoutes(): void {
+
+    // 获取当前覆盖的应用
+    Route.handle(IPC_METHODS.Get_Current_App, (_event) => {
+        return appStateManager.getOverlaidApp();
+    })
+        .description('获取当前被覆盖的应用信息');
+}

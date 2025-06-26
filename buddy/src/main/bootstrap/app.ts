@@ -6,9 +6,10 @@
 
 import { app } from 'electron';
 import { bootElectronApp, type ElectronAppConfig } from '@coffic/cosy';
-import { LogServiceProvider, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider, PluginServiceProvider, AppServiceProvider, ConfigServiceProvider, AIServiceProvider, Log, Config, AI, RouteServiceProvider } from '@coffic/buddy-foundation';
+import { LogServiceProvider, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider, PluginServiceProvider, AppServiceProvider, ConfigServiceProvider, AIServiceProvider, Log, Config, AI, RouteServiceProvider, Router } from '@coffic/buddy-foundation';
 import { appManager } from '../managers/AppManager.js';
 import { WindowServiceProvider } from '../providers/WindowServiceProvider.js';
+import { registerRoutes } from '../routes/index.js';
 
 // 应用配置
 const config: ElectronAppConfig = {
@@ -50,6 +51,9 @@ export async function bootApplication(): Promise<void> {
 
         // 启动应用管理器
         await appManager.start();
+
+        // 注册所有路由
+        registerRoutes();
 
         console.log('✅ 应用启动完成');
         console.log(`  ➡️ 环境: ${config.env}`);

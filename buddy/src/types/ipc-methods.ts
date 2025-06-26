@@ -2,60 +2,70 @@
  * IPC 通信中的方法名称常量
  */
 export const IPC_METHODS = {
-  // 基础功能
-  Open_Folder: 'open-folder',
-  Create_View: 'create-view',
-  Destroy_View: 'destroy-view',
-  Destroy_Plugin_Views: 'destroy-plugin-views',
-  Update_View_Bounds: 'update-view-bounds',
-  UPSERT_VIEW: 'upsert-view',
+  // Views 相关的路由
+  Create_View: 'views/create',
+  Destroy_View: 'views/destroy',
+  Update_View_Bounds: 'views/update-bounds',
+  UPSERT_VIEW: 'views/upsert',
 
-  // 插件相关
-  Plugin_Is_Installed: 'plugin-is-installed',
-  GET_ACTIONS: 'get-plugin-actions',
-  Get_PLUGIN_PAGE_SOURCE_CODE: 'get-plugin-page-source-code',
-  EXECUTE_PLUGIN_ACTION: 'execute-plugin-action',
-  GET_ACTION_VIEW: 'get-action-view',
-  CREATE_PLUGIN_VIEW: 'create-plugin-view',
-  SHOW_PLUGIN_VIEW: 'show-plugin-view',
-  HIDE_PLUGIN_VIEW: 'hide-plugin-view',
-  DESTROY_PLUGIN_VIEW: 'destroy-plugin-view',
-  TOGGLE_PLUGIN_DEVTOOLS: 'toggle-plugin-devtools',
+  // Folders 相关的路由
+  Open_Folder: 'folders/open',
 
-  // 插件商店相关
-  GET_USER_PLUGINS: 'plugin:getStorePlugins',
-  GET_DEV_PLUGINS: 'plugin:getDevPlugins',
-  GET_REMOTE_PLUGINS: 'plugin:getRemotePlugins',
-  DOWNLOAD_PLUGIN: 'plugin:downloadPlugin',
-  GET_PLUGIN_DIRECTORIES: 'plugin:getUserPluginDirectory',
-  GET_PLUGINS: 'plugin:getPlugins',
-  UNINSTALL_PLUGIN: 'plugin:uninstallPlugin',
-  OPEN_PLUGIN_DIRECTORY: 'plugin:openDirectory',
+  // Plugins 相关的路由
+  GET_PLUGINS: 'plugins',
+  Plugin_Is_Installed: 'plugins/status',
+  GET_ACTIONS: 'plugins/actions',
+  EXECUTE_PLUGIN_ACTION: 'plugins/actions/execute',
+  GET_ACTION_VIEW: 'plugins/actions/view',
 
-  // 被覆盖的应用
-  Get_Current_App: 'overlaid-app:getCurrent',
+  // Plugin Views 相关的路由
+  CREATE_PLUGIN_VIEW: 'plugins/views',
+  SHOW_PLUGIN_VIEW: 'plugins/views/show',
+  HIDE_PLUGIN_VIEW: 'plugins/views/hide',
+  DESTROY_PLUGIN_VIEW: 'plugins/views/destroy',
+  Destroy_Plugin_Views: 'plugins/views/destroy',
 
-  // AI功能相关
-  AI_CHAT: 'ai:chat',
+  // Plugin DevTools 相关的路由
+  TOGGLE_PLUGIN_DEVTOOLS: 'plugins/devtools/toggle',
 
-  // 流式AI聊天相关
-  AI_CHAT_SEND: 'ai:chatSend',
-  AI_CHAT_STREAM_CHUNK: 'ai:chatStreamChunk',
-  AI_CHAT_STREAM_DONE: 'ai:chatStreamDone',
-  AI_CHAT_CANCEL: 'ai:chatCancel',
+  // Plugin Pages 相关的路由
+  Get_PLUGIN_PAGE_SOURCE_CODE: 'plugins/pages/source',
 
-  // 配置管理相关
-  CONFIG_GET_ALL: 'config:getAll',
-  CONFIG_GET: 'config:get',
-  CONFIG_SET: 'config:set',
-  CONFIG_DELETE: 'config:delete',
-  CONFIG_RESET: 'config:reset',
-  CONFIG_GET_PATH: 'config:getPath',
+  // Plugin Store 相关的路由
+  GET_USER_PLUGINS: 'plugins/store',
+  GET_DEV_PLUGINS: 'plugins/dev',
+  GET_REMOTE_PLUGINS: 'plugins/remote',
+  DOWNLOAD_PLUGIN: 'plugins/download',
+  UNINSTALL_PLUGIN: 'plugins/uninstall',
 
-  // 开发测试相关方法
-  DEV_TEST_ECHO: 'dev:test:echo',           // 回显测试
-  DEV_TEST_ERROR: 'dev:test:error',         // 错误处理测试
-  DEV_TEST_STREAM: 'dev:test:stream',       // 流处理测试
+  // Plugin Directories 相关的路由
+  GET_PLUGIN_DIRECTORIES: 'plugins/directories',
+  OPEN_PLUGIN_DIRECTORY: 'plugins/directories/open',
+
+  // Overlaid Apps 相关的路由
+  Get_Current_App: 'overlaid-apps/current',
+
+  // AI Chats 相关的路由
+  AI_CHAT: 'ai/chats',
+  AI_CHAT_SEND: 'ai/chats/messages',
+  AI_CHAT_CANCEL: 'ai/chats/cancel',
+
+  // AI Chat Streams 相关的路由
+  AI_CHAT_STREAM_CHUNK: 'ai/chats/streams/chunks',
+  AI_CHAT_STREAM_DONE: 'ai/chats/streams/completion',
+
+  // Configs 相关的路由
+  CONFIG_GET_ALL: 'configs',
+  CONFIG_GET: 'configs/items',
+  CONFIG_SET: 'configs/items',
+  CONFIG_DELETE: 'configs/items',
+  CONFIG_RESET: 'configs/reset',
+  CONFIG_GET_PATH: 'configs/path',
+
+  // Dev Tests 相关的路由
+  DEV_TEST_ECHO: 'dev/tests/echo',           // 回显测试
+  DEV_TEST_ERROR: 'dev/tests/errors',        // 错误处理测试
+  DEV_TEST_STREAM: 'dev/tests/streams',      // 流处理测试
 } as const;
 
 /**
