@@ -6,6 +6,7 @@ import { join } from 'path';
 import fs from 'fs';
 import { PluginRepoContract } from '../contracts/PluginRepoContract.js';
 import { PluginEntity } from '../entities/PluginEntity.js';
+import { EMOJI } from '../../constants.js';
 
 const verbose = true;
 const logger = console;
@@ -38,7 +39,7 @@ export abstract class BasePluginRepo implements PluginRepoContract {
      */
     public async getAllPlugins(): Promise<PluginEntity[]> {
         if (verbose) {
-            logger.info('获取插件列表，根目录是', this.rootDir);
+            logger.info(`${EMOJI} [BasePluginRepo] 获取插件列表，根目录是`, this.rootDir);
         }
 
         if (!fs.existsSync(this.rootDir)) {
@@ -69,7 +70,7 @@ export abstract class BasePluginRepo implements PluginRepoContract {
                 return [];
             } else {
                 if (verbose) {
-                    logger.info('有效的插件数量', validPlugins.length);
+                    logger.info(`${EMOJI} [BasePluginRepo] 有效的插件数量`, validPlugins.length);
                 }
             }
 
@@ -78,7 +79,7 @@ export abstract class BasePluginRepo implements PluginRepoContract {
 
             return validPlugins;
         } catch (error) {
-            logger.error('获取插件列表失败', error);
+            logger.error(`${EMOJI} [BasePluginRepo] 获取插件列表失败`, error);
             return [];
         }
     }
@@ -99,7 +100,7 @@ export abstract class BasePluginRepo implements PluginRepoContract {
             const plugins = await this.getAllPlugins();
             return plugins.find((plugin) => plugin.id === id) || null;
         } catch (error) {
-            logger.error(`查找插件失败: ${id}`, error);
+            logger.error(`${EMOJI} [BasePluginRepo] 查找插件失败: ${id}`, error);
             return null;
         }
     }
@@ -109,11 +110,11 @@ export abstract class BasePluginRepo implements PluginRepoContract {
      */
     public async has(id: string): Promise<boolean> {
         if (typeof id !== 'string') {
-            logger.error('插件ID必须是字符串, 但是传入的是', id);
+            logger.error(`${EMOJI} [BasePluginRepo] 插件ID必须是字符串, 但是传入的是`, id);
             throw new Error('插件ID必须是字符串');
         }
 
-        logger.debug('检查插件是否存在', id);
+        logger.debug(`${EMOJI} [BasePluginRepo] 检查插件是否存在`, id);
 
         return (await this.getAllPlugins()).some((plugin) => plugin.id === id);
     }

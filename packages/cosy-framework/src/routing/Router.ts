@@ -1,9 +1,12 @@
 /**
- * 路由器类
- * 负责管理路由集合、分组和路由注册，类似Laravel的Router
+ * 关于 'electron' 模块导入的注意事项:
+ * 本模块为 ESM, 而 'electron' 是 CJS 模块。直接使用 `import { ipcMain } from 'electron'` 会因模块系统不兼容而出错。
+ * 必须使用 `import electron from 'electron'` 或 `import { default as electron } from 'electron'`
+ * 之后再解构 `const { ipcMain } = electron` 来获取 `ipcMain`。
  */
 
-import { ipcMain, IpcMainInvokeEvent } from 'electron';
+import { default as electron, IpcMainInvokeEvent } from 'electron';
+const { ipcMain } = electron;
 import { RouteConfig, RouteGroup, Middleware, RouteHandler } from './types.js';
 import { Route } from './Route.js';
 import { Validator } from './Validator.js';

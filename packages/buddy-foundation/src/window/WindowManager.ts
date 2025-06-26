@@ -74,7 +74,6 @@ export class WindowManager implements WindowManagerContract {
      * 创建主窗口
      */
     createWindow(): BrowserWindow {
-        console.log(`${EMOJI} [WindowManager] 创建主窗口`, this.config);
         try {
             // 创建浏览器窗口
             this.mainWindow = new BrowserWindow({
