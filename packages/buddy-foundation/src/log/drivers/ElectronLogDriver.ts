@@ -37,28 +37,50 @@ export class ElectronLogChannel implements LogChannelContract {
     }
 
     log(level: LogLevel, message: string, context?: LogContext): void {
-        // 根据配置的格式化方式处理日志
-        const formattedMessage = this.formatMessage(message, context);
+        // 根据日志级别选择颜色
+        let colorizer = (str: string) => str;
+        switch (level) {
+            case LogLevel.DEBUG:
+                colorizer = chalk.gray;
+                break;
+            case LogLevel.INFO:
+                colorizer = chalk.green;
+                break;
+            case LogLevel.WARN:
+                colorizer = chalk.yellow;
+                break;
+            case LogLevel.ERROR:
+                colorizer = chalk.red;
+                break;
+        }
+
+        // 根据配置的格式化方式处理日志，并应用颜色
+        const formattedMessage = this.formatMessage(message, context, colorizer);
 
         // 根据日志级别调用对应的方法
         switch (level) {
             case LogLevel.DEBUG:
-                console.debug(chalk.gray(formattedMessage));
+                console.debug(formattedMessage);
                 break;
             case LogLevel.INFO:
-                console.info(chalk.green(formattedMessage));
+                console.info(formattedMessage);
                 break;
             case LogLevel.WARN:
-                console.warn(chalk.yellow(formattedMessage));
+                console.warn(formattedMessage);
                 break;
             case LogLevel.ERROR:
-                console.error(chalk.red(formattedMessage));
+                console.error(formattedMessage);
                 break;
         }
     }
 
-    private formatMessage(message: string, context?: LogContext): string {
+    private formatMessage(
+        message: string,
+        context: LogContext | undefined,
+        colorize: (str: string) => string
+    ): string {
         const format = this.config.format || 'simple';
+        const contextStr = context ? ` ${chalk.dim(JSON.stringify(context))}` : '';
 
         switch (format) {
             case 'json':
@@ -71,12 +93,12 @@ export class ElectronLogChannel implements LogChannelContract {
 
             case 'structured':
                 const timestamp = this.config.includeTimestamp === false ? '' : ` [${new Date().toISOString()}]`;
-                const contextStr = context ? ` ${JSON.stringify(context)}` : '';
-                return `[${this.channelName}]${timestamp} ${message}${contextStr}`;
+                const mainMessage = `[${this.channelName}]${timestamp} ${message}`;
+                return colorize(mainMessage) + contextStr;
 
             case 'simple':
             default:
-                return context ? `${message} ${JSON.stringify(context)}` : message;
+                return colorize(message) + contextStr;
         }
     }
 }
