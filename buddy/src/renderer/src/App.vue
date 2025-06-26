@@ -27,46 +27,82 @@ import Confirm from './cosy/Confirm.vue'
 import Toast from './cosy/Toast.vue'
 import Alert from './cosy/Alert.vue'
 import Progress from './cosy/Progress.vue'
-import { useActionStore } from './stores/actionStore'
+import { useActionStore } from '@renderer/stores/actionStore'
 import { useMarketStore } from './stores/marketStore'
 import { globalConfirm } from './composables/useConfirm'
 import { globalToast } from './composables/useToast'
 import { globalAlert } from './composables/useAlert'
 import { globalProgress } from './composables/useProgress'
-import { useAppStore } from './stores/appStore'
+import { useAppStore } from '@renderer/stores/appStore'
+import ErrorNotification from '@renderer/components/ErrorNotification.vue'
+import { useErrorStore } from '@renderer/stores/errorStore'
 
 const actionStore = useActionStore()
 const marketStore = useMarketStore()
 const appStore = useAppStore()
+const errorStore = useErrorStore()
 const content = ref<HTMLElement | null>(null)
 
+// 全局错误处理
+const handleGlobalError = (event: ErrorEvent) => {
+    errorStore.addError(event.error || event.message)
+}
+
+const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+    errorStore.addError(event.reason?.message || '未处理的 Promise 错误')
+}
+
 // 在组件加载时注册消息监听和初始化
-onMounted(() => {
-    actionStore.onMounted()
-    appStore.onMounted()
-    marketStore.onMounted()
+onMounted(async () => {
+    // 检查IPC是否正常
+    if (!window.ipc) {
+        errorStore.addError('IPC 初始化失败')
+        return
+    }
 
-    // 监听内容区域的滚动事件
-    if (content.value) {
-        content.value.addEventListener('scroll', () => {
-            // 获取滚动的位置
-            const scrollTop = content.value!.scrollTop;
-            const scrollLeft = content.value!.scrollLeft;
-            // 打印滚动位置
-            // logger.info('content 滚动事件', { scrollTop, scrollLeft })
+    try {
+        window.addEventListener('error', handleGlobalError)
+        window.addEventListener('unhandledrejection', handleUnhandledRejection)
 
-            // 发出自定义事件
-            const contentScrollEvent = new CustomEvent('content-scroll', {
-                detail: { scrollTop, scrollLeft }
+        // 初始化 stores
+        try {
+            await appStore.onMounted()
+        } catch (error) {
+            errorStore.addError('应用初始化失败: ' + (error instanceof Error ? error.message : String(error)))
+        }
 
-            });
-            document.dispatchEvent(contentScrollEvent);
-        })
+        try {
+            await actionStore.onMounted()
+        } catch (error) {
+            errorStore.addError('动作列表加载失败: ' + (error instanceof Error ? error.message : String(error)))
+        }
+
+        // 监听内容区域的滚动事件
+        if (content.value) {
+            content.value.addEventListener('scroll', () => {
+                // 获取滚动的位置
+                const scrollTop = content.value!.scrollTop
+                const scrollLeft = content.value!.scrollLeft
+                // 打印滚动位置
+                // logger.info('content 滚动事件', { scrollTop, scrollLeft })
+
+                // 发出自定义事件
+                const contentScrollEvent = new CustomEvent('content-scroll', {
+                    detail: { scrollTop, scrollLeft }
+                })
+                document.dispatchEvent(contentScrollEvent)
+            })
+        }
+    } catch (error) {
+        errorStore.addError(error instanceof Error ? error.message : String(error))
     }
 })
 
 // 在组件卸载时清理消息监听
 onUnmounted(() => {
+    window.removeEventListener('error', handleGlobalError)
+    window.removeEventListener('unhandledrejection', handleUnhandledRejection)
+
     appStore.onUnmounted()
     actionStore.onUnmounted()
     marketStore.onUnmounted()
@@ -104,6 +140,8 @@ onUnmounted(() => {
         <div class="h-10 z-50 border-t border-base-200 dark:border-base-300 no-drag-region">
             <StatusBar />
         </div>
+
+        <ErrorNotification />
     </div>
 
     <!-- 全局确认对话框 -->

@@ -62,7 +62,7 @@ export const useAppStore = defineStore('app', {
     // 初始化窗口激活状态监听器
     setupWindowActiveListeners() {
       // 监听窗口激活事件
-      ipc.receive(AppEvents.ActIVATED, () => {
+      ipc.receive(AppEvents.ACTIVATED, () => {
         this.setActiveState(true);
       });
 
@@ -76,7 +76,7 @@ export const useAppStore = defineStore('app', {
     cleanupWindowActiveListeners() {
       // 移除监听器
       ipc.removeListener(AppEvents.OVERLAID_APP_CHANGED, () => { });
-      ipc.removeListener(AppEvents.ActIVATED, () => { });
+      ipc.removeListener(AppEvents.ACTIVATED, () => { });
       ipc.removeListener(AppEvents.DEACTIVATED, () => { });
     },
   },

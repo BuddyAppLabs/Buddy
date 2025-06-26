@@ -60,7 +60,7 @@ class StateManager extends BaseManager {
     // 监听应用激活事件
     app.on('activate', () => {
       logger.info(`${EMOJI} [StateManager] 应用激活事件`);
-      this.emitAndBroadcast(AppEvents.ActIVATED);
+      this.emitAndBroadcast(AppEvents.ACTIVATED);
     });
 
     // 监听应用失去焦点事件
@@ -70,7 +70,7 @@ class StateManager extends BaseManager {
 
     // 添加窗口获得焦点事件监听
     app.on('browser-window-focus', () => {
-      this.emitAndBroadcast(AppEvents.ActIVATED);
+      this.emitAndBroadcast(AppEvents.ACTIVATED);
     });
   }
 

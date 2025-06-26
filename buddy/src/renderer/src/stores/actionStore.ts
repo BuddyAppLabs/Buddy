@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { logger } from '@renderer/utils/logger';
-import { actionIpc } from '../ipc/action-ipc';
+import { actionIpc } from '@renderer/ipc/action-ipc';
 import { AppEvents } from '@coffic/buddy-types';
 import { SendableAction } from '@/types/sendable-action';
+import { useErrorStore } from './errorStore';
 
 const ipc = window.ipc;
-const verbose = false;
 
 /**
  * Action 管理 Store
@@ -38,37 +38,34 @@ export const useActionStore = defineStore('action', {
 
     actions: {
         async onMounted() {
-            await this.loadList();
-            this.selected = this.list[0]?.globalId || null;
-            this.setupWindowActivationListener();
+            // 监听窗口激活事件，刷新列表
+            ipc.receive(AppEvents.ACTIVATED, () => {
+                // 使用上次的搜索关键词刷新列表
+                this.loadList();
+            });
 
-            logger.info('actionStore: onMounted, current selected: ', this.selected);
+            // 初始加载
+            await this.loadList();
         },
 
         onUnmounted() {
-            this.cleanupWindowActivationListener()
+            // 移除事件监听
+            ipc.removeListener(AppEvents.ACTIVATED);
         },
 
         /**
          * 加载动作列表
          */
-        async loadList(searchKeyword: string = '') {
-            // 如果没有提供搜索关键词，则使用store中的keyword
-            const keywordToUse = searchKeyword || this.keyword;
-
-            if (verbose) {
-                logger.info('actionStore: loadList', keywordToUse);
-            }
-
-            this.lastKeyword = keywordToUse; // 保存当前关键词
-
+        async loadList() {
             try {
                 this.isLoading = true;
-                this.list = await actionIpc.getActions(keywordToUse);
+                const result = await actionIpc.getActions(this.keyword);
+                this.list = result;
             } catch (error) {
-                logger.error('actionStore: loadList error: 🐛', error);
+                logger.error('actionStore: loadList error:', error);
+                const errorStore = useErrorStore();
+                errorStore.addError('加载动作列表失败: ' + (error instanceof Error ? error.message : String(error)));
                 this.list = [];
-                throw error;
             } finally {
                 this.isLoading = false;
             }
@@ -158,39 +155,13 @@ export const useActionStore = defineStore('action', {
         },
 
         /**
-         * 设置窗口激活状态监听
-         * 当窗口被激活时，刷新动作列表
-         */
-        setupWindowActivationListener() {
-            ipc.receive(AppEvents.ActIVATED, () => {
-                // 使用上次的搜索关键词刷新列表
-                this.loadList(this.lastKeyword);
-            });
-        },
-
-        /**
-         * 清理窗口激活状态监听
-         */
-        cleanupWindowActivationListener() {
-            ipc.removeListener(AppEvents.ActIVATED, () => { });
-        },
-
-        /**
          * 更新搜索关键词并触发插件动作加载
          */
-        async updateKeyword(keyword: string) {
-            logger.info(`actionStore: 更新关键词 "${keyword}"，触发插件动作加载`);
+        async search(keyword: string) {
             this.keyword = keyword;
+            this.lastKeyword = keyword;
             this.lastSearchTime = Date.now();
-            await this.loadList(keyword);
-        },
-
-        /**
-         * 仅设置关键词而不触发其他操作
-         */
-        setKeyword(keyword: string) {
-            logger.info(`actionStore: 设置关键词 "${keyword}" (不触发额外操作)`);
-            this.keyword = keyword;
+            await this.loadList();
         },
 
         /**
@@ -198,7 +169,8 @@ export const useActionStore = defineStore('action', {
          */
         clearSearch() {
             this.keyword = '';
-            this.loadList('');
+            this.lastKeyword = '';
+            this.loadList();
         },
 
         /**
