@@ -45,9 +45,6 @@ importers:
       '@coffic/active-app-monitor':
         specifier: ^1.0.2
         version: 1.0.2
-      '@coffic/buddy-foundation':
-        specifier: workspace:*
-        version: link:../packages/buddy-foundation
       '@coffic/buddy-types':
         specifier: workspace:*
         version: link:../packages/buddy-types
@@ -187,22 +184,6 @@ importers:
       vue-tsc:
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.8.2)
-
-  packages/buddy-foundation:
-    dependencies:
-      '@coffic/cosy-framework':
-        specifier: workspace:*
-        version: link:../cosy-framework
-      '@coffic/cosy-keyboard':
-        specifier: workspace:*
-        version: link:../cosy-keyboard
-      '@coffic/cosy-logger':
-        specifier: workspace:*
-        version: link:../cosy-logger
-    devDependencies:
-      typescript:
-        specifier: ^5.8.3
-        version: 5.8.3
 
   packages/buddy-types: {}
 

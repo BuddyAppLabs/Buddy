@@ -3,11 +3,12 @@
  * 处理插件的安装、卸载、查询等功能
  */
 
-import { userPluginDB, devPluginDB, Market } from '@coffic/buddy-foundation';
 import { remotePluginDB } from '../repo/PluginRepoRemote.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { RouteFacade } from '@coffic/cosy-framework';
+import { Market } from '../providers/market/index.js';
+import { devPluginDB, userPluginDB } from '../providers/plugin/index.js';
 
 export function registerMarketRoutes(): void {
     // 检查插件是否已安装

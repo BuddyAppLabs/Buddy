@@ -3,11 +3,11 @@
  */
 import { WebContentsView } from 'electron';
 import { is } from '@electron-toolkit/utils';
-import { WindowFacade } from '@coffic/buddy-foundation';
 import { join } from 'path';
 import { ViewBounds } from '@coffic/buddy-types';
 import { createViewArgs } from '@/types/args.js';
 import { readFileSync } from 'fs';
+import { WindowFacade } from '../providers/window/WindowFacade.js';
 
 const logger = console;
 

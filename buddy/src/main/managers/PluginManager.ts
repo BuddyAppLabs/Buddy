@@ -2,8 +2,8 @@
  * 插件管理器
  * 负责插件的加载、管理和通信
  */
+import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import { BaseManager } from './BaseManager.js';
-import { Plugin } from '@coffic/buddy-foundation';
 
 class PluginManager extends BaseManager {
     private static instance: PluginManager;
@@ -28,18 +28,18 @@ class PluginManager extends BaseManager {
      */
     async initialize(): Promise<void> {
         try {
-            await Plugin.initialize();
+            await PluginFacade.initialize();
         } catch (error) {
             this.handleError(error, '插件系统初始化失败', true);
         }
     }
 
     async getPlugins(): Promise<any[]> {
-        return await Plugin.getPlugins();
+        return await PluginFacade.getPlugins();
     }
 
     async getPlugin(pluginId: string): Promise<any | null> {
-        return await Plugin.getPlugin(pluginId);
+        return await PluginFacade.getPlugin(pluginId);
     }
 
     /**
@@ -62,7 +62,7 @@ class PluginManager extends BaseManager {
      */
     public cleanup(): void {
         try {
-            Plugin.cleanup();
+            PluginFacade.cleanup();
             this.removeAllListeners();
         } catch (error) {
             this.handleError(error, '插件系统清理失败');

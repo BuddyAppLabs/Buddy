@@ -6,17 +6,15 @@
 
 import { app } from 'electron';
 import { registerRoutes } from '../routes/index.js';
-import {
-    WindowServiceProvider,
-    PluginServiceProvider,
-    McpServiceProvider,
-    MarketServiceProvider,
-    AIServiceProvider,
-    Plugin
-} from '@coffic/buddy-foundation';
 import { LogServiceProvider } from '@coffic/cosy-logger';
 import { ElectronAppConfig, RouteFacade, createElectronApp, setupIPCHandlers } from '@coffic/cosy-framework';
 import { KeyboardServiceProvider } from '@coffic/cosy-keyboard';
+import { AIServiceProvider } from '../providers/ai/AIServiceProvider.js';
+import { McpServiceProvider } from '../providers/mcp/McpServiceProvider.js';
+import { MarketServiceProvider } from '../providers/market/MarketServiceProvider.js';
+import { PluginServiceProvider } from '../providers/plugin/PluginServiceProvider.js';
+import { PluginFacade } from '../providers/plugin/PluginFacade.js';
+import { WindowServiceProvider } from '../providers/window/WindowServiceProvider.js';
 
 // 应用配置
 const config: ElectronAppConfig = {
@@ -51,10 +49,10 @@ export async function bootApplication(): Promise<void> {
         const application = await createElectronApp(config);
 
         // 初始化Facades
-        Plugin.setApp(application);
+        PluginFacade.setApp(application);
 
         // 等待插件系统初始化完成
-        await Plugin.initialize();
+        await PluginFacade.initialize();
 
         // 注册所有路由
         registerRoutes();
