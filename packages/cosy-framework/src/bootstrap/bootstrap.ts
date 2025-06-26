@@ -71,8 +71,6 @@ export async function createElectronApp(config: ElectronAppConfig): Promise<Appl
 export function setupIPCHandlers(app: Application): void {
     console.log(`${EMOJI} [Bootstrap] 设置 IPC 处理器`);
     const router = app.container().resolve<Router>('router');
-    console.log(router)
-    console.log(`${EMOJI} [Bootstrap] 获取路由: ${router.getRoutes().size}`);
 
     // 处理所有 IPC 调用
     ipcMain.handle(IPC_CHANNELS.DISPATCH, async (event, channel: string, args: any[]) => {

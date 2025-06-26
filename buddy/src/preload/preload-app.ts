@@ -54,6 +54,7 @@ if (process.contextIsolated) {
         console.error(error);
     }
 } else {
+    console.log('====== 暴露IPC API到渲染进程', ipcApi);
     // @ts-ignore (define in dts)
     window.ipc = ipcApi;
 }
