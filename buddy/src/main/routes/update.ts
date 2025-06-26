@@ -4,7 +4,6 @@
  */
 
 import { RouteFacade } from '@coffic/buddy-foundation';
-import { BrowserWindow } from 'electron';
 import { updateManager } from '../managers/UpdateManager.js';
 
 export function registerUpdateRoutes(): void {

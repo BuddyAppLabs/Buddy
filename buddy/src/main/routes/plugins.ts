@@ -3,7 +3,6 @@
  */
 
 import { RouteFacade } from '@coffic/buddy-foundation';
-import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { pluginManager } from '../managers/PluginManager.js';
 
 export function registerPluginRoutes(): void {

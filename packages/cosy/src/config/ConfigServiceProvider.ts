@@ -1,9 +1,8 @@
 /**
- * Buddy Foundation 配置服务提供者
- * 将配置系统集成到Cosy框架中
+ * 配置服务提供者
  */
 
-import { ServiceProvider, Application } from '@coffic/cosy';
+import { ServiceProvider, Application } from '../index.js';
 import { ConfigManager, ConfigLoaderOptions } from './types.js';
 import { Manager } from './Manager.js';
 import { Config } from './facades/Config.js';
@@ -41,7 +40,7 @@ export class ConfigServiceProvider extends ServiceProvider {
     /**
      * 启动配置服务
      */
-    public async boot(): Promise<void> {
+    public override async boot(): Promise<void> {
         const manager = this.app.make<ConfigManager>('config');
 
         // 获取应用基础路径

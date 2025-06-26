@@ -7,6 +7,7 @@ import { Router } from '../router/Router.js';
 import { LoggingMiddleware, ErrorHandlingMiddleware } from '../middleware/builtins.js';
 import electron from 'electron';
 import { EMOJI, IPC_CHANNELS } from '../constants.js';
+import { ConfigServiceProvider } from '../config/ConfigServiceProvider.js';
 const { ipcMain } = electron;
 
 export interface ElectronAppConfig extends ApplicationConfig {
@@ -23,8 +24,18 @@ export interface ElectronAppConfig extends ApplicationConfig {
  * @param config 应用配置
  */
 export function createElectronApp(config: ElectronAppConfig): Application {
-    console.log(`${EMOJI} 创建 Electron 应用`);
-    const app = Application.getInstance(config);
+    const defaultProviders = [
+        ConfigServiceProvider,
+    ];
+
+    console.log(`${EMOJI} 创建 Electron 应用，内置的服务提供者：\n    ➡️  ${defaultProviders.map(provider => provider.name).join('\n')}`);
+
+    const finalConfig = {
+        ...config,
+        providers: [...defaultProviders, ...(config.providers || [])],
+    };
+
+    const app = Application.getInstance(finalConfig);
 
     // 注册全局中间件
     const router = Router.getInstance();

@@ -7,6 +7,9 @@
 export { Application, createApp, app } from './application/index.js';
 export { ServiceContainer, container } from './container/index.js';
 
+// Config
+export { Config } from './config/index.js';
+
 // Service Providers
 export { ServiceProvider } from './providers/index.js';
 

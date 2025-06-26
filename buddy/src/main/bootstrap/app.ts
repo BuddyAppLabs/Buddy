@@ -8,9 +8,8 @@ import { app } from 'electron';
 import { bootElectronApp, type ElectronAppConfig } from '@coffic/cosy';
 import {
     LogServiceProvider, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider,
-    PluginServiceProvider, AppServiceProvider, ConfigServiceProvider, AIServiceProvider, Log, Router, AI, RouteServiceProvider,
+    PluginServiceProvider, AppServiceProvider, AIServiceProvider, Log, RouteServiceProvider,
     Facade,
-    RouteFacade,
     Plugin
 } from '@coffic/buddy-foundation';
 import { appManager } from '../managers/AppManager.js';
@@ -24,7 +23,6 @@ const config: ElectronAppConfig = {
     env: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     debug: process.env.NODE_ENV !== 'production',
     providers: [
-        ConfigServiceProvider, // 配置服务必须最先注册
         LogServiceProvider,
         RouteServiceProvider, // 路由服务应该在基础服务之后注册
         KeyboardServiceProvider,
