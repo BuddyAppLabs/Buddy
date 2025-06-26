@@ -56,7 +56,7 @@ export async function bootApplication(): Promise<void> {
         console.log('✅ 应用启动完成');
         console.log(`  ➡️ 环境: ${config.env}`);
         console.log(`  ➡️ 调试模式: ${config.debug}`);
-        console.log(`  ➡️ 已注册的路由: ${RouteFacade.router.getRoutes().size}`);
+        console.log(`  ➡️ 已注册的路由: ${RouteFacade.getRoutes().size}`);
     } catch (error) {
         console.error('❌ 应用启动失败:', error);
         throw error;

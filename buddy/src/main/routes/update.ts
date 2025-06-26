@@ -3,7 +3,7 @@
  * 处理应用更新检查等功能
  */
 
-import { RouteFacade } from '@coffic/buddy-foundation';
+import { RouteFacade } from '@coffic/cosy-framework';
 import { updateManager } from '../managers/UpdateManager.js';
 
 export function registerUpdateRoutes(): void {

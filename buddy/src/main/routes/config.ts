@@ -3,7 +3,7 @@
  * 使用新的配置系统处理应用配置
  */
 
-import { RouteFacade } from '@coffic/buddy-foundation';
+import { RouteFacade } from '@coffic/cosy-framework';
 import { IpcResponse } from '@coffic/buddy-types';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { Config } from '@coffic/cosy-framework';

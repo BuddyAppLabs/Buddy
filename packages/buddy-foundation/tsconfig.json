@@ -13,8 +13,7 @@
         "declarationMap": true
     },
     "include": [
-        "src/**/*",
-        "../cosy-framework/src/routing"
+        "src/**/*"
     ],
     "exclude": [
         "node_modules",

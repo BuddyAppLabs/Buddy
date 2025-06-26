@@ -3,12 +3,12 @@
  * 处理基础的文件、视图操作等
  */
 
-import { RouteFacade } from '@coffic/buddy-foundation';
 import { shell } from 'electron';
 import { viewManager } from '../managers/ViewManager.js';
 import { IpcResponse } from '@coffic/buddy-types';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { createViewArgs } from '@/types/args.js';
+import { RouteFacade } from '@coffic/cosy-framework';
 
 const logger = console;
 

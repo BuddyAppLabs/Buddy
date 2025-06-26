@@ -9,6 +9,7 @@ import electron from 'electron';
 import { EMOJI, IPC_CHANNELS } from '../constants.js';
 import { ConfigServiceProvider } from '../config/ConfigServiceProvider.js';
 import { Facade } from '../facades/Facade.js';
+import { RouteServiceProvider } from '../routing/RouteServiceProvider.js';
 const { ipcMain } = electron;
 
 export interface ElectronAppConfig extends ApplicationConfig {
@@ -27,6 +28,7 @@ export interface ElectronAppConfig extends ApplicationConfig {
 export async function createElectronApp(config: ElectronAppConfig): Promise<Application> {
     const defaultProviders = [
         ConfigServiceProvider,
+        RouteServiceProvider
     ];
 
     const finalConfig = {
@@ -38,6 +40,15 @@ export async function createElectronApp(config: ElectronAppConfig): Promise<Appl
 
     Facade.setFacadeApplication(app);
 
+
+
+    // 注册服务提供者
+    if (finalConfig.providers) {
+        finalConfig.providers.forEach(provider => {
+            app.register(provider);
+        });
+    }
+
     // 注册全局中间件
     const router = app.container().resolve<Router>('router');
 
@@ -47,13 +58,6 @@ export async function createElectronApp(config: ElectronAppConfig): Promise<Appl
 
     if (config.middleware?.logging !== false) {
         router.use(LoggingMiddleware);
-    }
-
-    // 注册服务提供者
-    if (finalConfig.providers) {
-        finalConfig.providers.forEach(provider => {
-            app.register(provider);
-        });
     }
 
     await app.boot();

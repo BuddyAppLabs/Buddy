@@ -3,10 +3,11 @@
  * 处理AI聊天和流式通信
  */
 
-import { AI, RouteFacade } from '@coffic/buddy-foundation';
+import { AI } from '@coffic/buddy-foundation';
 import { v4 as uuidv4 } from 'uuid';
 import { ChatMessage, IpcResponse, StreamChunkResponse } from '@coffic/buddy-types';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
+import { RouteFacade } from '@coffic/cosy-framework';
 
 const logger = console;
 
