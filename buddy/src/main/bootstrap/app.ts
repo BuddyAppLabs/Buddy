@@ -7,7 +7,7 @@
 import { app } from 'electron';
 import { registerRoutes } from '../routes/index.js';
 import { LogServiceProvider, WindowServiceProvider, RouteServiceProvider, Plugin, KeyboardServiceProvider, AIServiceProvider, PluginServiceProvider, McpServiceProvider, MarketServiceProvider, Log } from '@coffic/buddy-foundation';
-import { ElectronAppConfig, Facade, createElectronApp } from '@coffic/cosy-framework';
+import { ElectronAppConfig, RouteFacade, createElectronApp, setupIPCHandlers } from '@coffic/cosy-framework';
 
 // 应用配置
 const config: ElectronAppConfig = {
@@ -52,10 +52,12 @@ export async function bootApplication(): Promise<void> {
         // 注册所有路由
         registerRoutes();
 
+        setupIPCHandlers(application);
+
         // 输出路由信息
-        // console.log("\n=== 已注册的路由 ===");
-        // console.log(RouteFacade.listRoutes().join('\n'));
-        // console.log("==================\n");
+        console.log("\n=== 已注册的路由 ===");
+        console.log(RouteFacade.router.getRoutes());
+        console.log("==================\n");
 
         console.log('✅ 应用启动完成');
         console.log(`  ➡️ 环境: ${config.env}`);

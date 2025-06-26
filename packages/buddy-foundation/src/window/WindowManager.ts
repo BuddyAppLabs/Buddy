@@ -6,9 +6,14 @@ import { shell, BrowserWindow, screen, globalShortcut, app } from 'electron';
 import { WindowConfig, WindowManagerContract } from '../contracts/window.js';
 import { EMOJI } from '../constants.js';
 import { is } from '@electron-toolkit/utils';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const verbose = false;
+
+// 获取当前文件的目录路径
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export class WindowManager implements WindowManagerContract {
     private mainWindow: BrowserWindow | null = null;
@@ -87,6 +92,9 @@ export class WindowManager implements WindowManagerContract {
                     nodeIntegration: false,
                     devTools: true,
                     spellcheck: false,
+                    preload: is.dev
+                        ? join(app.getAppPath(), 'out/preload/app-preload.mjs')
+                        : join(app.getAppPath(), 'dist/preload/app-preload.mjs'),
                 },
             });
 
@@ -139,9 +147,10 @@ export class WindowManager implements WindowManagerContract {
             console.log(`${EMOJI} [WindowManager] 开发模式：加载开发服务器URL -> ${process.env['ELECTRON_RENDERER_URL']}`);
             this.mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
         } else {
-            const htmlPath = join(__dirname, '../renderer/index.html');
-            console.log(`${EMOJI} [WindowManager] 生产模式：加载本地HTML文件 -> ${htmlPath}`);
-            this.mainWindow.loadFile(htmlPath);
+            // 在生产环境中，使用 app.getAppPath() 获取应用根目录
+            const rendererPath = join(app.getAppPath(), 'dist/renderer/index.html');
+            console.log(`${EMOJI} [WindowManager] 生产模式：加载本地HTML文件 -> ${rendererPath}`);
+            this.mainWindow.loadFile(rendererPath);
         }
 
         // 当内容加载完成后显示窗口

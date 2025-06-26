@@ -3,8 +3,8 @@
  */
 import { ServiceProvider } from '../providers/ServiceProvider.js';
 import { Application, ApplicationConfig } from '../application/Application.js';
-import { Router } from '../router/Router.js';
-import { LoggingMiddleware, ErrorHandlingMiddleware } from '../middleware/builtins.js';
+import { Router } from '../routing/Router.js';
+import { LoggingMiddleware, ErrorHandlingMiddleware } from '../routing/middleware/builtins.js';
 import electron from 'electron';
 import { EMOJI, IPC_CHANNELS } from '../constants.js';
 import { ConfigServiceProvider } from '../config/ConfigServiceProvider.js';
@@ -42,11 +42,11 @@ export async function createElectronApp(config: ElectronAppConfig): Promise<Appl
     const router = Router.getInstance();
 
     if (config.middleware?.errorHandling !== false) {
-        router.use(new ErrorHandlingMiddleware());
+        router.use(ErrorHandlingMiddleware);
     }
 
     if (config.middleware?.logging !== false) {
-        router.use(new LoggingMiddleware());
+        router.use(LoggingMiddleware);
     }
 
     // 注册服务提供者
@@ -56,8 +56,6 @@ export async function createElectronApp(config: ElectronAppConfig): Promise<Appl
         });
     }
 
-    setupIPCHandlers();
-
     await app.boot();
 
     return app;
@@ -66,22 +64,33 @@ export async function createElectronApp(config: ElectronAppConfig): Promise<Appl
 /**
  * 设置 IPC 处理器
  */
-function setupIPCHandlers(): void {
+export function setupIPCHandlers(app: Application): void {
     console.log(`${EMOJI} [Bootstrap] 设置 IPC 处理器`);
-    const router = Router.getInstance();
+    const router = app.make<Router>('router');
+    console.log(router)
 
     // 处理所有 IPC 调用
     ipcMain.handle(IPC_CHANNELS.DISPATCH, async (event, channel: string, args: any[]) => {
-        return await router.dispatch(channel, args);
+        console.log(`${EMOJI} [Bootstrap] 处理 IPC 调用: ${channel}, 参数: ${JSON.stringify(args)}`);
+
+        try {
+            return await router.dispatch(channel, args);
+        } catch (error) {
+            console.error(`${EMOJI} ❌ [Bootstrap] 处理 IPC 调用失败: \n ${error} \n`);
+            throw new Error(`${error}`);
+        }
     });
 
     // 获取所有路由（用于调试）
     ipcMain.handle(IPC_CHANNELS.ROUTES, () => {
         const routes = router.getRoutes();
-        return Array.from(routes.entries()).map(([channel, route]) => ({
-            channel,
-            name: route.name,
-            middlewareCount: route.middleware.length,
-        }));
+        return Array.from(routes.entries()).map((entry) => {
+            const [channel, route] = entry as [string, { name: string; middleware: any[] }];
+            return {
+                channel,
+                name: route.name,
+                middlewareCount: route.middleware.length,
+            };
+        });
     });
 } 

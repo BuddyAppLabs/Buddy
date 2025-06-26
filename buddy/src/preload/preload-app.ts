@@ -5,6 +5,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { IpcResponse } from '@coffic/buddy-types';
 import { IpcApi } from '@/types/ipc-api.js';
+import { IPC_CHANNELS } from '@coffic/cosy-framework';
 
 const logger = console;
 
@@ -35,7 +36,7 @@ export const ipcApi: IpcApi = {
             logger.info('====== 调用IPC方法:', channel);
         }
 
-        const response = await ipcRenderer.invoke('electron-laravel-framework:dispatch', channel, args);
+        const response = await ipcRenderer.invoke(IPC_CHANNELS.DISPATCH, channel, args);
 
         try {
             return response as IpcResponse<any>;

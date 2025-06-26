@@ -7,16 +7,18 @@ export { ServiceProvider } from './providers/index.js';
 
 // Application Core
 export { Application, createApp, app } from './application/index.js';
-export { ServiceContainer, container } from './container/index.js';
+
+// Container & Providers
+export { ServiceContainer as Container, container } from './container/index.js';
 
 // Bootstrap
-export { createElectronApp } from './bootstrap/bootstrap.js';
+export { createElectronApp, setupIPCHandlers } from './bootstrap/bootstrap.js';
 
 // Config
 export { Config } from './config/index.js';
 
 // Router & Middleware
-export { Router, router } from './router/index.js';
+export * from './routing/index.js';
 export {
     Middleware,
     LoggingMiddleware,
@@ -27,3 +29,6 @@ export {
 // Facades
 export { Facade } from './facades/Facade.js';
 export { createFacade } from './facades/createFacade.js';
+
+// Constants
+export { IPC_CHANNELS } from './constants.js';
