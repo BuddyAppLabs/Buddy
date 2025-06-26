@@ -70,5 +70,5 @@ class PluginManager extends BaseManager {
     }
 }
 
-// 导出单例
+// 导出单例实例
 export const pluginManager = PluginManager.getInstance();

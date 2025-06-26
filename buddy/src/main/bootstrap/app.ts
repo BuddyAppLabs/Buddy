@@ -10,7 +10,8 @@ import {
     LogServiceProvider, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider,
     PluginServiceProvider, AppServiceProvider, ConfigServiceProvider, AIServiceProvider, Log, Router, AI, RouteServiceProvider,
     Facade,
-    RouteFacade
+    RouteFacade,
+    Plugin
 } from '@coffic/buddy-foundation';
 import { appManager } from '../managers/AppManager.js';
 import { WindowServiceProvider } from '../providers/WindowServiceProvider.js';
@@ -55,17 +56,21 @@ export async function bootApplication(): Promise<void> {
 
         // 初始化Facades
         Log.setApp(application);
+        Plugin.setApp(application);
 
         // 启动应用管理器
         await appManager.start();
+
+        // 等待插件系统初始化完成
+        await Plugin.initialize();
 
         // 注册所有路由
         registerRoutes();
 
         // 输出路由信息
-        console.log("\n=== 已注册的路由 ===");
-        console.log(RouteFacade.listRoutes().join('\n'));
-        console.log("==================\n");
+        // console.log("\n=== 已注册的路由 ===");
+        // console.log(RouteFacade.listRoutes().join('\n'));
+        // console.log("==================\n");
 
         console.log('✅ 应用启动完成');
         console.log(`  ➡️ 环境: ${config.env}`);

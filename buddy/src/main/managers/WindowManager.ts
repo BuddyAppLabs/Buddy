@@ -36,6 +36,7 @@ export class WindowManager extends BaseManager implements WindowManagerContract 
      * 创建主窗口
      */
     createWindow(): BrowserWindow {
+        console.log('🔧 createWindow', this.config);
         try {
             // 创建浏览器窗口
             this.mainWindow = new BrowserWindow({

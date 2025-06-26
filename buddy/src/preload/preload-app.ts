@@ -2,8 +2,7 @@
  * 预加载脚本入口文件
  * 整合所有模块并暴露给渲染进程
  */
-import { contextBridge } from 'electron';
-import { ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 import { IpcResponse } from '@coffic/buddy-types';
 import { IpcApi } from '@/types/ipc-api.js';
 
@@ -36,7 +35,7 @@ export const ipcApi: IpcApi = {
             logger.info('====== 调用IPC方法:', channel);
         }
 
-        const response = await ipcRenderer.invoke(channel, ...args);
+        const response = await ipcRenderer.invoke('electron-laravel-framework:dispatch', channel, args);
 
         try {
             return response as IpcResponse<any>;

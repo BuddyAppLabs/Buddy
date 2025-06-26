@@ -9,6 +9,7 @@ import { registerConfigRoutes } from './config.js';
 import { registerMarketRoutes } from './market.js';
 import { registerStateRoutes } from './state.js';
 import { registerUpdateRoutes } from './update.js';
+import { registerPluginRoutes } from './plugins.js';
 
 export function registerRoutes(): void {
     registerActionsRoutes();
@@ -18,4 +19,5 @@ export function registerRoutes(): void {
     registerMarketRoutes();
     registerStateRoutes();
     registerUpdateRoutes();
+    registerPluginRoutes();
 } 

@@ -115,7 +115,6 @@ export class Router implements ContractRouter {
      * 通用路由注册方法
      */
     handle(channel: string, handler: RouteHandler): Route {
-        console.log('🔧 handle', channel);
         const route = new Route(channel, handler);
         this.register(route);
         return route;
