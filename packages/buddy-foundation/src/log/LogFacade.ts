@@ -1,7 +1,5 @@
-
-
 import { createFacade, Facade } from '@coffic/cosy-framework';
-import { LogManagerContract } from '../contracts/LogContract.js';
+import { LogManagerContract } from './contracts/LogManagerContract.js';
 
 /**
  * 路由门面基类

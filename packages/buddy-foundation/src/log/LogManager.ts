@@ -11,7 +11,7 @@ import {
     LogContext,
     ChannelFactory,
     ContextualLoggerContract,
-} from './contracts/LogContract.js';
+} from './contracts/index.js';
 import { ElectronLogDriver } from './drivers/ElectronLogDriver.js';
 import { StackDriver } from './drivers/StackDriver.js';
 

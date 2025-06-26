@@ -8,7 +8,7 @@ import {
     LogChannelConfig,
     LogLevel,
     LogContext
-} from '../contracts/LogContract.js';
+} from '../contracts/index.js';
 import chalk from 'chalk';
 
 export class ElectronLogChannel implements LogChannelContract {
@@ -70,8 +70,9 @@ export class ElectronLogChannel implements LogChannelContract {
                 });
 
             case 'structured':
+                const timestamp = this.config.includeTimestamp === false ? '' : ` [${new Date().toISOString()}]`;
                 const contextStr = context ? ` ${JSON.stringify(context)}` : '';
-                return `[${this.channelName}] [${new Date().toISOString()}] ${message}${contextStr}`;
+                return `[${this.channelName}]${timestamp} ${message}${contextStr}`;
 
             case 'simple':
             default:

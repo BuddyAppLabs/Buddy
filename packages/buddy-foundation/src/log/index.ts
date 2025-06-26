@@ -1,7 +1,7 @@
 /**
  * 日志模块入口文件
  */
-export * from './contracts/LogContract.js';
+export * from './contracts/index.js';
 export * from './LogManager.js';
 export * from './LogServiceProvider.js';
-export * from './facades/Log.js'; 
+export * from './LogFacade.js'; 

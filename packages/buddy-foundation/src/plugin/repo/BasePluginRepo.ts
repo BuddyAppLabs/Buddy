@@ -7,10 +7,9 @@ import fs from 'fs';
 import { PluginRepoContract } from '../contracts/PluginRepoContract.js';
 import { PluginEntity } from '../entities/PluginEntity.js';
 import { EMOJI } from '../../constants.js';
-import { LogFacade } from '../../log/facades/Log.js';
+import { LogFacade } from '../../log/LogFacade.js';
 
 const verbose = true;
-const logger = console;
 
 export abstract class BasePluginRepo implements PluginRepoContract {
     protected rootDir: string;
@@ -40,7 +39,7 @@ export abstract class BasePluginRepo implements PluginRepoContract {
      */
     public async getAllPlugins(): Promise<PluginEntity[]> {
         if (verbose) {
-            logger.info(`${EMOJI} [BasePluginRepo] 获取插件列表，根目录是`, this.rootDir);
+            LogFacade.channel('plugin').info(`${EMOJI} [BasePluginRepo] 获取插件列表，根目录是`, { rootDir: this.rootDir });
         }
 
         if (!fs.existsSync(this.rootDir)) {
@@ -61,7 +60,7 @@ export abstract class BasePluginRepo implements PluginRepoContract {
                     const plugin = await PluginEntity.fromDir(pluginPath, this.getPluginType());
                     plugins.push(plugin);
                 } catch (error) {
-                    logger.warn(`${EMOJI} [BasePluginRepo] 读取插件信息失败`, error instanceof Error ? error.message : String(error));
+                    LogFacade.channel('plugin').warn(`${EMOJI} [BasePluginRepo] 读取插件信息失败`, { error: error instanceof Error ? error.message : String(error) });
                 }
             }
 
@@ -71,7 +70,7 @@ export abstract class BasePluginRepo implements PluginRepoContract {
                 return [];
             } else {
                 if (verbose) {
-                    LogFacade.info(`${EMOJI} [BasePluginRepo] 有效的插件数量` + validPlugins.length);
+                    LogFacade.channel('plugin').info(`${EMOJI} [BasePluginRepo] 有效的插件数量` + validPlugins.length, { validPlugins: validPlugins.length });
                 }
             }
 
@@ -80,7 +79,7 @@ export abstract class BasePluginRepo implements PluginRepoContract {
 
             return validPlugins;
         } catch (error) {
-            logger.error(`${EMOJI} [BasePluginRepo] 获取插件列表失败`, error);
+            LogFacade.channel('plugin').error(`${EMOJI} [BasePluginRepo] 获取插件列表失败`, { error: error instanceof Error ? error.message : String(error) });
             return [];
         }
     }
@@ -101,7 +100,7 @@ export abstract class BasePluginRepo implements PluginRepoContract {
             const plugins = await this.getAllPlugins();
             return plugins.find((plugin) => plugin.id === id) || null;
         } catch (error) {
-            logger.error(`${EMOJI} [BasePluginRepo] 查找插件失败: ${id}`, error);
+            LogFacade.channel('plugin').error(`${EMOJI} [BasePluginRepo] 查找插件失败: ${id}`, { error: error instanceof Error ? error.message : String(error) });
             return null;
         }
     }
@@ -111,11 +110,11 @@ export abstract class BasePluginRepo implements PluginRepoContract {
      */
     public async has(id: string): Promise<boolean> {
         if (typeof id !== 'string') {
-            logger.error(`${EMOJI} [BasePluginRepo] 插件ID必须是字符串, 但是传入的是`, id);
+            LogFacade.channel('plugin').error(`${EMOJI} [BasePluginRepo] 插件ID必须是字符串, 但是传入的是`, { id });
             throw new Error('插件ID必须是字符串');
         }
 
-        logger.debug(`${EMOJI} [BasePluginRepo] 检查插件是否存在`, id);
+        LogFacade.channel('plugin').debug(`${EMOJI} [BasePluginRepo] 检查插件是否存在`, { id });
 
         return (await this.getAllPlugins()).some((plugin) => plugin.id === id);
     }

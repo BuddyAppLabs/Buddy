@@ -8,7 +8,7 @@ import {
     LogChannelConfig,
     LogLevel,
     LogContext
-} from '../contracts/LogContract.js';
+} from '../contracts/index.js';
 
 export class StackChannel implements LogChannelContract {
     private channels: LogChannelContract[] = [];

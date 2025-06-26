@@ -29,4 +29,4 @@ export { WindowServiceProvider } from './window/WindowServiceProvider.js';
 export { AIServiceProvider } from './ai/AIServiceProvider.js';
 
 // Facade
-export { LogFacade } from './log/facades/Log.js';
+export { LogFacade } from './log/LogFacade.js';
