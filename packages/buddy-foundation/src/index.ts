@@ -21,6 +21,9 @@ export * from './plugin/index.js';
 // 应用模块
 export * from './app/index.js';
 
+// 路由模块
+export * from './routing/index.js';
+
 // 导出所有服务提供者
 export { AppServiceProvider } from './app/AppServiceProvider.js';
 
