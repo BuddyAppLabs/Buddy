@@ -6,13 +6,14 @@
  * 支持 OpenAI、Anthropic 和 DeepSeek
  */
 
-import { logger } from './LogManager.js'
 import { LanguageModelV1, streamText, type CoreMessage } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { anthropic } from '@ai-sdk/anthropic'
 import { createDeepSeek } from '@ai-sdk/deepseek'
 import { configManager } from './ConfigManager.js'
 import { ChatMessage } from '@coffic/buddy-types'
+
+const logger = console;
 
 // AI模型类型
 type AIModelType = 'openai' | 'anthropic' | 'deepseek'

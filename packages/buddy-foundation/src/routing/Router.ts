@@ -4,9 +4,9 @@
  */
 
 import { ipcMain, IpcMainInvokeEvent } from 'electron';
-import { RouteConfig, RouteGroup, Middleware, RouteHandler } from './types';
-import { Route } from './Route';
-import { Validator } from './Validator';
+import { RouteConfig, RouteGroup, Middleware, RouteHandler } from './types.js';
+import { Route } from './Route.js';
+import { Validator } from './Validator.js';
 
 export class Router {
     private routes: Map<string, RouteConfig> = new Map();

@@ -5,8 +5,6 @@
 import pkg from 'electron-updater';
 import { dialog, BrowserWindow } from 'electron';
 
-import { sendUpdateEvent } from '../controllers/update_router.js';
-
 const logger = console;
 
 const verbose = false;
@@ -50,7 +48,7 @@ export class UpdateManager {
     // 检查更新出错
     autoUpdater.on('error', (error) => {
       logger.error('更新检查失败', { error: error.message });
-      sendUpdateEvent('error', { message: error.message });
+      // sendUpdateEvent('error', { message: error.message });
     });
 
     // 检查更新
@@ -58,20 +56,20 @@ export class UpdateManager {
       if (verbose) {
         logger.info('正在检查更新...');
       }
-      sendUpdateEvent('checking-for-update', {});
+      // sendUpdateEvent('checking-for-update', {});
     });
 
     // 发现可用更新
     autoUpdater.on('update-available', (info) => {
       logger.info('发现新版本', { version: info.version });
-      sendUpdateEvent('update-available', info);
+      // sendUpdateEvent('update-available', info);
       this.notifyUpdateAvailable(info);
     });
 
     // 没有可用更新
     autoUpdater.on('update-not-available', (info) => {
       logger.info('当前已是最新版本', { version: info.version });
-      sendUpdateEvent('update-not-available', info);
+      // sendUpdateEvent('update-not-available', info);
     });
 
     // 更新下载进度
@@ -80,13 +78,13 @@ export class UpdateManager {
         percent: progressObj.percent,
         speed: progressObj.bytesPerSecond,
       });
-      sendUpdateEvent('download-progress', progressObj);
+      // sendUpdateEvent('download-progress', progressObj);
     });
 
     // 更新下载完成
     autoUpdater.on('update-downloaded', (info) => {
       logger.info('更新下载完成', { version: info.version });
-      sendUpdateEvent('update-downloaded', info);
+      // sendUpdateEvent('update-downloaded', info);
       this.notifyUpdateReady(info);
     });
   }

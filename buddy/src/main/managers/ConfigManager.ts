@@ -8,7 +8,8 @@
 import { BaseManager } from './BaseManager.js'
 import { app } from 'electron'
 import path from 'path'
-import { logger } from './LogManager.js'
+
+const logger = console;
 
 const verbose = false
 

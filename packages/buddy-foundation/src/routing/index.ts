@@ -4,18 +4,21 @@
  */
 
 // 核心类型
-export * from './types';
+export * from './types.js';
 
 // 核心类
-export { Route } from './Route';
-export { Router } from './Router';
-export { Validator } from './Validator';
+export { Route } from './Route.js';
+export { Router } from './Router.js';
+export { Validator } from './Validator.js';
 
 // 内置中间件
-export * from './middleware';
+export * from './middleware/index.js';
+
+// 门面 (Facades)
+export * from './facades/index.js';
 
 // 导入Router类用于创建实例
-import { Router } from './Router';
+import { Router } from './Router.js';
 
 // 创建全局路由器实例
 export const router = new Router(); 

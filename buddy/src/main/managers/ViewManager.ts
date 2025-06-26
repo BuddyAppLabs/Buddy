@@ -3,12 +3,13 @@
  */
 import { WebContentsView } from 'electron';
 import { is } from '@electron-toolkit/utils';
-import { windowManager } from './WindowManager.js';
+import { Window } from '../facades/Window.js';
 import { join } from 'path';
-import { logger } from './LogManager.js';
 import { ViewBounds } from '@coffic/buddy-types';
 import { createViewArgs } from '@/types/args.js';
 import { readFileSync } from 'fs';
+
+const logger = console;
 
 const verbose = false;
 
@@ -27,7 +28,7 @@ export class ViewManager {
             logger.info('创建视图:', args);
         }
 
-        const mainWindow = windowManager.getMainWindow();
+        const mainWindow = Window.getMainWindow();
         if (!mainWindow) {
             throw new Error('主窗口不存在');
         }
@@ -121,7 +122,7 @@ export class ViewManager {
             return;
         }
 
-        const mainWindow = windowManager.getMainWindow();
+        const mainWindow = Window.getMainWindow();
         if (!mainWindow) return;
 
         mainWindow.contentView.removeChildView(view);

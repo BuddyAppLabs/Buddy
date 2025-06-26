@@ -3,7 +3,7 @@
  * 提供对窗口管理器的静态访问方法
  */
 import { BaseFacade, createFacade } from '@coffic/cosy';
-import { WindowManagerContract } from '../../../../packages/buddy-foundation/src/window/contracts/WindowContract.js';
+import { WindowManagerContract } from '@coffic/buddy-foundation';
 
 class WindowFacade extends BaseFacade {
     /**

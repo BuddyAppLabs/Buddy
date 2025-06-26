@@ -24,7 +24,11 @@ export * from './app/index.js';
 // 路由模块
 export * from './routing/index.js';
 
+// 配置模块
+export * from './config/index.js';
+
 // 导出所有服务提供者
 export { AppServiceProvider } from './app/AppServiceProvider.js';
+export { ConfigServiceProvider } from './config/ConfigServiceProvider.js';
 
 export * from './window/index.js';

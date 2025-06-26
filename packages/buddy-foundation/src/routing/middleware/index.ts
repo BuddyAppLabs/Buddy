@@ -3,6 +3,6 @@
  * 提供常用的中间件功能
  */
 
-export { LoggingMiddleware } from './LoggingMiddleware';
-export { RateLimitMiddleware } from './RateLimitMiddleware';
-export { AuthMiddleware } from './AuthMiddleware'; 
+export { LoggingMiddleware } from './LoggingMiddleware.js';
+export { RateLimitMiddleware } from './RateLimitMiddleware.js';
+export { AuthMiddleware } from './AuthMiddleware.js'; 

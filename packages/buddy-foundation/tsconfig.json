@@ -8,7 +8,9 @@
         "skipLibCheck": true,
         "declaration": true,
         "outDir": "dist",
-        "rootDir": "src"
+        "rootDir": "src",
+        "sourceMap": true,
+        "declarationMap": true
     },
     "include": [
         "src/**/*"

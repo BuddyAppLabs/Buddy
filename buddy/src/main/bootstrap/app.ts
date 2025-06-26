@@ -3,13 +3,14 @@
  * 使用 Electron Laravel Framework
  * 负责应用的初始化和配置
  */
+
+import { initializeRoutes } from '../routes/index.js';
 import { app } from 'electron';
 import {
     bootElectronApp,
-    router,
     type ElectronAppConfig
 } from '@coffic/cosy';
-import { LogServiceProvider, Plugin, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider, PluginServiceProvider, AppServiceProvider, Log } from '@coffic/buddy-foundation';
+import { LogServiceProvider, KeyboardServiceProvider, MarketServiceProvider, McpServiceProvider, PluginServiceProvider, AppServiceProvider, Log } from '@coffic/buddy-foundation';
 import { appManager } from '../managers/AppManager.js';
 import { WindowServiceProvider } from '../providers/WindowServiceProvider.js';
 
@@ -34,70 +35,6 @@ const config: ElectronAppConfig = {
     }
 };
 
-// 注册路由
-function registerRoutes(): void {
-    console.log('🚀 registerRoutes');
-    // 应用信息路由
-    router.register('app:get-version', async () => {
-        return {
-            success: true,
-            data: {
-                version: config.version,
-                name: config.name,
-                env: config.env
-            }
-        };
-    }).name('app.version');
-
-    // 插件相关路由
-    router.register('plugin:list', async () => {
-        try {
-            const plugins = await Plugin.getPlugins();
-            return {
-                success: true,
-                data: plugins
-            };
-        } catch (error) {
-            return {
-                success: false,
-                error: 'Failed to get plugins'
-            };
-        }
-    }).name('plugin.list');
-
-    router.register('plugin:get', async (request) => {
-        try {
-            const [pluginId] = request.args;
-            const plugin = await Plugin.getPlugin(pluginId);
-            return {
-                success: true,
-                data: plugin
-            };
-        } catch (error) {
-            return {
-                success: false,
-                error: 'Failed to get plugin'
-            };
-        }
-    }).name('plugin.get');
-
-    router.register('plugin:execute', async (request) => {
-        try {
-            const [actionId, keyword] = request.args;
-            const result = await Plugin.executeAction(actionId, keyword);
-            return {
-                success: true,
-                data: result
-            };
-        } catch (error) {
-            return {
-                success: false,
-                error: 'Failed to execute action'
-            };
-        }
-    }).name('plugin.execute');
-}
-
 /**
  * 启动应用
  */
@@ -112,8 +49,8 @@ export async function bootApplication(): Promise<void> {
         // 初始化Facades
         Log.setApp(application);
 
-        // 注册路由
-        registerRoutes();
+        // 初始化新路由系统
+        initializeRoutes();
 
         // 启动应用管理器
         await appManager.start();
