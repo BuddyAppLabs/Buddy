@@ -7,6 +7,9 @@ dist
 vue-dist
 out
 
+# Turbo
+.turbo
+
 # Testing
 coverage
 
