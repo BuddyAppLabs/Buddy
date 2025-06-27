@@ -7,13 +7,9 @@ import { ConfigServiceProvider } from '../config/ConfigServiceProvider.js';
 import { Facade } from '../facades/Facade.js';
 import { RouteServiceProvider } from '../routing/RouteServiceProvider.js';
 import { ErrorHandlingMiddleware } from '../middleware/ErrorHandlingMiddleware.js';
-import { LoggingMiddleware } from '../middleware/LoggingMiddleware.js';
 const { ipcMain } = electron;
 
-const defaultMiddleware = [
-  ErrorHandlingMiddleware,
-  LoggingMiddleware({ includeRequest: true, includeResponse: true }),
-];
+const defaultMiddleware = [ErrorHandlingMiddleware];
 
 const defaultProviders = [ConfigServiceProvider, RouteServiceProvider];
 

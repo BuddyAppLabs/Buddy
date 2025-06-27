@@ -4,4 +4,5 @@
 export * from './contracts/index.js';
 export * from './LogManager.js';
 export * from './LogServiceProvider.js';
-export * from './LogFacade.js'; 
+export * from './LogFacade.js';
+export * from './LoggingMiddleware.js';

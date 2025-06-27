@@ -1,5 +1,6 @@
 import { IpcMainInvokeEvent } from 'electron';
-import { IMiddleware } from '../contract';
+import { IMiddleware } from '@coffic/cosy-framework';
+import { LogFacade } from './LogFacade.js';
 
 /**
  * Checks if the given object is an Electron IpcMainInvokeEvent.
@@ -58,7 +59,7 @@ export function LoggingMiddleware(
     const startMessage = `请求开始${
       includeRequest ? `，数据: ${JSON.stringify(requestForLog)}` : ''
     }`;
-    console[logLevel](
+    LogFacade[logLevel](
       `[${new Date().toISOString()}] ${context} ${startMessage}`
     );
 
@@ -69,7 +70,7 @@ export function LoggingMiddleware(
       const successMessage = `请求成功，耗时: ${duration}ms${
         includeResponse ? `，响应: ${JSON.stringify(result)}` : ''
       }`;
-      console[logLevel](
+      LogFacade[logLevel](
         `[${new Date().toISOString()}] ${context} ${successMessage}`
       );
 
@@ -82,9 +83,9 @@ export function LoggingMiddleware(
           ? error.message
           : String(error);
 
-      console.error(
+      LogFacade.error(
         `[${new Date().toISOString()}] ${context} 请求失败，耗时: ${duration}ms，错误:`,
-        errorToLog
+        { error: errorToLog }
       );
 
       throw error;

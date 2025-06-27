@@ -19,10 +19,7 @@ export * from './container/index.js';
 export * from './contract/index.js';
 
 // Middleware
-export { AuthMiddleware } from './middleware/AuthMiddleware.js';
 export { ErrorHandlingMiddleware } from './middleware/ErrorHandlingMiddleware.js';
-export { LoggingMiddleware } from './middleware/LoggingMiddleware.js';
-export { RateLimitMiddleware } from './middleware/RateLimitMiddleware.js';
 
 // Facades
 export { Facade } from './facades/Facade.js';

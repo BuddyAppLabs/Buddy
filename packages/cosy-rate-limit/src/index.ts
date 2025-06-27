@@ -1,5 +1,5 @@
 import { IpcMainInvokeEvent } from 'electron';
-import { IMiddleware } from '../contract';
+import { IMiddleware } from '@coffic/cosy-framework';
 
 interface RateLimitRecord {
   count: number;
