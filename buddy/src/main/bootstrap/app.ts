@@ -35,7 +35,7 @@ const config: ApplicationConfig = {
     McpServiceProvider,
     MarketServiceProvider,
   ],
-  middleware: [LoggingMiddleware()],
+  middleware: [LoggingMiddleware({ logLevel: 'error' })],
 };
 
 /**

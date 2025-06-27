@@ -67,6 +67,12 @@ export class LogServiceProvider extends ServiceProvider {
           format: 'structured',
           includeTimestamp: false,
         },
+        action: {
+          driver: 'electron',
+          level: LogLevel.INFO,
+          format: 'structured',
+          includeTimestamp: false,
+        },
         debug: {
           driver: 'electron',
           level: LogLevel.DEBUG,
@@ -78,6 +84,12 @@ export class LogServiceProvider extends ServiceProvider {
           format: 'json',
         },
         logMiddleware: {
+          driver: 'electron',
+          level: LogLevel.INFO,
+          format: 'structured',
+          includeTimestamp: false,
+        },
+        route: {
           driver: 'electron',
           level: LogLevel.INFO,
           format: 'structured',

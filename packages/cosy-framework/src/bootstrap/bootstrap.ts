@@ -67,8 +67,11 @@ export function setupIPCHandlers(app: Application): void {
       );
 
       try {
-        const data = await router.dispatch(channel, args, event);
-        return { success: true, data };
+        const result = await router.dispatch(channel, args, event);
+        return {
+          success: true,
+          data: result,
+        };
       } catch (error) {
         let message = error instanceof Error ? error.message : String(error);
         console.error(`${EMOJI} ❌ [Bootstrap] 处理 IPC 调用失败: ${message}`);

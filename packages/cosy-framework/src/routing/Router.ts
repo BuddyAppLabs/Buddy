@@ -17,7 +17,6 @@ import {
 import { Route } from './Route.js';
 import { Validator } from './Validator.js';
 import { RouteRegistrar } from './RouteRegistar.js';
-import { IpcResponse } from '@coffic/buddy-types/contact/ipc-response.js';
 
 const { ipcMain } = electron;
 
@@ -115,6 +114,11 @@ export class Router implements IContractRouter {
    * 注册路由
    */
   register(route: IRouteConfig): void {
+    if (this.routes.has(route.channel)) {
+      throw new Error(
+        `[Router] Route [${route.channel}] has already been registered.`
+      );
+    }
     this.routes.set(route.channel, route);
   }
 
@@ -200,7 +204,7 @@ export class Router implements IContractRouter {
     channel: string,
     args: any[],
     event: IpcMainInvokeEvent
-  ): Promise<IpcResponse<any>> {
+  ): Promise<any> {
     const match = this.findRoute(channel);
     if (!match) {
       throw new Error(`[Router] Route [${channel}] not found`);
@@ -226,22 +230,7 @@ export class Router implements IContractRouter {
 
     const result = await chain(event, ...args);
 
-    // 确保总是返回一个可序列化的对象。
-    // 这是一个防止中间件返回不可序列化数据的保障措施。
-    if (typeof result === 'object' && result !== null) {
-      // 如果结果已经是结构化响应，则按原样返回。
-      if ('success' in result && 'data' in result) {
-        return result;
-      }
-      if ('success' in result && 'error' in result) {
-        return result;
-      }
-    }
-
-    return {
-      success: true,
-      data: result,
-    };
+    return result;
   }
 
   /**

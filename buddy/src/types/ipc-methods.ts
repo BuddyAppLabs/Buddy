@@ -56,16 +56,16 @@ export const IPC_METHODS = {
 
   // Configs 相关的路由
   CONFIG_GET_ALL: 'configs',
-  CONFIG_GET: 'configs/items',
-  CONFIG_SET: 'configs/items',
-  CONFIG_DELETE: 'configs/items',
-  CONFIG_RESET: 'configs/reset',
-  CONFIG_GET_PATH: 'configs/path',
+  CONFIG_GET: 'configs/items/get',
+  CONFIG_SET: 'configs/items/set',
+  CONFIG_DELETE: 'configs/items/delete',
+  CONFIG_RESET: 'configs/items/reset',
+  CONFIG_GET_PATH: 'configs/items/path',
 
   // Dev Tests 相关的路由
-  DEV_TEST_ECHO: 'dev/tests/echo',           // 回显测试
-  DEV_TEST_ERROR: 'dev/tests/errors',        // 错误处理测试
-  DEV_TEST_STREAM: 'dev/tests/streams',      // 流处理测试
+  DEV_TEST_ECHO: 'dev/tests/echo', // 回显测试
+  DEV_TEST_ERROR: 'dev/tests/errors', // 错误处理测试
+  DEV_TEST_STREAM: 'dev/tests/streams', // 流处理测试
 } as const;
 
 /**

@@ -6,11 +6,10 @@ const ipc = window.ipc;
 
 export const actionIpc = {
   async getActions(keyword = ''): Promise<SendableAction[]> {
-    const response: IpcResponse<unknown> = await ipc.invoke(
+    const response: IpcResponse<SendableAction[]> = await ipc.invoke(
       IPC_METHODS.GET_ACTIONS,
       keyword
     );
-    console.log('getActions response', response);
     if (response.success) {
       return response.data as SendableAction[];
     } else {
@@ -18,17 +17,28 @@ export const actionIpc = {
     }
   },
 
-  executeAction: async (actionId: string, keyword: string) => {
+  async executeAction(actionId: string, keyword: string) {
     logger.info(`执行插件动作: ${actionId}, 关键词: ${keyword}`);
 
-    return await ipc.invoke(
+    const response = await ipc.invoke(
       IPC_METHODS.EXECUTE_PLUGIN_ACTION,
       actionId,
       keyword
     );
+
+    if (!response.success) {
+      throw new Error(response.error);
+    }
+
+    return response.data;
   },
 
   async getActionView(actionId: string): Promise<string> {
-    return await ipc.invoke(IPC_METHODS.GET_ACTION_VIEW, actionId);
+    const response = await ipc.invoke(IPC_METHODS.GET_ACTION_VIEW, actionId);
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
   },
 };
