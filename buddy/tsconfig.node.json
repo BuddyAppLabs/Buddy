@@ -7,6 +7,7 @@
     "src/types/**/*",
     "native/**/*",
     "../packages/cosy-foundation/src/window/contracts/WindowContract.ts",
+    "ui",
   ],
   "compilerOptions": {
     "composite": true,

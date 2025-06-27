@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import PluginCard from '@/renderer/src/components/PluginCard.vue'
+import PluginCard from '@components/PluginCard.vue'
 import ButtonFolder from '@renderer/cosy/ButtonFolder.vue'
 import ButtonRefresh from '@renderer/cosy/ButtonRefresh.vue'
 import Empty from '@renderer/cosy/Empty.vue'

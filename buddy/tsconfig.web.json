@@ -1,9 +1,9 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
   "include": [
-    "src/renderer/src/env.d.ts",
-    "src/renderer/src/**/*",
-    "src/renderer/src/**/*.vue",
+    "src/ui/env.d.ts",
+    "src/ui/**/*",
+    "src/ui/**/*.vue",
     "src/types/**/*",
     "vite.config.mjs"
   ],
@@ -17,7 +17,31 @@
         "src/*"
       ],
       "@renderer/*": [
-        "src/renderer/src/*"
+        "src/ui/*"
+      ],
+      "@components/*": [
+        "src/ui/components/*"
+      ],
+      "@renderer/assets/*": [
+        "src/ui/assets/*"
+      ],
+      "@utils/*": [
+        "src/ui/utils/*"
+      ],
+      "@renderer/stores/*": [
+        "src/ui/stores/*"
+      ],
+      "@renderer/hooks/*": [
+        "src/ui/hooks/*"
+      ],
+      "@renderer/services/*": [
+        "src/ui/services/*"
+      ],
+      "@ipc/*": [
+        "src/ui/ipc/*"
+      ],
+      "@renderer/types/*": [
+        "src/ui/types/*"
       ]
     }
   },

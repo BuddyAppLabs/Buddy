@@ -3,9 +3,9 @@
  * AI聊天界面，使用DaisyUI组件库
 -->
 <script setup lang="ts">
-import { aiIpc } from '@/renderer/src/ipc/ai-ipc';
+import { aiIpc } from '@renderer/ipc/ai-ipc';
 import { ref, reactive, onMounted } from 'vue';
-import { logger } from '../utils/logger';
+import { logger } from '@utils/logger';
 import { ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@coffic/buddy-types';
 
 // 输入消息

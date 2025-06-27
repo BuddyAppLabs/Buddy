@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { actionIpc } from '@renderer/ipc/action-ipc';
 import { AppEvents } from '@coffic/buddy-types';
 import { SendableAction } from '@/types/sendable-action';
-import { useErrorStore } from './errorStore';
+import { useErrorStore } from './errorStore.js';
 
 const ipc = window.ipc;
 const logger = console;

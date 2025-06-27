@@ -35,21 +35,26 @@ export default defineConfig({
     },
   },
   renderer: {
+    root: resolve('src/ui'),
     resolve: {
       alias: {
         '@': resolve('src'),
-        '@renderer': resolve('src/renderer/src'),
-        '@modules': resolve('src/renderer/src/modules'),
-        '@components': resolve('src/renderer/src/components'),
-        '@stores': resolve('src/renderer/src/stores'),
-        '@utils': resolve('src/renderer/src/utils'),
-        '@views': resolve('src/renderer/src/views'),
-        '@plugins': resolve('src/renderer/src/plugins'),
+        '@renderer': resolve('src/ui'),
+        '@modules': resolve('src/ui/modules'),
+        '@components': resolve('src/ui/components'),
+        '@stores': resolve('src/ui/stores'),
+        '@utils': resolve('src/ui/utils'),
+        '@views': resolve('src/ui/views'),
+        '@plugins': resolve('src/ui/plugins'),
+        '@ipc': resolve('src/ui/ipc'),
       },
     },
     plugins: [vue(), tailwindcss()],
     build: {
       sourcemap: true,
+      rollupOptions: {
+        input: 'src/ui/index.html',
+      },
     },
   },
 });

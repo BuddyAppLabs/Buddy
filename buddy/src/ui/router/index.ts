@@ -8,10 +8,10 @@
  */
 
 import { createRouter, createWebHashHistory } from 'vue-router';
-import PluginStoreView from '@/renderer/src/views/MarketView.vue';
+import PluginStoreView from '@views/MarketView.vue';
 import { useAppStore } from '@renderer/stores/appStore';
-import HomeView from '../views/HomeView.vue';
-import ChatView from '../views/ChatView.vue';
+import HomeView from '@views/HomeView.vue';
+import ChatView from '@views/ChatView.vue';
 
 // 路由配置
 const routes = [
@@ -62,7 +62,9 @@ router.beforeEach((to, _from, next) => {
     // 注意：这里需要延迟调用，因为在路由钩子中不能立即使用pinia store
     setTimeout(() => {
       const appStore = useAppStore();
-      appStore.setView(to.meta.viewType as 'home' | 'plugins' | 'chat' | 'plugin-grid');
+      appStore.setView(
+        to.meta.viewType as 'home' | 'plugins' | 'chat' | 'plugin-grid'
+      );
     }, 0);
   }
 

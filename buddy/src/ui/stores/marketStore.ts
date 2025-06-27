@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { marketIpc } from '../ipc/market-ipc';
+import { marketIpc } from '../ipc/market-ipc.js';
 import { SendablePlugin } from '@/types/sendable-plugin';
 
 const verbose = true;
