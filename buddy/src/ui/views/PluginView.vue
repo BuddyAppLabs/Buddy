@@ -254,6 +254,7 @@ const loadAndExecuteAction = () => {
 
             actionStore.execute(action.globalId).then(() => {
                 if (action.viewPath) {
+                    console.log('action.viewPath', action.viewPath)
                     const viewMode = action.viewMode || 'embedded'
 
                     if (viewMode === 'window') {

@@ -6,6 +6,7 @@ import { useActionStore } from '@renderer/stores/actionStore';
 import { computed, ref } from 'vue';
 import { onKeyStroke, useFocus } from '@vueuse/core';
 
+const debug = true;
 const actionStore = useActionStore()
 const props = defineProps<{
     action: SendableAction
@@ -66,6 +67,7 @@ const handleClick = () => {
 </script>
 
 <template>
-    <ListItem ref="itemRef" :selected="selected" :description="action.description" :icon="action.icon"
+    <ListItem ref="itemRef" :selected="selected"
+        :description="debug ? `${action.globalId} - ${action.description}` : action.description" :icon="action.icon"
         :tabindex="index + 1" @click="handleClick" />
 </template>

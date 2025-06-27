@@ -1,12 +1,3 @@
-/**
-* 插件动作列表视图
-*
-* 功能：
-* 1. 展示可用的插件动作列表
-* 2. 处理动作选择事件
-* 3. 支持搜索结果展示
-* 4. 支持键盘导航
-*/
 <script setup lang="ts">
 import { watch, ref, nextTick } from 'vue'
 import ActionItem from '@components/ActionItem.vue'
