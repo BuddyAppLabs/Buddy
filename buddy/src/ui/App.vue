@@ -28,7 +28,6 @@ import Toast from './cosy/Toast.vue'
 import Alert from './cosy/Alert.vue'
 import Progress from './cosy/Progress.vue'
 import { useActionStore } from '@renderer/stores/actionStore'
-import { useMarketStore } from './stores/marketStore'
 import { globalConfirm } from './composables/useConfirm'
 import { globalToast } from './composables/useToast'
 import { globalAlert } from './composables/useAlert'
@@ -38,7 +37,6 @@ import ErrorNotification from '@renderer/components/ErrorNotification.vue'
 import { useErrorStore } from '@renderer/stores/errorStore'
 
 const actionStore = useActionStore()
-const marketStore = useMarketStore()
 const appStore = useAppStore()
 const errorStore = useErrorStore()
 const content = ref<HTMLElement | null>(null)
@@ -105,7 +103,6 @@ onUnmounted(() => {
 
     appStore.onUnmounted()
     actionStore.onUnmounted()
-    marketStore.onUnmounted()
 })
 </script>
 

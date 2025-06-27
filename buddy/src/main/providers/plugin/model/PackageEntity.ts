@@ -3,14 +3,23 @@ import { PluginType, ValidationResult } from '@coffic/buddy-types';
 import { PluginEntity } from './PluginEntity.js';
 import { PackageJson } from '@/types/package-json.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
-import { LogFacade } from '@coffic/cosy-logger';
+// const logger = console;
 
 const verbose = false;
-const logger = console;
 
 /**
  * 插件包实体类
  * 用于管理插件包的所有相关信息，包括基本信息、路径、状态等
+ * @property {string} path - The path to the package.
+ * @property {string} name - The name of the package.
+ * @property {string} description - The description of the package.
+ * @property {string} version - The version of the package.
+ * @property {string} author - The author of the package.
+ * @property {string} main - The main entry point of the package.
+ * @property {ValidationResult | null} validation - The validation result of the package.
+ * @property {PluginType} type - The type of the package.
+ * @property {PackageJson | undefined} packageJson - The package.json of the package.
+ * @property {string} id - The id of the package.
  */
 export class PackageEntity {
   path: string;
@@ -51,10 +60,10 @@ export class PackageEntity {
     }
 
     if (verbose) {
-      LogFacade.channel('plugin').info('[PackageEntity] 💼 读取插件包目录', {
-        path,
-        type,
-      });
+      // LogFacade.channel('plugin').info('[PackageEntity] 💼 读取插件包目录', {
+      //   path,
+      //   type,
+      // });
     }
 
     const packageJson = await readPackageJson(path);

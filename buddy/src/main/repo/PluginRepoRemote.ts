@@ -6,7 +6,8 @@ import { npmRegistryService } from '../service/NpmRegistryService.js';
 import { PackageEntity } from '../providers/plugin/model/PackageEntity.js';
 import { PackageJson } from '@/types/package-json.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
-import { PluginEntity } from '../entities/PluginEntity.js';
+import { PluginEntity } from '../providers/plugin/model/PluginEntity.js';
+import { PluginRepoContract } from '../providers/plugin/contracts/PluginRepoContract.js';
 import { EMOJI } from '../constants.js';
 
 const verbose = false;
@@ -16,7 +17,7 @@ const logger = console;
  * 远程插件仓库
  * 负责从远程 npm registry 获取插件并缓存
  */
-export class PluginRepoRemote {
+export class PluginRepoRemote implements PluginRepoContract {
   private static instance: PluginRepoRemote;
 
   // 缓存刷新时间间隔 (毫秒): 1小时
@@ -145,6 +146,30 @@ export class PluginRepoRemote {
   private shouldRefreshCache(): boolean {
     const now = Date.now();
     return now - this.lastCacheRefreshTime > this.CACHE_REFRESH_INTERVAL;
+  }
+
+  getRootDir(): string {
+    throw new Error('Method not implemented.');
+  }
+
+  ensureRepoDirs(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  getAllPlugins(): Promise<PluginEntity[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  find(_id: string): Promise<PluginEntity | null> {
+    throw new Error('Method not implemented.');
+  }
+
+  has(_id: string): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
+  getPluginType(): 'remote' {
+    return 'remote';
   }
 }
 
