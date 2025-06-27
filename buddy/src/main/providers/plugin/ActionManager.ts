@@ -84,7 +84,9 @@ class ActionManager extends BaseManager {
         }
       }
 
-      // logger.info(`获取插件动作，所有动作`, allActions);
+      LogFacade.channel('action').info(`[ActionManager] 获取插件动作`, {
+        allActions,
+      });
 
       if (verbose) {
         LogFacade.channel('action').info(

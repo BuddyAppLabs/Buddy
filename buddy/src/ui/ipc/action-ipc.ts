@@ -18,6 +18,14 @@ export const actionIpc = {
   },
 
   async executeAction(actionId: string, keyword: string) {
+    if (actionId === undefined) {
+      throw new Error(`动作ID不存在: ${actionId}`);
+    }
+
+    if (actionId === '') {
+      throw new Error(`动作ID为空: ${actionId}`);
+    }
+
     logger.info(`执行插件动作: ${actionId}, 关键词: ${keyword}`);
 
     const response = await ipc.invoke(

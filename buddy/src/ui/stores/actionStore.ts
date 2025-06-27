@@ -85,6 +85,14 @@ export const useActionStore = defineStore('action', {
         throw new Error(`未找到动作: ${actionGlobalId}`);
       }
 
+      if (action.globalId === undefined) {
+        throw new Error(`动作ID不存在: ${actionGlobalId}`);
+      }
+
+      if (action.globalId === '') {
+        throw new Error(`动作ID为空: ${actionGlobalId}`);
+      }
+
       if (action.viewPath) {
         await this.loadView(action.globalId);
       } else {
