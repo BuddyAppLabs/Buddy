@@ -1,0 +1,81 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# IPC 通信设计指南
+
+本指南概述了项目中进程间通信（IPC）的设计理念和实现细节，旨在确保前后端通信的一致性、健壮性和可维护性。
+
+## 核心原则
+
+所有 IPC 调用都遵循一个统一的请求-响应模型，其核心在于：
+
+1.  **单一入口**: 所有 IPC 请求都通过一个集中的处理器进行分发。
+2.  **标准响应**: 所有 IPC 响应都遵循一个固定的数据结构。
+
+## 实现细节
+
+### 1. 后端：框架层处理器
+
+IPC 的核心处理器位于框架的启动文件 [bootstrap.ts](mdc:packages/cosy-framework/src/bootstrap/bootstrap.ts) 中。
+
+此文件中的 `setupIPCHandlers` 函数监听一个全局的 `IPC_CHANNELS.DISPATCH` 事件。它负责接收所有来自渲染进程的调用，并将它们分发到相应的路由处理器。
+
+最关键的是，它将路由处理器返回的**任何**结果包装成一个标准的响应对象。
+
+### 2. 标准响应结构
+
+所有 IPC 调用的返回值都必须遵循 [ipc-response.ts](mdc:packages/buddy-types/contact/ipc-response.ts) 中定义的 `IpcResponse<T>` 接口。
+
+```typescript
+// 摘自 ipc-response.ts
+export interface IpcResponse<T> {
+  success: boolean;
+  error?: string;
+  data?: T;
+}
+```
+
+-   如果操作成功，响应为 `{ success: true, data: <结果> }`。
+-   如果操作失败，响应为 `{ success: false, error: <错误信息> }`。
+
+### 3. 后端：业务逻辑路由
+
+具体的业务逻辑在各个路由文件中定义，例如 [market.ts](mdc:buddy/src/main/routes/market.ts)。
+
+开发者在使用 `RouteFacade.handle` 定义路由时，**只需要关注并返回核心的业务数据**即可。框架会自动将其包装成标准的 `IpcResponse` 结构。
+
+```typescript
+// 摘自 market.ts - 开发者只需返回原始数据数组
+RouteFacade.handle(
+  IPC_METHODS.GET_USER_PLUGINS,
+  async (_event): Promise<SendablePlugin[]> => {
+    return await userPluginDB.getSendablePlugins();
+  }
+);
+```
+
+### 4. 前端：数据消费
+
+前端代码在接收 IPC 响应时，**必须**处理被 `IpcResponse<T>` 包装后的数据结构。
+
+一个正确的实践是在 store（例如 [marketStore.ts](mdc:buddy/src/ui/stores/marketStore.ts)）中解开这个包装，并将真正的 `data` 赋值给应用状态。
+
+```typescript
+// 摘自 marketStore.ts - 正确处理响应
+const response = await marketIpc.getRemotePlugins();
+
+if (response && response.success && Array.isArray(response.data)) {
+  this.remotePlugins = response.data; // 正确地从 'data' 属性取值
+} else {
+  // ... 错误处理
+}
+```
+
+## 结论
+
+-   **后端开发者**: 在编写路由处理器时，只需返回业务数据本身。
+-   **前端开发者**: 在消费 IPC 数据时，必须预料到数据会被 `{ success, data }` 结构包装，并进行相应的处理。
+
+遵循此规则可以有效避免因前后端数据结构不匹配而导致的各种错误。

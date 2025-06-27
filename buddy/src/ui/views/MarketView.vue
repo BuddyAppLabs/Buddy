@@ -1,100 +1,29 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import PluginCard from '@components/PluginCard.vue'
 import ButtonFolder from '@renderer/cosy/ButtonFolder.vue'
 import ButtonRefresh from '@renderer/cosy/ButtonRefresh.vue'
 import Empty from '@renderer/cosy/Empty.vue'
 import ToolBar from '@renderer/cosy/ToolBar.vue'
-import { globalToast } from '../composables/useToast'
-import { useMarketStore } from '../stores/marketStore'
 import { useDirectory } from '../composables/useDirectory'
-import { useAlert } from '../composables/useAlert'
-import { useAsyncState, useStorage } from '@vueuse/core'
+import { useMarket } from '../composables/useMarket'
 
 const { openDirectory } = useDirectory()
-const { error } = useAlert()
-const isDev = import.meta.env.DEV
 
-const marketStore = useMarketStore()
-const userPlugins = computed(() => marketStore.userPlugins)
-const devPlugins = computed(() => marketStore.devPlugins)
-const remotePlugins = computed(() => marketStore.remotePlugins)
-const directory = computed(() => marketStore.userPluginDirectory)
-
-// 使用localStorage保存最后选择的标签
-const activeTab = useStorage<'user' | 'remote' | 'dev'>(
-    'market-active-tab',
-    'user'
-)
-
-// 加载插件状态管理
-const { state: isLoading, execute: loadPlugins } = useAsyncState(
-    async () => {
-        try {
-            switch (activeTab.value) {
-                case "remote":
-                    await marketStore.loadRemotePlugins()
-                    break
-                case "user":
-                    await marketStore.loadUserPlugins()
-                    break
-                case "dev":
-                    await marketStore.loadDevPlugins()
-                    break
-                default:
-                    error('未知标签')
-                    return false
-            }
-
-            globalToast.success(`刷新成功(${activeTab.value})`, { duration: 2000, position: 'bottom-center' })
-
-            return true
-        } catch (err) {
-            error('刷新失败' + err)
-            return false
-        } finally {
-            // 确保在任何情况下都重置loading状态
-            return false
-        }
-    },
-    false,
-    {
-        immediate: false,
-        resetOnExecute: true,
-        // 添加延迟以确保状态正确更新
-        delay: 100
-    }
-)
-
-// 简单使用Vue自带的computed
-const shouldShowEmpty = computed(() => {
-    return (activeTab.value === 'remote' && remotePlugins.value.length === 0) ||
-        (activeTab.value === 'user' && userPlugins.value.length === 0) ||
-        (activeTab.value === 'dev' && devPlugins.value.length === 0)
-})
-
-// 卸载状态 (使用Map合并处理)
-const uninstallStates = useStorage('uninstall-states', {
-    uninstallingPlugins: new Set<string>(),
-    uninstallSuccess: new Set<string>(),
-    uninstallError: new Map<string, string>()
-})
-
-// 刷新按钮点击事件
-const handleRefresh = () => {
-    loadPlugins()
-}
-
-// 切换标签并加载对应插件
-const switchTab = (tab: 'user' | 'remote' | 'dev') => {
-    activeTab.value = tab
-    loadPlugins()
-}
-
-// 清除单个插件的卸载错误状态
-const clearUninstallError = (pluginId: string) => {
-    uninstallStates.value.uninstallError.delete(pluginId)
-}
+const {
+    isDev,
+    userPlugins,
+    devPlugins,
+    remotePlugins,
+    directory,
+    activeTab,
+    isLoading,
+    shouldShowEmpty,
+    uninstallStates,
+    handleRefresh,
+    switchTab,
+    clearUninstallError,
+    uninstallPlugin
+} = useMarket()
 </script>
 
 <template>
@@ -134,7 +63,7 @@ const clearUninstallError = (pluginId: string) => {
                 <PluginCard v-for="plugin in userPlugins" :key="plugin.id" :plugin="plugin" type="local"
                     :uninstallingPlugins="uninstallStates.uninstallingPlugins"
                     :uninstallSuccess="uninstallStates.uninstallSuccess"
-                    :uninstallError="uninstallStates.uninstallError" @uninstall="marketStore.uninstallPlugin"
+                    :uninstallError="uninstallStates.uninstallError" @uninstall="uninstallPlugin"
                     @clear-uninstall-error="clearUninstallError" />
             </template>
 

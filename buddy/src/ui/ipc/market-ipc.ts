@@ -32,6 +32,7 @@ export const marketIpc = {
 
   // 获取远程插件列表
   async getRemotePlugins(): Promise<SendablePlugin[]> {
+    console.log('getRemotePlugins');
     return await ipc.invoke(IPC_METHODS.GET_REMOTE_PLUGINS);
   },
 

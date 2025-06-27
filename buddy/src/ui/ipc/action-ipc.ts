@@ -10,6 +10,7 @@ export const actionIpc = {
       IPC_METHODS.GET_ACTIONS,
       keyword
     );
+    console.log('getActions response', response);
     if (response.success) {
       return response.data as SendableAction[];
     } else {

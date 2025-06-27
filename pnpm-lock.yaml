@@ -210,6 +210,9 @@ importers:
 
   packages/cosy-framework:
     dependencies:
+      '@coffic/buddy-types':
+        specifier: workspace:*
+        version: link:../buddy-types
       electron:
         specifier: ^27.0.0
         version: 27.3.11

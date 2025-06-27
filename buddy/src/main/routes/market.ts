@@ -9,6 +9,7 @@ import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { RouteFacade } from '@coffic/cosy-framework';
 import { Market } from '../providers/market/index.js';
 import { devPluginDB, userPluginDB } from '../providers/plugin/index.js';
+import { LogFacade } from '@coffic/cosy-logger';
 
 export function registerMarketRoutes(): void {
   // 检查插件是否已安装
@@ -46,6 +47,7 @@ export function registerMarketRoutes(): void {
   RouteFacade.handle(
     IPC_METHODS.GET_REMOTE_PLUGINS,
     async (_event): Promise<SendablePlugin[]> => {
+      LogFacade.channel('market').info('getRemotePlugins');
       return await remotePluginDB.getSendablePlugins();
     }
   ).description('获取远程可下载的插件列表');

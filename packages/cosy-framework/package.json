@@ -25,18 +25,19 @@
   "author": "Coffic Team",
   "license": "MIT",
   "dependencies": {
+    "@coffic/buddy-types": "workspace:*",
     "electron": "^27.0.0"
   },
   "devDependencies": {
+    "@types/jest": "^29.0.0",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",
     "jest": "^29.0.0",
-    "@types/jest": "^29.0.0",
+    "rimraf": "^5.0.0",
     "ts-jest": "^29.0.0",
-    "typescript": "^5.0.0",
-    "rimraf": "^5.0.0"
+    "typescript": "^5.0.0"
   },
   "files": [
     "dist",

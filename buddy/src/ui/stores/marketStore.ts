@@ -34,15 +34,6 @@ export const useMarketStore = defineStore('market', {
   }),
 
   actions: {
-    onMounted() {
-      this.updateUserPluginDirectory();
-      this.loadUserPlugins();
-      this.loadDevPlugins();
-      this.loadRemotePlugins();
-    },
-
-    onUnmounted() {},
-
     // 加载开发插件列表
     async loadDevPlugins(): Promise<void> {
       if (verbose) {
@@ -134,15 +125,33 @@ export const useMarketStore = defineStore('market', {
 
     // 加载远程插件列表
     async loadRemotePlugins(): Promise<void> {
-      if (this.loadingRemotePlugins) return;
+      console.log('loadRemotePlugins');
+      if (this.loadingRemotePlugins) {
+        console.log('loadRemotePlugins already loading');
+        return;
+      } else {
+        console.log('loadRemotePlugins');
+      }
 
       this.loadingRemotePlugins = true;
 
       try {
         // 调用主进程方法获取远程插件列表
+        // @ts-ignore
         const response = await marketIpc.getRemotePlugins();
 
-        this.remotePlugins = response;
+        // @ts-ignore
+        if (response && response.success && Array.isArray(response.data)) {
+          // @ts-ignore
+          this.remotePlugins = response.data;
+        } else {
+          logger.error(
+            `${title} 获取远程插件列表失败，返回了非数组或无效的响应格式:`,
+            response
+          );
+          this.remotePlugins = [];
+          throw new Error('获取远程插件列表失败，返回了非数组或无效的响应格式');
+        }
       } catch (err) {
         throw err;
       } finally {

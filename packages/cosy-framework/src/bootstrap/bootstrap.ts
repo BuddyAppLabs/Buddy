@@ -7,6 +7,7 @@ import { ConfigServiceProvider } from '../config/ConfigServiceProvider.js';
 import { Facade } from '../facades/Facade.js';
 import { RouteServiceProvider } from '../routing/RouteServiceProvider.js';
 import { ErrorHandlingMiddleware } from '../middleware/ErrorHandlingMiddleware.js';
+import { IpcResponse } from '@coffic/buddy-types/contact/ipc-response.js';
 const { ipcMain } = electron;
 
 const defaultMiddleware = [ErrorHandlingMiddleware];
@@ -58,13 +59,16 @@ export function setupIPCHandlers(app: Application): void {
   // 处理所有 IPC 调用
   ipcMain.handle(
     IPC_CHANNELS.DISPATCH,
-    async (event, channel: string, args: any[]) => {
+    async (event, channel: string, args: any[]): Promise<IpcResponse<any>> => {
       console.log(
-        `${EMOJI} [Bootstrap] 处理 IPC 调用: ${channel}, 参数: ${JSON.stringify(args)}`
+        `${EMOJI} [Bootstrap] 处理 IPC 调用: ${channel}, 参数: ${JSON.stringify(
+          args
+        )}`
       );
 
       try {
-        return await router.dispatch(channel, args, event);
+        const data = await router.dispatch(channel, args, event);
+        return { success: true, data };
       } catch (error) {
         let message = error instanceof Error ? error.message : String(error);
         console.error(`${EMOJI} ❌ [Bootstrap] 处理 IPC 调用失败: ${message}`);

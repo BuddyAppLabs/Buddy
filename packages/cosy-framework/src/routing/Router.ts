@@ -17,6 +17,7 @@ import {
 import { Route } from './Route.js';
 import { Validator } from './Validator.js';
 import { RouteRegistrar } from './RouteRegistar.js';
+import { IpcResponse } from '@coffic/buddy-types/contact/ipc-response.js';
 
 const { ipcMain } = electron;
 
@@ -199,7 +200,7 @@ export class Router implements IContractRouter {
     channel: string,
     args: any[],
     event: IpcMainInvokeEvent
-  ): Promise<any> {
+  ): Promise<IpcResponse<any>> {
     const match = this.findRoute(channel);
     if (!match) {
       throw new Error(`[Router] Route [${channel}] not found`);
