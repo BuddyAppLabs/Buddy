@@ -4,9 +4,9 @@
  */
 import { app, BrowserWindow } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
-import { WindowFacade } from '@coffic/buddy-foundation';
 // import { pluginManager } from './PluginManager.js';
 import { pluginViewManager } from './PluginViewManager.js';
+import { WindowFacade } from '../providers/window/WindowFacade.js';
 // import { updateManager } from './UpdateManager.js';
 
 export class AppManager {

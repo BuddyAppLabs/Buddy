@@ -27,7 +27,7 @@ export class UserPluginRepo extends BasePluginRepo {
     /**
      * 从目录加载插件
      */
-    protected async loadPluginFromDir(pluginPath: string): Promise<any | null> {
+    protected async loadPluginFromDir(_pluginPath: string): Promise<any | null> {
         // 这里需要主项目提供具体的插件加载逻辑
         return null;
     }

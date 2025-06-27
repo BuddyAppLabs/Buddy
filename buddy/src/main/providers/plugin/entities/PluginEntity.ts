@@ -98,7 +98,7 @@ export class PluginEntity implements PluginMetadata {
     /**
      * 执行插件动作
      */
-    public async executeAction(actionId: string, keyword: string): Promise<any> {
+    public async executeAction(_actionId: string, _keyword: string): Promise<any> {
         // 这里需要实现具体的动作执行逻辑
         throw new Error('Not implemented');
     }

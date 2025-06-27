@@ -8,7 +8,7 @@
 import { BrowserWindow, app, BrowserView, screen } from 'electron';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
-import { WindowFacade } from '@coffic/buddy-foundation';
+import { WindowFacade } from '../providers/window/WindowFacade.js';
 import { actionManager } from './ActionManager.js';
 import { BaseManager } from './BaseManager.js';
 import {

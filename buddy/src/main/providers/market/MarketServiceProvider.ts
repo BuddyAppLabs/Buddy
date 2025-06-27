@@ -3,7 +3,7 @@
  * 负责注册插件市场相关的服务
  */
 import { ServiceProvider } from '@coffic/cosy-framework';
-import { MarketContract, MarketRepositoryContract, MarketDownloaderContract } from './contracts/MarketContract.js';
+import { MarketRepositoryContract, MarketDownloaderContract } from './contracts/MarketContract.js';
 import { MarketManager } from './MarketManager.js';
 
 export class MarketServiceProvider extends ServiceProvider {
