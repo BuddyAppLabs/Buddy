@@ -1,6 +1,6 @@
-export const EMOJI = "💤";
+export const EMOJI = '💤';
 
 export const IPC_CHANNELS = {
-    DISPATCH: 'electron-laravel-framework:dispatch',
-    ROUTES: 'electron-laravel-framework:routes',
+  DISPATCH: 'cody-framework:dispatch',
+  ROUTES: 'cody-framework:routes',
 } as const;

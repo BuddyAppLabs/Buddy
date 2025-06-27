@@ -109,11 +109,11 @@ export abstract class BasePluginRepo implements PluginRepoContract {
      */
     public async has(id: string): Promise<boolean> {
         if (typeof id !== 'string') {
-            LogFacade.channel('plugin').error(`[BasePluginRepo] 插件ID必须是字符串, 但是传入的是`, { id });
+            LogFacade.channel('plugin').error(`[BasePluginRepo.has] 判断插件是否存在，插件ID必须是字符串, 但是传入的是`, { id });
             throw new Error('插件ID必须是字符串');
         }
 
-        LogFacade.channel('plugin').debug(`[BasePluginRepo] 检查插件是否存在`, { id });
+        LogFacade.channel('plugin').debug(`[BasePluginRepo.has] 判断插件是否存在`, { id });
 
         return (await this.getAllPlugins()).some((plugin) => plugin.id === id);
     }

@@ -1,7 +1,10 @@
 {
   "devDependencies": {
+    "chalk": "^5.4.1",
+    "concurrently": "^9.2.0",
     "electron": "^35.1.3",
     "inquirer": "^12.5.0",
+    "lodash-es": "^4.17.21",
     "nodemon": "^3.1.9",
     "turbo": "^2.5.4",
     "typescript": "^5.8.2"
@@ -13,9 +16,11 @@
     "build": "turbo build",
     "build:deps": "turbo build --filter='@coffic/cosy-*' --filter='@coffic/buddy-types'",
     "build:buddy": "turbo build --filter='buddy'",
+    "build:framework": "turbo build --filter='@coffic/cosy-framework'",
     "build:buddy:mac": "turbo build --filter='@coffic/buddy-types' && pnpm --filter buddy build:mac",
     "build:plugins": "turbo build --filter='@coffic/buddy-plugin-*'",
-    "dev": "pnpm --filter buddy dev",
+    "dev": "pnpm build:deps && concurrently \"nodemon --watch 'packages/buddy-types/*.ts' --watch 'packages/cosy-*/src' --ext ts,js --exec 'turbo build --filter=@coffic/buddy-types --filter=@coffic/cosy-*'\" \"pnpm dev:buddy\"",
+    "dev:buddy": "pnpm --filter buddy dev",
     "dev:deps": "turbo dev --filter='@coffic/cosy-*' --parallel",
     "dev:all": "turbo dev --parallel",
     "ext": "nodemon pipeline.mjs",
