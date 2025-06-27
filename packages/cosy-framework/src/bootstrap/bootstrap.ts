@@ -23,6 +23,7 @@ export async function createElectronApp(
   const finalConfig = {
     ...config,
     providers: [...defaultProviders, ...(config.providers || [])],
+    middleware: [...defaultMiddleware, ...(config.middleware || [])],
   };
 
   const app = Application.getInstance(finalConfig);
@@ -38,7 +39,7 @@ export async function createElectronApp(
 
   // 注册全局中间件
   const router = app.container().resolve<Router>('router');
-  defaultMiddleware.forEach((middleware) => {
+  finalConfig.middleware.forEach((middleware) => {
     router.use(middleware);
   });
 

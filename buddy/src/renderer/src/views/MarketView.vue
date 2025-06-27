@@ -1,12 +1,3 @@
-/**
-* 插件商店视图
-*
-* 功能：
-* 1. 展示插件列表
-* 2. 按类型分类显示插件
-* 3. 显示插件目录信息
-* 4. 下载远程仓库插件
-*/
 <script setup lang="ts">
 import { computed } from 'vue'
 import PluginCard from '@/renderer/src/components/PluginCard.vue'
@@ -139,18 +130,23 @@ const clearUninstallError = (pluginId: string) => {
         <!-- 插件列表 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <!-- 本地插件卡片 -->
-            <PluginCard v-if="activeTab === 'user'" v-for="plugin in userPlugins" :key="plugin.id" :plugin="plugin"
-                type="local" :uninstallingPlugins="uninstallStates.uninstallingPlugins"
-                :uninstallSuccess="uninstallStates.uninstallSuccess" :uninstallError="uninstallStates.uninstallError"
-                @uninstall="marketStore.uninstallPlugin" @clear-uninstall-error="clearUninstallError" />
+            <template v-if="activeTab === 'user'">
+                <PluginCard v-for="plugin in userPlugins" :key="plugin.id" :plugin="plugin" type="local"
+                    :uninstallingPlugins="uninstallStates.uninstallingPlugins"
+                    :uninstallSuccess="uninstallStates.uninstallSuccess"
+                    :uninstallError="uninstallStates.uninstallError" @uninstall="marketStore.uninstallPlugin"
+                    @clear-uninstall-error="clearUninstallError" />
+            </template>
 
             <!-- 远程插件卡片 -->
-            <PluginCard v-if="activeTab === 'remote'" v-for="plugin in remotePlugins" :key="plugin.id" :plugin="plugin"
-                type="remote" />
+            <template v-if="activeTab === 'remote'">
+                <PluginCard v-for="plugin in remotePlugins" :key="plugin.id" :plugin="plugin" type="remote" />
+            </template>
 
             <!-- 开发插件卡片 -->
-            <PluginCard v-if="activeTab === 'dev'" v-for="plugin in devPlugins" :key="plugin.id" :plugin="plugin"
-                type="remote" />
+            <template v-if="activeTab === 'dev'">
+                <PluginCard v-for="plugin in devPlugins" :key="plugin.id" :plugin="plugin" type="remote" />
+            </template>
 
             <!-- 无插件提示 -->
             <Empty v-if="shouldShowEmpty" :message="activeTab === 'remote' ? '没有可用的远程插件' : '没有找到插件'" />

@@ -1,21 +1,7 @@
 import { IpcMainInvokeEvent } from 'electron';
 import { IMiddleware } from '@coffic/cosy-framework';
+import stringify from 'safe-stable-stringify';
 import { LogFacade } from './LogFacade.js';
-
-/**
- * Checks if the given object is an Electron IpcMainInvokeEvent.
- * This is a type guard.
- * @param obj The object to check.
- * @returns True if the object is an IpcMainInvokeEvent, false otherwise.
- */
-function isIpcMainInvokeEvent(obj: any): obj is IpcMainInvokeEvent {
-  return (
-    obj &&
-    typeof obj === 'object' &&
-    obj.sender &&
-    typeof obj.sender.id !== 'undefined'
-  );
-}
 
 /**
  * A universal logging middleware factory.
@@ -43,21 +29,15 @@ export function LoggingMiddleware(
   } = options;
 
   return async (
-    arg1: IpcMainInvokeEvent | any,
+    event: IpcMainInvokeEvent,
     next: () => Promise<any>,
     ...args: any[]
   ) => {
     const startTime = Date.now();
-    let context = '[Request]';
-    let requestForLog: any = arg1;
-
-    if (isIpcMainInvokeEvent(arg1)) {
-      context = `[IPC][WebContents:${arg1.sender.id}]`;
-      requestForLog = args;
-    }
+    const context = `[IPC][WebContents:${event.sender.id}]`;
 
     const startMessage = `请求开始${
-      includeRequest ? `，数据: ${JSON.stringify(requestForLog)}` : ''
+      includeRequest ? `，数据: ${stringify(args)}` : ''
     }`;
     LogFacade[logLevel](
       `[${new Date().toISOString()}] ${context} ${startMessage}`
@@ -68,7 +48,7 @@ export function LoggingMiddleware(
       const duration = Date.now() - startTime;
 
       const successMessage = `请求成功，耗时: ${duration}ms${
-        includeResponse ? `，响应: ${JSON.stringify(result)}` : ''
+        includeResponse ? `，响应: ${stringify(result)}` : ''
       }`;
       LogFacade[logLevel](
         `[${new Date().toISOString()}] ${context} ${successMessage}`
@@ -85,7 +65,7 @@ export function LoggingMiddleware(
 
       LogFacade.error(
         `[${new Date().toISOString()}] ${context} 请求失败，耗时: ${duration}ms，错误:`,
-        { error: errorToLog }
+        { error: stringify(errorToLog) }
       );
 
       throw error;

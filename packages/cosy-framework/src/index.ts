@@ -5,6 +5,7 @@
 
 // Application
 export { Application } from './application/Application.js';
+export { ApplicationConfig } from './application/ApplicationConfig.js';
 
 // Service Provider
 export { ServiceProvider } from './providers/ServiceProvider.js';

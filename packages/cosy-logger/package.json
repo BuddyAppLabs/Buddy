@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "@coffic/cosy-framework": "workspace:*",
-    "chalk": "^5.4.1"
+    "chalk": "^5.4.1",
+    "safe-stable-stringify": "^2.5.0"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

@@ -1,10 +1,14 @@
+import { IpcMainInvokeEvent } from 'electron';
 import { IMiddleware } from '../contract';
 
 /**
  * 错误处理中间件
  * 捕获并处理中间件链中的错误
  */
-export const ErrorHandlingMiddleware: IMiddleware = async (request, next) => {
+export const ErrorHandlingMiddleware: IMiddleware = async (
+  event: IpcMainInvokeEvent,
+  next: () => Promise<any>
+) => {
   try {
     return await next();
   } catch (error) {

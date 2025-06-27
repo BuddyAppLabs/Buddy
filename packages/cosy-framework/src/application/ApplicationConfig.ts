@@ -1,4 +1,5 @@
 import { Application } from './Application.js';
+import { IMiddleware } from '../contract/index.js';
 import { ServiceProvider } from '../providers/ServiceProvider.js';
 
 export interface ApplicationConfig {
@@ -7,4 +8,5 @@ export interface ApplicationConfig {
   env: 'development' | 'production' | 'test';
   debug: boolean;
   providers?: Array<new (app: Application) => ServiceProvider>;
+  middleware?: IMiddleware[];
 }

@@ -223,7 +223,24 @@ export class Router implements IContractRouter {
       finalHandler
     );
 
-    return chain(event, ...args);
+    const result = await chain(event, ...args);
+
+    // Ensure a serializable object is always returned.
+    // This is a safeguard against middleware returning non-serializable data.
+    if (typeof result === 'object' && result !== null) {
+      // If the result is already a structured response, return it as is.
+      if ('success' in result && 'data' in result) {
+        return result;
+      }
+      if ('success' in result && 'error' in result) {
+        return result;
+      }
+    }
+
+    return {
+      success: true,
+      data: result,
+    };
   }
 
   /**
