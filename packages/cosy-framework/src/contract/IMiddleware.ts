@@ -6,5 +6,6 @@ import { IpcMainInvokeEvent } from 'electron';
 export type IMiddleware = (
   event: IpcMainInvokeEvent | any, // Can be a generic request or an IPC event
   next: () => Promise<any>,
+  channel: string,
   ...args: any[]
 ) => Promise<any> | any;

@@ -31,16 +31,21 @@ export function LoggingMiddleware(
   return async (
     event: IpcMainInvokeEvent,
     next: () => Promise<any>,
+    channel: string,
     ...args: any[]
   ) => {
     const startTime = Date.now();
     const requestContext = {
       source: 'ipc',
+      channel: channel,
       webContentsId: event.sender.id,
       request: includeRequest ? args : undefined,
     };
 
-    LogFacade.channel('logMiddleware')[logLevel](`🚀 请求开始`, requestContext);
+    LogFacade.channel('logMiddleware')[logLevel](
+      `🦌🦌🦌 🚀 请求开始`,
+      requestContext
+    );
 
     try {
       const result = await next();
@@ -53,7 +58,7 @@ export function LoggingMiddleware(
       };
 
       LogFacade.channel('logMiddleware')[logLevel](
-        `🎉 请求成功`,
+        `🦌🦌🦌 🎉 请求成功`,
         successContext
       );
 
@@ -72,7 +77,10 @@ export function LoggingMiddleware(
         error: errorToLog,
       };
 
-      LogFacade.channel('logMiddleware').error(`❌ 请求失败`, errorContext);
+      LogFacade.channel('logMiddleware').error(
+        `🦌🦌🦌 ❌ 请求失败`,
+        errorContext
+      );
 
       throw error;
     }

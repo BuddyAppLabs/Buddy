@@ -224,7 +224,7 @@ export class Router implements IContractRouter {
     const chain = middlewareChain.reduceRight(
       (next, middleware) =>
         (evt, ...a) =>
-          middleware(evt, () => next(evt, ...a), ...a),
+          middleware(evt, () => next(evt, ...a), channel, ...a),
       finalHandler
     );
 
