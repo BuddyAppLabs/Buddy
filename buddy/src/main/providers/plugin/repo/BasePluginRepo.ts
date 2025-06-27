@@ -5,7 +5,7 @@
 import { join } from 'path';
 import fs from 'fs';
 import { PluginRepoContract } from '../contracts/PluginRepoContract.js';
-import { PluginEntity } from '../entities/PluginEntity.js';
+import { PluginEntity } from '../PluginEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
 
 const verbose = true;

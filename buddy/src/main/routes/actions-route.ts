@@ -4,11 +4,11 @@
  */
 
 import { SuperAction } from '@coffic/buddy-types';
-import { actionManager } from '../managers/ActionManager.js';
-import { pluginManager } from '../managers/PluginManager.js';
+import { actionManager } from '../providers/plugin/ActionManager.js';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { RouteFacade } from '@coffic/cosy-framework';
 import { LogFacade } from '@coffic/cosy-logger';
+import { pluginManager } from '../providers/plugin/PluginManager.js';
 
 export function registerActionsRoutes(): void {
   // 获取插件动作列表

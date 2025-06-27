@@ -2,10 +2,10 @@
  * 插件动作管理器
  * 负责管理和执行插件动作
  */
-import { pluginManager } from './PluginManager.js';
-import { BaseManager } from './BaseManager.js';
-import { ActionEntity } from '../entities/ActionEntity.js';
+import { BaseManager } from '../../managers/BaseManager.js';
+import { ActionEntity } from './ActionEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
+import { PluginManager } from './PluginManager.js';
 
 const verbose = true;
 
@@ -37,6 +37,7 @@ class ActionManager extends BaseManager {
    */
   async getActions(keyword: string = ''): Promise<ActionEntity[]> {
     let allActions: ActionEntity[] = [];
+    let pluginManager = new PluginManager();
 
     try {
       // 从所有加载的插件中获取动作

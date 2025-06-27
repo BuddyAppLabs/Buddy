@@ -3,7 +3,7 @@
  * 负责从远程 npm registry 获取插件并缓存
  */
 import { npmRegistryService } from '../service/NpmRegistryService.js';
-import { PackageEntity } from '../entities/PackageEntity.js';
+import { PackageEntity } from '../providers/plugin/PackageEntity.js';
 import { PackageJson } from '@/types/package-json.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PluginEntity } from '../entities/PluginEntity.js';

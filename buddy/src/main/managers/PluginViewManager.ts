@@ -9,7 +9,7 @@ import { BrowserWindow, app, BrowserView, screen } from 'electron';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
 import { WindowFacade } from '../providers/window/WindowFacade.js';
-import { actionManager } from './ActionManager.js';
+import { actionManager } from '../providers/plugin/ActionManager.js';
 import { BaseManager } from './BaseManager.js';
 import {
   PluginViewOptions,
@@ -102,9 +102,7 @@ class PluginViewManager extends BaseManager {
   /**
    * 创建插件视图窗口
    */
-  public async createView(
-    options: PluginViewOptions
-  ): Promise<ViewBounds> {
+  public async createView(options: PluginViewOptions): Promise<ViewBounds> {
     const { viewId, url, viewMode = 'embedded' } = options;
 
     // 清理已存在的视图
@@ -131,11 +129,7 @@ class PluginViewManager extends BaseManager {
 
     // 创建视图
     if (effectiveViewMode === 'window') {
-      return this.createWindowView(
-        viewId,
-        htmlContent,
-        actionConfig.devTools
-      );
+      return this.createWindowView(viewId, htmlContent, actionConfig.devTools);
     } else {
       return this.createEmbeddedView(
         viewId,

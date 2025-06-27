@@ -4,7 +4,7 @@
  */
 
 import { join } from 'path';
-import { readPackageJson, hasPackageJson } from '../utils/PackageUtils.js';
+import { readPackageJson, hasPackageJson } from './PackageUtils.js';
 import {
   ExecuteActionArgs,
   ExecuteResult,
@@ -17,7 +17,7 @@ import {
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PackageJson } from '@/types/package-json.js';
 import fs from 'fs';
-import { appStateManager } from '../managers/StateManager.js';
+import { appStateManager } from '../../managers/StateManager.js';
 import { ActionEntity } from './ActionEntity.js';
 
 const logger = console;
