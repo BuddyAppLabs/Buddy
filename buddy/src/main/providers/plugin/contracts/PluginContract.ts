@@ -3,7 +3,7 @@
  */
 
 import { ExecuteResult } from '@coffic/buddy-types';
-import { PluginEntity } from '../PluginEntity.js';
+import { PluginEntity } from '../model/PluginEntity.js';
 
 /**
  * 插件管理器契约

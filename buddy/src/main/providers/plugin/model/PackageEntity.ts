@@ -1,8 +1,9 @@
-import { readPackageJson, hasPackageJson } from './PackageUtils.js';
+import { readPackageJson, hasPackageJson } from '../PackageUtils.js';
 import { PluginType, ValidationResult } from '@coffic/buddy-types';
 import { PluginEntity } from './PluginEntity.js';
 import { PackageJson } from '@/types/package-json.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
+import { LogFacade } from '@coffic/cosy-logger';
 
 const verbose = false;
 const logger = console;
@@ -50,7 +51,10 @@ export class PackageEntity {
     }
 
     if (verbose) {
-      logger.info('读取插件目录', { path, type });
+      LogFacade.channel('plugin').info('[PackageEntity] 💼 读取插件包目录', {
+        path,
+        type,
+      });
     }
 
     const packageJson = await readPackageJson(path);

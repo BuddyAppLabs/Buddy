@@ -4,7 +4,7 @@
  */
 
 import { join } from 'path';
-import { readPackageJson, hasPackageJson } from './PackageUtils.js';
+import { readPackageJson, hasPackageJson } from '../PackageUtils.js';
 import {
   ExecuteActionArgs,
   ExecuteResult,
@@ -17,8 +17,9 @@ import {
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PackageJson } from '@/types/package-json.js';
 import fs from 'fs';
-import { appStateManager } from '../../managers/StateManager.js';
+import { appStateManager } from '../../../managers/StateManager.js';
 import { ActionEntity } from './ActionEntity.js';
+import { LogFacade } from '@coffic/cosy-logger';
 
 const logger = console;
 
@@ -62,7 +63,10 @@ export class PluginEntity {
     }
 
     if (verbose) {
-      logger.info('读取插件目录', { pluginPath, type });
+      LogFacade.channel('plugin').debug('[PluginEntity] 🧩 读取插件目录', {
+        pluginPath,
+        type,
+      });
     }
 
     const packageJson = await readPackageJson(pluginPath);
@@ -254,7 +258,9 @@ export class PluginEntity {
     }
 
     if (typeof pluginModule.getActions !== 'function') {
-      logger.warn(`插件 ${this.id} 未实现 getActions 方法，返回空动作列表`);
+      LogFacade.channel('plugin').warn(
+        `[PluginEntity] 🧩 插件 ${this.id} 未实现 getActions 方法，返回空动作列表`
+      );
       return [];
     }
 
@@ -264,14 +270,13 @@ export class PluginEntity {
     };
 
     if (verbose) {
-      logger.info(`调用插件 getActions: ${this.id}`, {
-        context,
-        pluginPath: this.path,
-      });
-    }
-
-    if (verbose) {
-      logger.info('pluginEntity getActions context', context);
+      LogFacade.channel('plugin').info(
+        `[PluginEntity] 🧩 调用插件 getActions: ${this.id}`,
+        {
+          context,
+          pluginPath: this.path,
+        }
+      );
     }
 
     try {

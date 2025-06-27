@@ -4,7 +4,7 @@ import {
   ValidationResult,
   ViewMode,
 } from '@coffic/buddy-types';
-import { pluginManager } from './PluginManager.js';
+import { pluginManager } from '../PluginManager.js';
 import { PluginEntity } from './PluginEntity.js';
 import { SendableAction } from '@/types/sendable-action.js';
 

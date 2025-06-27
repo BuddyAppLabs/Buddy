@@ -3,7 +3,7 @@
  * 负责管理和执行插件动作
  */
 import { BaseManager } from '../../managers/BaseManager.js';
-import { ActionEntity } from './ActionEntity.js';
+import { ActionEntity } from './model/ActionEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
 import { PluginManager } from './PluginManager.js';
 

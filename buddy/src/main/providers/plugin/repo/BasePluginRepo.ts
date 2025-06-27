@@ -5,8 +5,9 @@
 import { join } from 'path';
 import fs from 'fs';
 import { PluginRepoContract } from '../contracts/PluginRepoContract.js';
-import { PluginEntity } from '../PluginEntity.js';
+import { PluginEntity } from '../model/PluginEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
+import { PluginType } from '@coffic/buddy-types';
 
 const verbose = true;
 
@@ -148,5 +149,5 @@ export abstract class BasePluginRepo implements PluginRepoContract {
   /**
    * 获取插件类型
    */
-  public abstract getPluginType(): string;
+  public abstract getPluginType(): PluginType;
 }

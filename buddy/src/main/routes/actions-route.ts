@@ -7,8 +7,7 @@ import { SuperAction } from '@coffic/buddy-types';
 import { actionManager } from '../providers/plugin/ActionManager.js';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { RouteFacade } from '@coffic/cosy-framework';
-import { LogFacade } from '@coffic/cosy-logger';
-import { pluginManager } from '../providers/plugin/PluginManager.js';
+import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 
 export function registerActionsRoutes(): void {
   // 获取插件动作列表
@@ -16,7 +15,6 @@ export function registerActionsRoutes(): void {
     IPC_METHODS.GET_ACTIONS,
     async (_event, keyword = ''): Promise<SuperAction[]> => {
       const actions = await actionManager.getActions(keyword);
-      LogFacade.channel('route').error('get actions');
       return actions;
     }
   )
@@ -36,7 +34,7 @@ export function registerActionsRoutes(): void {
   RouteFacade.handle(
     IPC_METHODS.EXECUTE_PLUGIN_ACTION,
     async (_event, actionId: string, keyword: string): Promise<unknown> => {
-      const response = await pluginManager.executeAction(actionId, keyword);
+      const response = await PluginFacade.executeAction(actionId, keyword);
       return response;
     }
   )

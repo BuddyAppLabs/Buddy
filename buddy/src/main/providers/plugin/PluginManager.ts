@@ -3,9 +3,10 @@
  * 负责插件的加载、管理和通信
  */
 import { PluginContract } from './contracts/PluginContract.js';
-import { PluginEntity } from './PluginEntity.js';
+import { PluginEntity } from './model/PluginEntity.js';
 import { userPluginDB } from './repo/UserPluginRepo.js';
 import { devPluginDB } from './repo/DevPluginRepo.js';
+import { LogFacade } from '@coffic/cosy-logger';
 
 export class PluginManager implements PluginContract {
   /**
@@ -47,6 +48,11 @@ export class PluginManager implements PluginContract {
     const [pluginId, actionLocalId] = actionId.split(':');
     const plugin = await this.getPlugin(pluginId);
     if (!plugin) {
+      LogFacade.channel('plugin').error(`[PluginManager] 插件不存在`, {
+        pluginId,
+        actionId,
+        keyword,
+      });
       throw new Error(`插件不存在: ${pluginId}`);
     }
 
