@@ -14,28 +14,10 @@ export class KeyManager implements KeyboardContract {
   // 双击时间阈值（毫秒）
   private static readonly DOUBLE_PRESS_THRESHOLD = 300;
 
-  constructor(private app: Application) {}
-
-  /**
-   * 键盘按键码
-   * 开发环境和生产环境使用不同的键：
-   * - 开发环境：Option 键 (58, 61) - 避免与开发工具的 Command 键冲突
-   * - 生产环境：Command 键 (54, 55) - 正式环境下使用 Command 键
-   */
-  private get keycodesToMonitor(): number[] {
-    // 判断当前环境
-    const isDevelopment = is.dev;
-
-    if (isDevelopment) {
-      // 开发环境: 监听 Option 键 (左58, 右61)
-      console.debug('开发环境: 监听 Option 键 (58, 61)');
-      return [58, 61];
-    } else {
-      // 生产环境: 监听 Command 键 (左54, 右55)
-      console.info('生产环境: 监听 Command 键 (54, 55)');
-      return [54, 55];
-    }
-  }
+  constructor(
+    private app: Application,
+    private keycodesToMonitor: number[]
+  ) {}
 
   /**
    * 设置键盘快捷键监听器
