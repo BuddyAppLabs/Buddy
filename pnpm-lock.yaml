@@ -276,8 +276,8 @@ importers:
         specifier: workspace:*
         version: link:../cosy-framework
       chalk:
-        specifier: ^5.4.1
-        version: 5.4.1
+        specifier: ^4.1.2
+        version: 4.1.2
       safe-stable-stringify:
         specifier: ^2.5.0
         version: 2.5.0
