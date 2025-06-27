@@ -96,7 +96,7 @@ export class Router implements IContractRouter {
    * 设置路由前缀
    */
   prefix(prefix: string): this {
-    // This should be handled by a RouteRegistrar
+    // 这应该由 RouteRegistrar 处理
     console.warn(`[Router] prefix() should be used within a group.`);
     return this;
   }
@@ -105,7 +105,7 @@ export class Router implements IContractRouter {
    * 设置路由名称
    */
   name(name: string): this {
-    // This should be handled by a RouteRegistrar
+    // 这应该由 RouteRegistrar 处理
     console.warn(`[Router] name() should be used within a group.`);
     return this;
   }
@@ -145,8 +145,8 @@ export class Router implements IContractRouter {
     const routes: string[] = [];
     this.routes.forEach((config, channel) => {
       const group = config.group ? this.groups.get(config.group) : undefined;
-      const description = config.description || 'No description';
-      const groupInfo = group ? ` (Group: ${config.group})` : '';
+      const description = config.description || '无描述';
+      const groupInfo = group ? ` (分组: ${config.group})` : '';
       routes.push(`${channel} - ${description}${groupInfo}`);
     });
     return routes;
@@ -184,7 +184,7 @@ export class Router implements IContractRouter {
           } catch (error) {
             return {
               success: false,
-              error: error instanceof Error ? error.message : 'Unknown error',
+              error: error instanceof Error ? error.message : '未知错误',
             };
           }
         }
@@ -207,7 +207,7 @@ export class Router implements IContractRouter {
 
     const { route } = match;
 
-    // Combine global and route-specific middleware
+    // 合并全局和路由特定的中间件
     const middlewareChain = [
       ...this.globalMiddleware,
       ...(route.middleware || []),
@@ -225,10 +225,10 @@ export class Router implements IContractRouter {
 
     const result = await chain(event, ...args);
 
-    // Ensure a serializable object is always returned.
-    // This is a safeguard against middleware returning non-serializable data.
+    // 确保总是返回一个可序列化的对象。
+    // 这是一个防止中间件返回不可序列化数据的保障措施。
     if (typeof result === 'object' && result !== null) {
-      // If the result is already a structured response, return it as is.
+      // 如果结果已经是结构化响应，则按原样返回。
       if ('success' in result && 'data' in result) {
         return result;
       }
@@ -255,7 +255,7 @@ export class Router implements IContractRouter {
   findRoute(
     channel: string
   ): { route: IRouteConfig; params: { [key: string]: string } } | null {
-    // Basic matching, can be expanded to support route parameters
+    // 基本匹配，可以扩展以支持路由参数
     if (this.routes.has(channel)) {
       return { route: this.routes.get(channel)!, params: {} };
     }

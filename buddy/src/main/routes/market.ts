@@ -15,6 +15,9 @@ export function registerMarketRoutes(): void {
   RouteFacade.handle(
     IPC_METHODS.Plugin_Is_Installed,
     async (_event, pluginId: string): Promise<boolean> => {
+      if (typeof pluginId !== 'string') {
+        return false;
+      }
       return await userPluginDB.has(pluginId);
     }
   )

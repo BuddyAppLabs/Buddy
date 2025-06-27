@@ -4,27 +4,27 @@ import stringify from 'safe-stable-stringify';
 import { LogFacade } from './LogFacade.js';
 
 /**
- * A universal logging middleware factory.
- * It can log both generic requests and Electron IPC events.
+ * 通用的日志中间件工厂。
+ * 它可以记录通用请求和 Electron IPC 事件。
  *
- * @param options - Configuration options for the logger.
- * @returns A middleware function.
+ * @param options - 日志记录器的配置选项。
+ * @returns 一个中间件函数。
  */
 export function LoggingMiddleware(
   options: {
     logLevel?: 'debug' | 'info' | 'warn' | 'error';
-    /** Whether to include the request data (IPC arguments or request object) in the log. */
+    /** 是否在日志中包含请求数据（IPC 参数或请求对象）。 */
     includeRequest?: boolean;
-    /** Whether to include the response data in the log. */
+    /** 是否在日志中包含响应数据。 */
     includeResponse?: boolean;
-    /** Whether to log the full error object (including stack trace) or just the message. */
+    /** 是记录完整的错误对象（包括堆栈跟踪）还是只记录消息。 */
     logFullError?: boolean;
   } = {}
 ): IMiddleware {
   const {
     logLevel = 'info',
-    includeRequest = false,
-    includeResponse = false,
+    includeRequest = true,
+    includeResponse = true,
     logFullError = true,
   } = options;
 
@@ -34,24 +34,27 @@ export function LoggingMiddleware(
     ...args: any[]
   ) => {
     const startTime = Date.now();
-    const context = `[IPC][WebContents:${event.sender.id}]`;
+    const requestContext = {
+      source: 'ipc',
+      webContentsId: event.sender.id,
+      request: includeRequest ? args : undefined,
+    };
 
-    const startMessage = `请求开始${
-      includeRequest ? `，数据: ${stringify(args)}` : ''
-    }`;
-    LogFacade[logLevel](
-      `[${new Date().toISOString()}] ${context} ${startMessage}`
-    );
+    LogFacade.channel('logMiddleware')[logLevel](`🚀 请求开始`, requestContext);
 
     try {
       const result = await next();
       const duration = Date.now() - startTime;
 
-      const successMessage = `请求成功，耗时: ${duration}ms${
-        includeResponse ? `，响应: ${stringify(result)}` : ''
-      }`;
-      LogFacade[logLevel](
-        `[${new Date().toISOString()}] ${context} ${successMessage}`
+      const successContext = {
+        ...requestContext,
+        duration: `${duration}ms`,
+        response: includeResponse ? result : undefined,
+      };
+
+      LogFacade.channel('logMiddleware')[logLevel](
+        `🎉 请求成功`,
+        successContext
       );
 
       return result;
@@ -63,10 +66,13 @@ export function LoggingMiddleware(
           ? error.message
           : String(error);
 
-      LogFacade.error(
-        `[${new Date().toISOString()}] ${context} 请求失败，耗时: ${duration}ms，错误:`,
-        { error: stringify(errorToLog) }
-      );
+      const errorContext = {
+        ...requestContext,
+        duration: `${duration}ms`,
+        error: errorToLog,
+      };
+
+      LogFacade.channel('logMiddleware').error(`❌ 请求失败`, errorContext);
 
       throw error;
     }
