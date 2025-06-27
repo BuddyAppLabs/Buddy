@@ -50,8 +50,17 @@ class ActionManager extends BaseManager {
         }
 
         try {
-          const pluginActions = await plugin.getActions(keyword);
-          allActions = [...allActions, ...pluginActions];
+          const pluginActions: ActionEntity[] =
+            await plugin.getActions(keyword);
+
+          // 为每个动作设置插件 ID 和全局 ID
+          const processedActions = pluginActions.map((action) => {
+            action.pluginId = plugin.id; // 注入插件 ID
+            action.globalId = `${plugin.id}:${action.id}`; // 创建全局唯一 ID
+            return action;
+          });
+
+          allActions = [...allActions, ...processedActions];
         } catch (error) {
           // 获取详细的错误信息
           const errorDetail =
