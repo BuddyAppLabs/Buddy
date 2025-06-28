@@ -9,6 +9,7 @@ import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PluginEntity } from '../providers/plugin/model/PluginEntity.js';
 import { PluginRepoContract } from '../providers/plugin/contracts/PluginRepoContract.js';
 import { EMOJI } from '../constants.js';
+import { LogFacade } from '@coffic/cosy-logger';
 
 const verbose = false;
 const logger = console;
@@ -72,9 +73,8 @@ export class PluginRepoRemote implements PluginRepoContract {
    * 获取远程插件列表
    */
   public async getPlugins(): Promise<PluginEntity[]> {
-    console.log('getPlugins');
+    LogFacade.channel('plugin').info('getPlugins');
     const packages = await this.getPackages();
-    console.log('getPackages', packages);
     const plugins: PluginEntity[] = [];
     for (const pkg of packages) {
       const plugin = pkg.getPlugin();
@@ -125,9 +125,11 @@ export class PluginRepoRemote implements PluginRepoContract {
       if (packages && Array.isArray(packages) && packages.length > 0) {
         this.cachedRemotePackages = packages;
         this.lastCacheRefreshTime = Date.now();
-        logger.info(
+        LogFacade.channel('plugin').info(
           `${EMOJI} [PluginRepoRemote] 远程包列表缓存已更新, count`,
-          packages.length
+          {
+            count: packages.length,
+          }
         );
         return;
       }

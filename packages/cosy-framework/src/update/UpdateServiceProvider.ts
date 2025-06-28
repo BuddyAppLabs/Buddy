@@ -11,7 +11,7 @@ export class UpdateServiceProvider extends ServiceProvider {
       return new UpdateManager(
         this.app.make<IApplication>(AppContract),
         this.app.make<ConfigManager>('config'),
-        this.app.make<ILogManager>('log')
+        this.app.make<ILogManager>('log.manager')
       );
     });
   }

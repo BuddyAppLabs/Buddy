@@ -2,7 +2,7 @@
  * Electron Log 驱动实现
  * 基于 electron-log 的具体日志驱动
  */
-import log, { type LogFunctions } from 'electron-log';
+import log, { type LogFunctions, type LogLevel } from 'electron-log';
 import {
   ILogChannel,
   ILogChannelConfig,
@@ -11,6 +11,28 @@ import {
   ILogLevel,
 } from '@coffic/cosy-framework';
 import chalk from 'chalk';
+
+const SILLY_LEVEL = 'silly';
+const VALID_LEVELS: LogLevel[] = [
+  'error',
+  'warn',
+  'info',
+  'verbose',
+  'debug',
+  'silly',
+];
+
+function sanitizeLogLevel(level?: ILogLevel | LogLevel): LogLevel {
+  const defaultLevel: LogLevel = 'info';
+  if (!level) {
+    return defaultLevel;
+  }
+  if (VALID_LEVELS.includes(level as LogLevel)) {
+    return level as LogLevel;
+  }
+  // For safety, if an invalid level is passed, default to 'info'
+  return defaultLevel;
+}
 
 export class ElectronLogChannel implements ILogChannel {
   private logger: any;
@@ -23,21 +45,11 @@ export class ElectronLogChannel implements ILogChannel {
     this.logger = log.create({ logId: name });
     this.logger.transports.file.fileName = `${name}.log`;
 
+    const sanitizedLevel = sanitizeLogLevel(this.config.level);
+
     // file an console
-    this.logger.transports.file.level = this.config.level || 'info';
-    this.logger.transports.console.level = this.config.level || 'info';
-    this.logger.transports.console.format = ({ data, message }: any) => {
-      let contextStr = '';
-      if (data && data.length > 0) {
-        contextStr = data
-          .map((d: any) =>
-            typeof d === 'object' ? JSON.stringify(d, null, 2) : d
-          )
-          .join(' ');
-        return `${message} ${chalk.gray(contextStr)}`;
-      }
-      return message;
-    };
+    this.logger.transports.file.level = sanitizedLevel;
+    this.logger.transports.console.level = sanitizedLevel;
   }
 
   debug(message: string, context?: ILogContext): void {

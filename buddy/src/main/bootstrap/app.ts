@@ -10,7 +10,7 @@ import { LoggingMiddleware, LogServiceProvider } from '@coffic/cosy-logger';
 import {
   ApplicationConfig,
   createElectronApp,
-  LogManagerContract,
+  ILogManager,
   setupIPCHandlers,
 } from '@coffic/cosy-framework';
 import { UpdateServiceProvider } from '@coffic/cosy-framework/update';
@@ -45,8 +45,7 @@ const config: ApplicationConfig = {
  * 启动应用
  */
 export async function bootApplication(): Promise<void> {
-  let logger: LogManagerContract | null = null;
-
+  let logger: ILogManager | null = null;
   try {
     // 等待 Electron 准备就绪
     await app.whenReady();
@@ -55,7 +54,8 @@ export async function bootApplication(): Promise<void> {
     const application = await createElectronApp(config);
 
     // 从容器中获取日志管理器
-    logger = application.make<LogManagerContract>('log.manager');
+    logger = application.make<ILogManager>('log.manager');
+    console.log('logger', logger);
 
     // 监听应用的日志事件
     application.on('log', (level, message, context) => {
@@ -73,7 +73,7 @@ export async function bootApplication(): Promise<void> {
 
     setupIPCHandlers(application);
 
-    logger.channel('app').info('✅ Application started successfully');
+    logger.channel('app').info('✅ 应用核心服务已启动');
   } catch (error) {
     const errorMessage = '❌ Application failed to start';
     if (logger) {

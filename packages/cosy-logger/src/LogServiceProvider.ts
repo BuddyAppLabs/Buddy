@@ -21,17 +21,9 @@ export class LogServiceProvider extends ServiceProvider {
 
     // 注册日志管理器
     this.app.container().singleton('log.manager', (container) => {
+      console.log('注册日志管理器');
       const config = container.resolve<ILogConfig>('log.config');
       return new LogManager(config);
-    });
-
-    // 设置别名
-    this.app.container().alias('LogManager', 'log.manager');
-    this.app.container().alias('log', 'log.manager');
-
-    // 注册日志管理器接口的绑定
-    this.app.container().bind('LogManagerContract', (container) => {
-      return container.resolve('log.manager');
     });
   }
 
@@ -45,16 +37,6 @@ export class LogServiceProvider extends ServiceProvider {
   public async shutdown(): Promise<void> {
     console.log('👋 日志系统正在关闭...');
     // 这里可以添加清理逻辑，比如刷新缓冲区等
-  }
-
-  public provides(): string[] {
-    return [
-      'log.config',
-      'log.manager',
-      'LogManager',
-      'log',
-      'LogManagerContract',
-    ];
   }
 
   /**

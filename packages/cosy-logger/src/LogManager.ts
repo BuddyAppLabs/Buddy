@@ -11,6 +11,7 @@ import {
   ILogContext,
   IContextualLogger,
   IChannelFactory,
+  ILogLevel,
 } from '@coffic/cosy-framework';
 import { ElectronLogDriver } from './drivers/ElectronLogDriver.js';
 import { StackDriver } from './drivers/StackDriver.js';
@@ -135,6 +136,7 @@ export class LogManager implements ILogManager {
     const fallbackConfig: ILogChannelConfig = {
       driver: 'electron',
       name: 'fallback',
+      level: ILogLevel.DEBUG,
     };
 
     return this.drivers.get('electron')!.createChannel(fallbackConfig);

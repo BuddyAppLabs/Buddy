@@ -15,14 +15,24 @@ export const loggerConfig: LoggerConfig = {
       level: ILogLevel.INFO,
       format: 'simple',
     },
+    market: {
+      driver: 'electron',
+      level: ILogLevel.DEBUG,
+      format: 'simple',
+    },
     plugin: {
       driver: 'electron',
-      level: ILogLevel.INFO,
+      level: ILogLevel.DEBUG,
       format: 'simple',
     },
     window: {
       driver: 'electron',
-      level: ILogLevel.INFO,
+      level: ILogLevel.DEBUG,
+      format: 'simple',
+    },
+    updater: {
+      driver: 'electron',
+      level: ILogLevel.DEBUG,
       format: 'simple',
     },
   },

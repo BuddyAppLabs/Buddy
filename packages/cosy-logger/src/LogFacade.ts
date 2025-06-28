@@ -9,7 +9,7 @@ export class LogFacade extends Facade {
    * Get the registered name of the component.
    */
   protected static getFacadeAccessor(): string {
-    return 'log';
+    return 'log.manager';
   }
 
   /**
