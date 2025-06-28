@@ -26,7 +26,7 @@ export class UpdateManager implements IUpdateManager {
 
     const updaterConfig = this.config.get<IUpdateConfig>('updater', {});
     autoUpdater.logger = this.logger.createChannel('update', {
-      driver: 'electron',
+      driver: 'file',
       level: ILogLevel.INFO,
       format: 'structured',
       includeTimestamp: false,

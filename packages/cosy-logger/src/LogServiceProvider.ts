@@ -21,7 +21,6 @@ export class LogServiceProvider extends ServiceProvider {
 
     // 注册日志管理器
     this.app.container().singleton('log.manager', (container) => {
-      console.log('注册日志管理器');
       const config = container.resolve<ILogConfig>('log.config');
       return new LogManager(config);
     });

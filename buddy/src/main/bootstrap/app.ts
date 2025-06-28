@@ -55,11 +55,10 @@ export async function bootApplication(): Promise<void> {
 
     // 从容器中获取日志管理器
     logger = application.make<ILogManager>('log.manager');
-    console.log('logger', logger);
 
     // 监听应用的日志事件
     application.on('log', (level, message, context) => {
-      logger?.channel('app')[level](message, context);
+      logger?.channel()[level](message, context);
     });
 
     // 初始化Facades
@@ -73,11 +72,11 @@ export async function bootApplication(): Promise<void> {
 
     setupIPCHandlers(application);
 
-    logger.channel('app').info('✅ 应用核心服务已启动');
+    logger.channel().info('✅ 应用核心服务已启动');
   } catch (error) {
     const errorMessage = '❌ Application failed to start';
     if (logger) {
-      logger.channel('app').error(errorMessage, { error });
+      logger.channel().error(errorMessage, { error });
     } else {
       console.error(errorMessage, error);
     }

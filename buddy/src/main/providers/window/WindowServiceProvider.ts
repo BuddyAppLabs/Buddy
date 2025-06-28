@@ -1,7 +1,6 @@
 import { ServiceProvider } from '@coffic/cosy-framework';
-import { Config } from '@coffic/cosy-framework';
+import { Config, ILogManager } from '@coffic/cosy-framework';
 import { createWindowManager } from './WindowManager.js';
-import { LogFacade } from '@coffic/cosy-logger';
 import {
   WindowConfig,
   WindowManagerContract,
@@ -14,19 +13,23 @@ export class WindowServiceProvider extends ServiceProvider {
    */
   public register(): void {
     // 在注册阶段只创建一个基本的窗口管理器实例
-    this.app.container().singleton('window.manager', () => {
-      return createWindowManager({
-        showTrafficLights: false,
-        showDebugToolbar: false,
-        debugToolbarPosition: 'right',
-        hotkey: 'Option+Space',
-        size: {
-          width: 1200,
-          height: 600,
-        },
-        alwaysOnTop: true,
-        opacity: 0.99,
-      } as WindowConfig);
+    this.app.container().singleton('window.manager', (container) => {
+      const logger = container.resolve<ILogManager>('log.manager');
+      return createWindowManager(
+        {
+          showTrafficLights: false,
+          showDebugToolbar: false,
+          debugToolbarPosition: 'right',
+          hotkey: 'Option+Space',
+          size: {
+            width: 1200,
+            height: 600,
+          },
+          alwaysOnTop: true,
+          opacity: 0.99,
+        } as WindowConfig,
+        logger
+      );
     });
 
     this.app.container().alias('WindowManager', 'window.manager');
@@ -64,7 +67,6 @@ export class WindowServiceProvider extends ServiceProvider {
     windowManager.createWindow();
 
     this.app.on('hotkey:triggered', () => {
-      LogFacade.channel('window').info('Hotkey triggered event received!');
       windowManager.toggleMainWindow();
     });
 

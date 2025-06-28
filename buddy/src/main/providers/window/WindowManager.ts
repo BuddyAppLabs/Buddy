@@ -6,7 +6,7 @@ import { shell, BrowserWindow, screen, globalShortcut, app } from 'electron';
 import { EMOJI } from '../../constants.js';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
-import { LogFacade } from '@coffic/cosy-logger';
+import { ILogManager } from '@coffic/cosy-framework';
 import {
   WindowConfig,
   WindowManagerContract,
@@ -17,9 +17,11 @@ const verbose = false;
 export class WindowManager implements WindowManagerContract {
   private mainWindow: BrowserWindow | null = null;
   private config: WindowConfig;
+  private logger: ILogManager;
 
-  constructor(config: WindowConfig) {
+  constructor(config: WindowConfig, logger: ILogManager) {
     this.config = config;
+    this.logger = logger;
 
     // 监听 macOS 的 activate 事件
     if (process.platform === 'darwin') {
@@ -141,28 +143,32 @@ export class WindowManager implements WindowManagerContract {
    * 加载窗口内容
    */
   private loadWindowContent(): void {
-    LogFacade.channel('window').info(`${EMOJI} [WindowManager] 加载窗口内容`);
+    this.logger.channel().info(`${EMOJI} [WindowManager] 加载窗口内容`);
     if (!this.mainWindow) return;
 
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      LogFacade.channel('window').info(
-        `${EMOJI} [WindowManager] 开发模式：加载开发服务器URL -> ${process.env['ELECTRON_RENDERER_URL']}`
-      );
+      this.logger
+        .channel()
+        .info(
+          `${EMOJI} [WindowManager] 开发模式：加载开发服务器URL -> ${process.env['ELECTRON_RENDERER_URL']}`
+        );
       this.mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
     } else {
       // 在生产环境中，使用 app.getAppPath() 获取应用根目录
       const rendererPath = join(app.getAppPath(), 'out/renderer/index.html');
-      LogFacade.channel('window').info(
-        `${EMOJI} [WindowManager] 生产模式：加载本地HTML文件 -> ${rendererPath}`
-      );
+      this.logger
+        .channel()
+        .info(
+          `${EMOJI} [WindowManager] 生产模式：加载本地HTML文件 -> ${rendererPath}`
+        );
       this.mainWindow.loadFile(rendererPath);
     }
 
     // 当内容加载完成后显示窗口
     this.mainWindow.once('ready-to-show', () => {
-      LogFacade.channel('window').info(
-        `${EMOJI} [WindowManager] 窗口内容加载完成，显示窗口`
-      );
+      this.logger
+        .channel()
+        .info(`${EMOJI} [WindowManager] 窗口内容加载完成，显示窗口`);
       if (this.mainWindow && !this.mainWindow.isDestroyed()) {
         this.mainWindow.show();
       }
@@ -423,7 +429,8 @@ export class WindowManager implements WindowManagerContract {
  * 创建窗口管理器实例
  */
 export function createWindowManager(
-  config: WindowConfig
+  config: WindowConfig,
+  logger: ILogManager
 ): WindowManagerContract {
-  return new WindowManager(config);
+  return new WindowManager(config, logger);
 }

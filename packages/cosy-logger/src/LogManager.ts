@@ -13,7 +13,8 @@ import {
   IChannelFactory,
   ILogLevel,
 } from '@coffic/cosy-framework';
-import { ElectronLogDriver } from './drivers/ElectronLogDriver.js';
+import { ConsoleDriver } from './drivers/ConsoleDriver.js';
+import { FileDriver } from './drivers/FileDriver.js';
 import { StackDriver } from './drivers/StackDriver.js';
 
 class ContextualLogger implements IContextualLogger {
@@ -54,8 +55,9 @@ export class LogManager implements ILogManager {
    * 注册默认驱动
    */
   private registerDefaultDrivers(): void {
-    // 注册electron-log驱动
-    this.drivers.set('electron', new ElectronLogDriver());
+    // 注册驱动
+    this.drivers.set('console', new ConsoleDriver());
+    this.drivers.set('file', new FileDriver());
 
     // 注册stack驱动 - 需要传入channel解析器
     this.drivers.set(
@@ -131,15 +133,31 @@ export class LogManager implements ILogManager {
 
   /**
    * 创建备用通道
+   * 如果连备用通道都创建失败，则返回一个静默的空壳通道，并打印严重错误
    */
   private createFallbackChannel(): ILogChannel {
+    const driver = this.drivers.get('console');
+    if (!driver) {
+      console.error(
+        '🚨 FATAL: Log system fallback failed. The default console driver is not registered. All logs will be suppressed.'
+      );
+      // 返回一个什么都不做的空壳对象，以防止应用崩溃
+      return {
+        debug: () => {},
+        info: () => {},
+        warn: () => {},
+        error: () => {},
+        log: () => {},
+      };
+    }
+
     const fallbackConfig: ILogChannelConfig = {
-      driver: 'electron',
+      driver: 'console',
       name: 'fallback',
       level: ILogLevel.DEBUG,
     };
 
-    return this.drivers.get('electron')!.createChannel(fallbackConfig);
+    return driver.createChannel(fallbackConfig);
   }
 
   /**
