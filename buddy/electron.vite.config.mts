@@ -28,7 +28,10 @@ export default defineConfig({
       sourcemap: true,
       rollupOptions: {
         input: {
-          'app-preload': resolve(__dirname, 'src/preload/preload-app.ts'),
+          'framework-preload': resolve(
+            __dirname,
+            '../packages/cosy-framework/src/preload/index.ts'
+          ),
           'plugin-preload': resolve(__dirname, 'src/preload/preload-plugin.ts'),
         },
       },

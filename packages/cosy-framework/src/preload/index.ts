@@ -1,26 +1,21 @@
 /**
- * 预加载脚本入口文件
- * 整合所有模块并暴露给渲染进程
+ * Cosy Framework Preload Script
+ * This script is responsible for setting up the IPC bridge between the main and renderer processes.
  */
 import { contextBridge, ipcRenderer } from 'electron';
+import { IPC_CHANNELS } from '../constants.js';
+import { PreloadApi } from '../contracts/PreloadContract.js';
 import { IpcResponse } from '@coffic/buddy-types';
-import { IpcApi } from '@/types/ipc-api.js';
-import { IPC_CHANNELS } from '@coffic/cosy-framework/constants';
 
-const logger = console;
-
-const verbose = false;
-
-export const ipcApi: IpcApi = {
+/**
+ * The implementation of the Preload API that will be exposed to the renderer process.
+ */
+export const preloadApi: PreloadApi = {
   send: (channel: string, ...args: unknown[]): void => {
     ipcRenderer.send(channel, ...args);
   },
 
   receive: (channel: string, callback: (...args: unknown[]) => void): void => {
-    if (verbose) {
-      logger.info('====== 注册IPC监听器:', channel);
-    }
-
     ipcRenderer.on(channel, (_, ...args) => callback(...args));
   },
 
@@ -35,10 +30,6 @@ export const ipcApi: IpcApi = {
     channel: string,
     ...args: unknown[]
   ): Promise<IpcResponse<any>> => {
-    if (verbose) {
-      logger.info('====== 调用IPC方法:', channel);
-    }
-
     const response = await ipcRenderer.invoke(
       IPC_CHANNELS.DISPATCH,
       channel,
@@ -48,20 +39,20 @@ export const ipcApi: IpcApi = {
     try {
       return response as IpcResponse<any>;
     } catch (error: any) {
-      throw new Error('IPC通信出错', error);
+      throw new Error(`IPC Error: ${error?.message || error}`);
     }
   },
 };
 
-// 使用 contextBridge 暴露 API 到渲染进程
+// Expose the API to the renderer process
 if (process.contextIsolated) {
   try {
-    contextBridge.exposeInMainWorld('ipc', ipcApi);
+    contextBridge.exposeInMainWorld('ipc', preloadApi);
   } catch (error) {
-    console.error(error);
+    console.error('Failed to expose preload API:', error);
   }
 } else {
-  console.log('====== 暴露IPC API到渲染进程', ipcApi);
+  // For non-context-isolated environments (less secure)
   // @ts-ignore (define in dts)
-  window.ipc = ipcApi;
+  window.ipc = preloadApi;
 }

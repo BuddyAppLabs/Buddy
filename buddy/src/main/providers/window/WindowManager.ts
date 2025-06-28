@@ -97,7 +97,7 @@ export class WindowManager implements WindowManagerContract {
           nodeIntegration: false,
           devTools: true,
           spellcheck: false,
-          preload: join(app.getAppPath(), 'out/preload/app-preload.mjs'),
+          preload: join(app.getAppPath(), 'out/preload/framework-preload.mjs'),
         },
       });
 
