@@ -3,108 +3,73 @@
  * 基于 electron-log 的具体日志驱动
  */
 import {
-    LogDriverContract,
-    LogChannelContract,
-    LogChannelConfig,
-    LogLevel,
-    LogContext
+  LogDriverContract,
+  LogChannelContract,
+  LogChannelConfig,
+  LogLevel,
+  LogContext,
 } from '../contracts/index.js';
-import chalk from 'chalk';
+import log, { type LogFunctions } from 'electron-log';
 
 export class ElectronLogChannel implements LogChannelContract {
-    private config: LogChannelConfig;
-    private channelName: string;
+  private logger: any;
+  private config: LogChannelConfig;
+  private channelName: string;
 
-    constructor(name: string, config: LogChannelConfig) {
-        this.channelName = name;
-        this.config = config;
+  constructor(name: string, config: LogChannelConfig) {
+    this.channelName = name;
+    this.config = config;
+    this.logger = log.create({ logId: name });
+
+    //
+    this.logger.transports.file.fileName = `${name}.log`;
+
+    // file an console
+    this.logger.transports.file.level = this.config.level || 'info';
+    this.logger.transports.console.level = this.config.level || 'info';
+  }
+
+  debug(message: string, context?: LogContext): void {
+    this.log(LogLevel.DEBUG, message, context);
+  }
+
+  info(message: string, context?: LogContext): void {
+    this.log(LogLevel.INFO, message, context);
+  }
+
+  warn(message: string, context?: LogContext): void {
+    this.log(LogLevel.WARN, message, context);
+  }
+
+  error(message: string, context?: LogContext): void {
+    this.log(LogLevel.ERROR, message, context);
+  }
+
+  log(level: LogLevel, message: string, context?: LogContext): void {
+    const contextStr = context ? [context] : [];
+
+    switch (level) {
+      case LogLevel.DEBUG:
+        this.logger.debug(message, ...contextStr);
+        break;
+      case LogLevel.INFO:
+        this.logger.info(message, ...contextStr);
+        break;
+      case LogLevel.WARN:
+        this.logger.warn(message, ...contextStr);
+        break;
+      case LogLevel.ERROR:
+        this.logger.error(message, ...contextStr);
+        break;
+      default:
+        this.logger.info(message, ...contextStr);
+        break;
     }
-
-    debug(message: string, context?: LogContext): void {
-        this.log(LogLevel.DEBUG, message, context);
-    }
-
-    info(message: string, context?: LogContext): void {
-        this.log(LogLevel.INFO, message, context);
-    }
-
-    warn(message: string, context?: LogContext): void {
-        this.log(LogLevel.WARN, message, context);
-    }
-
-    error(message: string, context?: LogContext): void {
-        this.log(LogLevel.ERROR, message, context);
-    }
-
-    log(level: LogLevel, message: string, context?: LogContext): void {
-        // 根据日志级别选择颜色
-        let colorizer = (str: string) => str;
-        switch (level) {
-            case LogLevel.DEBUG:
-                colorizer = chalk.gray;
-                break;
-            case LogLevel.INFO:
-                colorizer = chalk.green;
-                break;
-            case LogLevel.WARN:
-                colorizer = chalk.yellow;
-                break;
-            case LogLevel.ERROR:
-                colorizer = chalk.red;
-                break;
-        }
-
-        // 根据配置的格式化方式处理日志，并应用颜色
-        const formattedMessage = this.formatMessage(message, context, colorizer);
-
-        // 根据日志级别调用对应的方法
-        switch (level) {
-            case LogLevel.DEBUG:
-                console.debug(formattedMessage);
-                break;
-            case LogLevel.INFO:
-                console.info(formattedMessage);
-                break;
-            case LogLevel.WARN:
-                console.warn(formattedMessage);
-                break;
-            case LogLevel.ERROR:
-                console.error(formattedMessage);
-                break;
-        }
-    }
-
-    private formatMessage(
-        message: string,
-        context: LogContext | undefined,
-        colorize: (str: string) => string
-    ): string {
-        const format = this.config.format || 'simple';
-        const contextStr = context ? ` ${chalk.dim(JSON.stringify(context))}` : '';
-
-        switch (format) {
-            case 'json':
-                return JSON.stringify({
-                    channel: this.channelName,
-                    message,
-                    context,
-                    timestamp: new Date().toISOString()
-                });
-
-            case 'structured':
-                const timestamp = this.config.includeTimestamp === false ? '' : ` [${new Date().toISOString()}]`;
-                const mainMessage = `[${this.channelName}]${timestamp} ${message}`;
-                return colorize(mainMessage) + contextStr;
-
-            case 'simple':
-            default:
-                return colorize(message) + contextStr;
-        }
-    }
+  }
 }
 
 export class ElectronLogDriver implements LogDriverContract {
-    createChannel(config: LogChannelConfig): LogChannelContract {
-        return new ElectronLogChannel(config.name || 'default', config);
-    }
-} 
+  createChannel(config: LogChannelConfig): LogChannelContract {
+    return new ElectronLogChannel(config.name || 'default', config);
+  }
+}

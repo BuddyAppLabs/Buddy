@@ -6,7 +6,11 @@
 
 import { app } from 'electron';
 import { registerRoutes } from '../routes/index.js';
-import { LoggingMiddleware, LogServiceProvider } from '@coffic/cosy-logger';
+import {
+  LoggingMiddleware,
+  LogManagerContract,
+  LogServiceProvider,
+} from '@coffic/cosy-logger';
 import {
   ApplicationConfig,
   createElectronApp,
@@ -42,12 +46,22 @@ const config: ApplicationConfig = {
  * 启动应用
  */
 export async function bootApplication(): Promise<void> {
+  let logger: LogManagerContract | null = null;
+
   try {
     // 等待 Electron 准备就绪
     await app.whenReady();
 
     // 使用框架启动应用
     const application = await createElectronApp(config);
+
+    // 从容器中获取日志管理器
+    logger = application.make<LogManagerContract>('log.manager');
+
+    // 监听应用的日志事件
+    application.on('log', (level, message, context) => {
+      logger?.channel('app')[level](message, context);
+    });
 
     // 初始化Facades
     PluginFacade.setApp(application);
@@ -60,9 +74,14 @@ export async function bootApplication(): Promise<void> {
 
     setupIPCHandlers(application);
 
-    console.log('✅ 应用启动完成');
+    logger.channel('app').info('✅ Application started successfully');
   } catch (error) {
-    console.error('❌ 应用启动失败:', error);
+    const errorMessage = '❌ Application failed to start';
+    if (logger) {
+      logger.channel('app').error(errorMessage, { error });
+    } else {
+      console.error(errorMessage, error);
+    }
     throw error;
   }
 }

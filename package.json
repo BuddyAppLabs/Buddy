@@ -19,7 +19,6 @@
     "build:framework": "turbo build --filter='@coffic/cosy-framework'",
     "build:buddy:mac": "turbo build --filter='@coffic/buddy-types' && pnpm --filter buddy build:mac",
     "build:plugins": "turbo build --filter='@coffic/buddy-plugin-*'",
-    "dev": "pnpm build:deps && concurrently \"nodemon --watch 'packages/buddy-types/*.ts' --watch 'packages/cosy-*/src' --ext ts,js --exec 'turbo build --filter=@coffic/buddy-types --filter=@coffic/cosy-*'\" \"pnpm dev:buddy\"",
     "dev:buddy": "pnpm --filter buddy dev",
     "dev:deps": "turbo dev --filter='@coffic/cosy-*' --parallel",
     "dev:all": "turbo dev --parallel",

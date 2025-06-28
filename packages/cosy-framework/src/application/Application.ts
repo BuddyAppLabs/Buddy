@@ -20,7 +20,7 @@ export class Application extends EventEmitter {
   private constructor(config: ApplicationConfig) {
     super();
 
-    console.log(`${EMOJI} [Application] 创建应用实例`);
+    this.emit('log', 'info', '[Application] Creating application instance');
 
     this._config = config;
     this._container = ServiceContainer.getInstance();
@@ -57,7 +57,11 @@ export class Application extends EventEmitter {
     const providerInstance = new provider(this);
     this._providers.push(providerInstance);
 
-    console.log(`${EMOJI} [Application] 注册服务提供者`, provider.name);
+    this.emit(
+      'log',
+      'info',
+      `[Application] Registering service provider: ${provider.name}`
+    );
     providerInstance.register();
 
     return this;
@@ -67,7 +71,7 @@ export class Application extends EventEmitter {
    * 启动应用
    */
   public async boot(): Promise<void> {
-    console.log(`${EMOJI} [Application] 启动应用`);
+    this.emit('log', 'info', '[Application] Booting application');
     if (this._booted) {
       return;
     }
@@ -77,9 +81,10 @@ export class Application extends EventEmitter {
     // 启动所有服务提供者
     for (const provider of this._providers) {
       if (provider.boot) {
-        console.log(
-          `${EMOJI} [Application] 启动服务提供者`,
-          provider.constructor.name
+        this.emit(
+          'log',
+          'info',
+          `[Application] Booting service provider: ${provider.constructor.name}`
         );
         await provider.boot();
       }
@@ -87,6 +92,7 @@ export class Application extends EventEmitter {
 
     this._booted = true;
     this.emit('booted');
+    this.emit('log', 'info', '[Application] Application booted');
   }
 
   /**
@@ -160,16 +166,23 @@ export class Application extends EventEmitter {
    */
   public async shutdown(): Promise<void> {
     this.emit('shutting-down');
+    this.emit('log', 'info', '[Application] Shutting down application');
 
     // 关闭所有服务提供者
     for (const provider of this._providers.reverse()) {
       if (provider.shutdown) {
+        this.emit(
+          'log',
+          'info',
+          `[Application] Shutting down service provider: ${provider.constructor.name}`
+        );
         await provider.shutdown();
       }
     }
 
     this._running = false;
     this.emit('shutdown');
+    this.emit('log', 'info', '[Application] Application shutdown complete');
   }
 
   /**

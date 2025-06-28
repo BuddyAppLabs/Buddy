@@ -1,4 +1,7 @@
 packages:
-  - 'buddy'
-  - 'packages/*'
-  - 'plugins/*'
+  - buddy
+  - packages/*
+  - plugins/*
+
+onlyBuiltDependencies:
+  - electron
