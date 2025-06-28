@@ -3,7 +3,7 @@ import { UpdateManager } from './UpdateManager.js';
 import { UpdateContract } from './IUpdateConfig.js';
 import { AppContract, IApplication } from '../application/Application.js';
 import { ConfigManager } from '../config/types.js';
-import { LogManagerContract } from '../contract/logger/index.js';
+import { ILogManager } from '../contract/logger/index.js';
 
 export class UpdateServiceProvider extends ServiceProvider {
   public register(): void {
@@ -11,7 +11,7 @@ export class UpdateServiceProvider extends ServiceProvider {
       return new UpdateManager(
         this.app.make<IApplication>(AppContract),
         this.app.make<ConfigManager>('config'),
-        this.app.make<LogManagerContract>('log')
+        this.app.make<ILogManager>('log')
       );
     });
   }

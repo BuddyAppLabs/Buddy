@@ -4,7 +4,7 @@ import { dialog } from 'electron';
 import { IUpdateConfig } from './IUpdateConfig.js';
 import { IApplication } from '../application/Application.js';
 import { ConfigManager } from '../config/types.js';
-import { LogManagerContract } from '../contract/logger/index.js';
+import { LogLevel, ILogManager } from '../contract/logger/index.js';
 import { IUpdateManager } from './IUpdateManager.js';
 
 export class UpdateManager implements IUpdateManager {
@@ -13,7 +13,7 @@ export class UpdateManager implements IUpdateManager {
   constructor(
     private readonly app: IApplication,
     private readonly config: ConfigManager,
-    private readonly logger: LogManagerContract
+    private readonly logger: ILogManager
   ) {}
 
   public boot(): void {
@@ -24,7 +24,12 @@ export class UpdateManager implements IUpdateManager {
     });
 
     const updaterConfig = this.config.get<IUpdateConfig>('updater', {});
-    autoUpdater.logger = this.logger.channel('updater');
+    autoUpdater.logger = this.logger.createChannel('update', {
+      driver: 'electron',
+      level: LogLevel.INFO,
+      format: 'structured',
+      includeTimestamp: false,
+    });
     autoUpdater.allowDowngrade = updaterConfig.allowDowngrade ?? true;
     autoUpdater.allowPrerelease = updaterConfig.allowPrerelease ?? true;
 

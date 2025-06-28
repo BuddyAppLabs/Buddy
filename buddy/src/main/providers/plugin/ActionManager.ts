@@ -7,7 +7,7 @@ import { ActionEntity } from './model/ActionEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
 import { PluginManager } from './PluginManager.js';
 
-const verbose = true;
+const verbose = false;
 
 class ActionManager extends BaseManager {
   private static instance: ActionManager;
@@ -93,9 +93,11 @@ class ActionManager extends BaseManager {
         }
       }
 
-      LogFacade.channel('action').info(`[ActionManager] 获取插件动作`, {
-        allActions,
-      });
+      if (verbose) {
+        LogFacade.channel('action').info(`[ActionManager] 获取插件动作`, {
+          allActions,
+        });
+      }
 
       if (verbose) {
         LogFacade.channel('action').info(

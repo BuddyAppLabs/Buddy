@@ -5,9 +5,10 @@
  */
 import {
   ServiceProvider,
-  LogManagerContract,
+  ILogManager,
   LogConfig,
   LogLevel,
+  Config,
 } from '@coffic/cosy-framework';
 import { LogManager } from './LogManager.js';
 
@@ -35,7 +36,7 @@ export class LogServiceProvider extends ServiceProvider {
   }
 
   public async boot(): Promise<void> {
-    const manager = this.app.make<LogManagerContract>('log.manager');
+    const manager = this.app.make<ILogManager>('log.manager');
 
     // 扩展自定义驱动的示例
     this.registerCustomDrivers(manager);
@@ -58,11 +59,11 @@ export class LogServiceProvider extends ServiceProvider {
 
   /**
    * 获取日志配置
-   * 可以从配置文件或环境变量中读取
+   * 从用户配置中读取，如果没有则使用默认配置
    */
   private getLogConfig(): LogConfig {
-    // 这里可以从配置文件中读取，现在先用默认配置
-    return {
+    // 默认配置
+    const defaultConfig: LogConfig = {
       default: 'app',
       channels: {
         app: {
@@ -71,69 +72,26 @@ export class LogServiceProvider extends ServiceProvider {
           format: 'structured',
           includeTimestamp: false,
         },
-        action: {
-          driver: 'electron',
-          level: LogLevel.INFO,
-          format: 'structured',
-          includeTimestamp: false,
-        },
-        debug: {
-          driver: 'electron',
-          level: LogLevel.DEBUG,
-          format: 'simple',
-        },
         error: {
           driver: 'electron',
           level: LogLevel.ERROR,
           format: 'json',
         },
-        logMiddleware: {
-          driver: 'electron',
-          level: LogLevel.INFO,
-          format: 'structured',
-          includeTimestamp: false,
-        },
-        route: {
-          driver: 'electron',
-          level: LogLevel.INFO,
-          format: 'structured',
-          includeTimestamp: false,
-        },
-        plugin: {
-          driver: 'electron',
-          level: LogLevel.INFO,
-          format: 'structured',
-          includeTimestamp: false,
-        },
-        security: {
-          driver: 'electron',
-          level: LogLevel.WARN,
-          format: 'json',
-        },
-        window: {
-          driver: 'electron',
-          level: LogLevel.INFO,
-          format: 'structured',
-          includeTimestamp: false,
-        },
-        performance: {
-          driver: 'electron',
-          level: LogLevel.INFO,
-          format: 'structured',
-        },
-        // Stack示例 - 同时记录到多个通道
-        production: {
-          driver: 'stack',
-          channels: ['app', 'error'],
-        },
       },
     };
+
+    const userConfig = Config.get('logger');
+
+    console.log('userConfig', userConfig);
+
+    // 从用户配置中读取，如果没有则使用默认配置
+    return Config.get('logger', defaultConfig);
   }
 
   /**
    * 注册自定义驱动示例
    */
-  private registerCustomDrivers(manager: LogManagerContract): void {
+  private registerCustomDrivers(manager: ILogManager): void {
     // 示例：注册一个自定义的文件驱动
     manager.extend('custom-file', (config) => {
       // 这里可以返回自定义的日志通道实现

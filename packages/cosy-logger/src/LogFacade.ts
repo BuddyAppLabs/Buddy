@@ -1,4 +1,4 @@
-import { Facade, LogManagerContract } from '@coffic/cosy-framework';
+import { Facade, ILogManager } from '@coffic/cosy-framework';
 
 /**
  * Log Facade
@@ -16,7 +16,7 @@ export class LogFacade extends Facade {
    * Get a specific log channel instance.
    */
   public static channel(name?: string) {
-    const instance = this.getFacadeRoot() as LogManagerContract;
+    const instance = this.getFacadeRoot() as ILogManager;
     return instance.channel(name);
   }
 }

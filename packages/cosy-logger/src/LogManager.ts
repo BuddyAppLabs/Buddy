@@ -3,7 +3,7 @@
  * 参考Laravel的设计，支持依赖注入、驱动扩展和灵活配置
  */
 import {
-  LogManagerContract,
+  ILogManager,
   LogChannelContract,
   LogDriverContract,
   LogChannelConfig,
@@ -38,7 +38,7 @@ class ContextualLogger implements ContextualLoggerContract {
   }
 }
 
-export class LogManager implements LogManagerContract {
+export class LogManager implements ILogManager {
   private config: LogConfig;
   private drivers: Map<string, LogDriverContract> = new Map();
   private channels: Map<string, LogChannelContract> = new Map();
@@ -67,6 +67,8 @@ export class LogManager implements LogManagerContract {
    * 获取通道实例
    */
   private getChannelInstance(name: string): LogChannelContract | null {
+    console.log('getChannelInstance', name);
+    console.log('this.channels', this.channels);
     // 如果通道已经存在，直接返回
     if (this.channels.has(name)) {
       return this.channels.get(name)!;

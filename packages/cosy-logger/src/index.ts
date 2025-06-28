@@ -3,5 +3,6 @@
  */
 export * from './LogManager.js';
 export * from './LogServiceProvider.js';
-export * from './LogFacade.js';
 export * from './LoggingMiddleware.js';
+export * from './LogFacade.js';
+export * from './types.js';
