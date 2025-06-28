@@ -1,10 +1,11 @@
 import pkg from 'electron-updater';
 const { autoUpdater } = pkg;
 import { dialog } from 'electron';
-import { IUpdateManager, UpdateConfig } from './contracts/UpdateContract.js';
+import { IUpdateConfig } from './IUpdateConfig.js';
 import { IApplication } from '../application/Application.js';
 import { ConfigManager } from '../config/types.js';
 import { LogManagerContract } from '../contract/logger/index.js';
+import { IUpdateManager } from './IUpdateManager.js';
 
 export class UpdateManager implements IUpdateManager {
   private mainWindow: Electron.BrowserWindow | null = null;
@@ -22,7 +23,7 @@ export class UpdateManager implements IUpdateManager {
       this.mainWindow = window;
     });
 
-    const updaterConfig = this.config.get<UpdateConfig>('updater', {});
+    const updaterConfig = this.config.get<IUpdateConfig>('updater', {});
     autoUpdater.logger = this.logger.channel('updater');
     autoUpdater.allowDowngrade = updaterConfig.allowDowngrade ?? true;
     autoUpdater.allowPrerelease = updaterConfig.allowPrerelease ?? true;

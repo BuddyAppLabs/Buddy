@@ -67,8 +67,11 @@ export const IPC_METHODS = {
   DEV_TEST_ERROR: 'dev/tests/errors', // 错误处理测试
   DEV_TEST_STREAM: 'dev/tests/streams', // 流处理测试
 
-  // New method
-  GET_VERSIONS: 'get-versions',
+  // 版本相关的路由
+  GET_VERSIONS: 'versions/get',
+  CHECK_UPDATE: 'versions/update',
+
+  // 其他
   OPEN_CONFIG_FOLDER: 'config/open-folder',
 } as const;
 

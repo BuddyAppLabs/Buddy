@@ -1,6 +1,6 @@
 import { ServiceProvider } from '../providers/ServiceProvider.js';
 import { UpdateManager } from './UpdateManager.js';
-import { UpdateContract } from './contracts/UpdateContract.js';
+import { UpdateContract } from './IUpdateConfig.js';
 import { AppContract, IApplication } from '../application/Application.js';
 import { ConfigManager } from '../config/types.js';
 import { LogManagerContract } from '../contract/logger/index.js';

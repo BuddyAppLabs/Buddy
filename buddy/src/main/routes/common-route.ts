@@ -11,6 +11,7 @@ import { createViewArgs } from '@/types/args.js';
 import { RouteFacade } from '@coffic/cosy-framework';
 import { app } from 'electron';
 import { fileIpc } from '../service/FileIpc';
+import { UpdateFacade } from '@coffic/cosy-framework';
 
 const logger = console;
 
@@ -97,4 +98,9 @@ export function registerCommonRoutes(): void {
       v8: process.versions.v8,
     };
   }).description('获取应用和运行时版本信息');
+
+  // 检查更新
+  RouteFacade.handle(IPC_METHODS.CHECK_UPDATE, () => {
+    return UpdateFacade.checkForUpdates();
+  }).description('检查更新');
 }

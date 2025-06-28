@@ -27,4 +27,16 @@ export const stateApi = {
       throw new Error(response.error);
     }
   },
+
+  async checkUpdate(): Promise<void> {
+    const response: IpcResponse<any> = await ipc.invoke(
+      IPC_METHODS.CHECK_UPDATE
+    );
+
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
 };

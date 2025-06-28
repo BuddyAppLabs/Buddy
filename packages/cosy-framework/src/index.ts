@@ -26,6 +26,7 @@ export { ErrorHandlingMiddleware } from './middleware/ErrorHandlingMiddleware.js
 export * from './facades/Facade.js';
 export { RouteFacade } from './routing/RouteFacade.js';
 export { createFacade } from './facades/createFacade.js';
+export { UpdateFacade } from './update/UpdateFacade.js';
 
 // Bootstrap
 export * from './bootstrap/bootstrap.js';

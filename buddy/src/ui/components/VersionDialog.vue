@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useAppStore } from '@renderer/stores/appStore'
+import { IPC_METHODS } from '@/types/ipc-methods';
 
 defineProps<{
     modelValue: boolean
@@ -39,8 +40,12 @@ const closeDialog = () => {
 
 // 检查更新
 const checkUpdate = async () => {
-    // TODO: 实现检查更新功能
-    console.log('检查更新')
+    let response = await window.ipc.invoke(IPC_METHODS.CHECK_UPDATE);
+    if (response.success) {
+        console.log('检查更新成功')
+    } else {
+        console.log('检查更新失败')
+    }
 }
 </script>
 
