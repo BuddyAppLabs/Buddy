@@ -9,7 +9,7 @@ import { PluginEntity } from '../model/PluginEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
 import { PluginType } from '@coffic/buddy-types';
 
-const verbose = true;
+const verbose = false;
 
 export abstract class BasePluginRepo implements PluginRepoContract {
   protected rootDir: string;

@@ -14,7 +14,7 @@ export class WindowServiceProvider extends ServiceProvider {
   public register(): void {
     // 在注册阶段只创建一个基本的窗口管理器实例
     this.app.container().singleton('window.manager', (container) => {
-      const logger = container.resolve<ILogManager>('log.manager');
+      const logger = container.resolve<ILogManager>('log');
       return createWindowManager(
         {
           showTrafficLights: false,

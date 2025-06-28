@@ -22,8 +22,7 @@ import { ActionEntity } from './ActionEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
 
 const logger = console;
-
-const verbose = true;
+const verbose = false;
 const title = '🧩 PluginEntity';
 
 /**

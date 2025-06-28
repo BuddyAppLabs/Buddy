@@ -4,33 +4,26 @@
  * 参考Laravel的设计模式
  */
 import {
-  ServiceProvider,
-  ILogManager,
-  ILogLevel,
-  Config,
   ILogConfig,
+  ILogManager,
+  ServiceProvider,
+  Config,
+  ILogLevel,
 } from '@coffic/cosy-framework';
 import { LogManager } from './LogManager.js';
 
 export class LogServiceProvider extends ServiceProvider {
-  public register(): void {
-    // 注册日志配置
-    this.app.container().singleton('log.config', () => {
-      return this.getLogConfig();
-    });
+  public static LogManager = 'log';
 
-    // 注册日志管理器
-    this.app.container().singleton('log.manager', (container) => {
-      const config = container.resolve<ILogConfig>('log.config');
-      return new LogManager(config);
+  register(): void {
+    this.app.singleton(LogServiceProvider.LogManager, () => {
+      const loggerConfig = Config.get<ILogConfig>('logger');
+      return new LogManager(loggerConfig);
     });
   }
 
-  public async boot(): Promise<void> {
-    const manager = this.app.make<ILogManager>('log.manager');
-
-    // 扩展自定义驱动的示例
-    this.registerCustomDrivers(manager);
+  async boot(): Promise<void> {
+    // No boot logic needed for the logger
   }
 
   public async shutdown(): Promise<void> {

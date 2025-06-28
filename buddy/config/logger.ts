@@ -9,6 +9,17 @@ export default {
       driver: 'stack',
       channels: ['console', 'file'],
     },
+    app: {
+      driver: 'file',
+      level: ILogLevel.DEBUG,
+      path: () => getLogPath('app.log'),
+    },
+
+    logMiddleware: {
+      driver: 'file',
+      level: ILogLevel.DEBUG,
+      path: () => getLogPath('logMiddleware.log'),
+    },
 
     console: {
       driver: 'console',
@@ -18,19 +29,19 @@ export default {
     file: {
       driver: 'file',
       level: ILogLevel.DEBUG,
-      path: getLogPath('buddy.log'),
+      path: () => getLogPath('buddy.log'),
     },
 
     updater: {
       driver: 'file',
       level: ILogLevel.DEBUG,
-      path: getLogPath('updater.log'),
+      path: () => getLogPath('updater.log'),
     },
 
     plugin: {
       driver: 'file',
       level: ILogLevel.DEBUG,
-      path: getLogPath('plugin.log'),
+      path: () => getLogPath('plugin.log'),
     },
   },
 };

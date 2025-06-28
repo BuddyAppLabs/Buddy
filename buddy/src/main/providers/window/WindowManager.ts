@@ -143,32 +143,40 @@ export class WindowManager implements WindowManagerContract {
    * 加载窗口内容
    */
   private loadWindowContent(): void {
-    this.logger.channel().info(`${EMOJI} [WindowManager] 加载窗口内容`);
+    if (verbose) {
+      this.logger.channel().info(`${EMOJI} [WindowManager] 加载窗口内容`);
+    }
     if (!this.mainWindow) return;
 
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      this.logger
-        .channel()
-        .info(
-          `${EMOJI} [WindowManager] 开发模式：加载开发服务器URL -> ${process.env['ELECTRON_RENDERER_URL']}`
-        );
+      if (verbose) {
+        this.logger
+          .channel()
+          .info(
+            `${EMOJI} [WindowManager] 开发模式：加载开发服务器URL -> ${process.env['ELECTRON_RENDERER_URL']}`
+          );
+      }
       this.mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
     } else {
       // 在生产环境中，使用 app.getAppPath() 获取应用根目录
       const rendererPath = join(app.getAppPath(), 'out/renderer/index.html');
-      this.logger
-        .channel()
-        .info(
-          `${EMOJI} [WindowManager] 生产模式：加载本地HTML文件 -> ${rendererPath}`
-        );
+      if (verbose) {
+        this.logger
+          .channel()
+          .info(
+            `${EMOJI} [WindowManager] 生产模式：加载本地HTML文件 -> ${rendererPath}`
+          );
+      }
       this.mainWindow.loadFile(rendererPath);
     }
 
     // 当内容加载完成后显示窗口
     this.mainWindow.once('ready-to-show', () => {
-      this.logger
-        .channel()
-        .info(`${EMOJI} [WindowManager] 窗口内容加载完成，显示窗口`);
+      if (verbose) {
+        this.logger
+          .channel()
+          .info(`${EMOJI} [WindowManager] 窗口内容加载完成，显示窗口`);
+      }
       if (this.mainWindow && !this.mainWindow.isDestroyed()) {
         this.mainWindow.show();
       }

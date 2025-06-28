@@ -141,7 +141,10 @@ export class LogUtil {
  * @returns 日志文件的完整路径
  */
 export function getLogPath(fileName: string): string {
-  if (app.isPackaged) {
+  const isPackaged = app.isPackaged;
+  console.log(`[LogUtil] ախ 正在获取日志路径... isPackaged: ${isPackaged}`);
+
+  if (isPackaged) {
     // 生产环境: 返回用户数据目录下的logs目录
     // 例如: /Users/username/Library/Application Support/AppName/logs/buddy.log
     return path.join(app.getPath('logs'), fileName);

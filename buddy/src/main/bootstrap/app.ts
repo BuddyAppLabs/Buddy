@@ -54,7 +54,7 @@ export async function bootApplication(): Promise<void> {
     const application = await createElectronApp(config);
 
     // 从容器中获取日志管理器
-    logger = application.make<ILogManager>('log.manager');
+    logger = application.make<ILogManager>('log');
 
     // 监听应用的日志事件
     application.on('log', (level, message, context) => {

@@ -7,7 +7,7 @@ export interface ILogChannelConfig {
   driver: string;
   name?: string;
   level?: ILogLevel;
-  path?: string;
+  path?: string | (() => string);
   channels?: string[];
   format?: 'simple' | 'json' | 'structured';
   includeTimestamp?: boolean; // 是否包含时间戳

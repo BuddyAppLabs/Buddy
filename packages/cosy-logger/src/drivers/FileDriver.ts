@@ -28,11 +28,30 @@ export class FileChannel implements ILogChannel {
     const sanitizedLevel = sanitizeLogLevel(this.config.level);
     this.logger.transports.file.level = sanitizedLevel;
 
+    // If a custom path is provided, use it
     if (this.config.path) {
-      const logDir = path.dirname(this.config.path);
+      const pathOrFn = this.config.path;
+      const logPath =
+        typeof pathOrFn === 'function'
+          ? (pathOrFn as () => string)()
+          : (pathOrFn as string);
+
+      // Ensure the directory exists
+      const logDir = path.dirname(logPath);
       fs.mkdirSync(logDir, { recursive: true });
 
-      this.logger.transports.file.resolvePathFn = () => this.config.path;
+      // Override electron-log's default path resolving
+      this.logger.transports.file.resolvePathFn = () => logPath;
+
+      console.log(
+        `[cosy-logger] 📝 File log channel '${name}' configured to write to: ${logPath}`
+      );
+      // 诊断：打印 electron-log 内部认为的最终文件路径
+      const fileInfo = this.logger.transports.file.getFile();
+      console.log(
+        `[cosy-logger] 🔍 [${name}] electron-log internal path:`,
+        fileInfo.path
+      );
     }
   }
 
