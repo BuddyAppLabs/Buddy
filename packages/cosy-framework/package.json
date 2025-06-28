@@ -80,6 +80,11 @@
       "import": "./dist/facades/index.js",
       "require": "./dist/facades/index.js",
       "types": "./dist/facades/index.d.ts"
+    },
+    "./constants": {
+      "import": "./dist/constants.js",
+      "require": "./dist/constants.js",
+      "types": "./dist/constants.d.ts"
     }
   }
 }
