@@ -80,12 +80,12 @@ export class LogServiceProvider extends ServiceProvider {
       },
     };
 
-    const userConfig = Config.get('logger');
+    const userConfig = Config.get<{ loggerConfig: LogConfig }>('logger');
 
     console.log('userConfig', userConfig);
 
     // 从用户配置中读取，如果没有则使用默认配置
-    return Config.get('logger', defaultConfig);
+    return userConfig?.loggerConfig || defaultConfig;
   }
 
   /**

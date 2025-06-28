@@ -16,5 +16,10 @@ export const loggerConfig: LoggerConfig = {
       level: LogLevel.INFO,
       format: 'simple',
     },
+    window: {
+      driver: 'electron',
+      level: LogLevel.INFO,
+      format: 'simple',
+    },
   },
 };
