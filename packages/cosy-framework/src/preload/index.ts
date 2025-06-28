@@ -4,13 +4,13 @@
  */
 import { contextBridge, ipcRenderer } from 'electron';
 import { IPC_CHANNELS } from '../constants.js';
-import { PreloadApi } from '../contracts/PreloadContract.js';
+import { IPreloadApi } from '../contract/IPreloadContract.js';
 import { IpcResponse } from '@coffic/buddy-types';
 
 /**
  * The implementation of the Preload API that will be exposed to the renderer process.
  */
-export const preloadApi: PreloadApi = {
+export const preloadApi: IPreloadApi = {
   send: (channel: string, ...args: unknown[]): void => {
     ipcRenderer.send(channel, ...args);
   },

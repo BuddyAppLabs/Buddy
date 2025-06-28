@@ -50,7 +50,7 @@ export const useActionStore = defineStore('action', {
 
     onUnmounted() {
       // 移除事件监听
-      ipc.removeListener(AppEvents.ACTIVATED);
+      // ipc.removeListener(AppEvents.ACTIVATED);
     },
 
     /**

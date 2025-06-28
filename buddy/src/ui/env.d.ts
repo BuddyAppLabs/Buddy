@@ -1,10 +1,10 @@
 /// <reference types="vite/client" />
 
-import { IpcApi } from '@coffic/buddy-types';
+import { IPreloadApi } from '@coffic/cosy-framework';
 
 declare global {
   interface Window {
-    ipc: IpcApi;
+    ipc: IPreloadApi;
   }
 }
 

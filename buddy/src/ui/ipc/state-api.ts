@@ -17,6 +17,14 @@ export const stateApi = {
   },
 
   async getVersions(): Promise<Record<string, string>> {
-    return await ipc.invoke(IPC_METHODS.GET_VERSIONS);
+    const response: IpcResponse<any> = await ipc.invoke(
+      IPC_METHODS.GET_VERSIONS
+    );
+
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
   },
 };

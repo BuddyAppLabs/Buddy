@@ -36,5 +36,5 @@ export * from './constants.js';
 // New exports
 export * from './container/ServiceContainer.js';
 export * from './routing/index.js';
-export * from './contracts/logger/index.js';
+export * from './contract/logger/index.js';
 export * from './middleware/index.js';

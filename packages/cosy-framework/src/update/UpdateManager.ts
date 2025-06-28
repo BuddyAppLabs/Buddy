@@ -4,7 +4,7 @@ import { dialog } from 'electron';
 import { IUpdateManager, UpdateConfig } from './contracts/UpdateContract.js';
 import { IApplication } from '../application/Application.js';
 import { ConfigManager } from '../config/types.js';
-import { LogManagerContract } from '../contracts/logger/index.js';
+import { LogManagerContract } from '../contract/logger/index.js';
 
 export class UpdateManager implements IUpdateManager {
   private mainWindow: Electron.BrowserWindow | null = null;

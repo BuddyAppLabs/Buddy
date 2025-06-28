@@ -4,7 +4,7 @@
  */
 import { IpcResponse } from '@coffic/buddy-types';
 
-export interface PreloadApi {
+export interface IPreloadApi {
   /**
    * Send a message to the main process
    * @param channel The channel to send the message on

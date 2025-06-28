@@ -6,3 +6,4 @@ export * from './IRouteMatch.js';
 export * from './IValidation.js';
 export * from './IContractRouteRegistrar.js';
 export * from './IContractRouter.js';
+export * from './IPreloadContract.js';
