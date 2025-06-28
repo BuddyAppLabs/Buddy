@@ -7,6 +7,7 @@ import {
   WindowConfig,
   WindowManagerContract,
 } from './contracts/ContractWindow.js';
+import { app } from 'electron';
 
 export class WindowServiceProvider extends ServiceProvider {
   /**
@@ -69,6 +70,14 @@ export class WindowServiceProvider extends ServiceProvider {
     this.app.on('hotkey:triggered', () => {
       LogFacade.channel('window').info('Hotkey triggered event received!');
       windowManager.toggleMainWindow();
+    });
+
+    app.on('activate', () => {
+      // On macOS it's common to re-create a window in the app when the
+      // dock icon is clicked and there are no other windows open.
+      if (windowManager.getAllWindows().length === 0) {
+        windowManager.createWindow();
+      }
     });
   }
 }
