@@ -35,6 +35,7 @@ import { globalProgress } from './composables/useProgress'
 import { useAppStore } from '@renderer/stores/appStore'
 import ErrorNotification from '@renderer/components/ErrorNotification.vue'
 import { useErrorStore } from '@renderer/stores/errorStore'
+import VersionDialog from '@renderer/components/VersionDialog.vue'
 
 const actionStore = useActionStore()
 const appStore = useAppStore()
@@ -59,6 +60,7 @@ onMounted(async () => {
     }
 
     try {
+        // 注册全局错误处理
         window.addEventListener('error', handleGlobalError)
         window.addEventListener('unhandledrejection', handleUnhandledRejection)
 
@@ -96,7 +98,7 @@ onMounted(async () => {
     }
 })
 
-// 在组件卸载时清理消息监听
+// 在组件卸载时清理监听器
 onUnmounted(() => {
     window.removeEventListener('error', handleGlobalError)
     window.removeEventListener('unhandledrejection', handleUnhandledRejection)
@@ -154,6 +156,9 @@ onUnmounted(() => {
         @close="globalToast.close">
         {{ globalToast.state.value.message }}
     </Toast>
+
+    <!-- 版本信息对话框 -->
+    <VersionDialog v-model="appStore.showVersionDialog" />
 </template>
 
 <style>

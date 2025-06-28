@@ -7,6 +7,7 @@
  * - 提供插件商店入口
  * - 显示窗口激活状态
  * - 提供打开配置文件夹功能
+ * - 显示版本信息
  -->
 
 <script setup lang="ts">
@@ -89,6 +90,11 @@ onUnmounted(() => {
 
         <!-- 右侧状态栏 -->
         <template #right>
+            <!-- 版本信息按钮 -->
+            <StatusBarItem clickable @click="appStore.toggleVersionDialog" title="查看版本信息">
+                v{{ appStore.version }}
+            </StatusBarItem>
+
             <!-- 配置文件夹按钮 -->
             <StatusBarItem clickable @click="openConfigFolder" title="打开配置文件夹">
                 配置

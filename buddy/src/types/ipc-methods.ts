@@ -66,6 +66,10 @@ export const IPC_METHODS = {
   DEV_TEST_ECHO: 'dev/tests/echo', // 回显测试
   DEV_TEST_ERROR: 'dev/tests/errors', // 错误处理测试
   DEV_TEST_STREAM: 'dev/tests/streams', // 流处理测试
+
+  // New method
+  GET_VERSIONS: 'get-versions',
+  OPEN_CONFIG_FOLDER: 'config/open-folder',
 } as const;
 
 /**
