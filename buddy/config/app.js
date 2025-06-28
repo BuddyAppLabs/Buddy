@@ -84,6 +84,13 @@ export default {
     gc_interval: parseInt(env('GC_INTERVAL', '60000')), // ms
     preload_plugins: env('PRELOAD_PLUGINS', 'true') === 'true',
   },
+
+  // 更新配置
+  updater: {
+    autoCheck: true,
+    autoCheckDelay: 5000, // 启动后5秒检查
+    allowPrerelease: false,
+  },
 };
 
 function env(key, defaultValue = null) {

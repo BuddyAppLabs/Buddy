@@ -9,7 +9,34 @@ import { ServiceProvider } from '../providers/ServiceProvider.js';
 import { EMOJI } from '../constants.js';
 import { ApplicationConfig } from './ApplicationConfig.js';
 
-export class Application extends EventEmitter {
+export const AppContract = 'app';
+
+export interface IApplication extends EventEmitter {
+  boot(): Promise<void>;
+  run(): Promise<void>;
+  container(): ServiceContainer;
+  config(): ApplicationConfig;
+  config<T>(key: keyof ApplicationConfig): T;
+  isDevelopment(): boolean;
+  isProduction(): boolean;
+  isTest(): boolean;
+  isBooted(): boolean;
+  isRunning(): boolean;
+  shutdown(): Promise<void>;
+  make<T>(abstract: string): T;
+  bind<T>(
+    abstract: string,
+    factory: (container: ServiceContainer) => T,
+    singleton?: boolean
+  ): void;
+  singleton<T>(
+    abstract: string,
+    factory: (container: ServiceContainer) => T
+  ): void;
+  register(provider: new (app: IApplication) => ServiceProvider): this;
+}
+
+export class Application extends EventEmitter implements IApplication {
   private static _instance: Application;
   private _container: ServiceContainer;
   private _config: ApplicationConfig;

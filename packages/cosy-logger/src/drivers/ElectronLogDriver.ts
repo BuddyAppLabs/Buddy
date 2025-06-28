@@ -8,7 +8,7 @@ import {
   LogChannelConfig,
   LogLevel,
   LogContext,
-} from '../contracts/index.js';
+} from '@coffic/cosy-framework';
 import log, { type LogFunctions } from 'electron-log';
 
 export class ElectronLogChannel implements LogChannelContract {

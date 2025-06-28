@@ -27,7 +27,10 @@
   "dependencies": {
     "@coffic/buddy-types": "workspace:*",
     "electron": "^27.0.0",
-    "jiti": "^2.4.2"
+    "electron-updater": "^6.1.7",
+    "inversify": "^6.0.2",
+    "jiti": "^2.4.2",
+    "reflect-metadata": "^0.2.1"
   },
   "devDependencies": {
     "@types/jest": "^29.0.0",
@@ -90,6 +93,16 @@
       "import": "./dist/contracts/PreloadContract.js",
       "require": "./dist/contracts/PreloadContract.js",
       "types": "./dist/contracts/PreloadContract.d.ts"
+    },
+    "./update": {
+      "import": "./dist/update/index.js",
+      "require": "./dist/update/index.js",
+      "types": "./dist/update/index.d.ts"
+    },
+    "./contracts/logger": {
+      "import": "./dist/contracts/logger/index.js",
+      "require": "./dist/contracts/logger/index.js",
+      "types": "./dist/contracts/logger/index.d.ts"
     }
   }
 }

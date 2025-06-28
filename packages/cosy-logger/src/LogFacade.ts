@@ -1,14 +1,22 @@
-import { createFacade, Facade } from '@coffic/cosy-framework';
-import { LogManagerContract } from './contracts/LogManagerContract.js';
+import { Facade, LogManagerContract } from '@coffic/cosy-framework';
 
 /**
- * 路由门面基类
+ * Log Facade
+ * Provides a static interface to the log manager.
  */
-class BaseFacade extends Facade {
-    protected static override getFacadeAccessor(): string {
-        return 'log';
-    }
-}
+export class LogFacade extends Facade {
+  /**
+   * Get the registered name of the component.
+   */
+  protected static getFacadeAccessor(): string {
+    return 'log';
+  }
 
-// 创建并导出类型安全的路由门面
-export const LogFacade = createFacade<LogManagerContract>(BaseFacade);
+  /**
+   * Get a specific log channel instance.
+   */
+  public static channel(name?: string) {
+    const instance = this.getFacadeRoot() as LogManagerContract;
+    return instance.channel(name);
+  }
+}

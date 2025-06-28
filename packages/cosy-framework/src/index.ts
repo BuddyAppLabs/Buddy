@@ -4,11 +4,11 @@
  */
 
 // Application
-export { Application } from './application/Application.js';
-export { ApplicationConfig } from './application/ApplicationConfig.js';
+export * from './application/Application.js';
+export * from './application/ApplicationConfig.js';
 
 // Service Provider
-export { ServiceProvider } from './providers/ServiceProvider.js';
+export * from './providers/ServiceProvider.js';
 
 // Config
 export * from './config/index.js';
@@ -23,12 +23,18 @@ export * from './contract/index.js';
 export { ErrorHandlingMiddleware } from './middleware/ErrorHandlingMiddleware.js';
 
 // Facades
-export { Facade } from './facades/Facade.js';
+export * from './facades/Facade.js';
 export { RouteFacade } from './routing/RouteFacade.js';
 export { createFacade } from './facades/createFacade.js';
 
 // Bootstrap
-export { createElectronApp, setupIPCHandlers } from './bootstrap/bootstrap.js';
+export * from './bootstrap/bootstrap.js';
 
 // Constants
 export * from './constants.js';
+
+// New exports
+export * from './container/ServiceContainer.js';
+export * from './routing/index.js';
+export * from './contracts/logger/index.js';
+export * from './middleware/index.js';

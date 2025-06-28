@@ -6,16 +6,14 @@
 
 import { app } from 'electron';
 import { registerRoutes } from '../routes/index.js';
-import {
-  LoggingMiddleware,
-  LogManagerContract,
-  LogServiceProvider,
-} from '@coffic/cosy-logger';
+import { LoggingMiddleware, LogServiceProvider } from '@coffic/cosy-logger';
 import {
   ApplicationConfig,
   createElectronApp,
+  LogManagerContract,
   setupIPCHandlers,
 } from '@coffic/cosy-framework';
+import { UpdateServiceProvider } from '@coffic/cosy-framework/update';
 import { KeyboardServiceProvider } from '@coffic/cosy-keyboard';
 import { AIServiceProvider } from '../providers/ai/AIServiceProvider.js';
 import { McpServiceProvider } from '../providers/mcp/McpServiceProvider.js';
@@ -33,6 +31,7 @@ const config: ApplicationConfig = {
   providers: [
     LogServiceProvider,
     KeyboardServiceProvider,
+    UpdateServiceProvider,
     AIServiceProvider,
     PluginServiceProvider,
     WindowServiceProvider,
