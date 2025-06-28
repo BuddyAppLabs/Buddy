@@ -3,39 +3,39 @@
  * 支持将多个日志通道组合在一起
  */
 import {
-  LogDriverContract,
-  LogChannelContract,
-  LogChannelConfig,
-  LogLevel,
-  LogContext,
+  ILogDriver,
+  ILogChannel,
+  ILogChannelConfig,
+  ILogLevel,
+  ILogContext,
 } from '@coffic/cosy-framework';
 
-export class StackChannel implements LogChannelContract {
-  private channels: LogChannelContract[] = [];
+export class StackChannel implements ILogChannel {
+  private channels: ILogChannel[] = [];
   private channelName: string;
 
-  constructor(name: string, channels: LogChannelContract[]) {
+  constructor(name: string, channels: ILogChannel[]) {
     this.channelName = name;
     this.channels = channels;
   }
 
-  debug(message: string, context?: LogContext): void {
-    this.log(LogLevel.DEBUG, message, context);
+  debug(message: string, context?: ILogContext): void {
+    this.log(ILogLevel.DEBUG, message, context);
   }
 
-  info(message: string, context?: LogContext): void {
-    this.log(LogLevel.INFO, message, context);
+  info(message: string, context?: ILogContext): void {
+    this.log(ILogLevel.INFO, message, context);
   }
 
-  warn(message: string, context?: LogContext): void {
-    this.log(LogLevel.WARN, message, context);
+  warn(message: string, context?: ILogContext): void {
+    this.log(ILogLevel.WARN, message, context);
   }
 
-  error(message: string, context?: LogContext): void {
-    this.log(LogLevel.ERROR, message, context);
+  error(message: string, context?: ILogContext): void {
+    this.log(ILogLevel.ERROR, message, context);
   }
 
-  log(level: LogLevel, message: string, context?: LogContext): void {
+  log(level: ILogLevel, message: string, context?: ILogContext): void {
     // 将日志同时发送到所有通道
     this.channels.forEach((channel) => {
       try {
@@ -48,13 +48,11 @@ export class StackChannel implements LogChannelContract {
   }
 }
 
-export class StackDriver implements LogDriverContract {
-  constructor(
-    private channelResolver: (name: string) => LogChannelContract | null
-  ) {}
+export class StackDriver implements ILogDriver {
+  constructor(private channelResolver: (name: string) => ILogChannel | null) {}
 
-  createChannel(config: LogChannelConfig): LogChannelContract {
-    const channels: LogChannelContract[] = [];
+  createChannel(config: ILogChannelConfig): ILogChannel {
+    const channels: ILogChannel[] = [];
 
     if (config.channels) {
       for (const channelName of config.channels) {

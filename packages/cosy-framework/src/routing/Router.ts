@@ -6,21 +6,19 @@
  */
 
 import { default as electron, IpcMainInvokeEvent } from 'electron';
-import {
-  IMiddleware,
-  IRouteConfig,
-  IRouteGroup,
-  IRouteHandler,
-  IContractRouter,
-  IContractRouteRegistrar,
-} from '../contract';
+import { IMiddleware } from '../contract/IMiddleware.js';
+import { IRouteConfig } from '../contract/router/IRouteConfig.js';
+import { IRouteGroup } from '../contract/router/IRouteGroup.js';
+import { IRouteHandler } from '../contract/router/IRouteHandler.js';
+import { IRouteRegistrar } from '../contract/router/IRouteRegistrar.js';
+import { IRouter } from '../contract/router/IRouter.js';
 import { Route } from './Route.js';
 import { Validator } from './Validator.js';
 import { RouteRegistrar } from './RouteRegistar.js';
 
 const { ipcMain } = electron;
 
-export class Router implements IContractRouter {
+export class Router implements IRouter {
   private routes: Map<string, IRouteConfig> = new Map();
   private groups: Map<string, IRouteGroup> = new Map();
   private globalMiddleware: IMiddleware[] = [];
@@ -72,7 +70,7 @@ export class Router implements IContractRouter {
    */
   group(
     config: string | Omit<IRouteGroup, 'name'>,
-    callback: (registrar: IContractRouteRegistrar) => void
+    callback: (registrar: IRouteRegistrar) => void
   ): void {
     const registrar = new RouteRegistrar(this);
     if (typeof config === 'string') {

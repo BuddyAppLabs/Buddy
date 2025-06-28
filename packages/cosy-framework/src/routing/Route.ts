@@ -3,12 +3,10 @@
  * 提供链式API来配置路由，类似Laravel的Route门面
  */
 
-import {
-  IRouteConfig,
-  IRouteHandler,
-  IMiddleware,
-  IValidationRules,
-} from '../contract';
+import { IMiddleware } from '../contract/IMiddleware.js';
+import { IRouteConfig } from '../contract/router/IRouteConfig.js';
+import { IRouteHandler } from '../contract/router/IRouteHandler.js';
+import { IValidationRules } from '../contract/router/IValidation.js';
 import { Router } from './Router.js';
 
 export class Route {

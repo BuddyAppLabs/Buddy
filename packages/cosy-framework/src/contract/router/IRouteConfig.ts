@@ -1,4 +1,4 @@
-import { IMiddleware } from './IMiddleware';
+import { IMiddleware } from '../IMiddleware';
 import { IRouteHandler } from './IRouteHandler';
 import { IValidationRules } from './IValidation';
 

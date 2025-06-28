@@ -17,7 +17,22 @@ export * from './config/index.js';
 export * from './container/index.js';
 
 // Contract
-export * from './contract/index.js';
+export { IRouter } from './contract/router/IRouter.js';
+export { IRouteRegistrar } from './contract/router/IRouteRegistrar.js';
+export { IRouteConfig } from './contract/router/IRouteConfig.js';
+export { IRouteGroup } from './contract/router/IRouteGroup.js';
+export { IRouteMatch } from './contract/router/IRouteMatch.js';
+export { IRouteHandler } from './contract/router/IRouteHandler.js';
+export { IMiddleware } from './contract/IMiddleware.js';
+export { ILogChannel } from './contract/logger/ILogChannel.js';
+export { ILogChannelConfig } from './contract/logger/ILogChannelConfig.js';
+export { IChannelFactory } from './contract/logger/IChannelFactory.js';
+export { ILogDriver } from './contract/logger/ILogDriver.js';
+export { ILogManager } from './contract/logger/ILogManager.js';
+export { ILogContext } from './contract/logger/ILogContext.js';
+export { ILogLevel } from './contract/logger/ILogLevel.js';
+export { ILogConfig } from './contract/logger/ILogConfig.js';
+export { IContextualLogger } from './contract/logger/IContextualLogger.js';
 
 // Middleware
 export { ErrorHandlingMiddleware } from './middleware/ErrorHandlingMiddleware.js';
@@ -33,9 +48,3 @@ export * from './bootstrap/bootstrap.js';
 
 // Constants
 export * from './constants.js';
-
-// New exports
-export * from './container/ServiceContainer.js';
-export * from './routing/index.js';
-export * from './contract/logger/index.js';
-export * from './middleware/index.js';

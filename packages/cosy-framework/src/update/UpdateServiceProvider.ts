@@ -3,7 +3,7 @@ import { UpdateManager } from './UpdateManager.js';
 import { UpdateContract } from './IUpdateConfig.js';
 import { AppContract, IApplication } from '../application/Application.js';
 import { ConfigManager } from '../config/types.js';
-import { ILogManager } from '../contract/logger/index.js';
+import { ILogManager } from '../contract/logger/ILogManager.js';
 
 export class UpdateServiceProvider extends ServiceProvider {
   public register(): void {

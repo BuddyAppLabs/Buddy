@@ -17,7 +17,7 @@
  * ```
  */
 
-import { IContractRouter } from '../contract/IContractRouter.js';
+import { IRouter } from '../contract/router/IRouter.js';
 import { createFacade } from '../facades/createFacade.js';
 import { Facade } from '../facades/Facade.js';
 
@@ -31,4 +31,4 @@ class BaseFacade extends Facade {
 }
 
 // 创建并导出类型安全的路由门面
-export const RouteFacade = createFacade<IContractRouter>(BaseFacade);
+export const RouteFacade = createFacade<IRouter>(BaseFacade);

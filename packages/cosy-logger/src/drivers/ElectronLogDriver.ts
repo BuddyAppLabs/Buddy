@@ -2,21 +2,21 @@
  * Electron Log 驱动实现
  * 基于 electron-log 的具体日志驱动
  */
-import {
-  LogDriverContract,
-  LogChannelContract,
-  LogChannelConfig,
-  LogLevel,
-  LogContext,
-} from '@coffic/cosy-framework';
 import log, { type LogFunctions } from 'electron-log';
+import {
+  ILogChannel,
+  ILogChannelConfig,
+  ILogContext,
+  ILogDriver,
+  ILogLevel,
+} from '@coffic/cosy-framework';
 
-export class ElectronLogChannel implements LogChannelContract {
+export class ElectronLogChannel implements ILogChannel {
   private logger: any;
-  private config: LogChannelConfig;
+  private config: ILogChannelConfig;
   private channelName: string;
 
-  constructor(name: string, config: LogChannelConfig) {
+  constructor(name: string, config: ILogChannelConfig) {
     this.channelName = name;
     this.config = config;
     this.logger = log.create({ logId: name });
@@ -29,36 +29,36 @@ export class ElectronLogChannel implements LogChannelContract {
     this.logger.transports.console.level = this.config.level || 'info';
   }
 
-  debug(message: string, context?: LogContext): void {
-    this.log(LogLevel.DEBUG, message, context);
+  debug(message: string, context?: ILogContext): void {
+    this.log(ILogLevel.DEBUG, message, context);
   }
 
-  info(message: string, context?: LogContext): void {
-    this.log(LogLevel.INFO, message, context);
+  info(message: string, context?: ILogContext): void {
+    this.log(ILogLevel.INFO, message, context);
   }
 
-  warn(message: string, context?: LogContext): void {
-    this.log(LogLevel.WARN, message, context);
+  warn(message: string, context?: ILogContext): void {
+    this.log(ILogLevel.WARN, message, context);
   }
 
-  error(message: string, context?: LogContext): void {
-    this.log(LogLevel.ERROR, message, context);
+  error(message: string, context?: ILogContext): void {
+    this.log(ILogLevel.ERROR, message, context);
   }
 
-  log(level: LogLevel, message: string, context?: LogContext): void {
+  log(level: ILogLevel, message: string, context?: ILogContext): void {
     const contextStr = context ? [context] : [];
 
     switch (level) {
-      case LogLevel.DEBUG:
+      case ILogLevel.DEBUG:
         this.logger.debug(message, ...contextStr);
         break;
-      case LogLevel.INFO:
+      case ILogLevel.INFO:
         this.logger.info(message, ...contextStr);
         break;
-      case LogLevel.WARN:
+      case ILogLevel.WARN:
         this.logger.warn(message, ...contextStr);
         break;
-      case LogLevel.ERROR:
+      case ILogLevel.ERROR:
         this.logger.error(message, ...contextStr);
         break;
       default:
@@ -68,8 +68,8 @@ export class ElectronLogChannel implements LogChannelContract {
   }
 }
 
-export class ElectronLogDriver implements LogDriverContract {
-  createChannel(config: LogChannelConfig): LogChannelContract {
+export class ElectronLogDriver implements ILogDriver {
+  createChannel(config: ILogChannelConfig): ILogChannel {
     return new ElectronLogChannel(config.name || 'default', config);
   }
 }

@@ -5,17 +5,15 @@
  * 之后再解构 `const { ipcMain } = electron` 来获取 `ipcMain`。
  */
 
-import {
-  IContractRouteRegistrar,
-  IRouteConfig,
-  IRouteGroup,
-  IRouteHandler,
-  IMiddleware,
-} from '../contract';
+import { IMiddleware } from '../contract/IMiddleware.js';
+import { IRouteConfig } from '../contract/router/IRouteConfig.js';
+import { IRouteGroup } from '../contract/router/IRouteGroup.js';
+import { IRouteHandler } from '../contract/router/IRouteHandler.js';
+import { IRouteRegistrar } from '../contract/router/IRouteRegistrar.js';
 import { Route } from './Route.js';
 import { Router } from './Router.js';
 
-export class RouteRegistrar implements IContractRouteRegistrar {
+export class RouteRegistrar implements IRouteRegistrar {
   private router: Router;
   private groupPrefix = '';
   private groupMiddleware: IMiddleware[] = [];
@@ -80,7 +78,7 @@ export class RouteRegistrar implements IContractRouteRegistrar {
 
   group(
     config: string | Omit<IRouteGroup, 'name'>,
-    callback: (registrar: IContractRouteRegistrar) => void
+    callback: (registrar: IRouteRegistrar) => void
   ): void {
     this.router.group(config, callback);
   }

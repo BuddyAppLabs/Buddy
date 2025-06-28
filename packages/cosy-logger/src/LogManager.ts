@@ -4,21 +4,21 @@
  */
 import {
   ILogManager,
-  LogChannelContract,
-  LogDriverContract,
-  LogChannelConfig,
-  LogConfig,
-  LogContext,
-  ChannelFactory,
-  ContextualLoggerContract,
+  ILogChannel,
+  ILogDriver,
+  ILogChannelConfig,
+  ILogConfig,
+  ILogContext,
+  IContextualLogger,
+  IChannelFactory,
 } from '@coffic/cosy-framework';
 import { ElectronLogDriver } from './drivers/ElectronLogDriver.js';
 import { StackDriver } from './drivers/StackDriver.js';
 
-class ContextualLogger implements ContextualLoggerContract {
+class ContextualLogger implements IContextualLogger {
   constructor(
-    private channel: LogChannelContract,
-    private context: LogContext
+    private channel: ILogChannel,
+    private context: ILogContext
   ) {}
 
   debug(message: string): void {
@@ -39,12 +39,12 @@ class ContextualLogger implements ContextualLoggerContract {
 }
 
 export class LogManager implements ILogManager {
-  private config: LogConfig;
-  private drivers: Map<string, LogDriverContract> = new Map();
-  private channels: Map<string, LogChannelContract> = new Map();
-  private customCreators: Map<string, ChannelFactory> = new Map();
+  private config: ILogConfig;
+  private drivers: Map<string, ILogDriver> = new Map();
+  private channels: Map<string, ILogChannel> = new Map();
+  private customCreators: Map<string, IChannelFactory> = new Map();
 
-  constructor(config: LogConfig) {
+  constructor(config: ILogConfig) {
     this.config = config;
     this.registerDefaultDrivers();
   }
@@ -66,9 +66,7 @@ export class LogManager implements ILogManager {
   /**
    * 获取通道实例
    */
-  private getChannelInstance(name: string): LogChannelContract | null {
-    console.log('getChannelInstance', name);
-    console.log('this.channels', this.channels);
+  private getChannelInstance(name: string): ILogChannel | null {
     // 如果通道已经存在，直接返回
     if (this.channels.has(name)) {
       return this.channels.get(name)!;
@@ -94,8 +92,8 @@ export class LogManager implements ILogManager {
    */
   private createChannelFromConfig(
     name: string,
-    config: LogChannelConfig
-  ): LogChannelContract | null {
+    config: ILogChannelConfig
+  ): ILogChannel | null {
     const configWithName = { ...config, name };
 
     // 首先检查是否有自定义创建器
@@ -116,7 +114,7 @@ export class LogManager implements ILogManager {
   /**
    * 获取指定通道
    */
-  channel(name?: string): LogChannelContract {
+  channel(name?: string): ILogChannel {
     const channelName = name || this.config.default;
 
     const channel = this.getChannelInstance(channelName);
@@ -131,8 +129,8 @@ export class LogManager implements ILogManager {
   /**
    * 创建备用通道
    */
-  private createFallbackChannel(): LogChannelContract {
-    const fallbackConfig: LogChannelConfig = {
+  private createFallbackChannel(): ILogChannel {
+    const fallbackConfig: ILogChannelConfig = {
       driver: 'electron',
       name: 'fallback',
     };
@@ -157,7 +155,7 @@ export class LogManager implements ILogManager {
   /**
    * 扩展日志驱动
    */
-  extend(driver: string, callback: ChannelFactory): void {
+  extend(driver: string, callback: IChannelFactory): void {
     this.customCreators.set(driver, callback);
   }
 
@@ -171,7 +169,7 @@ export class LogManager implements ILogManager {
   /**
    * 动态创建新通道
    */
-  createChannel(name: string, config: LogChannelConfig): LogChannelContract {
+  createChannel(name: string, config: ILogChannelConfig): ILogChannel {
     const channel = this.createChannelFromConfig(name, config);
     if (!channel) {
       throw new Error(`Failed to create log channel '${name}'`);
@@ -184,35 +182,35 @@ export class LogManager implements ILogManager {
   /**
    * 创建带上下文的日志记录器
    */
-  withContext(context: LogContext): ContextualLoggerContract {
+  withContext(context: ILogContext): IContextualLogger {
     return new ContextualLogger(this.channel(), context);
   }
 
   /**
    * 便捷方法：记录调试日志
    */
-  debug(message: string, context?: LogContext): void {
+  debug(message: string, context?: ILogContext): void {
     this.channel().debug(message, context);
   }
 
   /**
    * 便捷方法：记录信息日志
    */
-  info(message: string, context?: LogContext): void {
+  info(message: string, context?: ILogContext): void {
     this.channel().info(message, context);
   }
 
   /**
    * 便捷方法：记录警告日志
    */
-  warn(message: string, context?: LogContext): void {
+  warn(message: string, context?: ILogContext): void {
     this.channel().warn(message, context);
   }
 
   /**
    * 便捷方法：记录错误日志
    */
-  error(message: string, context?: LogContext): void {
+  error(message: string, context?: ILogContext): void {
     this.channel().error(message, context);
   }
 }

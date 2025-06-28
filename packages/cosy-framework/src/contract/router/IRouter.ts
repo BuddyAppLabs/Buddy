@@ -5,12 +5,12 @@
 
 import { IpcMainInvokeEvent } from 'electron';
 import { IRouteHandler } from './IRouteHandler.js';
-import { IMiddleware } from './IMiddleware.js';
+import { IMiddleware } from '../IMiddleware.js';
 import { IRouteConfig } from './IRouteConfig.js';
 import { IRouteGroup } from './IRouteGroup.js';
-import { IContractRouteRegistrar } from './IContractRouteRegistrar.js';
+import { IRouteRegistrar } from './IRouteRegistrar.js';
 
-export interface IContractRouter extends IContractRouteRegistrar {
+export interface IRouter extends IRouteRegistrar {
   /**
    * 应用中间件
    * @param middleware 要应用的中间件

@@ -4,7 +4,7 @@
  */
 import { contextBridge, ipcRenderer } from 'electron';
 import { IPC_CHANNELS } from '../constants.js';
-import { IPreloadApi } from '../contract/IPreloadContract.js';
+import { IPreloadApi } from '../contract/IPreloadApi.js';
 import { IpcResponse } from '@coffic/buddy-types';
 
 /**

@@ -3,13 +3,13 @@
  * 定义路由注册器的链式调用方法
  */
 
-import { Route } from '../routing/Route.js';
+import { Route } from '../../routing/Route.js';
 import { IRouteHandler } from './IRouteHandler.js';
-import { IMiddleware } from './IMiddleware.js';
+import { IMiddleware } from '../IMiddleware.js';
 import { IRouteConfig } from './IRouteConfig.js';
 import { IRouteGroup } from './IRouteGroup.js';
 
-export interface IContractRouteRegistrar {
+export interface IRouteRegistrar {
   /**
    * 添加中间件
    */
@@ -57,7 +57,7 @@ export interface IContractRouteRegistrar {
    */
   group(
     prefix: string | Omit<IRouteGroup, 'name'>,
-    callback: (registrar: IContractRouteRegistrar) => void
+    callback: (registrar: IRouteRegistrar) => void
   ): void;
 
   /**

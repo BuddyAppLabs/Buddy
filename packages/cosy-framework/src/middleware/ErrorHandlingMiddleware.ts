@@ -1,5 +1,5 @@
 import { IpcMainInvokeEvent } from 'electron';
-import { IMiddleware } from '../contract';
+import { IMiddleware } from '../contract/IMiddleware.js';
 
 /**
  * 错误处理中间件

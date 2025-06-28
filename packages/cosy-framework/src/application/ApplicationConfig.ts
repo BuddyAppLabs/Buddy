@@ -1,5 +1,5 @@
 import { Application } from './Application.js';
-import { IMiddleware } from '../contract/index.js';
+import { IMiddleware } from '../contract/IMiddleware.js';
 import { ServiceProvider } from '../providers/ServiceProvider.js';
 
 export interface ApplicationConfig {

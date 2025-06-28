@@ -1,4 +1,4 @@
-import { IMiddleware } from './IMiddleware';
+import { IMiddleware } from '../IMiddleware';
 
 /**
  * 路由分组配置

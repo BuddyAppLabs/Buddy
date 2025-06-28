@@ -4,8 +4,9 @@ import { dialog } from 'electron';
 import { IUpdateConfig } from './IUpdateConfig.js';
 import { IApplication } from '../application/Application.js';
 import { ConfigManager } from '../config/types.js';
-import { LogLevel, ILogManager } from '../contract/logger/index.js';
 import { IUpdateManager } from './IUpdateManager.js';
+import { ILogLevel } from '../contract/logger/ILogLevel.js';
+import { ILogManager } from '../contract/logger/ILogManager.js';
 
 export class UpdateManager implements IUpdateManager {
   private mainWindow: Electron.BrowserWindow | null = null;
@@ -26,7 +27,7 @@ export class UpdateManager implements IUpdateManager {
     const updaterConfig = this.config.get<IUpdateConfig>('updater', {});
     autoUpdater.logger = this.logger.createChannel('update', {
       driver: 'electron',
-      level: LogLevel.INFO,
+      level: ILogLevel.INFO,
       format: 'structured',
       includeTimestamp: false,
     });

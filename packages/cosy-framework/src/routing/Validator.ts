@@ -3,7 +3,10 @@
  * 提供路由参数的验证功能，类似Laravel的Validator
  */
 
-import { IValidationRule, IValidationRules } from '../contract';
+import {
+  IValidationRule,
+  IValidationRules,
+} from '../contract/router/IValidation';
 
 export interface ValidationResult {
   valid: boolean;

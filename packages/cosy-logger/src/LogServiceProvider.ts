@@ -6,9 +6,9 @@
 import {
   ServiceProvider,
   ILogManager,
-  LogConfig,
-  LogLevel,
+  ILogLevel,
   Config,
+  ILogConfig,
 } from '@coffic/cosy-framework';
 import { LogManager } from './LogManager.js';
 
@@ -21,7 +21,7 @@ export class LogServiceProvider extends ServiceProvider {
 
     // 注册日志管理器
     this.app.container().singleton('log.manager', (container) => {
-      const config = container.resolve<LogConfig>('log.config');
+      const config = container.resolve<ILogConfig>('log.config');
       return new LogManager(config);
     });
 
@@ -61,28 +61,26 @@ export class LogServiceProvider extends ServiceProvider {
    * 获取日志配置
    * 从用户配置中读取，如果没有则使用默认配置
    */
-  private getLogConfig(): LogConfig {
+  private getLogConfig(): ILogConfig {
     // 默认配置
-    const defaultConfig: LogConfig = {
+    const defaultConfig: ILogConfig = {
       default: 'app',
       channels: {
         app: {
           driver: 'electron',
-          level: LogLevel.INFO,
+          level: ILogLevel.INFO,
           format: 'structured',
           includeTimestamp: false,
         },
         error: {
           driver: 'electron',
-          level: LogLevel.ERROR,
+          level: ILogLevel.ERROR,
           format: 'json',
         },
       },
     };
 
-    const userConfig = Config.get<{ loggerConfig: LogConfig }>('logger');
-
-    console.log('userConfig', userConfig);
+    const userConfig = Config.get<{ loggerConfig: ILogConfig }>('logger');
 
     // 从用户配置中读取，如果没有则使用默认配置
     return userConfig?.loggerConfig || defaultConfig;
