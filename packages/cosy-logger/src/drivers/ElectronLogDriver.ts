@@ -10,6 +10,7 @@ import {
   ILogDriver,
   ILogLevel,
 } from '@coffic/cosy-framework';
+import chalk from 'chalk';
 
 export class ElectronLogChannel implements ILogChannel {
   private logger: any;
@@ -20,13 +21,23 @@ export class ElectronLogChannel implements ILogChannel {
     this.channelName = name;
     this.config = config;
     this.logger = log.create({ logId: name });
-
-    //
     this.logger.transports.file.fileName = `${name}.log`;
 
     // file an console
     this.logger.transports.file.level = this.config.level || 'info';
     this.logger.transports.console.level = this.config.level || 'info';
+    this.logger.transports.console.format = ({ data, message }: any) => {
+      let contextStr = '';
+      if (data && data.length > 0) {
+        contextStr = data
+          .map((d: any) =>
+            typeof d === 'object' ? JSON.stringify(d, null, 2) : d
+          )
+          .join(' ');
+        return `${message} ${chalk.gray(contextStr)}`;
+      }
+      return message;
+    };
   }
 
   debug(message: string, context?: ILogContext): void {

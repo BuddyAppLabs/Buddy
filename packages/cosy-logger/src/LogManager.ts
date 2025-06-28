@@ -119,7 +119,9 @@ export class LogManager implements ILogManager {
 
     const channel = this.getChannelInstance(channelName);
     if (!channel) {
-      console.warn(`Log channel '${channelName}' not found, using fallback`);
+      console.warn(
+        `🚨 Log channel '${channelName}' not found, using fallback 🚨`
+      );
       return this.createFallbackChannel();
     }
 

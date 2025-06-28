@@ -1,4 +1,4 @@
-import { LogLevel } from '@coffic/cosy-framework';
+import { ILogLevel } from '@coffic/cosy-framework';
 import { LoggerConfig } from '@coffic/cosy-logger';
 
 export const loggerConfig: LoggerConfig = {
@@ -6,19 +6,23 @@ export const loggerConfig: LoggerConfig = {
   channels: {
     app: {
       driver: 'electron',
-      level: LogLevel.DEBUG, // 覆盖默认级别
+      level: ILogLevel.DEBUG, // 覆盖默认级别
       format: 'json', // 修改输出格式
       includeTimestamp: true, // 添加时间戳
     },
-    customChannel: {
-      // 添加新的通道
+    logMiddleware: {
       driver: 'electron',
-      level: LogLevel.INFO,
+      level: ILogLevel.INFO,
+      format: 'simple',
+    },
+    plugin: {
+      driver: 'electron',
+      level: ILogLevel.INFO,
       format: 'simple',
     },
     window: {
       driver: 'electron',
-      level: LogLevel.INFO,
+      level: ILogLevel.INFO,
       format: 'simple',
     },
   },
