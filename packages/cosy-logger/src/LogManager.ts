@@ -3,12 +3,13 @@
  * 参考Laravel的设计，支持依赖注入、驱动扩展和灵活配置
  */
 import {
-  ILogManager,
+  IApplication,
   ILogChannel,
-  ILogDriver,
   ILogChannelConfig,
   ILogConfig,
   ILogContext,
+  ILogDriver,
+  ILogManager,
   IContextualLogger,
   IChannelFactory,
   ILogLevel,
@@ -23,20 +24,32 @@ class ContextualLogger implements IContextualLogger {
     private context: ILogContext
   ) {}
 
-  debug(message: string): void {
-    this.channel.debug(message, this.context);
+  emergency(message: string): void {
+    this.channel.emergency(message, this.context);
   }
-
+  alert(message: string): void {
+    this.channel.alert(message, this.context);
+  }
+  critical(message: string): void {
+    this.channel.critical(message, this.context);
+  }
+  error(message: string): void {
+    this.channel.error(message, this.context);
+  }
+  warning(message: string): void {
+    this.channel.warning(message, this.context);
+  }
+  warn(message: string): void {
+    this.warning(message);
+  }
+  notice(message: string): void {
+    this.channel.notice(message, this.context);
+  }
   info(message: string): void {
     this.channel.info(message, this.context);
   }
-
-  warn(message: string): void {
-    this.channel.warn(message, this.context);
-  }
-
-  error(message: string): void {
-    this.channel.error(message, this.context);
+  debug(message: string): void {
+    this.channel.debug(message, this.context);
   }
 }
 
@@ -143,10 +156,15 @@ export class LogManager implements ILogManager {
       );
       // 返回一个什么都不做的空壳对象，以防止应用崩溃
       return {
-        debug: () => {},
-        info: () => {},
-        warn: () => {},
+        emergency: () => {},
+        alert: () => {},
+        critical: () => {},
         error: () => {},
+        warning: () => {},
+        warn: () => {},
+        notice: () => {},
+        info: () => {},
+        debug: () => {},
         log: () => {},
       };
     }
@@ -208,31 +226,31 @@ export class LogManager implements ILogManager {
     return new ContextualLogger(this.channel(), context);
   }
 
-  /**
-   * 便捷方法：记录调试日志
-   */
-  debug(message: string, context?: ILogContext): void {
-    this.channel().debug(message, context);
+  emergency(message: string, context?: ILogContext): void {
+    this.channel().emergency(message, context);
   }
-
-  /**
-   * 便捷方法：记录信息日志
-   */
+  alert(message: string, context?: ILogContext): void {
+    this.channel().alert(message, context);
+  }
+  critical(message: string, context?: ILogContext): void {
+    this.channel().critical(message, context);
+  }
+  error(message: string, context?: ILogContext): void {
+    this.channel().error(message, context);
+  }
+  warning(message: string, context?: ILogContext): void {
+    this.channel().warning(message, context);
+  }
+  warn(message: string, context?: ILogContext): void {
+    this.warning(message, context);
+  }
+  notice(message: string, context?: ILogContext): void {
+    this.channel().notice(message, context);
+  }
   info(message: string, context?: ILogContext): void {
     this.channel().info(message, context);
   }
-
-  /**
-   * 便捷方法：记录警告日志
-   */
-  warn(message: string, context?: ILogContext): void {
-    this.channel().warn(message, context);
-  }
-
-  /**
-   * 便捷方法：记录错误日志
-   */
-  error(message: string, context?: ILogContext): void {
-    this.channel().error(message, context);
+  debug(message: string, context?: ILogContext): void {
+    this.channel().debug(message, context);
   }
 }

@@ -15,8 +15,12 @@ export interface ILogManager {
   getAvailableChannels(): string[];
   createChannel(name: string, config: ILogChannelConfig): ILogChannel;
   withContext(context: ILogContext): IContextualLogger;
-  debug(message: string, context?: ILogContext): void;
-  info(message: string, context?: ILogContext): void;
-  warn(message: string, context?: ILogContext): void;
+  emergency(message: string, context?: ILogContext): void;
+  alert(message: string, context?: ILogContext): void;
+  critical(message: string, context?: ILogContext): void;
   error(message: string, context?: ILogContext): void;
+  warning(message: string, context?: ILogContext): void;
+  notice(message: string, context?: ILogContext): void;
+  info(message: string, context?: ILogContext): void;
+  debug(message: string, context?: ILogContext): void;
 }

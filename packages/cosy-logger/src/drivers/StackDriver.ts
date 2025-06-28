@@ -11,28 +11,48 @@ import {
 } from '@coffic/cosy-framework';
 
 export class StackChannel implements ILogChannel {
-  private channels: ILogChannel[] = [];
-  private channelName: string;
+  protected channels: ILogChannel[];
+  protected name: string;
 
   constructor(name: string, channels: ILogChannel[]) {
-    this.channelName = name;
+    this.name = name;
     this.channels = channels;
   }
 
-  debug(message: string, context?: ILogContext): void {
-    this.log(ILogLevel.DEBUG, message, context);
+  emergency(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.EMERGENCY, message, context);
   }
 
-  info(message: string, context?: ILogContext): void {
+  alert(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.ALERT, message, context);
+  }
+
+  critical(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.CRITICAL, message, context);
+  }
+
+  error(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.ERROR, message, context);
+  }
+
+  warning(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.WARNING, message, context);
+  }
+
+  warn(message: string, context?: ILogContext | undefined): void {
+    this.warning(message, context);
+  }
+
+  notice(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.NOTICE, message, context);
+  }
+
+  info(message: string, context?: ILogContext | undefined): void {
     this.log(ILogLevel.INFO, message, context);
   }
 
-  warn(message: string, context?: ILogContext): void {
-    this.log(ILogLevel.WARN, message, context);
-  }
-
-  error(message: string, context?: ILogContext): void {
-    this.log(ILogLevel.ERROR, message, context);
+  debug(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.DEBUG, message, context);
   }
 
   log(level: ILogLevel, message: string, context?: ILogContext): void {
@@ -42,7 +62,7 @@ export class StackChannel implements ILogChannel {
         channel.log(level, message, context);
       } catch (error) {
         // 如果某个通道出错，不影响其他通道
-        console.error(`Stack channel error in ${this.channelName}:`, error);
+        console.error(`Stack channel error in ${this.name}:`, error);
       }
     });
   }

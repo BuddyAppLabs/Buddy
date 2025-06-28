@@ -1,19 +1,36 @@
-import { ILogLevel, ILogConfig } from '@coffic/cosy-framework';
+import { ILogLevel } from '@coffic/cosy-framework';
+import { getLogPath } from '../src/main/utils/LogUtil';
 
-export const loggerConfig: ILogConfig = {
+export default {
   default: 'stack',
+
   channels: {
     stack: {
       driver: 'stack',
-      channels: ['file', 'console'],
+      channels: ['console', 'file'],
     },
+
     console: {
       driver: 'console',
       level: ILogLevel.DEBUG,
     },
+
     file: {
       driver: 'file',
       level: ILogLevel.DEBUG,
+      path: getLogPath('buddy.log'),
+    },
+
+    updater: {
+      driver: 'file',
+      level: ILogLevel.DEBUG,
+      path: getLogPath('updater.log'),
+    },
+
+    plugin: {
+      driver: 'file',
+      level: ILogLevel.DEBUG,
+      path: getLogPath('plugin.log'),
     },
   },
 };

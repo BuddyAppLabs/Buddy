@@ -70,37 +70,53 @@ export class ConsoleChannel implements ILogChannel {
     );
   }
 
-  debug(message: string, context?: ILogContext): void {
-    this.log(ILogLevel.DEBUG, message, context);
+  emergency(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.EMERGENCY, message, context);
   }
-
-  info(message: string, context?: ILogContext): void {
+  alert(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.ALERT, message, context);
+  }
+  critical(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.CRITICAL, message, context);
+  }
+  error(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.ERROR, message, context);
+  }
+  warning(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.WARNING, message, context);
+  }
+  warn(message: string, context?: ILogContext | undefined): void {
+    this.warning(message, context);
+  }
+  notice(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.NOTICE, message, context);
+  }
+  info(message: string, context?: ILogContext | undefined): void {
     this.log(ILogLevel.INFO, message, context);
   }
-
-  warn(message: string, context?: ILogContext): void {
-    this.log(ILogLevel.WARN, message, context);
-  }
-
-  error(message: string, context?: ILogContext): void {
-    this.log(ILogLevel.ERROR, message, context);
+  debug(message: string, context?: ILogContext | undefined): void {
+    this.log(ILogLevel.DEBUG, message, context);
   }
 
   log(level: ILogLevel, message: string, context?: ILogContext): void {
     const contextStr = context ? [context] : [];
 
     switch (level) {
-      case ILogLevel.DEBUG:
-        this.logger.debug(message, ...contextStr);
+      case ILogLevel.EMERGENCY:
+      case ILogLevel.ALERT:
+      case ILogLevel.CRITICAL:
+      case ILogLevel.ERROR:
+        this.logger.error(message, ...contextStr);
         break;
+      case ILogLevel.WARNING:
+        this.logger.warn(message, ...contextStr);
+        break;
+      case ILogLevel.NOTICE:
       case ILogLevel.INFO:
         this.logger.info(message, ...contextStr);
         break;
-      case ILogLevel.WARN:
-        this.logger.warn(message, ...contextStr);
-        break;
-      case ILogLevel.ERROR:
-        this.logger.error(message, ...contextStr);
+      case ILogLevel.DEBUG:
+        this.logger.debug(message, ...contextStr);
         break;
       default:
         this.logger.info(message, ...contextStr);

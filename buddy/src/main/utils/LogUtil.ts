@@ -6,6 +6,9 @@ import log from 'electron-log/main.js';
 import type { Format } from 'electron-log';
 import 'source-map-support/register';
 import { SuperLogger } from '@coffic/buddy-types';
+import { app } from 'electron';
+import path from 'path';
+
 log.initialize();
 // 配置日志级别对应的颜色和表情
 const logStyles = {
@@ -127,5 +130,24 @@ export class LogUtil {
         logWithLocation('debug', ...params);
       },
     };
+  }
+}
+
+/**
+ * 获取日志文件的完整路径。
+ * 在开发环境中，日志将存储在项目根目录下的 'logs' 文件夹中。
+ * 在生产环境中，日志将存储在 Electron 的标准用户数据日志目录中。
+ * @param fileName - 日志文件的名称 (例如, 'buddy.log')
+ * @returns 日志文件的完整路径
+ */
+export function getLogPath(fileName: string): string {
+  if (app.isPackaged) {
+    // 生产环境: 返回用户数据目录下的logs目录
+    // 例如: /Users/username/Library/Application Support/AppName/logs/buddy.log
+    return path.join(app.getPath('logs'), fileName);
+  } else {
+    // 开发环境: 返回项目根目录下的logs目录
+    // 例如: /path/to/your/project/logs/buddy.log
+    return path.join(app.getAppPath(), 'logs', fileName);
   }
 }
