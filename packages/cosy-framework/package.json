@@ -26,7 +26,8 @@
   "license": "MIT",
   "dependencies": {
     "@coffic/buddy-types": "workspace:*",
-    "electron": "^27.0.0"
+    "electron": "^27.0.0",
+    "jiti": "^2.4.2"
   },
   "devDependencies": {
     "@types/jest": "^29.0.0",
