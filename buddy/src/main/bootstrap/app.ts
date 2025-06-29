@@ -72,7 +72,7 @@ export async function bootApplication(): Promise<void> {
 
     setupIPCHandlers(application);
 
-    logger.channel().info('✅ 应用核心服务已启动');
+    logger.channel('app').info('✅ 应用核心服务已启动');
   } catch (error) {
     const errorMessage = '❌ Application failed to start';
     if (logger) {

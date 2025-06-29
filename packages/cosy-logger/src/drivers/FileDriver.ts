@@ -28,10 +28,22 @@ export class FileChannel implements ILogChannel {
     const sanitizedLevel = sanitizeLogLevel(this.config.level);
     this.logger.transports.file.level = sanitizedLevel;
 
-    // 打印日志文件位置
-    const fileInfo = this.logger.transports.file.getFile();
+    // 获取 electron-log 的默认日志目录
+    const defaultPath = this.logger.transports.file.getFile().path;
+    const logDir = path.dirname(defaultPath);
+
+    // 为当前通道构建一个专属的日志文件路径
+    const channelLogPath = path.join(logDir, `${name}.log`);
+
+    // 确保日志目录存在
+    fs.mkdirSync(logDir, { recursive: true });
+
+    // 覆盖 electron-log 的默认路径解析逻辑，使用我们自定义的路径
+    this.logger.transports.file.resolvePathFn = () => channelLogPath;
+
+    // 打印最终的日志文件位置
     console.log(
-      `[cosy-logger] 📝 File log channel '${name}' will write to: ${fileInfo.path}`
+      `[cosy-logger] 📝 File log channel '${name}' will write to: ${channelLogPath}`
     );
   }
 
