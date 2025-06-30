@@ -15,12 +15,6 @@ export function useMarket() {
   const devPlugins = computed(() => marketStore.devPlugins);
   const remotePlugins = computed(() => marketStore.remotePlugins);
 
-  // 使用localStorage保存最后选择的标签
-  const activeTab = useStorage<'user' | 'remote' | 'dev'>(
-    'market-active-tab',
-    'user'
-  );
-
   const isLoading = ref(false);
 
   const setDevPluginDir = async () => {
@@ -41,13 +35,12 @@ export function useMarket() {
       return;
     }
 
-    console.log('loadPlugins start', activeTab.value);
     isLoading.value = true;
     try {
-      if (activeTab.value === 'dev') {
+      if (marketStore.activeTab === 'dev') {
         await marketStore.updateDevPluginDirectory();
       }
-      switch (activeTab.value) {
+      switch (marketStore.activeTab) {
         case 'remote':
           await marketStore.loadRemotePlugins();
           break;
@@ -75,9 +68,10 @@ export function useMarket() {
   // 简单使用Vue自带的computed
   const shouldShowEmpty = computed(() => {
     return (
-      (activeTab.value === 'remote' && remotePlugins.value.length === 0) ||
-      (activeTab.value === 'user' && userPlugins.value.length === 0) ||
-      (activeTab.value === 'dev' && devPlugins.value.length === 0)
+      (marketStore.activeTab === 'remote' &&
+        remotePlugins.value.length === 0) ||
+      (marketStore.activeTab === 'user' && userPlugins.value.length === 0) ||
+      (marketStore.activeTab === 'dev' && devPlugins.value.length === 0)
     );
   });
 
@@ -96,7 +90,7 @@ export function useMarket() {
 
   // 切换标签并加载对应插件
   const switchTab = (tab: 'user' | 'remote' | 'dev') => {
-    activeTab.value = tab;
+    marketStore.activeTab = tab;
     loadPlugins();
   };
 
@@ -110,6 +104,8 @@ export function useMarket() {
     let currentDirectory = marketStore.getCurrentPluginDirectory();
     if (currentDirectory) {
       fileIpc.openFolder(currentDirectory);
+    } else {
+      error('当前插件目录不存在');
     }
   };
 
@@ -118,7 +114,6 @@ export function useMarket() {
     userPlugins,
     devPlugins,
     remotePlugins,
-    activeTab,
     isLoading,
     shouldShowEmpty,
     uninstallStates,

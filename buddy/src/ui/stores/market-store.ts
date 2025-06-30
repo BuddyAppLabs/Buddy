@@ -38,6 +38,18 @@ export const useMarketStore = defineStore('market', {
   }),
 
   actions: {
+    /**
+     * 初始化
+     */
+    async onMounted() {
+      this.activeTab = 'user';
+      this.userPluginDirectory = await marketIpc.getUserPluginDirectory();
+      this.devPluginDirectory = await marketIpc.getDevPluginDirectory();
+      await this.loadUserPlugins();
+      await this.loadRemotePlugins();
+      await this.loadDevPlugins();
+    },
+
     // 加载开发插件列表
     async loadDevPlugins(): Promise<void> {
       if (verbose) {
@@ -149,11 +161,18 @@ export const useMarketStore = defineStore('market', {
       this.devPluginDirectory = await marketIpc.getDevPluginDirectory();
     },
 
-    getCurrentPluginDirectory() {
+    getCurrentPluginDirectory(): string | null {
+      console.log('getCurrentPluginDirectory', this.activeTab);
+
       if (this.activeTab === 'dev') {
         return this.devPluginDirectory;
       }
-      return this.userPluginDirectory;
+
+      if (this.activeTab === 'user') {
+        return this.userPluginDirectory;
+      }
+
+      return null;
     },
   },
 });

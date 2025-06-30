@@ -15,7 +15,6 @@ const {
     userPlugins,
     devPlugins,
     remotePlugins,
-    activeTab,
     isLoading,
     shouldShowEmpty,
     setDevPluginDir,
@@ -25,8 +24,7 @@ const {
 } = useMarket()
 
 onMounted(() => {
-    console.log('MarketView mounted');
-    handleRefresh();
+    marketStore.onMounted();
 });
 </script>
 
@@ -37,23 +35,24 @@ onMounted(() => {
             <ToolBar variant="compact" :bordered="false">
                 <template #left>
                     <div role="tablist" class="tabs tabs-box bg-primary/50 shadow-inner">
-                        <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'user' }"
+                        <a role="tab" class="tab" :class="{ 'tab-active': marketStore.activeTab === 'user' }"
                             @click="switchTab('user')">
                             用户插件
                         </a>
-                        <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'remote' }"
+                        <a role="tab" class="tab" :class="{ 'tab-active': marketStore.activeTab === 'remote' }"
                             @click="switchTab('remote')">
                             远程仓库
                         </a>
-                        <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'dev' }" v-if="isDev"
-                            @click="switchTab('dev')">
+                        <a role="tab" class="tab" :class="{ 'tab-active': marketStore.activeTab === 'dev' }"
+                            v-if="isDev" @click="switchTab('dev')">
                             开发插件
                         </a>
                     </div>
                 </template>
 
                 <template #right>
-                    <ButtonFolder @click="openCurrentPluginDirectory" shape="circle" size="sm" tooltip="打开插件目录" />
+                    <ButtonFolder v-if="marketStore.activeTab === 'user' || marketStore.activeTab === 'dev'"
+                        @click="openCurrentPluginDirectory" shape="circle" size="sm" tooltip="打开插件目录" />
                     <ButtonRefresh @click="handleRefresh" shape="circle" :loading="isLoading" :disabled="isLoading"
                         tooltip="刷新插件列表" size="sm" />
                 </template>
@@ -61,7 +60,7 @@ onMounted(() => {
         </div>
 
         <!-- 开发插件目录信息 -->
-        <div v-if="activeTab === 'dev'" class="mb-4">
+        <div v-if="marketStore.activeTab === 'dev'" class="mb-4">
             <div v-if="marketStore.devPluginDirectory"
                 class="flex items-center justify-between p-2 rounded-md bg-base-200 text-sm">
                 <span>当前开发目录: <code>{{ marketStore.devPluginDirectory }}</code></span>
@@ -76,23 +75,23 @@ onMounted(() => {
         <!-- 插件列表 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <!-- 本地插件卡片 -->
-            <template v-if="activeTab === 'user'">
+            <template v-if="marketStore.activeTab === 'user'">
                 <PluginCard v-for="plugin in userPlugins" :key="plugin.id" :plugin="plugin" type="local" />
             </template>
 
             <!-- 远程插件卡片 -->
-            <template v-if="activeTab === 'remote'">
+            <template v-if="marketStore.activeTab === 'remote'">
                 <PluginCard v-for="plugin in remotePlugins" :key="plugin.id" :plugin="plugin" type="remote" />
             </template>
 
             <!-- 开发插件卡片 -->
-            <template v-if="activeTab === 'dev'">
+            <template v-if="marketStore.activeTab === 'dev'">
                 <PluginCard v-for="plugin in devPlugins" :key="plugin.id" :plugin="plugin" type="remote" />
             </template>
 
             <!-- 无插件提示 -->
             <Empty v-if="shouldShowEmpty"
-                :message="activeTab === 'remote' ? '没有可用的远程插件' : (activeTab === 'dev' && !marketStore.devPluginDirectory) ? '请先配置开发插件目录' : '没有找到插件'" />
+                :message="marketStore.activeTab === 'remote' ? '没有可用的远程插件' : (marketStore.activeTab === 'dev' && !marketStore.devPluginDirectory) ? '请先配置开发插件目录' : '没有找到插件'" />
         </div>
     </div>
 </template>
