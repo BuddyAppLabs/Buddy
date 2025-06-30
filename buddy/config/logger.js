@@ -9,7 +9,7 @@ export default {
       channels: ['console', 'file'],
     },
     app: {
-      driver: 'file',
+      driver: 'console',
       level: ILogLevel.DEBUG,
     },
 

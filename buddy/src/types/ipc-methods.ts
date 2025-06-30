@@ -9,7 +9,7 @@ export const IPC_METHODS = {
   UPSERT_VIEW: 'views/upsert',
 
   // Folders 相关的路由
-  Open_Folder: 'folders/open',
+  OPEN_FOLDER: 'folders/open',
 
   // Plugins 相关的路由
   GET_PLUGINS: 'plugins',

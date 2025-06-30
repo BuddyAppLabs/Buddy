@@ -43,4 +43,9 @@ export interface ISettingManager {
    * Save settings to persistence.
    */
   save(): Promise<void>;
+
+  /**
+   * Get the directory path of the settings file.
+   */
+  getDirectoryPath(): string;
 }

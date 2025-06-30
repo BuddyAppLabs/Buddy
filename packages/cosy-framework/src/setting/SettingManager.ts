@@ -53,4 +53,8 @@ export class SettingManager implements ISettingManager {
   public all(): Record<string, any> {
     return Object.fromEntries(this._settings);
   }
+
+  public getDirectoryPath(): string {
+    return path.dirname(this.filePath);
+  }
 }

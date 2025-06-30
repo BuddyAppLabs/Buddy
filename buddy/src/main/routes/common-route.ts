@@ -5,29 +5,34 @@
 
 import { shell } from 'electron';
 import { viewManager } from '../managers/ViewManager.js';
-import { IpcResponse } from '@coffic/buddy-types';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { createViewArgs } from '@/types/args.js';
 import { RouteFacade } from '@coffic/cosy-framework';
 import { app } from 'electron';
 import { fileIpc } from '../service/FileIpc';
 import { UpdateFacade } from '@coffic/cosy-framework';
+import { LogFacade } from '@coffic/cosy-logger';
 
 const logger = console;
 
 export function registerCommonRoutes(): void {
   // 打开文件夹
   RouteFacade.handle(
-    IPC_METHODS.Open_Folder,
-    (_event, directory: string): IpcResponse<string> => {
-      logger.debug(`打开: ${directory}`);
+    IPC_METHODS.OPEN_FOLDER,
+    (_event, directory: string): void => {
+      // directory 必须是字符串
+      if (typeof directory !== 'string') {
+        throw new Error(`路径必须是字符串，当前类型为: ${typeof directory}`);
+      }
+
+      LogFacade.channel('app').info(`打开: ${directory}`);
+
       try {
         shell.openPath(directory);
-        return { success: true, data: '打开成功' };
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        return { success: false, error: errorMessage };
+        throw new Error(errorMessage);
       }
     }
   )

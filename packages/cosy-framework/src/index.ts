@@ -35,6 +35,7 @@ export { ILogLevel } from './contract/logger/ILogLevel.js';
 export { ILogConfig } from './contract/logger/ILogConfig.js';
 export { IContextualLogger } from './contract/logger/IContextualLogger.js';
 export { ISettingManager } from './contract/setting/ISettingManager.js';
+export { IPreloadApi } from './contract/IPreloadApi.js';
 
 // Middleware
 export { ErrorHandlingMiddleware } from './middleware/ErrorHandlingMiddleware.js';
@@ -47,7 +48,7 @@ export * from './facades/Facade.js';
 export { RouteFacade } from './routing/RouteFacade.js';
 export { createFacade } from './facades/createFacade.js';
 export { UpdateFacade } from './update/UpdateFacade.js';
-export { SettingFacade } from './facades/Setting.js';
+export { SettingFacade } from './facades/SettingFacade.js';
 
 // Bootstrap
 export * from './bootstrap/bootstrap.js';

@@ -12,6 +12,7 @@ import {
   createElectronApp,
   ILogManager,
   setupIPCHandlers,
+  SettingServiceProvider,
 } from '@coffic/cosy-framework';
 import { UpdateServiceProvider } from '@coffic/cosy-framework/update';
 import { KeyboardServiceProvider } from '@coffic/cosy-keyboard';
@@ -37,6 +38,7 @@ const config: ApplicationConfig = {
     WindowServiceProvider,
     McpServiceProvider,
     MarketServiceProvider,
+    SettingServiceProvider,
   ],
   paths: {
     userData: app.getPath('userData'),

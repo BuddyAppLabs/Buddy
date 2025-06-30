@@ -53,19 +53,12 @@ export async function createElectronApp(
  * 设置 IPC 处理器
  */
 export function setupIPCHandlers(app: Application): void {
-  console.log(`${EMOJI} [Bootstrap] 设置 IPC 处理器`);
   const router = app.container().resolve<Router>('router');
 
   // 处理所有 IPC 调用
   ipcMain.handle(
     IPC_CHANNELS.DISPATCH,
     async (event, channel: string, args: any[]): Promise<IpcResponse<any>> => {
-      console.log(
-        `${EMOJI} [Bootstrap] 处理 IPC 调用: ${channel}, 参数: ${JSON.stringify(
-          args
-        )}`
-      );
-
       try {
         const result = await router.dispatch(channel, args, event);
         return {
@@ -74,7 +67,6 @@ export function setupIPCHandlers(app: Application): void {
         };
       } catch (error) {
         let message = error instanceof Error ? error.message : String(error);
-        console.error(`${EMOJI} ❌ [Bootstrap] 处理 IPC 调用失败: ${message}`);
         // 返回错误响应而不是抛出错误，避免Electron输出错误堆栈
         return {
           success: false,

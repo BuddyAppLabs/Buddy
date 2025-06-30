@@ -5,7 +5,7 @@
 import { registerActionsRoutes } from './actions-route.js';
 import { registerAIRoutes } from './ai-route.js';
 import { registerCommonRoutes } from './common-route.js';
-import { registerConfigRoutes } from './config-route.js';
+import { registerSettingRoutes } from './setting-route.js';
 import { registerMarketRoutes } from './market.js';
 import { registerStateRoutes } from './state-route.js';
 
@@ -13,7 +13,7 @@ export function registerRoutes(): void {
   registerActionsRoutes();
   registerAIRoutes();
   registerCommonRoutes();
-  registerConfigRoutes();
+  registerSettingRoutes();
   registerMarketRoutes();
   registerStateRoutes();
 }
