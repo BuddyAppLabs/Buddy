@@ -109,6 +109,11 @@ export class LogManager implements ILogManager {
     name: string,
     config: ILogChannelConfig
   ): ILogChannel | null {
+    // If driver is null, return a silent, "black hole" channel.
+    if (config.driver === null) {
+      return this.createNullChannel();
+    }
+
     const configWithName = { ...config, name };
 
     // 首先检查是否有自定义创建器
@@ -124,6 +129,24 @@ export class LogManager implements ILogManager {
 
     console.warn(`Log driver '${config.driver}' not found`);
     return null;
+  }
+
+  /**
+   * Creates a null channel that does nothing.
+   */
+  private createNullChannel(): ILogChannel {
+    return {
+      emergency: () => {},
+      alert: () => {},
+      critical: () => {},
+      error: () => {},
+      warning: () => {},
+      warn: () => {},
+      notice: () => {},
+      info: () => {},
+      debug: () => {},
+      log: () => {},
+    };
   }
 
   /**
@@ -154,18 +177,7 @@ export class LogManager implements ILogManager {
         '🚨 FATAL: Log system fallback failed. The default console driver is not registered. All logs will be suppressed.'
       );
       // 返回一个什么都不做的空壳对象，以防止应用崩溃
-      return {
-        emergency: () => {},
-        alert: () => {},
-        critical: () => {},
-        error: () => {},
-        warning: () => {},
-        warn: () => {},
-        notice: () => {},
-        info: () => {},
-        debug: () => {},
-        log: () => {},
-      };
+      return this.createNullChannel();
     }
 
     const fallbackConfig: ILogChannelConfig = {
