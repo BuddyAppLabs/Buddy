@@ -95,7 +95,6 @@ export function useMarket() {
 
   // 刷新按钮点击事件
   const handleRefresh = () => {
-    console.log('handleRefresh');
     loadPlugins();
   };
 

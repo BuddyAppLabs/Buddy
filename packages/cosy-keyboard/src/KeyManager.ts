@@ -47,7 +47,6 @@ export class KeyManager implements KeyboardContract {
 
         // 检查是否是双击（两次按键间隔小于阈值）
         if (now - lastTime < KeyManager.DOUBLE_PRESS_THRESHOLD) {
-          console.log('hotkey triggered');
           this.app.emit('hotkey:triggered');
         }
 

@@ -23,6 +23,11 @@ export default {
       level: ILogLevel.DEBUG,
     },
 
+    market: {
+      driver: 'console',
+      level: ILogLevel.DEBUG,
+    },
+
     file: {
       driver: 'file',
       level: ILogLevel.DEBUG,

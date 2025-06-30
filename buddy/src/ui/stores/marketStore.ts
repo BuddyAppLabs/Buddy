@@ -136,22 +136,9 @@ export const useMarketStore = defineStore('market', {
       this.loadingRemotePlugins = true;
 
       try {
-        // 调用主进程方法获取远程插件列表
-        // @ts-ignore
-        const response = await marketIpc.getRemotePlugins();
+        const plugins = await marketIpc.getRemotePlugins();
 
-        // @ts-ignore
-        if (response && response.success && Array.isArray(response.data)) {
-          // @ts-ignore
-          this.remotePlugins = response.data;
-        } else {
-          logger.error(
-            `${title} 获取远程插件列表失败，返回了非数组或无效的响应格式:`,
-            response
-          );
-          this.remotePlugins = [];
-          throw new Error('获取远程插件列表失败，返回了非数组或无效的响应格式');
-        }
+        this.remotePlugins = plugins;
       } catch (err) {
         throw err;
       } finally {
