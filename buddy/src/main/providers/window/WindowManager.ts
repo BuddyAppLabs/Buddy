@@ -7,19 +7,17 @@ import { EMOJI } from '../../constants.js';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
 import { ILogManager } from '@coffic/cosy-framework';
-import {
-  WindowConfig,
-  WindowManagerContract,
-} from './contracts/ContractWindow.js';
+import { IWindowConfig } from './IWindowConfig.js';
+import { IWindowManager } from './IWindowManager.js';
 
 const verbose = false;
 
-export class WindowManager implements WindowManagerContract {
+export class WindowManager implements IWindowManager {
   private mainWindow: BrowserWindow | null = null;
-  private config: WindowConfig;
+  private config: IWindowConfig;
   private logger: ILogManager;
 
-  constructor(config: WindowConfig, logger: ILogManager) {
+  constructor(config: IWindowConfig, logger: ILogManager) {
     this.config = config;
     this.logger = logger;
 
@@ -36,7 +34,7 @@ export class WindowManager implements WindowManagerContract {
   /**
    * 更新配置
    */
-  public updateConfig(newConfig: Partial<WindowConfig>): void {
+  public updateConfig(newConfig: Partial<IWindowConfig>): void {
     this.config = { ...this.config, ...newConfig };
 
     // 如果窗口已经存在，应用新的配置
@@ -437,8 +435,8 @@ export class WindowManager implements WindowManagerContract {
  * 创建窗口管理器实例
  */
 export function createWindowManager(
-  config: WindowConfig,
+  config: IWindowConfig,
   logger: ILogManager
-): WindowManagerContract {
+): IWindowManager {
   return new WindowManager(config, logger);
 }

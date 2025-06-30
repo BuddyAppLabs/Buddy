@@ -8,6 +8,7 @@ import { ViewBounds } from '@coffic/buddy-types';
 import { createViewArgs } from '@/types/args.js';
 import { readFileSync } from 'fs';
 import { WindowFacade } from '../providers/window/WindowFacade.js';
+import { LogFacade } from '@coffic/cosy-logger';
 
 const logger = console;
 
@@ -24,9 +25,7 @@ export class ViewManager {
       throw new Error('创建视图的参数不能为空');
     }
 
-    if (verbose) {
-      logger.info('创建视图:', args);
-    }
+    LogFacade.channel('view').info('创建视图:', args);
 
     const mainWindow = WindowFacade.getMainWindow();
     if (!mainWindow) {
@@ -39,9 +38,11 @@ export class ViewManager {
     }
 
     // 创建视图
+    const preloadPath = join(__dirname, '../preload/plugin-preload.js');
+    console.log('preloadPath', preloadPath);
     const view = new WebContentsView({
       webPreferences: {
-        preload: join(__dirname, '../preload/plugin-preload.js'),
+        preload: preloadPath,
         sandbox: false,
         contextIsolation: true,
         nodeIntegration: false,
@@ -100,7 +101,7 @@ export class ViewManager {
     );
 
     // 将视图添加到主窗口并保存到Map中
-    // mainWindow.contentView.addChildView(view);
+    WindowFacade.getMainWindow()!.contentView.addChildView(view);
     this.views.set(args.pagePath ?? 'wild', view);
 
     logger.info('视图创建成功，当前视图个数', this.views.size);
@@ -150,9 +151,7 @@ export class ViewManager {
   }
 
   public async upsertView(args: createViewArgs): Promise<void> {
-    if (verbose) {
-      logger.info('upsert view:', args);
-    }
+    LogFacade.channel('view').info('upsert view:', args);
 
     const view = this.views.get(args.pagePath) ?? (await this.createView(args));
 

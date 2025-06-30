@@ -11,6 +11,7 @@ import { ActionEntity } from '../model/ActionEntity.js';
 import fs from 'fs';
 import path from 'path';
 import { Downloader } from '@/main/service/Downloader.js';
+import { ExecuteResult } from '@coffic/buddy-types';
 
 export class PluginManager implements IPluginManager {
   /**
@@ -61,7 +62,10 @@ export class PluginManager implements IPluginManager {
    * @param actionId 动作ID
    * @param keyword 关键词
    */
-  public async executeAction(actionId: string, keyword: string): Promise<any> {
+  public async executeAction(
+    actionId: string,
+    keyword: string
+  ): Promise<ExecuteResult> {
     const [pluginId, actionLocalId] = actionId.split(':');
     const plugin = await this.find(pluginId);
     if (!plugin) {
@@ -155,7 +159,7 @@ export class PluginManager implements IPluginManager {
       `[ActionManager] 获取动作视图: ${actionId}`
     );
 
-    return 'action view';
+    return '<div>action view</div>';
   }
 
   /**

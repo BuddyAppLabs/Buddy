@@ -17,17 +17,7 @@ export const actionIpc = {
     }
   },
 
-  async executeAction(actionId: string, keyword: string) {
-    if (actionId === undefined) {
-      throw new Error(`动作ID不存在: ${actionId}`);
-    }
-
-    if (actionId === '') {
-      throw new Error(`动作ID为空: ${actionId}`);
-    }
-
-    logger.info(`执行插件动作: ${actionId}, 关键词: ${keyword}`);
-
+  async executeAction(actionId: string, keyword: string): Promise<any> {
     const response = await ipc.invoke(
       IPC_METHODS.EXECUTE_PLUGIN_ACTION,
       actionId,
@@ -42,7 +32,10 @@ export const actionIpc = {
   },
 
   async getActionView(actionId: string): Promise<string> {
-    const response = await ipc.invoke(IPC_METHODS.GET_ACTION_VIEW, actionId);
+    const response = await ipc.invoke(
+      IPC_METHODS.GET_ACTION_VIEW_HTML,
+      actionId
+    );
     if (response.success) {
       return response.data;
     } else {

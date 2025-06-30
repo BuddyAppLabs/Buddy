@@ -19,7 +19,6 @@ import fs from 'fs';
 import { ActionEntity } from './ActionEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
 
-const logger = console;
 const verbose = false;
 const title = '🧩 PluginEntity';
 
@@ -229,7 +228,7 @@ export class PluginEntity {
     }
 
     fs.rmdirSync(pluginPath, { recursive: true });
-    logger.info(`插件 ${this.id} 删除成功`);
+    LogFacade.channel('plugin').info(`插件 ${this.id} 删除成功`);
   }
 
   /**
@@ -240,7 +239,7 @@ export class PluginEntity {
   async getActions(keyword: string = ''): Promise<ActionEntity[]> {
     // 如果插件未加载或状态不正常，返回空数组
     if (this.status !== 'active') {
-      logger.warn(
+      LogFacade.channel('plugin').warn(
         `插件 ${this.id} 未加载或状态不正常(${this.status})，返回空动作列表`
       );
       return [];
@@ -279,11 +278,13 @@ export class PluginEntity {
     actionId: string,
     keyword: string
   ): Promise<ExecuteResult> {
-    logger.info(`${this.id} 执行动作: ${actionId}`);
+    LogFacade.channel('plugin').info(`${this.id} 执行动作: ${actionId}`);
 
     const pluginModule = await this.load();
     if (!pluginModule) {
-      logger.warn(`插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`);
+      LogFacade.channel('plugin').warn(
+        `插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`
+      );
       return {
         success: false,
         message: `插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`,
@@ -291,7 +292,7 @@ export class PluginEntity {
     }
 
     if (typeof pluginModule.executeAction !== 'function') {
-      logger.warn(
+      LogFacade.channel('plugin').warn(
         `插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`
       );
       return {
@@ -360,12 +361,16 @@ export class PluginEntity {
    */
   async getPagePath(): Promise<string> {
     if (verbose) {
-      logger.info(`${title} 获取插件 ${this.id} 的主页面路径`);
+      LogFacade.channel('plugin').info(
+        `${title} 获取插件 ${this.id} 的主页面路径`
+      );
     }
 
     const module = await this.load();
     if (!module) {
-      logger.warn(`${title} 插件 ${this.id} 加载失败，无法获取主页面路径`);
+      LogFacade.channel('plugin').warn(
+        `${title} 插件 ${this.id} 加载失败，无法获取主页面路径`
+      );
       return '';
     }
 
@@ -373,7 +378,9 @@ export class PluginEntity {
     const absolutePagePath = join(this.path, pagePath);
 
     if (verbose) {
-      logger.info(`${title} 插件 ${this.id} 的主页面路径: ${absolutePagePath}`);
+      LogFacade.channel('plugin').info(
+        `${title} 插件 ${this.id} 的主页面路径: ${absolutePagePath}`
+      );
     }
 
     return pagePath ? absolutePagePath : '';

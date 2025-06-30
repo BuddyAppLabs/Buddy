@@ -18,7 +18,6 @@ interface ActionState {
   isLoading: boolean;
   selected: string | null;
   willRun: string | null;
-  viewHtml: string;
   lastKeyword: string; // 存储上次搜索的关键词，用于窗口激活时刷新
   keyword: string; // 当前搜索关键词
   lastSearchTime: number; // 记录最后一次搜索时间
@@ -30,7 +29,6 @@ export const useActionStore = defineStore('action', {
     isLoading: false,
     selected: null,
     willRun: null,
-    viewHtml: '',
     lastKeyword: '',
     keyword: '',
     lastSearchTime: 0,
@@ -93,27 +91,7 @@ export const useActionStore = defineStore('action', {
         throw new Error(`动作ID为空: ${actionGlobalId}`);
       }
 
-      if (action.viewPath) {
-        await this.loadView(action.globalId);
-      } else {
-        this.viewHtml = '';
-      }
-
       return actionIpc.executeAction(action.globalId, this.keyword);
-    },
-
-    /**
-     * 加载动作的自定义视图
-     */
-    async loadView(actionId: string): Promise<void> {
-      try {
-        this.viewHtml = '';
-        const response = await actionIpc.getActionView(actionId);
-        this.viewHtml = response;
-      } catch (error) {
-        this.viewHtml = '';
-        throw error;
-      }
     },
 
     /**
@@ -133,7 +111,6 @@ export const useActionStore = defineStore('action', {
 
     clearSelected() {
       this.selected = null;
-      this.viewHtml = '';
     },
 
     clearWillRun() {

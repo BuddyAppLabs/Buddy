@@ -22,7 +22,6 @@ const viewState = ref({
         id: '',
         isAttached: false,
         isVisible: false,
-        content: ''
     },
     // 窗口视图状态
     window: {
@@ -50,7 +49,7 @@ const { isLoading, state: actionResult, error: actionError } = useAsyncState(
                 id: '',
                 isAttached: false,
                 isVisible: false,
-                content: ''
+
             },
             window: {
                 id: '',
@@ -129,9 +128,6 @@ async function createEmbeddedView(action: SendableAction) {
     // 设置视图ID
     viewState.value.embedded.id = `embedded-view-${action.globalId}`
 
-    // 获取主进程存储的HTML内容
-    viewState.value.embedded.content = actionStore.viewHtml
-
     // 设置为已附加状态，这样模板会渲染容器
     viewState.value.embedded.isAttached = true
 
@@ -206,7 +202,6 @@ const destroyViews = async () => {
         viewState.value.embedded.id = ''
         viewState.value.embedded.isAttached = false
         viewState.value.embedded.isVisible = false
-        viewState.value.embedded.content = ''
         viewState.value.window.isOpen = false
         viewState.value.window.id = ''
     }
@@ -214,6 +209,7 @@ const destroyViews = async () => {
 
 // 在独立窗口中打开插件视图
 const openPluginWindow = async (action: SendableAction) => {
+    console.log('openPluginWindow', action)
     try {
         viewState.value.window.id = `window-view-${action.globalId}`
 
@@ -248,13 +244,15 @@ const loadAndExecuteAction = () => {
     // 手动调用异步函数而不使用execute方法
     destroyViews().then(() => {
         const action = actionStore.find(actionId)
+
+        console.log('action', action)
+
         if (action) {
             // 手动实现原来executeAction的逻辑
             viewState.value.currentAction = action
 
-            actionStore.execute(action.globalId).then(() => {
+            actionStore.execute(action.globalId).then(async () => {
                 if (action.viewPath) {
-                    console.log('action.viewPath', action.viewPath)
                     const viewMode = action.viewMode || 'embedded'
 
                     if (viewMode === 'window') {

@@ -230,6 +230,9 @@ export class ActionEntity implements SuperAction {
       globalId: this.globalId,
       id: this.id,
       pluginId: this.pluginId,
+      viewPath: this.viewPath,
+      viewMode: this.viewMode,
+      devTools: this.devTools,
       description: this.description,
     };
   }

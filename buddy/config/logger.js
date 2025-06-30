@@ -45,7 +45,12 @@ export default {
     },
 
     plugin: {
-      driver: null,
+      driver: 'console',
+      level: ILogLevel.DEBUG,
+    },
+
+    view: {
+      driver: 'console',
       level: ILogLevel.DEBUG,
     },
   },

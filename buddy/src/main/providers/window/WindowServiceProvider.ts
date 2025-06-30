@@ -1,11 +1,9 @@
 import { ServiceProvider } from '@coffic/cosy-framework';
 import { Config, ILogManager } from '@coffic/cosy-framework';
 import { createWindowManager } from './WindowManager.js';
-import {
-  WindowConfig,
-  WindowManagerContract,
-} from './contracts/ContractWindow.js';
 import { app } from 'electron';
+import { IWindowConfig } from './IWindowConfig.js';
+import { IWindowManager } from './IWindowManager.js';
 
 export class WindowServiceProvider extends ServiceProvider {
   /**
@@ -27,7 +25,7 @@ export class WindowServiceProvider extends ServiceProvider {
           },
           alwaysOnTop: true,
           opacity: 0.99,
-        } as WindowConfig,
+        } as IWindowConfig,
         logger
       );
     });
@@ -51,14 +49,13 @@ export class WindowServiceProvider extends ServiceProvider {
       },
       alwaysOnTop: true,
       opacity: 0.99,
-    } as WindowConfig;
+    } as IWindowConfig;
 
     // 设置全局配置
     Config.set('window', windowConfig);
 
     // 获取窗口管理器实例并更新配置
-    const windowManager =
-      this.app.make<WindowManagerContract>('window.manager');
+    const windowManager = this.app.make<IWindowManager>('window.manager');
     windowManager.updateConfig(windowConfig);
 
     // 设置全局快捷键

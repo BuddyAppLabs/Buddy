@@ -45,7 +45,7 @@ export interface IPluginManager {
   initialize(): Promise<void>;
 
   /**
-   * 获取动作视图
+   * 获取动作视图的HTML内容
    * @param actionId 动作ID
    */
   getActionView(actionId: string): Promise<string>;

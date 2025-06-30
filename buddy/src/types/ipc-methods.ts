@@ -16,7 +16,7 @@ export const IPC_METHODS = {
   Plugin_Is_Installed: 'plugins/status',
   GET_ACTIONS: 'plugins/actions',
   EXECUTE_PLUGIN_ACTION: 'plugins/actions/execute',
-  GET_ACTION_VIEW: 'plugins/actions/view',
+  GET_ACTION_VIEW_HTML: 'plugins/actions/view/html',
 
   // Plugin Views 相关的路由
   CREATE_PLUGIN_VIEW: 'plugins/views',

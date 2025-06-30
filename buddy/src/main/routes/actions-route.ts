@@ -7,6 +7,7 @@ import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { RouteFacade } from '@coffic/cosy-framework';
 import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import { SendableAction } from '@/types/sendable-action.js';
+import { ExecuteResult } from '@coffic/buddy-types';
 
 export function registerActionsRoutes(): void {
   // 获取插件动作列表
@@ -32,9 +33,12 @@ export function registerActionsRoutes(): void {
   // 执行插件动作
   RouteFacade.handle(
     IPC_METHODS.EXECUTE_PLUGIN_ACTION,
-    async (_event, actionId: string, keyword: string): Promise<unknown> => {
-      const response = await PluginFacade.executeAction(actionId, keyword);
-      return response;
+    async (
+      _event,
+      actionId: string,
+      keyword: string
+    ): Promise<ExecuteResult> => {
+      return await PluginFacade.executeAction(actionId, keyword);
     }
   )
     .validation({
@@ -43,9 +47,9 @@ export function registerActionsRoutes(): void {
     })
     .description('执行指定的插件动作');
 
-  // 获取动作视图
+  // 获取动作视图的HTML内容
   RouteFacade.handle(
-    IPC_METHODS.GET_ACTION_VIEW,
+    IPC_METHODS.GET_ACTION_VIEW_HTML,
     async (_event, actionId: string): Promise<string> => {
       return await PluginFacade.getActionView(actionId);
     }
