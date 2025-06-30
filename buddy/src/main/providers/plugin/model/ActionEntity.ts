@@ -12,7 +12,7 @@ const logger = console;
 /**
  * 插件动作实体类
  */
-export class ActionEntity implements SendableAction {
+export class ActionEntity implements SuperAction {
   // 基本信息
   globalId: string;
   id: string;

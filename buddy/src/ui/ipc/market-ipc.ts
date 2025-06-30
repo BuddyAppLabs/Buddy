@@ -29,7 +29,7 @@ export const marketIpc = {
 
   // 获取用户插件目录
   async getUserPluginDirectory(): Promise<string> {
-    let response = await ipc.invoke(IPC_METHODS.GET_PLUGIN_DIRECTORIES);
+    let response = await ipc.invoke(IPC_METHODS.GET_PLUGIN_DIRECTORIES_USER);
 
     if (response.success) {
       return response.data;
@@ -84,7 +84,7 @@ export const marketIpc = {
 
   // 获取开发插件目录
   async getDevPluginDirectory(): Promise<string> {
-    let response = await ipc.invoke(IPC_METHODS.GET_DEV_PLUGIN_DIRECTORY);
+    let response = await ipc.invoke(IPC_METHODS.GET_PLUGIN_DIRECTORIES_DEV);
     if (response.success) {
       return response.data;
     } else {
@@ -94,7 +94,7 @@ export const marketIpc = {
 
   // 设置开发插件目录
   async setDevPluginDirectory(): Promise<string | null> {
-    let response = await ipc.invoke(IPC_METHODS.SET_DEV_PLUGIN_DIRECTORY);
+    let response = await ipc.invoke(IPC_METHODS.SET_PLUGIN_DIRECTORIES_DEV);
     if (response.success) {
       return response.data;
     } else {

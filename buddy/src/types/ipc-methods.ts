@@ -39,10 +39,9 @@ export const IPC_METHODS = {
   UNINSTALL_PLUGIN: 'plugins/uninstall',
 
   // Plugin Directories 相关的路由
-  GET_PLUGIN_DIRECTORIES: 'plugins/directories',
-  OPEN_PLUGIN_DIRECTORY: 'plugins/directories/open',
-  GET_DEV_PLUGIN_DIRECTORY: 'plugins/directories/dev/get',
-  SET_DEV_PLUGIN_DIRECTORY: 'plugins/directories/dev/set',
+  GET_PLUGIN_DIRECTORIES_USER: 'plugins/directories/user',
+  GET_PLUGIN_DIRECTORIES_DEV: 'plugins/directories/dev',
+  SET_PLUGIN_DIRECTORIES_DEV: 'plugins/directories/dev/set',
 
   // Overlaid Apps 相关的路由
   Get_Current_App: 'overlaid-apps/current',

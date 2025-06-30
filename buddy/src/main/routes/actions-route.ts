@@ -4,18 +4,16 @@
  */
 
 import { SuperAction } from '@coffic/buddy-types';
-import { actionManager } from '../providers/plugin/ActionManager.js';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { RouteFacade } from '@coffic/cosy-framework';
-import { PluginFacade } from '../providers/plugin/PluginFacade.js';
+import { PluginFacade } from '../providers/plugin/facade/PluginFacade.js';
 
 export function registerActionsRoutes(): void {
   // 获取插件动作列表
   RouteFacade.handle(
     IPC_METHODS.GET_ACTIONS,
     async (_event, keyword = ''): Promise<SuperAction[]> => {
-      const actions = await actionManager.getActions(keyword);
-      return actions;
+      return await PluginFacade.getActions(keyword);
     }
   )
     .validation({
@@ -48,7 +46,7 @@ export function registerActionsRoutes(): void {
   RouteFacade.handle(
     IPC_METHODS.GET_ACTION_VIEW,
     async (_event, actionId: string): Promise<string> => {
-      return await actionManager.getActionView(actionId);
+      return await PluginFacade.getActionView(actionId);
     }
   )
     .validation({

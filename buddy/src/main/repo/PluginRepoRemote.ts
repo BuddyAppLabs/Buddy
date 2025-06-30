@@ -7,7 +7,7 @@ import { PackageEntity } from '../providers/plugin/model/PackageEntity.js';
 import { PackageJson } from '@/types/package-json.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PluginEntity } from '../providers/plugin/model/PluginEntity.js';
-import { PluginRepoContract } from '../providers/plugin/contracts/PluginRepoContract.js';
+import { IPluginRepo } from '../providers/plugin/contract/IPluginRepo.js';
 import { EMOJI } from '../constants.js';
 import { LogFacade } from '@coffic/cosy-logger';
 
@@ -18,7 +18,7 @@ const logger = console;
  * 远程插件仓库
  * 负责从远程 npm registry 获取插件并缓存
  */
-export class PluginRepoRemote implements PluginRepoContract {
+export class PluginRepoRemote implements IPluginRepo {
   private static instance: PluginRepoRemote;
 
   // 缓存刷新时间间隔 (毫秒): 1小时

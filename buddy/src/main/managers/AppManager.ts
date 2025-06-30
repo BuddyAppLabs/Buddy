@@ -5,7 +5,7 @@
 import { app, BrowserWindow } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
 // import { pluginManager } from './PluginManager.js';
-import { pluginViewManager } from './PluginViewManager.js';
+import { pluginViewManager } from '../providers/plugin/manager/PluginViewManager.js';
 import { WindowFacade } from '../providers/window/WindowFacade.js';
 // import { updateManager } from './UpdateManager.js';
 
@@ -108,7 +108,7 @@ export class AppManager {
       { label: '粘贴', role: 'paste' },
       { label: '剪切', role: 'cut' },
       { type: 'separator' },
-      { label: '全选', role: 'selectAll' }
+      { label: '全选', role: 'selectAll' },
     ]);
 
     // 聊天消息的上下文菜单
@@ -120,10 +120,10 @@ export class AppManager {
           if (browserWindow) {
             browserWindow.webContents.send('context-menu-copy-code');
           }
-        }
+        },
       },
       { type: 'separator' },
-      { label: '全选', role: 'selectAll' }
+      { label: '全选', role: 'selectAll' },
     ]);
 
     // 监听上下文菜单请求

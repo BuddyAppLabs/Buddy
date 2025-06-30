@@ -1,9 +1,10 @@
-import { computed, ref, onMounted } from 'vue';
-import { useMarketStore } from '../stores/marketStore';
+import { computed, ref } from 'vue';
+import { useMarketStore } from '../stores/market-store';
 import { useStorage } from '@vueuse/core';
 import { useAlert } from './useAlert';
 import { globalToast } from './useToast';
 import { marketIpc } from '../ipc/market-ipc';
+import { fileIpc } from '../ipc/file-ipc';
 
 export function useMarket() {
   const { error } = useAlert();
@@ -13,17 +14,6 @@ export function useMarket() {
   const userPlugins = computed(() => marketStore.userPlugins);
   const devPlugins = computed(() => marketStore.devPlugins);
   const remotePlugins = computed(() => marketStore.remotePlugins);
-  const directory = computed(() => {
-    if (activeTab.value === 'dev') {
-      if (devPluginDirectory.value) {
-        return devPluginDirectory.value;
-      } else {
-        throw new Error('开发插件目录未配置');
-      }
-    }
-    return marketStore.userPluginDirectory;
-  });
-  const devPluginDirectory = ref<string | null>(null);
 
   // 使用localStorage保存最后选择的标签
   const activeTab = useStorage<'user' | 'remote' | 'dev'>(
@@ -33,28 +23,11 @@ export function useMarket() {
 
   const isLoading = ref(false);
 
-  const fetchDevPluginDir = async () => {
-    console.log('fetchDevPluginDir start');
-    try {
-      devPluginDirectory.value = await marketIpc.getDevPluginDirectory();
-
-      if (devPluginDirectory.value) {
-        console.log('fetchDevPluginDir end', devPluginDirectory.value);
-      } else {
-        console.warn('fetchDevPluginDir end, devPluginDirectory is null');
-      }
-    } catch (e) {
-      error('获取开发插件目录失败: ' + e);
-    }
-    console.log('fetchDevPluginDir end');
-  };
-
   const setDevPluginDir = async () => {
     try {
       const newPath = await marketIpc.setDevPluginDirectory();
       if (newPath) {
-        devPluginDirectory.value = newPath;
-        globalToast.success('开发插件目录已更新');
+        marketStore.devPluginDirectory = newPath;
         await loadPlugins(); // 重新加载插件
       }
     } catch (e) {
@@ -72,7 +45,7 @@ export function useMarket() {
     isLoading.value = true;
     try {
       if (activeTab.value === 'dev') {
-        await fetchDevPluginDir();
+        await marketStore.updateDevPluginDirectory();
       }
       switch (activeTab.value) {
         case 'remote':
@@ -132,27 +105,28 @@ export function useMarket() {
     uninstallStates.value.uninstallError.delete(pluginId);
   };
 
-  onMounted(() => {
-    if (activeTab.value === 'dev') {
-      fetchDevPluginDir();
+  // 打开当前的插件目录
+  const openCurrentPluginDirectory = () => {
+    let currentDirectory = marketStore.getCurrentPluginDirectory();
+    if (currentDirectory) {
+      fileIpc.openFolder(currentDirectory);
     }
-  });
+  };
 
   return {
     isDev,
     userPlugins,
     devPlugins,
     remotePlugins,
-    directory,
     activeTab,
     isLoading,
     shouldShowEmpty,
     uninstallStates,
-    devPluginDirectory,
     setDevPluginDir,
     handleRefresh,
     switchTab,
     clearUninstallError,
     uninstallPlugin: marketStore.uninstallPlugin,
+    openCurrentPluginDirectory,
   };
 }

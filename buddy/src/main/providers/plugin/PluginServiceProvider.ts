@@ -3,9 +3,12 @@
  * 负责注册插件相关的服务
  */
 import { ServiceProvider, SettingFacade } from '@coffic/cosy-framework';
-import { PluginManager } from './PluginManager.js';
-import { PluginContract } from './contracts/PluginContract.js';
+import { PluginManager } from './manager/PluginManager.js';
+import { IPluginManager } from './contract/IPluginManager.js';
 import { DevPluginRepo } from './repo/DevPluginRepo.js';
+import { IMarketRepo } from './contract/IMarketRepo.js';
+import { MarketManager } from './manager/MarketManager.js';
+import { IDownloader } from './contract/IDownloader.js';
 
 export class PluginServiceProvider extends ServiceProvider {
   /**
@@ -23,13 +26,24 @@ export class PluginServiceProvider extends ServiceProvider {
       const devPluginDB = this.app.make<DevPluginRepo>('plugin.repo.dev');
       return new PluginManager(devPluginDB);
     });
+
+    // 注册插件市场服务
+    this.app.container().singleton('market', () => {
+      const repository = this.app
+        .container()
+        .resolve('market.repository') as IMarketRepo;
+      const downloader = this.app
+        .container()
+        .resolve('market.downloader') as IDownloader;
+      return new MarketManager(repository, downloader);
+    });
   }
 
   /**
    * 启动插件服务
    */
   public async boot(): Promise<void> {
-    const manager = this.app.make<PluginContract>('plugin');
+    const manager = this.app.make<IPluginManager>('plugin');
     await manager.initialize();
   }
 
@@ -37,7 +51,7 @@ export class PluginServiceProvider extends ServiceProvider {
    * 关闭插件服务
    */
   public async shutdown(): Promise<void> {
-    const manager = this.app.make<PluginContract>('plugin');
+    const manager = this.app.make<IPluginManager>('plugin');
     manager.cleanup();
   }
 

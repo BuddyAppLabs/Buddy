@@ -4,11 +4,10 @@
  */
 
 import { join } from 'path';
-import { readPackageJson, hasPackageJson } from '../PackageUtils.js';
+import { readPackageJson, hasPackageJson } from '../util/PackageUtils.js';
 import {
   ExecuteActionArgs,
   ExecuteResult,
-  GetActionsArgs,
   PluginStatus,
   PluginType,
   SuperPlugin,
@@ -17,7 +16,6 @@ import {
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PackageJson } from '@/types/package-json.js';
 import fs from 'fs';
-import { appStateManager } from '../../../managers/StateManager.js';
 import { ActionEntity } from './ActionEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
 

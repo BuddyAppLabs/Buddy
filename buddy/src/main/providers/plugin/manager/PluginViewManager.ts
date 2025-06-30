@@ -8,9 +8,7 @@
 import { BrowserWindow, app, BrowserView, screen } from 'electron';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
-import { WindowFacade } from '../providers/window/WindowFacade.js';
-import { actionManager } from '../providers/plugin/ActionManager.js';
-import { BaseManager } from './BaseManager.js';
+import { WindowFacade } from '../../window/WindowFacade.js';
 import {
   PluginViewOptions,
   ViewBounds,
@@ -20,18 +18,12 @@ import {
 
 const logger = console;
 
-class PluginViewManager extends BaseManager {
+class PluginViewManager {
   private static instance: PluginViewManager;
   private viewWindows: Map<string, BrowserWindow> = new Map();
   private viewBrowserViews: Map<string, BrowserView> = new Map();
 
-  private constructor() {
-    super({
-      name: 'PluginViewManager',
-      enableLogging: true,
-      logLevel: 'info',
-    });
-  }
+  private constructor() {}
 
   /**
    * 获取 PluginViewManager 实例
@@ -143,32 +135,34 @@ class PluginViewManager extends BaseManager {
   /**
    * 获取视图内容
    */
-  private async getViewContent(actionId: string): Promise<string> {
-    try {
-      return await actionManager.getActionView(actionId);
-    } catch (error) {
-      throw new Error(
-        this.handleError(error, `获取动作视图内容失败: ${actionId}`)
-      );
-    }
+  private async getViewContent(_actionId: string): Promise<string> {
+    throw new Error('Not implemented');
+    // try {
+    //   return await actionManager.getActionView(actionId);
+    // } catch (error) {
+    //   throw new Error(
+    //     this.handleError(error, `获取动作视图内容失败: ${actionId}`)
+    //   );
+    // }
   }
 
   /**
    * 获取动作配置
    */
   private async getActionConfig(
-    actionId: string
+    _actionId: string
   ): Promise<{ devTools: boolean; viewMode?: ViewMode }> {
-    try {
-      const actions = await actionManager.getActions();
-      const actionInfo = actions.find((a) => a.id === actionId);
-      return {
-        devTools: actionInfo?.devTools === true,
-        viewMode: actionInfo?.viewMode,
-      };
-    } catch (error) {
-      throw new Error(this.handleError(error, `获取动作配置失败: ${actionId}`));
-    }
+    throw new Error('Not implemented');
+    // try {
+    //   const actions = await PluginFacade.getActions();
+    //   const actionInfo = actions.find((a) => a.id === actionId);
+    //   return {
+    //     devTools: actionInfo?.devTools === true,
+    //     viewMode: actionInfo?.viewMode,
+    //   };
+    // } catch (error) {
+    //   throw new Error(this.handleError(error, `获取动作配置失败: ${actionId}`));
+    // }
   }
 
   /**
@@ -331,7 +325,7 @@ class PluginViewManager extends BaseManager {
           view.webContents.openDevTools();
         }
       } catch (error) {
-        this.handleError(error, `打开开发者工具失败: ${viewId}`);
+        throw new Error(`打开开发者工具失败: ${viewId}`);
       }
     }, 1000);
   }

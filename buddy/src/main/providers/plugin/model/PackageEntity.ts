@@ -1,4 +1,4 @@
-import { readPackageJson, hasPackageJson } from '../PackageUtils.js';
+import { readPackageJson, hasPackageJson } from '../util/PackageUtils.js';
 import { PluginType, ValidationResult } from '@coffic/buddy-types';
 import { PluginEntity } from './PluginEntity.js';
 import { PackageJson } from '@/types/package-json.js';

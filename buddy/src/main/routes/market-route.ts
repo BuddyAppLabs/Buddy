@@ -12,10 +12,11 @@ import {
   RouteFacade,
   SettingFacade,
 } from '@coffic/cosy-framework';
-import { Market } from '../providers/market/index.js';
-import { userPluginDB } from '../providers/plugin/index.js';
-import { DevPluginRepo } from '../providers/plugin/repo/DevPluginRepo.js';
+
 import { LogFacade } from '@coffic/cosy-logger';
+import { MarketFacade } from '../providers/plugin/facade/MarketFacade.js';
+import { DevPluginRepo } from '../providers/plugin/repo/DevPluginRepo.js';
+import { userPluginDB } from '../providers/plugin/repo/UserPluginRepo.js';
 
 export function registerMarketRoutes(app: Application): void {
   const devPluginDB = app.make<DevPluginRepo>('plugin.repo.dev');
@@ -51,13 +52,16 @@ export function registerMarketRoutes(app: Application): void {
   ).description('获取开发环境的插件列表');
 
   // 获取开发插件目录
-  RouteFacade.handle(IPC_METHODS.GET_DEV_PLUGIN_DIRECTORY, (_event): string => {
-    return devPluginDB.getRootDir();
-  }).description('获取开发插件的根目录');
+  RouteFacade.handle(
+    IPC_METHODS.GET_PLUGIN_DIRECTORIES_DEV,
+    (_event): string => {
+      return devPluginDB.getRootDir();
+    }
+  ).description('获取开发插件的根目录');
 
   // 设置开发插件目录
   RouteFacade.handle(
-    IPC_METHODS.SET_DEV_PLUGIN_DIRECTORY,
+    IPC_METHODS.SET_PLUGIN_DIRECTORIES_DEV,
     async (_event): Promise<string | null> => {
       const { canceled, filePaths } = await dialog.showOpenDialog({
         properties: ['openDirectory'],
@@ -88,7 +92,7 @@ export function registerMarketRoutes(app: Application): void {
   RouteFacade.handle(
     IPC_METHODS.DOWNLOAD_PLUGIN,
     async (_event, pluginId: string): Promise<void> => {
-      await Market.install(pluginId);
+      await MarketFacade.install(pluginId);
     }
   )
     .validation({
@@ -96,16 +100,19 @@ export function registerMarketRoutes(app: Application): void {
     })
     .description('下载并安装指定的插件');
 
-  // 获取插件目录路径
-  RouteFacade.handle(IPC_METHODS.GET_PLUGIN_DIRECTORIES, (_event): string => {
-    return userPluginDB.getRootDir();
-  }).description('获取用户插件存储目录路径');
+  // 获取用户插件目录路径
+  RouteFacade.handle(
+    IPC_METHODS.GET_PLUGIN_DIRECTORIES_USER,
+    (_event): string => {
+      return userPluginDB.getRootDir();
+    }
+  ).description('获取用户插件存储目录路径');
 
   // 卸载插件
   RouteFacade.handle(
     IPC_METHODS.UNINSTALL_PLUGIN,
     async (_event, pluginId: string): Promise<void> => {
-      await Market.uninstall(pluginId);
+      await MarketFacade.uninstall(pluginId);
     }
   )
     .validation({

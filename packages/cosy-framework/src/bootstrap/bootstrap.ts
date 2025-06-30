@@ -61,6 +61,17 @@ export function setupIPCHandlers(app: Application): void {
     async (event, channel: string, args: any[]): Promise<IpcResponse<any>> => {
       try {
         const result = await router.dispatch(channel, args, event);
+        try {
+          structuredClone(result);
+        } catch (e) {
+          console.error('❌ 路由返回了不可克隆的数据', channel);
+          console.log('错误信息', e);
+          console.log('返回数据', result);
+          throw new Error(
+            `IPC handler 返回了不可克隆的数据（如函数、class 实例、Electron 原生对象等），请只返回纯数据对象`
+          );
+        }
+
         return {
           success: true,
           data: result,

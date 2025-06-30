@@ -8,13 +8,19 @@ export default {
       driver: 'stack',
       channels: ['console', 'file'],
     },
+
+    action: {
+      driver: 'console',
+      level: ILogLevel.DEBUG,
+    },
+
     app: {
       driver: 'console',
       level: ILogLevel.DEBUG,
     },
 
     logMiddleware: {
-      driver: 'null',
+      driver: 'stack',
       level: ILogLevel.DEBUG,
     },
 

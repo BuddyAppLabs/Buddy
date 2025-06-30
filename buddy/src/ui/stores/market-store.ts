@@ -7,7 +7,6 @@ const title = '🛍️ 插件市场';
 const logger = console;
 
 interface MarketState {
-  userPluginDirectory: string;
   error: string;
   userPlugins: SendablePlugin[];
   devPlugins: SendablePlugin[];
@@ -17,11 +16,13 @@ interface MarketState {
   loadingRemotePlugins: boolean;
   downloadingPlugins: Set<string>;
   uninstallingPlugins: Set<string>;
+  userPluginDirectory: string;
+  devPluginDirectory: string;
+  activeTab: 'user' | 'remote' | 'dev';
 }
 
 export const useMarketStore = defineStore('market', {
   state: (): MarketState => ({
-    userPluginDirectory: '',
     error: '',
     userPlugins: [],
     devPlugins: [],
@@ -31,6 +32,9 @@ export const useMarketStore = defineStore('market', {
     loadingRemotePlugins: false,
     downloadingPlugins: new Set<string>(),
     uninstallingPlugins: new Set<string>(),
+    userPluginDirectory: '',
+    devPluginDirectory: '',
+    activeTab: 'user',
   }),
 
   actions: {
@@ -84,17 +88,6 @@ export const useMarketStore = defineStore('market', {
       }
     },
 
-    // 更新用户插件目录
-    async updateUserPluginDirectory() {
-      try {
-        this.userPluginDirectory = await marketIpc.getUserPluginDirectory();
-      } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : String(error);
-        this.error = `加载目录信息失败: ${errorMsg}`;
-        console.error('加载目录信息失败', error);
-      }
-    },
-
     // 下载插件
     async downloadPlugin(plugin: SendablePlugin) {
       if (this.downloadingPlugins.has(plugin.id)) {
@@ -144,6 +137,23 @@ export const useMarketStore = defineStore('market', {
       } finally {
         this.loadingRemotePlugins = false;
       }
+    },
+
+    // 更新用户插件目录
+    async updateUserPluginDirectory() {
+      this.userPluginDirectory = await marketIpc.getUserPluginDirectory();
+    },
+
+    // 更新开发插件目录
+    async updateDevPluginDirectory() {
+      this.devPluginDirectory = await marketIpc.getDevPluginDirectory();
+    },
+
+    getCurrentPluginDirectory() {
+      if (this.activeTab === 'dev') {
+        return this.devPluginDirectory;
+      }
+      return this.userPluginDirectory;
     },
   },
 });

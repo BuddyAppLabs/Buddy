@@ -4,14 +4,14 @@
  */
 import { join } from 'path';
 import fs from 'fs';
-import { PluginRepoContract } from '../contracts/PluginRepoContract.js';
+import { IPluginRepo } from '../contract/IPluginRepo.js';
 import { PluginEntity } from '../model/PluginEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
 import { PluginType } from '@coffic/buddy-types';
 
 const verbose = false;
 
-export abstract class BasePluginRepo implements PluginRepoContract {
+export abstract class BasePluginRepo implements IPluginRepo {
   protected rootDir: string;
 
   protected constructor(pluginsDir: string) {

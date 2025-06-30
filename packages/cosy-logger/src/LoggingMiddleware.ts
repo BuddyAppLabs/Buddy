@@ -13,11 +13,8 @@ import { LogFacade } from './LogFacade.js';
 export function LoggingMiddleware(
   options: {
     logLevel?: 'debug' | 'info' | 'warn' | 'error';
-    /** 是否在日志中包含请求数据（IPC 参数或请求对象）。 */
     includeRequest?: boolean;
-    /** 是否在日志中包含响应数据。 */
     includeResponse?: boolean;
-    /** 是记录完整的错误对象（包括堆栈跟踪）还是只记录消息。 */
     logFullError?: boolean;
   } = {}
 ): IMiddleware {

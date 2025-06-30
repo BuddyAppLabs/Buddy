@@ -6,7 +6,7 @@ import {
 } from '@remixicon/vue'
 import Button from '@renderer/cosy/Button.vue'
 import { globalConfirm } from '@renderer/composables/useConfirm'
-import { useMarketStore } from '@renderer/stores/marketStore'
+import { useMarketStore } from '@/ui/stores/market-store'
 import { globalToast } from '@renderer/composables/useToast'
 import { marketIpc } from '../ipc/market-ipc'
 import { SendablePlugin } from '@/types/sendable-plugin'
@@ -14,12 +14,6 @@ import { useAsyncState, useTimeoutFn } from '@vueuse/core'
 
 const props = defineProps<{
     plugin: SendablePlugin
-    downloadingPlugins?: Set<string>
-    downloadSuccess?: Set<string>
-    downloadError?: Map<string, string>
-    uninstallingPlugins?: Set<string>
-    uninstallSuccess?: Set<string>
-    uninstallError?: Map<string, string>
 }>()
 
 // 状态管理
@@ -101,10 +95,15 @@ const confirmUninstall = async () => {
         executeUninstall()
     }
 }
+
+const uninstallingPlugins = computed(() => marketStore.uninstallingPlugins)
 </script>
 
 <template>
-    <transition name="card-fade" appear>
+    <transition name="card-fade" appear enter-active-class="transition-all duration-300 ease"
+        enter-from-class="opacity-0 translate-y-2" enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition-all duration-300 ease" leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 translate-y-2">
         <div class="p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300" :class="cardClass">
             <!-- 插件详细信息 -->
             <div class="flex justify-between items-center text-sm border-b border-secondary/20 mb-2">
@@ -124,9 +123,9 @@ const confirmUninstall = async () => {
                     <div v-if="isUserPlugin">
                         <!-- 卸载按钮 -->
                         <Button variant="primary" @click="confirmUninstall"
-                            :loading="uninstallingPlugins?.has(plugin.id) || isUninstalling">
+                            :loading="uninstallingPlugins.has(plugin.id) || isUninstalling">
                             <RiDeleteBinLine class="mr-1 h-4 w-4" />
-                            {{ (uninstallingPlugins?.has(plugin.id) || isUninstalling) ? '卸载中...' : '卸载' }}
+                            {{ (uninstallingPlugins.has(plugin.id) || isUninstalling) ? '卸载中...' : '卸载' }}
                         </Button>
                     </div>
                 </template>
@@ -138,7 +137,10 @@ const confirmUninstall = async () => {
                         {{ isInstalled ? '已安装' : (isDownloading ? '下载中...' : '下载') }}
                     </Button>
                     <!-- 下载成功提示 -->
-                    <transition name="fade">
+                    <transition name="fade" enter-active-class="transition-opacity duration-300 ease"
+                        enter-from-class="opacity-0" enter-to-class="opacity-100"
+                        leave-active-class="transition-opacity duration-300 ease" leave-from-class="opacity-100"
+                        leave-to-class="opacity-0">
                         <span v-if="downloadComplete" class="text-xs text-success flex items-center">
                             <RiCheckLine class="h-3 w-3 mr-1" />
                             下载成功
@@ -149,43 +151,3 @@ const confirmUninstall = async () => {
         </div>
     </transition>
 </template>
-
-<style scoped>
-/* 卡片淡入淡出效果 */
-.card-fade-enter-active,
-.card-fade-leave-active {
-    transition: all 0.3s ease;
-}
-
-.card-fade-enter-from,
-.card-fade-leave-to {
-    opacity: 0;
-    transform: translateY(10px);
-}
-
-/* 淡入淡出效果 */
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
-
-/* 滑动淡入淡出效果 */
-.slide-fade-enter-active {
-    transition: all 0.3s ease-out;
-}
-
-.slide-fade-leave-active {
-    transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-    transform: translateY(-10px);
-    opacity: 0;
-}
-</style>

@@ -18,9 +18,8 @@ import { UpdateServiceProvider } from '@coffic/cosy-framework/update';
 import { KeyboardServiceProvider } from '@coffic/cosy-keyboard';
 import { AIServiceProvider } from '../providers/ai/AIServiceProvider.js';
 import { McpServiceProvider } from '../providers/mcp/McpServiceProvider.js';
-import { MarketServiceProvider } from '../providers/market/MarketServiceProvider.js';
 import { PluginServiceProvider } from '../providers/plugin/PluginServiceProvider.js';
-import { PluginFacade } from '../providers/plugin/PluginFacade.js';
+import { PluginFacade } from '../providers/plugin/facade/PluginFacade.js';
 import { WindowServiceProvider } from '../providers/window/WindowServiceProvider.js';
 
 // 应用配置
@@ -38,7 +37,6 @@ const config: ApplicationConfig = {
     PluginServiceProvider,
     WindowServiceProvider,
     McpServiceProvider,
-    MarketServiceProvider,
   ],
   paths: {
     userData: app.getPath('userData'),

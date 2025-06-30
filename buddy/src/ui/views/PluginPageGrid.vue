@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMarketStore } from '../stores/marketStore'
+import { useMarketStore } from '../stores/market-store'
 import { onUnmounted, computed } from 'vue'
 import { logger } from '../utils/logger'
 import { viewIpc } from '../ipc/view-ipc'
