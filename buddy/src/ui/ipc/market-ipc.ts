@@ -83,6 +83,26 @@ export const marketIpc = {
     }
   },
 
+  // 获取开发插件目录
+  async getDevPluginDirectory(): Promise<string> {
+    let response = await ipc.invoke(IPC_METHODS.GET_DEV_PLUGIN_DIRECTORY);
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 设置开发插件目录
+  async setDevPluginDirectory(): Promise<string | null> {
+    let response = await ipc.invoke(IPC_METHODS.SET_DEV_PLUGIN_DIRECTORY);
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
   // 判断某个插件是否已经安装
   async isInstalled(pluginId: string): Promise<boolean> {
     logger.debug('判断插件是否已经安装', pluginId);

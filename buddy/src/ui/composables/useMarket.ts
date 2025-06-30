@@ -1,8 +1,9 @@
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useMarketStore } from '../stores/marketStore';
 import { useStorage } from '@vueuse/core';
 import { useAlert } from './useAlert';
 import { globalToast } from './useToast';
+import { marketIpc } from '../ipc/market-ipc';
 
 export function useMarket() {
   const { error } = useAlert();
@@ -13,6 +14,7 @@ export function useMarket() {
   const devPlugins = computed(() => marketStore.devPlugins);
   const remotePlugins = computed(() => marketStore.remotePlugins);
   const directory = computed(() => marketStore.userPluginDirectory);
+  const devPluginDirectory = ref<string | null>(null);
 
   // 使用localStorage保存最后选择的标签
   const activeTab = useStorage<'user' | 'remote' | 'dev'>(
@@ -21,10 +23,35 @@ export function useMarket() {
   );
 
   const isLoading = ref(false);
+
+  const fetchDevPluginDir = async () => {
+    try {
+      devPluginDirectory.value = await marketIpc.getDevPluginDirectory();
+    } catch (e) {
+      error('获取开发插件目录失败: ' + e);
+    }
+  };
+
+  const setDevPluginDir = async () => {
+    try {
+      const newPath = await marketIpc.setDevPluginDirectory();
+      if (newPath) {
+        devPluginDirectory.value = newPath;
+        globalToast.success('开发插件目录已更新');
+        await loadPlugins(); // 重新加载插件
+      }
+    } catch (e) {
+      error('设置开发插件目录失败: ' + e);
+    }
+  };
+
   const loadPlugins = async () => {
     if (isLoading.value) return;
     isLoading.value = true;
     try {
+      if (activeTab.value === 'dev') {
+        await fetchDevPluginDir();
+      }
       switch (activeTab.value) {
         case 'remote':
           await marketStore.loadRemotePlugins();
@@ -83,6 +110,12 @@ export function useMarket() {
     uninstallStates.value.uninstallError.delete(pluginId);
   };
 
+  onMounted(() => {
+    if (activeTab.value === 'dev') {
+      fetchDevPluginDir();
+    }
+  });
+
   return {
     isDev,
     userPlugins,
@@ -93,6 +126,8 @@ export function useMarket() {
     isLoading,
     shouldShowEmpty,
     uninstallStates,
+    devPluginDirectory,
+    setDevPluginDir,
     handleRefresh,
     switchTab,
     clearUninstallError,

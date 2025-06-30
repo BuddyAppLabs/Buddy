@@ -5,10 +5,11 @@
 import { PluginContract } from './contracts/PluginContract.js';
 import { PluginEntity } from './model/PluginEntity.js';
 import { userPluginDB } from './repo/UserPluginRepo.js';
-import { devPluginDB } from './repo/DevPluginRepo.js';
+import { DevPluginRepo } from './repo/DevPluginRepo.js';
 import { LogFacade } from '@coffic/cosy-logger';
 
 export class PluginManager implements PluginContract {
+  constructor(private devPluginDB: DevPluginRepo) {}
   /**
    * 初始化插件系统
    */
@@ -27,7 +28,7 @@ export class PluginManager implements PluginContract {
   public async getPlugins(): Promise<PluginEntity[]> {
     return [
       ...(await userPluginDB.getAllPlugins()),
-      ...(await devPluginDB.getAllPlugins()),
+      ...(await this.devPluginDB.getAllPlugins()),
     ];
   }
 
@@ -36,7 +37,7 @@ export class PluginManager implements PluginContract {
    * @param id 插件ID
    */
   public async getPlugin(id: string): Promise<PluginEntity | null> {
-    return (await userPluginDB.find(id)) || (await devPluginDB.find(id));
+    return (await userPluginDB.find(id)) || (await this.devPluginDB.find(id));
   }
 
   /**
@@ -66,5 +67,3 @@ export class PluginManager implements PluginContract {
     // 清理资源，如事件监听器等
   }
 }
-
-export const pluginManager = new PluginManager();

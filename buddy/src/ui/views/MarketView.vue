@@ -19,6 +19,8 @@ const {
     isLoading,
     shouldShowEmpty,
     uninstallStates,
+    devPluginDirectory,
+    setDevPluginDir,
     handleRefresh,
     switchTab,
     clearUninstallError,
@@ -56,6 +58,18 @@ const {
             </ToolBar>
         </div>
 
+        <!-- 开发插件目录信息 -->
+        <div v-if="activeTab === 'dev'" class="mb-4">
+            <div v-if="devPluginDirectory" class="flex items-center justify-between p-2 rounded-md bg-base-200 text-sm">
+                <span>当前开发目录: <code>{{ devPluginDirectory }}</code></span>
+                <button class="btn btn-xs btn-outline" @click="setDevPluginDir">更改</button>
+            </div>
+            <div v-else class="flex items-center justify-between p-2 rounded-md bg-warning/20 text-warning text-sm">
+                <span>尚未配置开发插件目录</span>
+                <button class="btn btn-xs btn-warning" @click="setDevPluginDir">立即配置</button>
+            </div>
+        </div>
+
         <!-- 插件列表 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <!-- 本地插件卡片 -->
@@ -78,7 +92,8 @@ const {
             </template>
 
             <!-- 无插件提示 -->
-            <Empty v-if="shouldShowEmpty" :message="activeTab === 'remote' ? '没有可用的远程插件' : '没有找到插件'" />
+            <Empty v-if="shouldShowEmpty"
+                :message="activeTab === 'remote' ? '没有可用的远程插件' : (activeTab === 'dev' && !devPluginDirectory) ? '请先配置开发插件目录' : '没有找到插件'" />
         </div>
     </div>
 </template>

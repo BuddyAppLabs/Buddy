@@ -73,7 +73,7 @@ export async function bootApplication(): Promise<void> {
     await PluginFacade.initialize();
 
     // 注册所有路由
-    registerRoutes();
+    registerRoutes(application);
 
     setupIPCHandlers(application);
 

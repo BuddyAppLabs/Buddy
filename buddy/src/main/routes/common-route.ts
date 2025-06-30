@@ -13,8 +13,6 @@ import { fileIpc } from '../service/FileIpc';
 import { UpdateFacade } from '@coffic/cosy-framework';
 import { LogFacade } from '@coffic/cosy-logger';
 
-const logger = console;
-
 export function registerCommonRoutes(): void {
   // 打开文件夹
   RouteFacade.handle(

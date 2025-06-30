@@ -2,26 +2,34 @@
  * 开发插件仓库
  * 负责从开发目录读取插件信息
  */
-import { dirname, join } from 'path';
 import { BasePluginRepo } from './BasePluginRepo.js';
 import { PluginType } from '@coffic/buddy-types';
 
 export class DevPluginRepo extends BasePluginRepo {
-  private static instance: DevPluginRepo;
+  private enabled: boolean = true;
 
-  private constructor() {
-    const dir = join(dirname(process.cwd()), 'packages');
-    super(dir);
+  constructor(dir: string | null) {
+    // 如果没有提供目录，则使用一个不会加载任何内容的假路径
+    super(dir ?? '');
+    if (!dir) {
+      this.enabled = false;
+    }
+  }
+
+  public async getAllPlugins() {
+    if (!this.enabled) {
+      return [];
+    }
+    return await super.getAllPlugins();
   }
 
   /**
-   * 获取实例
+   * 更新仓库的根目录
+   * @param newPath 新的根目录路径
    */
-  public static getInstance(): DevPluginRepo {
-    if (!DevPluginRepo.instance) {
-      DevPluginRepo.instance = new DevPluginRepo();
-    }
-    return DevPluginRepo.instance;
+  public updatePath(newPath: string): void {
+    this.rootDir = newPath;
+    this.enabled = true; // 确保仓库是启用的
   }
 
   /**
@@ -47,6 +55,3 @@ export class DevPluginRepo extends BasePluginRepo {
     return 'dev';
   }
 }
-
-// 导出单例
-export const devPluginDB = DevPluginRepo.getInstance();

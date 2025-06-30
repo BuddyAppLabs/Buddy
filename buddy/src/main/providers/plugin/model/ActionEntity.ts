@@ -4,7 +4,6 @@ import {
   ValidationResult,
   ViewMode,
 } from '@coffic/buddy-types';
-import { pluginManager } from '../PluginManager.js';
 import { PluginEntity } from './PluginEntity.js';
 import { SendableAction } from '@/types/sendable-action.js';
 
@@ -40,17 +39,20 @@ export class ActionEntity implements SendableAction {
   /**
    * 构造函数
    */
-  constructor(action: {
-    id: string;
-    description?: string;
-    icon?: string;
-    pluginId: string;
-    keywords?: string[];
-    category?: string;
-    viewPath?: string;
-    viewMode?: ViewMode;
-    devTools?: boolean;
-  }) {
+  constructor(
+    action: {
+      id: string;
+      description?: string;
+      icon?: string;
+      pluginId: string;
+      keywords?: string[];
+      category?: string;
+      viewPath?: string;
+      viewMode?: ViewMode;
+      devTools?: boolean;
+    },
+    private plugin: PluginEntity
+  ) {
     this.id = action.id;
     this.globalId = action.pluginId + ':' + action.id;
     this.description = action.description || '';
@@ -100,20 +102,32 @@ export class ActionEntity implements SendableAction {
   /**
    * 静态工厂方法：从原始数据创建实例
    */
-  static fromRawAction(action: SuperAction, pluginId: string): ActionEntity {
-    return new ActionEntity({
-      ...action,
-      pluginId,
-      keywords: [],
-    });
+  static fromRawAction(
+    action: SuperAction,
+    plugin: PluginEntity
+  ): ActionEntity {
+    return new ActionEntity(
+      {
+        ...action,
+        pluginId: plugin.id,
+        keywords: [],
+      },
+      plugin
+    );
   }
 
-  static fromSendableAction(action: SendableAction): ActionEntity {
-    return new ActionEntity({
-      ...action,
-      pluginId: action.pluginId,
-      keywords: [],
-    });
+  static fromSendableAction(
+    action: SendableAction,
+    plugin: PluginEntity
+  ): ActionEntity {
+    return new ActionEntity(
+      {
+        ...action,
+        pluginId: plugin.id,
+        keywords: [],
+      },
+      plugin
+    );
   }
 
   /**
@@ -194,16 +208,10 @@ export class ActionEntity implements SendableAction {
   async getViewContent(): Promise<string> {
     logger.info(`获取动作视图: ${this.globalId}`);
 
-    // 解析插件ID
-    const [pluginId] = this.globalId.split(':');
-    if (!pluginId) {
-      throw new Error(`无效的动作ID: ${this.globalId}`);
-    }
-
     // 获取插件实例
-    const plugin = await this.getPlugin();
+    const plugin = this.plugin;
     if (!plugin) {
-      throw new Error(`未找到插件: ${pluginId}`);
+      throw new Error(`未找到插件: ${this.pluginId}`);
     }
 
     if (!this.viewPath) {
@@ -212,9 +220,5 @@ export class ActionEntity implements SendableAction {
 
     // 获取视图内容
     return this.viewPath;
-  }
-
-  async getPlugin(): Promise<PluginEntity | null> {
-    return await pluginManager.getPlugin(this.pluginId);
   }
 }

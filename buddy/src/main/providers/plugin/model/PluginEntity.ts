@@ -248,47 +248,27 @@ export class PluginEntity {
       return [];
     }
 
-    // 动态加载插件模块
-    const pluginModule = await this.load();
-
-    if (!pluginModule) {
-      logger.warn(`插件模块加载失败: ${this.id}，返回空动作列表`);
-      return [];
-    }
-
-    if (typeof pluginModule.getActions !== 'function') {
-      LogFacade.channel('plugin').warn(
-        `[PluginEntity] 🧩 插件 ${this.id} 未实现 getActions 方法，返回空动作列表`
-      );
-      return [];
-    }
-
-    const context: GetActionsArgs = {
-      keyword,
-      overlaidApp: appStateManager.getOverlaidApp()?.name || '',
-    };
-
-    if (verbose) {
-      LogFacade.channel('plugin').info(
-        `[PluginEntity] 🧩 调用插件 getActions: ${this.id}`,
-        {
-          context,
-          pluginPath: this.path,
-        }
-      );
-    }
-
     try {
-      const actions = await pluginModule.getActions(context);
-      if (Array.isArray(actions)) {
-        return actions.map((action) => new ActionEntity(action));
+      if (!this.instance) {
+        this.instance = await this.load(); // 加载插件实例
       }
-      logger.warn(
-        `插件 ${this.id} 的 getActions 方法未返回数组，返回空动作列表`
+
+      // 如果插件实例上没有getActions方法，则返回空数组
+      if (!this.instance || typeof this.instance.getActions !== 'function') {
+        return [];
+      }
+
+      // 假设插件实例有一个 getActions 方法
+      const rawActions = await this.instance.getActions({ keyword });
+
+      // 在这里创建 ActionEntity
+      return rawActions.map((rawAction: any) =>
+        ActionEntity.fromRawAction(rawAction, this)
       );
-      return [];
     } catch (error) {
-      logger.error(`插件 ${this.id} 执行 getActions 失败`, error);
+      LogFacade.channel('plugin').error(`[PluginEntity] 获取动作列表失败`, {
+        error: error instanceof Error ? error.message : String(error),
+      });
       return [];
     }
   }
