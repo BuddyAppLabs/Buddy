@@ -44,7 +44,7 @@ export function registerPluginRoutes(app: Application): void {
   RouteFacade.handle(
     IPC_METHODS.GET_DEV_PLUGINS,
     async (_event): Promise<SendablePlugin[]> => {
-      const plugins = await PluginFacade.all();
+      const plugins = await PluginFacade.allDev();
       return await Promise.all(
         plugins.map((plugin) => plugin.getSendablePlugin())
       );

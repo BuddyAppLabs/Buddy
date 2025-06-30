@@ -8,6 +8,9 @@ import { LogFacade } from '@coffic/cosy-logger';
 import { DevPluginRepo } from '../repo/DevPluginRepo.js';
 import { userPluginDB } from '../repo/UserPluginRepo.js';
 import { ActionEntity } from '../model/ActionEntity.js';
+import fs from 'fs';
+import path from 'path';
+import { Downloader } from '@/main/service/Downloader.js';
 
 export class PluginManager implements IPluginManager {
   /**
@@ -36,6 +39,13 @@ export class PluginManager implements IPluginManager {
       ...(await userPluginDB.getAllPlugins()),
       ...(await this.devPluginDB.getAllPlugins()),
     ];
+  }
+
+  /**
+   * 获取所有开发插件
+   */
+  public async allDev(): Promise<PluginEntity[]> {
+    return await this.devPluginDB.getAllPlugins();
   }
 
   /**
@@ -149,16 +159,6 @@ export class PluginManager implements IPluginManager {
   }
 
   /**
-   * 安装插件
-   * @param packageName 包名
-   */
-  public async install(packageName: string): Promise<void> {
-    LogFacade.channel('plugin').info(
-      `[PluginManager] 安装插件: ${packageName}`
-    );
-  }
-
-  /**
    * 卸载插件
    * @param packageName 包名
    */
@@ -188,5 +188,45 @@ export class PluginManager implements IPluginManager {
    */
   public updateDevPluginRootDir(path: string): void {
     this.devPluginDB.updatePath(path);
+  }
+
+  /**
+   * 下载并安装插件
+   * @param pluginId 插件ID
+   * @returns 安装是否成功
+   */
+  public async install(pluginId: string): Promise<void> {
+    try {
+      const userPluginDir = userPluginDB.getRootDir();
+      if (!fs.existsSync(userPluginDir)) {
+        fs.mkdirSync(userPluginDir, { recursive: true });
+      }
+
+      // 处理插件ID中的特殊字符，确保文件路径安全
+      const safePluginId = pluginId.replace(/[@/]/g, '-');
+      const pluginDir = path.join(userPluginDir, safePluginId);
+      if (!fs.existsSync(pluginDir)) {
+        fs.mkdirSync(pluginDir, { recursive: true });
+      }
+
+      LogFacade.channel('plugin').info(`开始下载插件`, {
+        pluginId,
+        pluginDir,
+      });
+
+      await Downloader.getInstance().downloadAndExtractPackage(
+        pluginId,
+        pluginDir
+      );
+      await userPluginDB.getAllPlugins();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      LogFacade.channel('plugin').error('下载插件失败', {
+        error: errorMessage,
+        pluginId: pluginId,
+      });
+      throw error;
+    }
   }
 }

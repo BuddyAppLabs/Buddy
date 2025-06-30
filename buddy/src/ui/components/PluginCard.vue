@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import {
     RiCheckLine,
     RiDeleteBinLine
@@ -19,23 +19,13 @@ const props = defineProps<{
 // 状态管理
 const marketStore = useMarketStore()
 
+const isDownloading = computed(() => marketStore.downloadingPlugins.has(props.plugin.id))
+
 // 检查插件安装状态
 const { state: isInstalled } = useAsyncState(
     () => marketIpc.isInstalled(props.plugin.id),
     false,
     { immediate: true }
-)
-
-// 下载状态管理
-const { state: isDownloading, execute: executeDownload } = useAsyncState(
-    async () => {
-        await marketStore.downloadPlugin(props.plugin)
-        isInstalled.value = true
-        showDownloadSuccess()
-        return true
-    },
-    false,
-    { immediate: false }
 )
 
 // 下载成功状态与超时清除
@@ -79,8 +69,10 @@ const cardClass = computed(() => {
 const isUserPlugin = computed(() => props.plugin.type === 'user')
 
 // 下载插件
-const handleDownload = () => {
-    executeDownload()
+const handleDownload = async () => {
+    await marketStore.downloadPlugin(props.plugin)
+    isInstalled.value = true
+    showDownloadSuccess()
 }
 
 // 显示卸载确认

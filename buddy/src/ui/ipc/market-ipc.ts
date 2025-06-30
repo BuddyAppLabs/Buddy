@@ -40,6 +40,7 @@ export const marketIpc = {
 
   // 下载插件
   async downloadPlugin(pluginId: string): Promise<void> {
+    console.log('downloadPlugin', pluginId);
     let response = await ipc.invoke(IPC_METHODS.DOWNLOAD_PLUGIN, pluginId);
 
     if (response.success) {

@@ -16,6 +16,11 @@ export interface IPluginManager {
   all(): Promise<PluginEntity[]>;
 
   /**
+   * 获取所有开发插件
+   */
+  allDev(): Promise<PluginEntity[]>;
+
+  /**
    * 获取指定插件
    * @param id 插件ID
    */

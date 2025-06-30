@@ -52,10 +52,6 @@ export const useMarketStore = defineStore('market', {
 
     // 加载开发插件列表
     async loadDevPlugins(): Promise<void> {
-      if (verbose) {
-        logger.debug(`${title} 加载开发插件列表`);
-      }
-
       this.loadingPlugins = true;
 
       try {
@@ -103,6 +99,7 @@ export const useMarketStore = defineStore('market', {
     // 下载插件
     async downloadPlugin(plugin: SendablePlugin) {
       if (this.downloadingPlugins.has(plugin.id)) {
+        console.log('downloadPlugin already downloading', plugin.id);
         return; // 避免重复下载
       }
 
