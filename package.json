@@ -16,7 +16,7 @@
     "build:deps": "turbo build --filter='@coffic/cosy-*' --filter='@coffic/buddy-types'",
     "build:buddy": "turbo build --filter='buddy'",
     "build:framework": "clear && turbo build --filter='@coffic/cosy-framework'",
-    "build:buddy:mac": "turbo build --filter='@coffic/buddy-types' && pnpm --filter buddy build:mac",
+    "build:buddy:mac": "pnpm run build:buddy && pnpm --filter buddy build:mac",
     "build:plugins": "turbo build --filter='@coffic/buddy-plugin-*'",
     "dev:buddy": "clear && pnpm --filter buddy dev",
     "dev:deps": "turbo dev --filter='@coffic/cosy-*' --parallel",
