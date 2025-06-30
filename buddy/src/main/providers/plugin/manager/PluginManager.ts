@@ -166,6 +166,13 @@ export class PluginManager implements IPluginManager {
     LogFacade.channel('plugin').info(
       `[PluginManager] 卸载插件: ${packageName}`
     );
+
+    const plugin = await this.find(packageName);
+    if (!plugin) {
+      throw new Error(`插件不存在: ${packageName}`);
+    }
+
+    plugin.delete();
   }
 
   /**
