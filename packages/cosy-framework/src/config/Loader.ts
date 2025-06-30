@@ -12,17 +12,8 @@ import {
   ConfigObject,
   ConfigFileDefinition,
 } from './types.js';
-import { mergeConfig, generateCacheKey, parseEnvValue } from './utils.js';
+import { mergeConfig, parseEnvValue } from './utils.js';
 import { EMOJI } from '../constants.js';
-import createJiti from 'jiti';
-
-// jiti an ESM module, so we need to use this workaround to get the current directory
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const jiti = createJiti(__dirname);
 
 export class Loader implements ConfigLoader {
   /** 支持的配置文件扩展名 */
@@ -239,8 +230,8 @@ export class Loader implements ConfigLoader {
    */
   private async loadModuleConfig(filePath: string): Promise<ConfigObject> {
     try {
-      // 使用 jiti 动态导入模块，jiti 会处理 TS -> JS 的即时编译
-      const module = jiti(filePath);
+      // Use native dynamic import, as electron-vite has already compiled TS to JS.
+      const module = await import(filePath);
 
       // 支持默认导出和命名导出
       const config = module.default || module;

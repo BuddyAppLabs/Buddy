@@ -1,6 +1,4 @@
-import { KeyboardConfig } from '@coffic/cosy-keyboard';
-
-const config: KeyboardConfig = {
+const config = {
   /**
    * 热键配置
    * KeyManager 将根据当前环境选择对应的 keycodes 进行监听

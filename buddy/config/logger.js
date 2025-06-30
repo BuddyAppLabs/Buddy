@@ -14,7 +14,7 @@ export default {
     },
 
     logMiddleware: {
-      driver: 'file',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 
@@ -34,7 +34,7 @@ export default {
     },
 
     plugin: {
-      driver: 'file',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
   },

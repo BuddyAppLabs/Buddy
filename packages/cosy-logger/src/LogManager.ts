@@ -109,8 +109,8 @@ export class LogManager implements ILogManager {
     name: string,
     config: ILogChannelConfig
   ): ILogChannel | null {
-    // If driver is null, return a silent, "black hole" channel.
-    if (config.driver === null) {
+    // If driver is null or the string 'null', return a silent, "black hole" channel.
+    if (config.driver === null || config.driver === 'null') {
       return this.createNullChannel();
     }
 

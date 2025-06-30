@@ -58,22 +58,4 @@ export class LogServiceProvider extends ServiceProvider {
     // Return user config if available, otherwise use default config.
     return userConfig || defaultConfig;
   }
-
-  /**
-   * 注册自定义驱动示例
-   */
-  private registerCustomDrivers(manager: ILogManager): void {
-    // 示例：注册一个自定义的文件驱动
-    manager.extend('custom-file', (config) => {
-      // 这里可以返回自定义的日志通道实现
-      // 比如集成第三方日志服务等
-      console.log('创建自定义文件驱动:', config);
-      // 暂时返回默认的electron驱动
-      const { driver, ...restConfig } = config;
-      return manager.createChannel('temp', {
-        driver: 'electron',
-        ...restConfig,
-      });
-    });
-  }
 }
