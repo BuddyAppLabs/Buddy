@@ -7,7 +7,7 @@ on:
       - main
     paths:
       - 'buddy/**'
-      - '.github/workflows/buddy-publish.yaml'
+      - '.github/workflows/publish-buddy.yaml'
 
 permissions:
   contents: write
