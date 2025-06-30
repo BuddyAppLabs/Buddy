@@ -1,12 +1,12 @@
-/**
- * 用户插件仓库
- * 负责从用户数据目录读取插件信息
- */
 import { app } from 'electron';
 import { join } from 'path';
 import { BasePluginRepo } from './BasePluginRepo.js';
 import { PluginType } from '@coffic/buddy-types';
 
+/**
+ * 用户插件仓库
+ * 负责从用户数据目录读取插件信息
+ */
 export class UserPluginRepo extends BasePluginRepo {
   private static instance: UserPluginRepo;
 
@@ -23,22 +23,6 @@ export class UserPluginRepo extends BasePluginRepo {
       UserPluginRepo.instance = new UserPluginRepo();
     }
     return UserPluginRepo.instance;
-  }
-
-  /**
-   * 从目录加载插件
-   */
-  protected async loadPluginFromDir(_pluginPath: string): Promise<any | null> {
-    // 这里需要主项目提供具体的插件加载逻辑
-    return null;
-  }
-
-  /**
-   * 转换为可发送的插件格式
-   */
-  protected async toSendablePlugin(plugin: any): Promise<any> {
-    // 这里需要主项目提供具体的转换逻辑
-    return plugin;
   }
 
   /**

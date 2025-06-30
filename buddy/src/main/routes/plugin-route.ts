@@ -1,5 +1,5 @@
 import { dialog } from 'electron';
-import { remotePluginDB } from '../repo/PluginRepoRemote.js';
+import { remotePluginDB } from '../providers/plugin/repo/PluginRepoRemote.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import {
@@ -9,17 +9,14 @@ import {
 } from '@coffic/cosy-framework';
 
 import { LogFacade } from '@coffic/cosy-logger';
-import { MarketFacade } from '../providers/plugin/facade/MarketFacade.js';
-import { DevPluginRepo } from '../providers/plugin/repo/DevPluginRepo.js';
 import { userPluginDB } from '../providers/plugin/repo/UserPluginRepo.js';
+import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 
 /**
- * 插件市场相关路由
+ * 插件市场路由
  * 处理插件的安装、卸载、查询等功能
  */
-export function registerMarketRoutes(app: Application): void {
-  const devPluginDB = app.make<DevPluginRepo>('plugin.repo.dev');
-
+export function registerPluginRoutes(app: Application): void {
   // 检查插件是否已安装
   RouteFacade.handle(
     IPC_METHODS.Plugin_Is_Installed,
@@ -47,7 +44,10 @@ export function registerMarketRoutes(app: Application): void {
   RouteFacade.handle(
     IPC_METHODS.GET_DEV_PLUGINS,
     async (_event): Promise<SendablePlugin[]> => {
-      return await devPluginDB.getSendablePlugins();
+      const plugins = await PluginFacade.all();
+      return await Promise.all(
+        plugins.map((plugin) => plugin.getSendablePlugin())
+      );
     }
   ).description('获取开发环境的插件列表');
 
@@ -55,7 +55,7 @@ export function registerMarketRoutes(app: Application): void {
   RouteFacade.handle(
     IPC_METHODS.GET_PLUGIN_DIRECTORIES_DEV,
     (_event): string => {
-      return devPluginDB.getRootDir();
+      return PluginFacade.getDevPluginRootDir();
     }
   ).description('获取开发插件的根目录');
 
@@ -72,8 +72,8 @@ export function registerMarketRoutes(app: Application): void {
       }
 
       const newPath = filePaths[0];
-      await SettingFacade.set('plugins.dev.path', newPath);
-      devPluginDB.updatePath(newPath);
+      SettingFacade.set('plugins.dev.path', newPath);
+      PluginFacade.updateDevPluginRootDir(newPath);
 
       return newPath;
     }
@@ -92,7 +92,7 @@ export function registerMarketRoutes(app: Application): void {
   RouteFacade.handle(
     IPC_METHODS.DOWNLOAD_PLUGIN,
     async (_event, pluginId: string): Promise<void> => {
-      await MarketFacade.install(pluginId);
+      await PluginFacade.install(pluginId);
     }
   )
     .validation({
@@ -112,7 +112,7 @@ export function registerMarketRoutes(app: Application): void {
   RouteFacade.handle(
     IPC_METHODS.UNINSTALL_PLUGIN,
     async (_event, pluginId: string): Promise<void> => {
-      await MarketFacade.uninstall(pluginId);
+      await PluginFacade.uninstall(pluginId);
     }
   )
     .validation({

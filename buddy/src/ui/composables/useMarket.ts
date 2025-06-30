@@ -61,7 +61,7 @@ export function useMarket() {
           error('未知标签');
       }
 
-      globalToast.success(`刷新成功(${activeTab.value})`, {
+      globalToast.success(`刷新成功`, {
         duration: 2000,
         position: 'bottom-center',
       });

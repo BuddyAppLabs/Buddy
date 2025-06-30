@@ -8,6 +8,7 @@ import { IPluginRepo } from '../contract/IPluginRepo.js';
 import { PluginEntity } from '../model/PluginEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
 import { PluginType } from '@coffic/buddy-types';
+import { SendablePlugin } from '@/types/sendable-plugin.js';
 
 const verbose = false;
 
@@ -104,7 +105,7 @@ export abstract class BasePluginRepo implements IPluginRepo {
   /**
    * 获取可发送的插件列表
    */
-  public async getSendablePlugins(): Promise<any[]> {
+  public async getSendablePlugins(): Promise<SendablePlugin[]> {
     const plugins = await this.getAllPlugins();
     return await Promise.all(
       plugins.map((plugin) => plugin.getSendablePlugin())

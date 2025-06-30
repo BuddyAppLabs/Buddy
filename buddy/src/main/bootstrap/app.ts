@@ -19,7 +19,7 @@ import { KeyboardServiceProvider } from '@coffic/cosy-keyboard';
 import { AIServiceProvider } from '../providers/ai/AIServiceProvider.js';
 import { McpServiceProvider } from '../providers/mcp/McpServiceProvider.js';
 import { PluginServiceProvider } from '../providers/plugin/PluginServiceProvider.js';
-import { PluginFacade } from '../providers/plugin/facade/PluginFacade.js';
+import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import { WindowServiceProvider } from '../providers/window/WindowServiceProvider.js';
 
 // 应用配置
@@ -63,9 +63,6 @@ export async function bootApplication(): Promise<void> {
     application.on('log', (level, message, context) => {
       logger?.channel()[level](message, context);
     });
-
-    // 初始化Facades
-    PluginFacade.setApp(application);
 
     // 等待插件系统初始化完成
     await PluginFacade.initialize();

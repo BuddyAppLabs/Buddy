@@ -2,13 +2,13 @@
  * 远程插件数据库
  * 负责从远程 npm registry 获取插件并缓存
  */
-import { npmRegistryService } from '../service/NpmRegistryService.js';
-import { PackageEntity } from '../providers/plugin/model/PackageEntity.js';
+import { npmRegistryService } from '../../../service/NpmRegistryService.js';
+import { PackageEntity } from '../model/PackageEntity.js';
 import { PackageJson } from '@/types/package-json.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
-import { PluginEntity } from '../providers/plugin/model/PluginEntity.js';
-import { IPluginRepo } from '../providers/plugin/contract/IPluginRepo.js';
-import { EMOJI } from '../constants.js';
+import { PluginEntity } from '../model/PluginEntity.js';
+import { IPluginRepo } from '../contract/IPluginRepo.js';
+import { EMOJI } from '../../../constants.js';
 import { LogFacade } from '@coffic/cosy-logger';
 
 const verbose = false;

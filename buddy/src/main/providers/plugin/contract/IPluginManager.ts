@@ -13,19 +13,19 @@ export interface IPluginManager {
   /**
    * 获取所有插件
    */
-  getPlugins(): Promise<PluginEntity[]>;
+  all(): Promise<PluginEntity[]>;
 
   /**
    * 获取指定插件
    * @param id 插件ID
    */
-  getPlugin(id: string): Promise<PluginEntity | null>;
+  find(id: string): Promise<PluginEntity | null>;
 
   /**
    * 获取插件动作
    * @param keyword 关键词
    */
-  getActions(keyword: string): Promise<ActionEntity[]>;
+  actions(keyword: string): Promise<ActionEntity[]>;
 
   /**
    * 执行插件动作
@@ -46,7 +46,24 @@ export interface IPluginManager {
   getActionView(actionId: string): Promise<string>;
 
   /**
-   * 清理资源
+   * 安装插件
+   * @param packageName 包名
    */
-  cleanup(): void;
+  install(packageName: string): Promise<void>;
+
+  /**
+   * 卸载插件
+   * @param packageName 包名
+   */
+  uninstall(packageName: string): Promise<void>;
+
+  /**
+   * 获取开发插件的根目录
+   */
+  getDevPluginRootDir(): string;
+
+  /**
+   * 更新开发插件的根目录
+   */
+  updateDevPluginRootDir(path: string): void;
 }

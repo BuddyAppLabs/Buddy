@@ -5,7 +5,7 @@
 
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { RouteFacade } from '@coffic/cosy-framework';
-import { PluginFacade } from '../providers/plugin/facade/PluginFacade.js';
+import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import { SendableAction } from '@/types/sendable-action.js';
 
 export function registerActionsRoutes(): void {
@@ -13,7 +13,7 @@ export function registerActionsRoutes(): void {
   RouteFacade.handle(
     IPC_METHODS.GET_ACTIONS,
     async (_event, keyword = ''): Promise<SendableAction[]> => {
-      const actions = await PluginFacade.getActions(keyword);
+      const actions = await PluginFacade.actions(keyword);
       return actions.map((action) => action.toSendableAction());
     }
   )

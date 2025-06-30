@@ -8,10 +8,13 @@ import { LogFacade } from '@coffic/cosy-logger';
 import { DevPluginRepo } from '../repo/DevPluginRepo.js';
 import { userPluginDB } from '../repo/UserPluginRepo.js';
 import { ActionEntity } from '../model/ActionEntity.js';
-import { SuperAction } from '@coffic/buddy-types';
 
 export class PluginManager implements IPluginManager {
-  constructor(private devPluginDB: DevPluginRepo) {}
+  /**
+   * 构造函数
+   * @param repository 插件仓储
+   */
+  constructor(private readonly devPluginDB: DevPluginRepo) {}
 
   /**
    * 初始化插件系统
@@ -28,7 +31,7 @@ export class PluginManager implements IPluginManager {
   /**
    * 获取所有插件
    */
-  public async getPlugins(): Promise<PluginEntity[]> {
+  public async all(): Promise<PluginEntity[]> {
     return [
       ...(await userPluginDB.getAllPlugins()),
       ...(await this.devPluginDB.getAllPlugins()),
@@ -39,7 +42,7 @@ export class PluginManager implements IPluginManager {
    * 获取指定插件
    * @param id 插件ID
    */
-  public async getPlugin(id: string): Promise<PluginEntity | null> {
+  public async find(id: string): Promise<PluginEntity | null> {
     return (await userPluginDB.find(id)) || (await this.devPluginDB.find(id));
   }
 
@@ -50,7 +53,7 @@ export class PluginManager implements IPluginManager {
    */
   public async executeAction(actionId: string, keyword: string): Promise<any> {
     const [pluginId, actionLocalId] = actionId.split(':');
-    const plugin = await this.getPlugin(pluginId);
+    const plugin = await this.find(pluginId);
     if (!plugin) {
       LogFacade.channel('plugin').error(`[PluginManager] 插件不存在`, {
         pluginId,
@@ -68,12 +71,12 @@ export class PluginManager implements IPluginManager {
    * @param keyword 搜索关键词
    * @returns 匹配的插件动作列表
    */
-  async getActions(keyword: string = ''): Promise<ActionEntity[]> {
+  async actions(keyword: string = ''): Promise<ActionEntity[]> {
     let allActions: ActionEntity[] = [];
 
     try {
       // 从所有加载的插件中获取动作
-      const plugins = await this.getPlugins();
+      const plugins = await this.all();
       for (const plugin of plugins) {
         LogFacade.channel('plugin').debug(
           `[PluginManager] 获取插件动作: ${plugin.id}`
@@ -146,9 +149,37 @@ export class PluginManager implements IPluginManager {
   }
 
   /**
-   * 清理资源
+   * 安装插件
+   * @param packageName 包名
    */
-  public cleanup(): void {
-    // 清理资源，如事件监听器等
+  public async install(packageName: string): Promise<void> {
+    LogFacade.channel('plugin').info(
+      `[PluginManager] 安装插件: ${packageName}`
+    );
+  }
+
+  /**
+   * 卸载插件
+   * @param packageName 包名
+   */
+  public async uninstall(packageName: string): Promise<void> {
+    LogFacade.channel('plugin').info(
+      `[PluginManager] 卸载插件: ${packageName}`
+    );
+  }
+
+  /**
+   * 获取开发插件的根目录
+   */
+  public getDevPluginRootDir(): string {
+    return this.devPluginDB.getRootDir();
+  }
+
+  /**
+   * 更新开发插件的根目录
+   * @param path 新路径
+   */
+  public updateDevPluginRootDir(path: string): void {
+    this.devPluginDB.updatePath(path);
   }
 }
