@@ -1,0 +1,17 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# cosy-framework 文档维护规则
+
+此规则旨在确保 `cosy-framework` 的文档与其功能保持同步。
+
+## 核心要求
+
+当您为 `cosy-framework` 包新增或修改任何模块、类、或公共 API 时，您必须：
+
+1.  **新增文档**：如果是全新的模块，请在 `packages/cosy-framework/docs` 目录下为其创建一份新的使用指南。
+2.  **更新文档**：如果修改了现有模块，请务必更新其对应的文档，以反映最新的变更。
+
+这样做可以帮助所有使用者快速理解新功能和变更，并保持项目代码库的健康和可维护性。

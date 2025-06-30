@@ -7,6 +7,9 @@ export interface ApplicationConfig {
   version: string;
   env: 'development' | 'production' | 'test';
   debug: boolean;
+  paths: {
+    userData: string;
+  };
   providers?: Array<new (app: Application) => ServiceProvider>;
   middleware?: IMiddleware[];
 }

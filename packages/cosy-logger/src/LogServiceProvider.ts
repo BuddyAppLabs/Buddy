@@ -16,14 +16,20 @@ export class LogServiceProvider extends ServiceProvider {
   public static LogManager = 'log';
 
   register(): void {
+    // Register the log manager as a singleton, but defer its creation.
+    // The actual instance will be created in the boot method when the config is ready.
     this.app.singleton(LogServiceProvider.LogManager, () => {
-      const loggerConfig = Config.get<ILogConfig>('logger');
-      return new LogManager(loggerConfig);
+      // This will be replaced in boot()
+      return new LogManager(this.getLogConfig());
     });
   }
 
   async boot(): Promise<void> {
-    // No boot logic needed for the logger
+    // Now that the config is loaded, we can create the real LogManager instance.
+    const config = this.getLogConfig();
+    this.app
+      .container()
+      .instance(LogServiceProvider.LogManager, new LogManager(config));
   }
 
   public async shutdown(): Promise<void> {
@@ -41,23 +47,16 @@ export class LogServiceProvider extends ServiceProvider {
       default: 'app',
       channels: {
         app: {
-          driver: 'electron',
+          driver: 'console',
           level: ILogLevel.INFO,
-          format: 'structured',
-          includeTimestamp: false,
-        },
-        error: {
-          driver: 'electron',
-          level: ILogLevel.ERROR,
-          format: 'json',
         },
       },
     };
 
-    const userConfig = Config.get<{ loggerConfig: ILogConfig }>('logger');
+    const userConfig = Config.get<ILogConfig>('logger');
 
-    // 从用户配置中读取，如果没有则使用默认配置
-    return userConfig?.loggerConfig || defaultConfig;
+    // Return user config if available, otherwise use default config.
+    return userConfig || defaultConfig;
   }
 
   /**

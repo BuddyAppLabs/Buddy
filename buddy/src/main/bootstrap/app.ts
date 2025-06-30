@@ -38,6 +38,9 @@ const config: ApplicationConfig = {
     McpServiceProvider,
     MarketServiceProvider,
   ],
+  paths: {
+    userData: app.getPath('userData'),
+  },
   middleware: [LoggingMiddleware({ logLevel: 'debug' })],
 };
 

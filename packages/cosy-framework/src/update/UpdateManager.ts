@@ -2,7 +2,7 @@ import pkg from 'electron-updater';
 const { autoUpdater } = pkg;
 import { dialog } from 'electron';
 import { IUpdateConfig } from './IUpdateConfig.js';
-import { IApplication } from '../application/Application.js';
+import { IApplication } from '../contract/IApplication.js';
 import { ConfigManager } from '../config/types.js';
 import { IUpdateManager } from './IUpdateManager.js';
 import { ILogLevel } from '../contract/logger/ILogLevel.js';

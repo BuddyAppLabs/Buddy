@@ -3,7 +3,6 @@
  * 参考Laravel的设计，支持依赖注入、驱动扩展和灵活配置
  */
 import {
-  IApplication,
   ILogChannel,
   ILogChannelConfig,
   ILogConfig,
