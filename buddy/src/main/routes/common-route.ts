@@ -103,7 +103,7 @@ export function registerCommonRoutes(): void {
   }).description('获取应用和运行时版本信息');
 
   // 检查更新
-  RouteFacade.handle(IPC_METHODS.CHECK_UPDATE, () => {
-    return UpdateFacade.checkForUpdates();
+  RouteFacade.handle(IPC_METHODS.CHECK_UPDATE, async (): Promise<string> => {
+    return await UpdateFacade.checkForUpdates();
   }).description('检查更新');
 }

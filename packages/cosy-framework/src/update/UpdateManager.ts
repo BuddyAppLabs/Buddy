@@ -1,4 +1,4 @@
-import pkg from 'electron-updater';
+import pkg, { UpdateCheckResult } from 'electron-updater';
 const { autoUpdater } = pkg;
 import { dialog } from 'electron';
 import { IUpdateConfig } from './IUpdateConfig.js';
@@ -125,12 +125,18 @@ export class UpdateManager implements IUpdateManager {
       });
   }
 
-  public checkForUpdates(): void {
+  /**
+   * 手动检查更新
+   * @returns null if the updater is disabled, otherwise info about the latest version
+   */
+  public async checkForUpdates(): Promise<string> {
     this.logger.channel('updater').info('Manually checking for updates...');
-    autoUpdater.checkForUpdates().catch((error) => {
-      this.logger
-        .channel('updater')
-        .error('Failed to check for updates', { error: error.message });
-    });
+
+    let result = await autoUpdater.checkForUpdates();
+    if (result) {
+      return result.updateInfo.version;
+    }
+
+    return '更新被禁用';
   }
 }

@@ -143,6 +143,9 @@ onUnmounted(() => {
         <ErrorNotification />
     </div>
 
+    <!-- 版本信息对话框 -->
+    <VersionDialog v-model="appStore.showVersionDialog" />
+
     <!-- 全局确认对话框 -->
     <Confirm v-model="globalConfirm.state.value.show" :title="globalConfirm.state.value.title"
         :message="globalConfirm.state.value.message" :confirm-text="globalConfirm.state.value.confirmText"
@@ -156,9 +159,6 @@ onUnmounted(() => {
         @close="globalToast.close">
         {{ globalToast.state.value.message }}
     </Toast>
-
-    <!-- 版本信息对话框 -->
-    <VersionDialog v-model="appStore.showVersionDialog" />
 </template>
 
 <style>

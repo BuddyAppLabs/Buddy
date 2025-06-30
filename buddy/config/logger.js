@@ -40,12 +40,12 @@ export default {
     },
 
     updater: {
-      driver: 'null',
+      driver: 'console',
       level: ILogLevel.DEBUG,
     },
 
     plugin: {
-      driver: 'console',
+      driver: null,
       level: ILogLevel.DEBUG,
     },
   },

@@ -11,6 +11,7 @@
 import { computed } from 'vue'
 import { useAppStore } from '@renderer/stores/appStore'
 import { IPC_METHODS } from '@/types/ipc-methods';
+import { globalToast } from '../composables/useToast';
 
 defineProps<{
     modelValue: boolean
@@ -42,9 +43,11 @@ const closeDialog = () => {
 const checkUpdate = async () => {
     let response = await window.ipc.invoke(IPC_METHODS.CHECK_UPDATE);
     if (response.success) {
-        console.log('检查更新成功')
+        console.log('检查更新成功', response.data)
+        globalToast.success('检查更新成功, 响应: ' + response.data)
     } else {
-        console.log('检查更新失败')
+        console.log('检查更新失败', response.error)
+        globalToast.error('检查更新失败')
     }
 }
 </script>
@@ -52,7 +55,7 @@ const checkUpdate = async () => {
 <template>
     <div v-if="modelValue" class="fixed inset-0 flex items-center justify-center z-50">
         <!-- 背景遮罩 -->
-        <div class="absolute inset-0 bg-black bg-opacity-50" @click="closeDialog"></div>
+        <div class="absolute inset-0 bg-black/50" @click="closeDialog"></div>
 
         <!-- 对话框内容 -->
         <div class="relative bg-base-100 rounded-lg shadow-xl w-96 max-w-full">

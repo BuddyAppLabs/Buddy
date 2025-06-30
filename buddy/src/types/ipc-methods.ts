@@ -70,7 +70,7 @@ export const IPC_METHODS = {
 
   // 版本相关的路由
   GET_VERSIONS: 'versions/get',
-  CHECK_UPDATE: 'versions/update',
+  CHECK_UPDATE: 'versions/update/check',
 
   // 其他
   OPEN_CONFIG_FOLDER: 'config/open-folder',
