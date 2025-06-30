@@ -1,0 +1,174 @@
+<!--
+App.vue - 应用程序入口组件
+
+这是应用的根组件，主要负责：
+1. 组织整体布局结构
+2. 管理插件系统的生命周期
+3. 处理插件消息通信
+4. 管理全局快捷键
+5. 管理窗口激活状态监听
+
+技术栈：
+- Vue 3 组合式API
+- Pinia 状态管理
+- Electron IPC通信
+
+注意事项：
+- 所有的状态管理都通过pinia store处理
+- 插件通信使用electron的IPC机制
+- 组件间通过store而不是props通信
+-->
+
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue'
+import SearchBar from './layouts/SearchBar.vue'
+import StatusBar from './layouts/StatusBar.vue'
+import Confirm from './cosy/Confirm.vue'
+import Toast from './cosy/Toast.vue'
+import Alert from './cosy/Alert.vue'
+import Progress from './cosy/Progress.vue'
+import { useActionStore } from '@renderer/stores/actionStore'
+import { globalConfirm } from './composables/useConfirm'
+import { globalToast } from './composables/useToast'
+import { globalAlert } from './composables/useAlert'
+import { globalProgress } from './composables/useProgress'
+import { useAppStore } from '@renderer/stores/appStore'
+import ErrorNotification from '@renderer/components/ErrorNotification.vue'
+import { useErrorStore } from '@renderer/stores/errorStore'
+import VersionDialog from '@renderer/components/VersionDialog.vue'
+
+const actionStore = useActionStore()
+const appStore = useAppStore()
+const errorStore = useErrorStore()
+const content = ref<HTMLElement | null>(null)
+
+// 全局错误处理
+const handleGlobalError = (event: ErrorEvent) => {
+    errorStore.addError(event.error || event.message)
+}
+
+const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+    errorStore.addError(event.reason?.message || '未处理的 Promise 错误')
+}
+
+// 在组件加载时注册消息监听和初始化
+onMounted(async () => {
+    // 检查IPC是否正常
+    if (!window.ipc) {
+        errorStore.addError('IPC 初始化失败')
+        return
+    }
+
+    try {
+        // 注册全局错误处理
+        window.addEventListener('error', handleGlobalError)
+        window.addEventListener('unhandledrejection', handleUnhandledRejection)
+
+        // 初始化 stores
+        try {
+            await appStore.onMounted()
+        } catch (error) {
+            errorStore.addError('应用初始化失败: ' + (error instanceof Error ? error.message : String(error)))
+        }
+
+        try {
+            await actionStore.onMounted()
+        } catch (error) {
+            errorStore.addError('动作列表加载失败: ' + (error instanceof Error ? error.message : String(error)))
+        }
+
+        // 监听内容区域的滚动事件
+        if (content.value) {
+            content.value.addEventListener('scroll', () => {
+                // 获取滚动的位置
+                const scrollTop = content.value!.scrollTop
+                const scrollLeft = content.value!.scrollLeft
+                // 打印滚动位置
+                // logger.info('content 滚动事件', { scrollTop, scrollLeft })
+
+                // 发出自定义事件
+                const contentScrollEvent = new CustomEvent('content-scroll', {
+                    detail: { scrollTop, scrollLeft }
+                })
+                document.dispatchEvent(contentScrollEvent)
+            })
+        }
+    } catch (error) {
+        errorStore.addError(error instanceof Error ? error.message : String(error))
+    }
+})
+
+// 在组件卸载时清理监听器
+onUnmounted(() => {
+    window.removeEventListener('error', handleGlobalError)
+    window.removeEventListener('unhandledrejection', handleUnhandledRejection)
+
+    appStore.onUnmounted()
+    actionStore.onUnmounted()
+})
+</script>
+
+<template>
+    <div class="flex flex-col h-screen frosted-glass">
+        <!-- 搜索区域 - 这里是可拖动区域 -->
+        <div class="h-10 mt-4 px-4">
+            <SearchBar />
+        </div>
+
+        <!-- 全局进度条 -->
+        <div class="absolute top-14 left-1/2 transform -translate-x-1/2">
+            <Progress v-if="globalProgress.state.value.show" :value="globalProgress.state.value.value"
+                :max="globalProgress.state.value.max" :color="globalProgress.state.value.color" />
+        </div>
+
+        <!-- 全局警告提示 -->
+        <Alert v-if="globalAlert.state.value.show" :type="globalAlert.state.value.type"
+            :message="globalAlert.state.value.message" :closable="globalAlert.state.value.closable"
+            @close="globalAlert.close" />
+
+        <!-- 内容区域 -->
+        <div class="flex-1 overflow-auto no-drag-region" ref="content">
+            <router-view v-slot="{ Component }">
+                <transition name="fade" mode="out-in">
+                    <component :is="Component" />
+                </transition>
+            </router-view>
+        </div>
+
+        <!-- 状态栏 -->
+        <div class="h-10 z-50 border-t border-base-200 dark:border-base-300 no-drag-region">
+            <StatusBar />
+        </div>
+
+        <ErrorNotification />
+    </div>
+
+    <!-- 版本信息对话框 -->
+    <VersionDialog v-model="appStore.showVersionDialog" />
+
+    <!-- 全局确认对话框 -->
+    <Confirm v-model="globalConfirm.state.value.show" :title="globalConfirm.state.value.title"
+        :message="globalConfirm.state.value.message" :confirm-text="globalConfirm.state.value.confirmText"
+        :cancel-text="globalConfirm.state.value.cancelText" :confirm-variant="globalConfirm.state.value.confirmVariant"
+        :cancel-variant="globalConfirm.state.value.cancelVariant" :loading="globalConfirm.state.value.loading"
+        @confirm="globalConfirm.handleConfirm" @cancel="globalConfirm.handleCancel" />
+
+    <!-- 全局消息提示 -->
+    <Toast v-if="globalToast.state.value.show" :type="globalToast.state.value.type"
+        :duration="globalToast.state.value.duration" :position="globalToast.state.value.position"
+        @close="globalToast.close">
+        {{ globalToast.state.value.message }}
+    </Toast>
+</template>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>

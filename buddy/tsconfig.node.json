@@ -2,15 +2,18 @@
   "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
   "include": [
     "electron.vite.config.*",
+    "src/**/*.d.ts",
     "src/main/**/*",
     "src/preload/**/*",
     "src/types/**/*",
     "native/**/*",
+    "../packages/cosy-foundation/src/window/contracts/WindowContract.ts",
+    "ui",
   ],
   "compilerOptions": {
     "composite": true,
-    "module": "Node16",
-    "moduleResolution": "node16",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "types": [
       "electron-vite/node"
     ],

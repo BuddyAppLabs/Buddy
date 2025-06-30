@@ -1,0 +1,54 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "out/**", ".next/**"],
+      "inputs": [
+        "src/**",
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx",
+        "package.json",
+        "tsconfig.json"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**",
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx",
+        ".eslintrc*",
+        "eslint.config.*"
+      ]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**",
+        "test/**",
+        "*.test.*",
+        "*.spec.*",
+        "jest.config.*",
+        "vitest.config.*"
+      ]
+    },
+    "clean": {
+      "cache": false
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "*.ts", "*.tsx", "tsconfig.json"]
+    }
+  },
+  "globalDependencies": ["package.json", "pnpm-lock.yaml"],
+  "ui": "tui"
+}

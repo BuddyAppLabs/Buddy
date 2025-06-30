@@ -3,27 +3,22 @@
  * 负责监控应用的激活状态以及其他应用的状态
  */
 import { app, BrowserWindow } from 'electron';
-import { BaseManager } from './BaseManager.js';
 import {
   ActiveApplication,
   getFrontmostApplication,
 } from '@coffic/active-app-monitor';
-import { logger } from './LogManager.js';
 import { AppEvents, SuperApp } from '@coffic/buddy-types';
+import { EMOJI } from '../constants.js';
+
+const logger = console;
 
 const verbose = false;
 
-class StateManager extends BaseManager {
+class StateManager {
   private static instance: StateManager;
   private overlaidApp: SuperApp | null = null;
 
   private constructor() {
-    super({
-      name: 'StateManager',
-      enableLogging: true,
-      logLevel: 'info',
-    });
-
     // 监听应用激活事件
     this.setupAppStateListeners();
   }
@@ -44,9 +39,6 @@ class StateManager extends BaseManager {
    * @param args 事件参数
    */
   private emitAndBroadcast(channel: string, ...args: any[]): void {
-    // 用于主进程内部的模块间通信
-    this.emit(channel, ...args);
-
     // 用于向所有渲染进程广播事件
     this.broadcastToAllWindows(channel, ...args);
   }
@@ -57,8 +49,8 @@ class StateManager extends BaseManager {
   private setupAppStateListeners(): void {
     // 监听应用激活事件
     app.on('activate', () => {
-      logger.info('应用激活事件');
-      this.emitAndBroadcast(AppEvents.ActIVATED);
+      logger.info(`${EMOJI} [StateManager] 应用激活事件`);
+      this.emitAndBroadcast(AppEvents.ACTIVATED);
     });
 
     // 监听应用失去焦点事件
@@ -68,7 +60,7 @@ class StateManager extends BaseManager {
 
     // 添加窗口获得焦点事件监听
     app.on('browser-window-focus', () => {
-      this.emitAndBroadcast(AppEvents.ActIVATED);
+      this.emitAndBroadcast(AppEvents.ACTIVATED);
     });
   }
 
@@ -86,7 +78,7 @@ class StateManager extends BaseManager {
         }
       }
     } catch (error) {
-      this.handleError(error, '向渲染进程广播事件失败');
+      throw new Error(`向渲染进程广播事件失败: ${error}`);
     }
   }
 
@@ -117,7 +109,6 @@ class StateManager extends BaseManager {
     try {
       const frontmostApp = getFrontmostApplication();
       if (frontmostApp) {
-
         if (verbose) {
           logger.debug('当前活跃应用信息:', frontmostApp);
         }
@@ -154,15 +145,13 @@ class StateManager extends BaseManager {
    */
   public cleanup(): void {
     try {
-      // 移除所有事件监听器
-      this.removeAllListeners();
       // 移除应用状态监听器
       app.removeAllListeners('activate');
       app.removeAllListeners('browser-window-blur');
       app.removeAllListeners('browser-window-focus');
       app.removeAllListeners('window-all-closed');
     } catch (error) {
-      this.handleError(error, '状态管理器清理失败');
+      throw new Error(`状态管理器清理失败: ${error}`);
     }
   }
 }
