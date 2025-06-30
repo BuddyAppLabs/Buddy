@@ -2,8 +2,9 @@
  * 插件系统相关契约
  */
 
-import { ExecuteResult, SuperAction } from '@coffic/buddy-types';
+import { ExecuteResult } from '@coffic/buddy-types';
 import { PluginEntity } from '../model/PluginEntity.js';
+import { ActionEntity } from '../model/ActionEntity.js';
 
 /**
  * 插件管理器契约
@@ -24,7 +25,7 @@ export interface IPluginManager {
    * 获取插件动作
    * @param keyword 关键词
    */
-  getActions(keyword: string): Promise<SuperAction[]>;
+  getActions(keyword: string): Promise<ActionEntity[]>;
 
   /**
    * 执行插件动作

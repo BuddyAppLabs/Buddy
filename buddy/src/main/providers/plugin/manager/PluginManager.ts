@@ -68,8 +68,8 @@ export class PluginManager implements IPluginManager {
    * @param keyword 搜索关键词
    * @returns 匹配的插件动作列表
    */
-  async getActions(keyword: string = ''): Promise<SuperAction[]> {
-    let allActions: SuperAction[] = [];
+  async getActions(keyword: string = ''): Promise<ActionEntity[]> {
+    let allActions: ActionEntity[] = [];
 
     try {
       // 从所有加载的插件中获取动作

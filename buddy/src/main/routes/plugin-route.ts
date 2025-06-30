@@ -1,8 +1,3 @@
-/**
- * 插件市场相关路由
- * 处理插件的安装、卸载、查询等功能
- */
-
 import { dialog } from 'electron';
 import { remotePluginDB } from '../repo/PluginRepoRemote.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
@@ -18,8 +13,13 @@ import { MarketFacade } from '../providers/plugin/facade/MarketFacade.js';
 import { DevPluginRepo } from '../providers/plugin/repo/DevPluginRepo.js';
 import { userPluginDB } from '../providers/plugin/repo/UserPluginRepo.js';
 
+/**
+ * 插件市场相关路由
+ * 处理插件的安装、卸载、查询等功能
+ */
 export function registerMarketRoutes(app: Application): void {
   const devPluginDB = app.make<DevPluginRepo>('plugin.repo.dev');
+
   // 检查插件是否已安装
   RouteFacade.handle(
     IPC_METHODS.Plugin_Is_Installed,

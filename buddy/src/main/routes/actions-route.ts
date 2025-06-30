@@ -3,17 +3,18 @@
  * 处理插件动作的查询和执行
  */
 
-import { SuperAction } from '@coffic/buddy-types';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { RouteFacade } from '@coffic/cosy-framework';
 import { PluginFacade } from '../providers/plugin/facade/PluginFacade.js';
+import { SendableAction } from '@/types/sendable-action.js';
 
 export function registerActionsRoutes(): void {
   // 获取插件动作列表
   RouteFacade.handle(
     IPC_METHODS.GET_ACTIONS,
-    async (_event, keyword = ''): Promise<SuperAction[]> => {
-      return await PluginFacade.getActions(keyword);
+    async (_event, keyword = ''): Promise<SendableAction[]> => {
+      const actions = await PluginFacade.getActions(keyword);
+      return actions.map((action) => action.toSendableAction());
     }
   )
     .validation({

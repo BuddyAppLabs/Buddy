@@ -221,4 +221,16 @@ export class ActionEntity implements SuperAction {
     // 获取视图内容
     return this.viewPath;
   }
+
+  /**
+   * 转换为可发送的动作对象，用于主进程和渲染进程的通信
+   */
+  toSendableAction(): SendableAction {
+    return {
+      globalId: this.globalId,
+      id: this.id,
+      pluginId: this.pluginId,
+      description: this.description,
+    };
+  }
 }

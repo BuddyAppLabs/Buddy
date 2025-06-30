@@ -5,6 +5,7 @@
 import { Application } from '@coffic/cosy-framework';
 import { IPluginManager } from '../contract/IPluginManager.js';
 import { SuperAction } from '@coffic/buddy-types';
+import { ActionEntity } from '../model/ActionEntity.js';
 
 export class PluginFacade {
   /**
@@ -43,7 +44,7 @@ export class PluginFacade {
   /**
    * 获取插件动作
    */
-  public static async getActions(keyword: string): Promise<SuperAction[]> {
+  public static async getActions(keyword: string): Promise<ActionEntity[]> {
     return await this.getManager().getActions(keyword);
   }
 
