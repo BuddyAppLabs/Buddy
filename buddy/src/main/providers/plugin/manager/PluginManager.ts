@@ -92,9 +92,10 @@ export class PluginManager implements IPluginManager {
       // 从所有加载的插件中获取动作
       const plugins = await this.all();
       for (const plugin of plugins) {
-        LogFacade.channel('plugin').debug(
-          `[PluginManager] 获取插件动作: ${plugin.id}`
-        );
+        LogFacade.channel('plugin').debug(`[PluginManager] 获取插件动作`, {
+          keyword,
+          pluginId: plugin.id,
+        });
 
         try {
           const pluginActions: ActionEntity[] =
@@ -135,10 +136,6 @@ export class PluginManager implements IPluginManager {
           throw new Error(`获取插件 ${plugin.id} 的动作失败，但不影响其他插件`);
         }
       }
-
-      LogFacade.channel('plugin').info(`[PluginManager] 获取插件动作`, {
-        allActions,
-      });
 
       LogFacade.channel('plugin').info(
         `[PluginManager] 找到 ${allActions.length} 个动作`

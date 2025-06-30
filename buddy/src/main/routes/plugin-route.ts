@@ -2,11 +2,7 @@ import { dialog } from 'electron';
 import { remotePluginDB } from '../providers/plugin/repo/PluginRepoRemote.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
-import {
-  Application,
-  RouteFacade,
-  SettingFacade,
-} from '@coffic/cosy-framework';
+import { RouteFacade, SettingFacade } from '@coffic/cosy-framework';
 
 import { LogFacade } from '@coffic/cosy-logger';
 import { userPluginDB } from '../providers/plugin/repo/UserPluginRepo.js';
@@ -16,7 +12,7 @@ import { PluginFacade } from '../providers/plugin/PluginFacade.js';
  * 插件市场路由
  * 处理插件的安装、卸载、查询等功能
  */
-export function registerPluginRoutes(app: Application): void {
+export function registerPluginRoutes(): void {
   // 检查插件是否已安装
   RouteFacade.handle(
     IPC_METHODS.Plugin_Is_Installed,

@@ -162,6 +162,16 @@ export const useActionStore = defineStore('action', {
     },
 
     /**
+     * 更新搜索关键词并触发插件动作加载
+     */
+    async updateKeyword(keyword: string) {
+      logger.info(`actionStore: 更新关键词 "${keyword}"，触发插件动作加载`);
+      this.keyword = keyword;
+      this.lastSearchTime = Date.now();
+      await this.loadList();
+    },
+
+    /**
      * 处理键盘事件
      */
     handleKeyDown(event: KeyboardEvent) {

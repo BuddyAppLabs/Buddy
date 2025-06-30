@@ -1,7 +1,6 @@
 import { IpcResponse } from '@coffic/buddy-types';
 import { SendableAction } from '@/types/sendable-action.js';
-import { logger } from '@utils/logger';
-import { IPC_METHODS } from '@/types/ipc-methods';
+import { IPC_METHODS } from '@/types/ipc-methods.js';
 const ipc = window.ipc;
 
 export const actionIpc = {

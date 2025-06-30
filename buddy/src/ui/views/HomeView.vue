@@ -1,11 +1,3 @@
-/**
-* 首页视图组件
-*
-* 功能：
-* 1. 显示欢迎信息
-* 2. 提供初始导航指引
-* 3. 显示插件视图网格
-*/
 <script setup lang="ts">
 import { useActionStore } from '@renderer/stores/actionStore';
 import ActionListView from './ActionListView.vue';

@@ -38,7 +38,7 @@ const searchInput = ref<HTMLInputElement | null>(null)
 watch(keyword, async (newKeyword) => {
     console.log(`SearchBar: 关键词变化为 "${newKeyword}"`)
     // 使用updateKeyword触发搜索
-    // actionStore.updateKeyword(newKeyword)
+    actionStore.updateKeyword(newKeyword)
 
     // 等待DOM更新后计算宽度
     await nextTick()
