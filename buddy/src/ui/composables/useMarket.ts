@@ -13,7 +13,16 @@ export function useMarket() {
   const userPlugins = computed(() => marketStore.userPlugins);
   const devPlugins = computed(() => marketStore.devPlugins);
   const remotePlugins = computed(() => marketStore.remotePlugins);
-  const directory = computed(() => marketStore.userPluginDirectory);
+  const directory = computed(() => {
+    if (activeTab.value === 'dev') {
+      if (devPluginDirectory.value) {
+        return devPluginDirectory.value;
+      } else {
+        throw new Error('开发插件目录未配置');
+      }
+    }
+    return marketStore.userPluginDirectory;
+  });
   const devPluginDirectory = ref<string | null>(null);
 
   // 使用localStorage保存最后选择的标签
@@ -25,11 +34,19 @@ export function useMarket() {
   const isLoading = ref(false);
 
   const fetchDevPluginDir = async () => {
+    console.log('fetchDevPluginDir start');
     try {
       devPluginDirectory.value = await marketIpc.getDevPluginDirectory();
+
+      if (devPluginDirectory.value) {
+        console.log('fetchDevPluginDir end', devPluginDirectory.value);
+      } else {
+        console.warn('fetchDevPluginDir end, devPluginDirectory is null');
+      }
     } catch (e) {
       error('获取开发插件目录失败: ' + e);
     }
+    console.log('fetchDevPluginDir end');
   };
 
   const setDevPluginDir = async () => {
@@ -46,7 +63,12 @@ export function useMarket() {
   };
 
   const loadPlugins = async () => {
-    if (isLoading.value) return;
+    if (isLoading.value) {
+      console.log('loadPlugins is loading, skip');
+      return;
+    }
+
+    console.log('loadPlugins start', activeTab.value);
     isLoading.value = true;
     try {
       if (activeTab.value === 'dev') {
@@ -95,6 +117,7 @@ export function useMarket() {
 
   // 刷新按钮点击事件
   const handleRefresh = () => {
+    console.log('handleRefresh');
     loadPlugins();
   };
 

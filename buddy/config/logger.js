@@ -34,7 +34,7 @@ export default {
     },
 
     updater: {
-      driver: 'file',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 

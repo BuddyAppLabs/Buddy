@@ -31,6 +31,7 @@ const config: ApplicationConfig = {
   debug: process.env.NODE_ENV !== 'production',
   providers: [
     LogServiceProvider,
+    SettingServiceProvider,
     KeyboardServiceProvider,
     UpdateServiceProvider,
     AIServiceProvider,
@@ -38,7 +39,6 @@ const config: ApplicationConfig = {
     WindowServiceProvider,
     McpServiceProvider,
     MarketServiceProvider,
-    SettingServiceProvider,
   ],
   paths: {
     userData: app.getPath('userData'),

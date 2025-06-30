@@ -12,6 +12,8 @@ export class SettingManager implements ISettingManager {
       const data = await fs.readFile(this.filePath, 'utf-8');
       const parsed = JSON.parse(data);
       this._settings = new Map(Object.entries(parsed));
+
+      console.log('loaded settings', this._settings);
     } catch (error: any) {
       if (error.code === 'ENOENT') {
         this._settings = new Map();
@@ -38,7 +40,12 @@ export class SettingManager implements ISettingManager {
   }
 
   public get(key: string, defaultValue?: any): any {
-    return this._settings.has(key) ? this._settings.get(key) : defaultValue;
+    const value = this._settings.get(key);
+    if (value === undefined) {
+      console.log('get', key, 'not found, return default value', defaultValue);
+      return defaultValue;
+    }
+    return value;
   }
 
   public async set(key: string, value: any): Promise<void> {

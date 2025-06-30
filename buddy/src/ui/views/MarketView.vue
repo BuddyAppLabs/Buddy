@@ -6,6 +6,7 @@ import Empty from '@renderer/cosy/Empty.vue'
 import ToolBar from '@renderer/cosy/ToolBar.vue'
 import { useDirectory } from '../composables/useDirectory'
 import { useMarket } from '../composables/useMarket'
+import { onMounted } from 'vue'
 
 const { openDirectory } = useDirectory()
 
@@ -26,6 +27,11 @@ const {
     clearUninstallError,
     uninstallPlugin
 } = useMarket()
+
+onMounted(() => {
+    console.log('MarketView mounted');
+    handleRefresh();
+});
 </script>
 
 <template>
