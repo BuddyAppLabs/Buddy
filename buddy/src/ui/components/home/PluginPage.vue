@@ -7,6 +7,7 @@ interface Props {
     plugin: SendablePlugin
 }
 
+const debug = false
 const props = defineProps<Props>()
 const container = ref<HTMLElement | null>(null)
 const elementInfo = ref({
@@ -14,15 +15,11 @@ const elementInfo = ref({
     y: 0,
     width: 0,
     height: 0,
-    scrollTop: 0,
-    scrollLeft: 0,
-    offsetTop: 0,
-    offsetLeft: 0,
     fullWidth: 0,
     fullHeight: 0,
 })
 
-const { registerView, unregisterView } = useViewLayoutManager()
+const { registerView, unregisterView, updateViewPosition } = useViewLayoutManager()
 
 const STATUS_BAR_HEIGHT = 40;
 
@@ -30,7 +27,6 @@ const STATUS_BAR_HEIGHT = 40;
 const updateElementInfo = () => {
     if (container.value) {
         const rect = container.value.getBoundingClientRect()
-        const element = container.value
 
         // 获取视口尺寸
         const viewportWidth = window.innerWidth
@@ -51,10 +47,6 @@ const updateElementInfo = () => {
             y: Math.round(rect.y),
             width: Math.round(visibleWidth),
             height: Math.round(visibleHeight),
-            scrollTop: Math.round(element.scrollTop),
-            scrollLeft: Math.round(element.scrollLeft),
-            offsetTop: Math.round(element.offsetTop),
-            offsetLeft: Math.round(element.offsetLeft),
             fullWidth: Math.round(rect.width),
             fullHeight: Math.round(rect.height),
         }
@@ -64,7 +56,7 @@ const updateElementInfo = () => {
 // 创建背景图样式
 const createInfoBackgroundImage = () => {
     const info = elementInfo.value
-    const text = `坐标: (${info.x}, ${info.y}) | 可见: ${info.width}x${info.height} | 完整: ${info.fullWidth}x${info.fullHeight} | 偏移: (${info.offsetLeft}, ${info.offsetTop})`
+    const text = `坐标: (${info.x}, ${info.y}) | 可见: ${info.width}x${info.height} | 完整: ${info.fullWidth}x${info.fullHeight}`
 
     // 创建SVG背景图
     const svg = `
@@ -83,6 +75,37 @@ const createInfoBackgroundImage = () => {
     return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
 }
 
+// 简单节流函数
+function throttle(fn: (...args: any[]) => void, delay: number) {
+    let last = 0
+    let timer: ReturnType<typeof setTimeout> | null = null
+    return function (...args: any[]) {
+        const now = Date.now()
+        if (now - last > delay) {
+            last = now
+            fn(...args)
+        } else {
+            if (timer) clearTimeout(timer)
+            timer = setTimeout(() => {
+                last = Date.now()
+                fn(...args)
+            }, delay - (now - last))
+        }
+    }
+}
+
+const throttledUpdateViewPosition = throttle(() => {
+    if (props.plugin.pagePath) {
+        const info = elementInfo.value
+        updateViewPosition(props.plugin.pagePath, {
+            x: info.x,
+            y: info.y,
+            width: info.width,
+            height: info.height
+        })
+    }
+}, 5)
+
 onMounted(async () => {
     console.log('PluginPage: 挂载插件视图', props.plugin.pagePath)
 
@@ -91,7 +114,7 @@ onMounted(async () => {
 
     // 注册到集中式管理器
     if (container.value && props.plugin.pagePath) {
-        registerView(props.plugin.pagePath, container.value)
+        registerView(props.plugin.pagePath)
     }
 
     // 初始化元素信息
@@ -119,15 +142,20 @@ onUnmounted(() => {
 watch(container, () => {
     updateElementInfo()
 }, { flush: 'post' })
+
+// 监听 elementInfo 变化，节流同步到 useViewLayoutManager
+watch(elementInfo, () => {
+    throttledUpdateViewPosition()
+})
 </script>
 
 <template>
     <div class="relative">
         <!-- 原始容器 -->
-        <div class="h-56 w-full border-2 bg-red-500" ref="container"></div>
+        <div class="h-56 w-full" ref="container"></div>
 
         <!-- 信息显示区域 - 以背景图形式在底部 -->
-        <div class="absolute top-0 left-0 right-0 h-8 z-10" :style="{
+        <div v-if="debug" class="absolute top-0 left-0 right-0 h-8 z-10" :style="{
             backgroundImage: createInfoBackgroundImage(),
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat'

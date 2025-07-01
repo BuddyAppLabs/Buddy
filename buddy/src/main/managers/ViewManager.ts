@@ -63,15 +63,7 @@ export class ViewManager {
       );
     }
 
-    // 设置视图边界，验证并调整以防止覆盖状态栏
-    const viewBounds = this.validateViewBounds({
-      x: args.x,
-      y: args.y,
-      width: args.width,
-      height: args.height,
-    });
-
-    view.setBounds(viewBounds);
+    view.setBounds(args);
 
     // 设置视图自动调整大小
     mainWindow.on('resize', () => {
@@ -185,64 +177,12 @@ export class ViewManager {
       return;
     }
 
-    // 验证并调整边界，确保不覆盖状态栏
-    const validatedBounds = this.validateViewBounds(bounds);
-    view.setBounds(validatedBounds);
+    view.setBounds(bounds);
 
     LogFacade.channel('pluginView').info(
       '[ViewManager] 视图位置已更新:',
-      validatedBounds
+      bounds
     );
-  }
-
-  /**
-   * 验证并调整视图边界，确保不覆盖状态栏和搜索栏
-   * @param bounds 原始边界
-   * @returns 调整后的边界
-   */
-  private validateViewBounds(bounds: ViewBounds): ViewBounds {
-    const mainWindow = WindowFacade.getMainWindow();
-    if (!mainWindow) return bounds;
-
-    const windowBounds = mainWindow.getBounds();
-    const statusBarHeight = 40; // 状态栏在底部，高度40px
-    const searchBarHeight = 56; // 搜索栏高度约56px
-
-    // 计算可用的内容区域
-    const availableContentHeight =
-      windowBounds.height - searchBarHeight - statusBarHeight;
-    const maxAllowedBottom = searchBarHeight + availableContentHeight;
-    const minAllowedTop = searchBarHeight;
-
-    // 确保视图Y坐标不小于搜索栏高度
-    const adjustedY = Math.max(minAllowedTop, bounds.y);
-
-    // 确保视图不会延伸到状态栏区域
-    const maxHeight = maxAllowedBottom - adjustedY;
-    const adjustedHeight = Math.min(bounds.height, Math.max(100, maxHeight));
-
-    const result = {
-      x: Math.max(0, Math.min(bounds.x, windowBounds.width - 100)),
-      y: adjustedY,
-      width: Math.max(100, Math.min(bounds.width, windowBounds.width)),
-      height: adjustedHeight,
-    };
-
-    // 如果视图被调整得太小或位置不合理，记录警告
-    if (result.height < 100 || result.y >= maxAllowedBottom) {
-      LogFacade.channel('pluginView').warn(
-        '[ViewManager] 视图边界不合理，可能无法正常显示:',
-        {
-          original: bounds,
-          adjusted: result,
-          windowBounds,
-          searchBarHeight,
-          statusBarHeight,
-        }
-      );
-    }
-
-    return result;
   }
 
   public async upsertView(args: createViewArgs): Promise<void> {
@@ -250,13 +190,12 @@ export class ViewManager {
 
     const view = this.views.get(args.pagePath) ?? (await this.createView(args));
 
-    // 验证并调整边界，确保不覆盖状态栏
-    const validatedBounds = this.validateViewBounds({
+    const validatedBounds = {
       x: args.x,
       y: args.y,
       width: args.width,
       height: args.height,
-    });
+    };
 
     view.setBounds(validatedBounds);
   }

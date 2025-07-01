@@ -9,7 +9,7 @@ const plugins = computed(() => marketStore.pluginsWithPage)
 </script>
 
 <template>
-    <div class="w-full h-full flex flex-col overflow-hidden bg-amber-100">
+    <div class="w-full h-full flex flex-col overflow-hidden">
         <div class="flex-1">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 px-12">
                 <div v-for="(plugin, index) in plugins" :key="index">
