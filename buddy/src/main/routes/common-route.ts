@@ -86,6 +86,18 @@ export function registerCommonRoutes(): void {
     })
     .description('更新或插入视图');
 
+  // 批量更新或插入视图
+  RouteFacade.handle(
+    IPC_METHODS.BATCH_UPSERT_VIEWS,
+    (_event, viewsArgs: createViewArgs[]): Promise<void> => {
+      return viewManager.batchUpsertViews(viewsArgs);
+    }
+  )
+    .validation({
+      '0': { required: true, type: 'array' },
+    })
+    .description('批量更新或插入多个视图');
+
   // 打开配置文件夹
   RouteFacade.handle(IPC_METHODS.OPEN_CONFIG_FOLDER, async () => {
     await fileIpc.openConfigFolder();

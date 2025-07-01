@@ -246,6 +246,41 @@ export class ViewManager {
   }
 
   /**
+   * 批量更新或创建视图
+   * @param viewsArgs 多个视图的创建/更新参数
+   */
+  public async batchUpsertViews(viewsArgs: createViewArgs[]): Promise<void> {
+    LogFacade.channel('pluginView').info(
+      `[ViewManager] 批量更新视图，数量: ${viewsArgs.length}`
+    );
+
+    // 并行处理所有视图更新
+    const results = await Promise.allSettled(
+      viewsArgs.map(async (args) => {
+        try {
+          await this.upsertView(args);
+          return { success: true, pagePath: args.pagePath };
+        } catch (error) {
+          LogFacade.channel('pluginView').error(
+            `[ViewManager] 批量更新视图失败 ${args.pagePath}:`,
+            error
+          );
+          return { success: false, pagePath: args.pagePath, error };
+        }
+      })
+    );
+
+    // 统计结果
+    const successCount = results.filter(
+      (result) => result.status === 'fulfilled' && result.value.success
+    ).length;
+
+    LogFacade.channel('pluginView').info(
+      `[ViewManager] 批量更新完成，成功: ${successCount}/${viewsArgs.length}`
+    );
+  }
+
+  /**
    * 销毁所有视图
    */
   public destroyAllViews(): void {

@@ -7,6 +7,7 @@ export const IPC_METHODS = {
   Destroy_View: 'views/destroy',
   Update_View_Bounds: 'views/update-bounds',
   UPSERT_VIEW: 'views/upsert',
+  BATCH_UPSERT_VIEWS: 'views/batch-upsert',
 
   // Folders 相关的路由
   OPEN_FOLDER: 'folders/open',
