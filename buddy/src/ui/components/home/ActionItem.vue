@@ -6,7 +6,7 @@ import { useActionStore } from '@renderer/stores/actionStore';
 import { computed, ref } from 'vue';
 import { onKeyStroke, useFocus } from '@vueuse/core';
 
-const debug = true;
+const debug = false;
 const actionStore = useActionStore()
 const props = defineProps<{
     action: SendableAction
