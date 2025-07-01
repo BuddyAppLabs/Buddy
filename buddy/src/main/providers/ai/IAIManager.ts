@@ -3,8 +3,7 @@
  * 定义了AI管理器需要实现的方法
  */
 
-import { AIModelConfig, ChatMessage } from '@coffic/buddy-types';
-import { IAIModelConfig } from './IAIModelConfig';
+import { IAIModelConfig, ChatMessage } from '@coffic/buddy-types';
 
 // AI模型类型
 export type AIModelType = 'openai' | 'anthropic' | 'deepseek';
@@ -18,7 +17,7 @@ export interface IAIManager {
     messages: ChatMessage[],
     onChunk: (chunk: string) => void,
     onFinish: () => void,
-    modelConfig?: Partial<AIModelConfig>,
+    modelConfig?: Partial<IAIModelConfig>,
     requestId?: string
   ): Promise<void>;
 
@@ -30,7 +29,7 @@ export interface IAIManager {
   /**
    * 设置默认模型配置
    */
-  setDefaultModel(config: Partial<AIModelConfig>): void;
+  setDefaultModel(config: Partial<IAIModelConfig>): void;
 
   /**
    * 获取默认模型配置

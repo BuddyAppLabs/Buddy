@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
   ChatMessage,
+  IAIModelConfig,
   IpcResponse,
   StreamChunkResponse,
 } from '@coffic/buddy-types';
@@ -17,7 +18,11 @@ export function registerAIRoutes(): void {
   // 启动流式AI聊天会话
   RouteFacade.handle(
     IPC_METHODS.AI_CHAT_SEND,
-    async (event, messages: ChatMessage[]): Promise<IpcResponse<string>> => {
+    async (
+      event,
+      messages: ChatMessage[],
+      modelConfig: IAIModelConfig
+    ): Promise<IpcResponse<string>> => {
       LogFacade.channel('ai').debug(`启动流式AI聊天: ${messages.length}条消息`);
       try {
         const requestId = uuidv4();
@@ -40,7 +45,7 @@ export function registerAIRoutes(): void {
               requestId,
             });
           },
-          undefined,
+          modelConfig,
           requestId
         );
 

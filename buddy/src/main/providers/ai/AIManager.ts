@@ -1,6 +1,5 @@
-import { ChatMessage } from '@coffic/buddy-types';
+import { ChatMessage, IAIModelConfig } from '@coffic/buddy-types';
 import { IAIManager, AIModelType } from './IAIManager.js';
-import { IAIModelConfig } from './IAIModelConfig.js';
 import { SettingFacade } from '@coffic/cosy-framework';
 import { CoreMessage, streamText } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
@@ -50,7 +49,18 @@ export class AIManager implements IAIManager {
     const apiKey = await this.getApiKey(config.type);
 
     if (!apiKey) {
-      throw new Error(`缺少 ${config.type} 的 API 密钥`);
+      const toolCallPayload = {
+        type: 'tool-call',
+        toolCall: {
+          toolCallId: `tool_call_${requestId}`,
+          toolName: 'require_api_key',
+          args: { provider: config.type },
+        },
+      };
+
+      onChunk(JSON.stringify(toolCallPayload));
+      onFinish();
+      return;
     }
 
     const abortController = new AbortController();

@@ -2,7 +2,15 @@
 import { aiIpc } from '@renderer/ipc/ai-ipc';
 import { ref, reactive, onMounted } from 'vue';
 import { logger } from '@utils/logger';
-import { ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@coffic/buddy-types';
+import {
+    ChatMessage,
+    StreamChunkResponse,
+    StreamDoneResponse,
+    IAIModelConfig,
+    IpcResponse,
+    AIModelType,
+} from '@coffic/buddy-types';
+import ApiKeyInput from './ApiKeyInput.vue';
 
 // 输入消息
 const message = ref('');
@@ -13,21 +21,60 @@ const currentRequestId = ref('');
 // 加载状态
 const loading = ref(false);
 // AI正在回复的消息
-const aiMessage = ref('');
+const aiMessage = ref<{
+    content: string;
+    toolInvocation?: ChatMessage['toolInvocation'];
+}>({
+    content: '',
+});
+// 可用模型
+const availableModels = ref<
+    Record<'openai' | 'anthropic' | 'deepseek', string[]>
+>({
+    openai: [],
+    anthropic: [],
+    deepseek: [],
+});
+// 选中的模型
+const selectedModel = ref<string>('');
 
 // 注册流式响应处理
-onMounted(() => {
+onMounted(async () => {
+    // 获取可用模型
+    try {
+        const models = await aiIpc.getAvailableModels();
+        if (models) {
+            availableModels.value = models;
+            // 设置默认选项
+            if (models.openai && models.openai.length > 0) {
+                selectedModel.value = `openai:${models.openai[0]}`;
+            }
+        }
+    } catch (error) {
+        logger.error('获取可用模型失败:', error);
+    }
+
     // 注册流式聊天数据块监听器
     aiIpc.onAiChatStreamChunk((response: StreamChunkResponse) => {
         logger.info('AI响应:', response);
         if (response.success && response.data) {
-            // 如果是当前请求的响应，则追加内容
-            if (response.requestId === currentRequestId.value || currentRequestId.value === '') {
-                logger.info('AI响应数据块:', response.data);
-                aiMessage.value += response.data;
+            if (
+                response.requestId === currentRequestId.value ||
+                currentRequestId.value === ''
+            ) {
+                try {
+                    const parsed = JSON.parse(response.data);
+                    if (parsed.type === 'tool-call') {
+                        aiMessage.value.toolInvocation = parsed.toolCall;
+                    } else {
+                        aiMessage.value.content += response.data;
+                    }
+                } catch (e) {
+                    // 如果不是JSON，则视为普通文本
+                    aiMessage.value.content += response.data;
+                }
             } else {
-                logger.info('AI响应数据块，但是请求ID不匹配，当前ID:', currentRequestId);
-                logger.warn('AI响应数据块，但是请求ID不匹配:', response.data);
+                logger.warn('AI响应数据块，但是请求ID不匹配:', response);
             }
         } else if (response.error) {
             console.error('AI响应错误:', response.error);
@@ -38,14 +85,15 @@ onMounted(() => {
     aiIpc.onAiChatStreamDone((response: StreamDoneResponse) => {
         if (response.requestId === currentRequestId.value) {
             // 将AI回复添加到消息列表
-            if (aiMessage.value) {
+            if (aiMessage.value.content || aiMessage.value.toolInvocation) {
                 messages.push({
                     role: 'assistant',
-                    content: aiMessage.value
+                    content: aiMessage.value.content,
+                    toolInvocation: aiMessage.value.toolInvocation,
                 });
             }
             // 重置状态
-            aiMessage.value = '';
+            aiMessage.value = { content: '' };
             loading.value = false;
             currentRequestId.value = '';
         }
@@ -59,7 +107,7 @@ async function sendMessage() {
     // 添加用户消息到列表
     messages.push({
         role: 'user',
-        content: message.value
+        content: message.value,
     });
 
     // 清空输入框并设置加载状态
@@ -67,13 +115,18 @@ async function sendMessage() {
     loading.value = true;
 
     try {
+        // 解析选中的模型
+        const [type, modelName] = selectedModel.value.split(':');
+
         // 发送消息并获取请求ID
-        // 创建一个新的消息数组，确保只包含可序列化的数据
-        const serializableMessages = messages.map(msg => ({
+        const serializableMessages = messages.map((msg) => ({
             role: msg.role,
-            content: msg.content
+            content: msg.content,
         }));
-        currentRequestId.value = await aiIpc.send(serializableMessages);
+        currentRequestId.value = await aiIpc.send(serializableMessages, {
+            type: type as AIModelType,
+            modelName,
+        });
         logger.info('发送消息后得到的请求ID:', currentRequestId.value);
     } catch (error) {
         console.error('发送消息失败:', error);
@@ -104,27 +157,31 @@ function handleKeydown(event: KeyboardEvent) {
 
             <div v-else class="space-y-4">
                 <!-- 历史消息 -->
-                <div v-for="(msg, index) in messages" :key="index"
-                    :class="['chat', msg.role === 'user' ? 'chat-end' : 'chat-start']">
-                    <div class="chat-header opacity-75">
-                        {{ msg.role === 'user' ? '你' : 'AI助手' }}
+                <div v-for="(msg, index) in messages" :key="index">
+                    <div v-if="msg.toolInvocation?.toolName === 'require_api_key'">
+                        <ApiKeyInput :provider="msg.toolInvocation.args.provider" />
                     </div>
-                    <div
-                        :class="['chat-bubble', msg.role === 'user' ? 'chat-bubble-primary' : 'chat-bubble-secondary']">
-                        <div class="whitespace-pre-wrap">{{ msg.content }}</div>
+                    <div v-else :class="['chat', msg.role === 'user' ? 'chat-end' : 'chat-start']">
+                        <div class="chat-header opacity-75">
+                            {{ msg.role === 'user' ? '你' : 'AI助手' }}
+                        </div>
+                        <div
+                            :class="['chat-bubble', msg.role === 'user' ? 'chat-bubble-primary' : 'chat-bubble-secondary']">
+                            <div class="whitespace-pre-wrap">{{ msg.content }}</div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- AI正在回复 -->
-                <div v-if="loading && aiMessage" class="chat chat-start">
+                <div v-if="loading && aiMessage.content" class="chat chat-start">
                     <div class="chat-header opacity-75">AI助手</div>
                     <div class="chat-bubble chat-bubble-secondary">
-                        <div class="whitespace-pre-wrap">{{ aiMessage }}</div>
+                        <div class="whitespace-pre-wrap">{{ aiMessage.content }}</div>
                     </div>
                 </div>
 
                 <!-- 加载指示器 -->
-                <div v-if="loading && !aiMessage" class="chat chat-start">
+                <div v-if="loading && !aiMessage.content" class="chat chat-start">
                     <div class="chat-bubble">
                         <span class="loading loading-dots loading-sm"></span>
                     </div>
@@ -133,7 +190,17 @@ function handleKeydown(event: KeyboardEvent) {
         </div>
 
         <!-- 输入区域 -->
-        <div class="input-container">
+        <div class="input-container flex flex-col gap-2">
+            <div class="flex items-center gap-2">
+                <select class="select select-bordered select-sm" v-model="selectedModel">
+                    <optgroup v-for="(models, provider) in availableModels" :key="provider"
+                        :label="provider.toUpperCase()">
+                        <option v-for="model in models" :key="model" :value="`${provider}:${model}`">
+                            {{ model }}
+                        </option>
+                    </optgroup>
+                </select>
+            </div>
             <div class="flex gap-2">
                 <textarea class="textarea textarea-bordered flex-1" placeholder="输入消息..." v-model="message"
                     @keydown="handleKeydown" :disabled="loading" rows="3"></textarea>
