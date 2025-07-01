@@ -14,8 +14,8 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@renderer/stores/appStore'
-import StatusBar from '@renderer/cosy/StatusBar.vue'
-import StatusBarItem from '@renderer/cosy/StatusBarItem.vue'
+import StatusBar from '@renderer/components/cosy/StatusBar.vue'
+import StatusBarItem from '@renderer/components/cosy/StatusBarItem.vue'
 import { fileIpc } from '@renderer/ipc/file-ipc'
 
 // 当前时间

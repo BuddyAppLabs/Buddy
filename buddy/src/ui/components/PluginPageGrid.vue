@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useMarketStore } from '../stores/market-store'
+import { useMarketStore } from '@renderer/stores/market-store'
 import { onUnmounted, computed } from 'vue'
-import { logger } from '../utils/logger'
-import { viewIpc } from '../ipc/view-ipc'
-import PluginPage from '../components/PluginPage.vue'
+import { logger } from '@renderer/utils/logger'
+import { viewIpc } from '@renderer/ipc/view-ipc'
+import PluginPage from '@renderer/components/PluginPage.vue'
 
 const marketStore = useMarketStore()
 const plugins = computed(() => marketStore.pluginsWithPage)

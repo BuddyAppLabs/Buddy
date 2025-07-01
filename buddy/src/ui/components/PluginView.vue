@@ -4,7 +4,7 @@ import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
 import { ViewBounds } from '@coffic/buddy-types'
 import { SendableAction } from '@/types/sendable-action'
-import { viewIpc } from '../ipc/view-ipc'
+import { viewIpc } from '@renderer/ipc/view-ipc'
 import { useElementBounding, useAsyncState, useDebounceFn, useTimeoutFn } from '@vueuse/core'
 
 const actionStore = useActionStore()

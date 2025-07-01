@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import PluginCard from '@components/PluginCard.vue'
-import ButtonFolder from '@renderer/cosy/ButtonFolder.vue'
-import ButtonRefresh from '@renderer/cosy/ButtonRefresh.vue'
-import Empty from '@renderer/cosy/Empty.vue'
-import ToolBar from '@renderer/cosy/ToolBar.vue'
+import ButtonFolder from '@renderer/components/cosy/ButtonFolder.vue'
+import ButtonRefresh from '@renderer/components/cosy/ButtonRefresh.vue'
+import Empty from '@renderer/components/cosy/Empty.vue'
+import ToolBar from '@renderer/components/cosy/ToolBar.vue'
 import { useMarket } from '../composables/useMarket'
 import { onMounted } from 'vue'
 import { useMarketStore } from '../stores/market-store'

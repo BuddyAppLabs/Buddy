@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { SendableAction } from '@/types/sendable-action.js';
-import ListItem from '@renderer/cosy/ListItem.vue'
-import { logger } from '../utils/logger';
+import ListItem from '@renderer/components/cosy/ListItem.vue'
+import { logger } from '@renderer/utils/logger';
 import { useActionStore } from '@renderer/stores/actionStore';
 import { computed, ref } from 'vue';
 import { onKeyStroke, useFocus } from '@vueuse/core';

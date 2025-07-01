@@ -43,9 +43,6 @@
       "@renderer/types/*": [
         "src/ui/types/*"
       ],
-      "@views/*": [
-        "src/ui/views/*"
-      ]
     }
   },
 }

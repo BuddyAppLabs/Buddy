@@ -11,7 +11,7 @@
 import { computed } from 'vue'
 import { useAppStore } from '@renderer/stores/appStore'
 import { IPC_METHODS } from '@/types/ipc-methods';
-import { globalToast } from '../composables/useToast';
+import { globalToast } from '@renderer/composables/useToast';
 
 defineProps<{
     modelValue: boolean

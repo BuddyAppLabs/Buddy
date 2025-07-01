@@ -4,7 +4,7 @@ import {
     RiCheckLine,
     RiDeleteBinLine
 } from '@remixicon/vue'
-import Button from '@renderer/cosy/Button.vue'
+import Button from '@renderer/components/cosy/Button.vue'
 import { globalConfirm } from '@renderer/composables/useConfirm'
 import { useMarketStore } from '@/ui/stores/market-store'
 import { globalToast } from '@renderer/composables/useToast'
