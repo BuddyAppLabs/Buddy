@@ -63,15 +63,20 @@ export class ViewManager {
       );
     }
 
-    // 设置视图边界
-    const viewBounds = {
+    // 设置视图边界，验证并调整以防止覆盖状态栏
+    const viewBounds = this.validateViewBounds({
       x: args.x,
       y: args.y,
       width: args.width,
       height: args.height,
-    };
+    });
 
     view.setBounds(viewBounds);
+
+    LogFacade.channel('pluginView').info(
+      '[ViewManager] 创建视图边界已设置:',
+      viewBounds
+    );
 
     // 设置视图自动调整大小
     mainWindow.on('resize', () => {
@@ -185,7 +190,38 @@ export class ViewManager {
       return;
     }
 
-    view.setBounds(bounds);
+    // 验证并调整边界，确保不覆盖状态栏
+    const validatedBounds = this.validateViewBounds(bounds);
+    view.setBounds(validatedBounds);
+
+    LogFacade.channel('pluginView').info(
+      '[ViewManager] 视图位置已更新:',
+      validatedBounds
+    );
+  }
+
+  /**
+   * 验证并调整视图边界，确保不覆盖状态栏
+   * @param bounds 原始边界
+   * @returns 调整后的边界
+   */
+  private validateViewBounds(bounds: ViewBounds): ViewBounds {
+    const mainWindow = WindowFacade.getMainWindow();
+    if (!mainWindow) return bounds;
+
+    const windowBounds = mainWindow.getBounds();
+    const statusBarHeight = 40; // 状态栏高度（h-10 = 40px）
+
+    // 确保视图不会延伸到状态栏区域
+    const maxHeight = windowBounds.height - bounds.y - statusBarHeight;
+    const adjustedHeight = Math.min(bounds.height, Math.max(100, maxHeight));
+
+    return {
+      x: Math.max(0, bounds.x),
+      y: Math.max(0, bounds.y),
+      width: Math.max(100, Math.min(bounds.width, windowBounds.width)),
+      height: adjustedHeight,
+    };
   }
 
   public async upsertView(args: createViewArgs): Promise<void> {
@@ -193,12 +229,20 @@ export class ViewManager {
 
     const view = this.views.get(args.pagePath) ?? (await this.createView(args));
 
-    view.setBounds({
+    // 验证并调整边界，确保不覆盖状态栏
+    const validatedBounds = this.validateViewBounds({
       x: args.x,
       y: args.y,
       width: args.width,
       height: args.height,
     });
+
+    view.setBounds(validatedBounds);
+
+    LogFacade.channel('pluginView').info(
+      '[ViewManager] 视图边界已设置:',
+      validatedBounds
+    );
   }
 
   /**

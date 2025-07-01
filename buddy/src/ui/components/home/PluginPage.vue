@@ -47,11 +47,22 @@ const updateOptions = () => {
     const pagePath = props.plugin.pagePath
     if (!pagePath || !container.value) return
 
+    // 获取窗口高度和状态栏高度（h-10 = 40px）
+    const windowHeight = window.innerHeight
+    const statusBarHeight = 40
+    const containerBottom = y.value + height.value
+
+    // 如果插件视图会延伸到状态栏区域，则调整高度
+    let adjustedHeight = height.value
+    if (containerBottom > windowHeight - statusBarHeight) {
+        adjustedHeight = Math.max(100, windowHeight - statusBarHeight - y.value)
+    }
+
     options.value = {
         x: Math.round(x.value),
         y: Math.round(y.value),
         width: Math.round(width.value),
-        height: Math.round(height.value),
+        height: Math.round(adjustedHeight),
         pagePath,
     }
 }
@@ -62,6 +73,15 @@ watch([x, y, width, height], updateOptions, { immediate: true })
 // 监听content-scroll事件时手动触发位置更新
 const handlePositionChange = () => {
     update()
+}
+
+// 监听窗口大小变化，重新计算插件视图位置
+const handleWindowResize = () => {
+    update()
+    // 延迟更新，确保布局稳定后再计算
+    setTimeout(() => {
+        updateOptions()
+    }, 50)
 }
 
 onMounted(async () => {
@@ -75,11 +95,14 @@ onMounted(async () => {
 
     // 添加自定义滚动事件监听
     document.addEventListener('content-scroll', handlePositionChange)
+    // 添加窗口大小变化监听
+    window.addEventListener('resize', handleWindowResize)
 })
 
 // 组件卸载时移除事件监听
 onUnmounted(() => {
     document.removeEventListener('content-scroll', handlePositionChange)
+    window.removeEventListener('resize', handleWindowResize)
 })
 
 // 监听options变化并更新视图
