@@ -8,10 +8,10 @@
  */
 
 import { createRouter, createWebHashHistory } from 'vue-router';
-import PluginStoreView from '@/ui/components/MarketView.vue';
+import PluginStoreView from '@/ui/components/market/MarketView.vue';
 import { useAppStore } from '@renderer/stores/appStore';
-import HomeView from '@/ui/components/HomeView.vue';
-import ChatView from '@/ui/components/ChatView.vue';
+import HomeView from '@/ui/components/home/HomeView.vue';
+import ChatView from '@/ui/components/chat/ChatView.vue';
 
 // 路由配置
 const routes = [

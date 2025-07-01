@@ -21,8 +21,8 @@ App.vue - 应用程序入口组件
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
-import SearchBar from '@renderer/components/SearchBar.vue'
-import StatusBar from '@renderer/components/StatusBar.vue'
+import SearchBar from '@/ui/components/layout/SearchBar.vue'
+import StatusBar from '@/ui/components/layout/StatusBar.vue'
 import Confirm from '@renderer/components/cosy/Confirm.vue'
 import Toast from '@renderer/components/cosy/Toast.vue'
 import Alert from '@renderer/components/cosy/Alert.vue'
@@ -33,9 +33,9 @@ import { globalToast } from '@renderer/composables/useToast'
 import { globalAlert } from '@renderer/composables/useAlert'
 import { globalProgress } from '@renderer/composables/useProgress'
 import { useAppStore } from '@renderer/stores/appStore'
-import ErrorNotification from '@renderer/components/ErrorNotification.vue'
+import ErrorNotification from '@/ui/components/layout/ErrorNotification.vue'
 import { useErrorStore } from '@renderer/stores/errorStore'
-import VersionDialog from '@renderer/components/VersionDialog.vue'
+import VersionDialog from '@/ui/components/bottom/VersionDialog.vue'
 
 const actionStore = useActionStore()
 const appStore = useAppStore()

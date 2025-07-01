@@ -3,7 +3,7 @@ import { useMarketStore } from '@renderer/stores/market-store'
 import { onUnmounted, computed } from 'vue'
 import { logger } from '@renderer/utils/logger'
 import { viewIpc } from '@renderer/ipc/view-ipc'
-import PluginPage from '@renderer/components/PluginPage.vue'
+import PluginPage from '@/ui/components/home/PluginPage.vue'
 
 const marketStore = useMarketStore()
 const plugins = computed(() => marketStore.pluginsWithPage)

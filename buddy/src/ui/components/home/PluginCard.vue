@@ -8,7 +8,7 @@ import Button from '@renderer/components/cosy/Button.vue'
 import { globalConfirm } from '@renderer/composables/useConfirm'
 import { useMarketStore } from '@/ui/stores/market-store'
 import { globalToast } from '@renderer/composables/useToast'
-import { marketIpc } from '../ipc/market-ipc'
+import { marketIpc } from '../../ipc/market-ipc'
 import { SendablePlugin } from '@/types/sendable-plugin'
 import { useAsyncState, useTimeoutFn } from '@vueuse/core'
 

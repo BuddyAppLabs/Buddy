@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { watch, ref, onUnmounted, onMounted, nextTick } from 'vue'
 import { useElementBounding, useMutationObserver } from '@vueuse/core'
-import { viewIpc } from '../ipc/view-ipc'
+import { viewIpc } from '../../ipc/view-ipc'
 import { SendablePlugin } from '@/types/sendable-plugin';
 import { createViewArgs } from '@/types/args';
 

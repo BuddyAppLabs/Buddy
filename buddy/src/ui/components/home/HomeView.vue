@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useActionStore } from '@renderer/stores/actionStore';
-import ActionListView from './ActionListView.vue';
+import ActionListView from '@renderer/components/home/ActionListView.vue';
 import PluginView from './PluginView.vue';
 import PluginPageGrid from './PluginPageGrid.vue';
 

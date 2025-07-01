@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { watch, ref, nextTick } from 'vue'
-import ActionItem from '@components/ActionItem.vue'
+import ActionItem from '@/ui/components/home/ActionItem.vue'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
 import { useAsyncState } from '@vueuse/core'
