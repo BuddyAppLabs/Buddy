@@ -26,7 +26,6 @@ const appStore = useAppStore()
 // 计算属性：版本信息列表
 const versionList = computed(() => {
     return [
-        { name: '应用', version: appStore.version },
         ...Object.entries(appStore.versions).map(([name, version]) => ({
             name,
             version

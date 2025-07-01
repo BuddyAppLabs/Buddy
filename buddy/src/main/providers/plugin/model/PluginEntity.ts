@@ -4,6 +4,7 @@
  */
 
 import { join } from 'path';
+import fs from 'fs';
 import { readPackageJson, hasPackageJson } from '../util/PackageUtils.js';
 import {
   ExecuteActionArgs,
@@ -16,9 +17,10 @@ import {
 } from '@coffic/buddy-types';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PackageJson } from '@/types/package-json.js';
-import fs from 'fs';
+
 import { ActionEntity } from './ActionEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
+import { PluginContext } from './PluginContext.js';
 
 const verbose = false;
 const title = '🧩 PluginEntity';
@@ -302,16 +304,20 @@ export class PluginEntity {
       };
     }
 
+    // 创建插件上下文，提供主进程能力
+    const pluginContext = PluginContext.createPluginContext(this);
+
     const context: ExecuteActionArgs = {
       actionId,
       keyword,
+      context: pluginContext, // 注入插件上下文
     };
 
     return pluginModule.executeAction(context);
   }
 
   async getAction(actionId: string): Promise<ActionEntity | null> {
-    const actions = await this.getActions({});
+    const actions = await this.getActions({ version: '1.0.0' });
     return actions.find((action) => action.id === actionId) || null;
   }
 

@@ -1,4 +1,5 @@
 import { SuperAction } from './super-action.js';
+import { SuperContext } from './super-context.js';
 
 /**
  * 验证结果
@@ -33,6 +34,10 @@ export interface GetActionsArgs {
 export interface ExecuteActionArgs {
   actionId: string;
   keyword?: string;
+  /**
+   * 插件上下文，提供主进程能力
+   */
+  context?: SuperContext;
 }
 
 /**

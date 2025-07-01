@@ -8,6 +8,7 @@ class FileIpc {
    */
   async openConfigFolder(): Promise<void> {
     const configPath = Config.get('paths.config');
+    console.log('configPath', configPath);
     if (!configPath || typeof configPath !== 'string') {
       throw new Error('配置路径未设置或类型错误');
     }
