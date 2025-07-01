@@ -12,7 +12,6 @@ interface AppState {
   selectedAction: SuperAction | null;
   isActive: boolean; // 添加窗口激活状态
   overlaidApp: SuperApp | null; // 用于记录当前被覆盖的应用
-  version: string; // 应用版本
   versions: Record<string, string>; // 各组件版本信息
   showVersionDialog: boolean; // 版本对话框显示状态
 }
@@ -24,7 +23,6 @@ export const useAppStore = defineStore('app', {
     selectedAction: null,
     isActive: true, // 默认为激活状态
     overlaidApp: null, // 初始化为null
-    version: '1.0.0', // 默认版本
     versions: {}, // 初始化为空对象
     showVersionDialog: false, // 默认不显示版本对话框
   }),
@@ -65,7 +63,6 @@ export const useAppStore = defineStore('app', {
     async fetchVersions() {
       try {
         const versions = await stateApi.getVersions();
-        this.version = versions.app || '1.0.0';
         this.versions = versions;
       } catch (error) {
         console.error('获取版本信息失败:', error);

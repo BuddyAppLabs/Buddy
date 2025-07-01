@@ -27,6 +27,7 @@ export type PluginType = 'user' | 'dev' | 'remote';
 export interface GetActionsArgs {
   keyword?: string;
   overlaidApp?: string;
+  version: string;
 }
 
 export interface ExecuteActionArgs {

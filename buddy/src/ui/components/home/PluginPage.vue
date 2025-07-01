@@ -8,7 +8,7 @@ interface Props {
     plugin: SendablePlugin
 }
 
-const debug = true
+const debug = false
 const showView = true
 const props = defineProps<Props>()
 const container = ref<HTMLElement | null>(null)

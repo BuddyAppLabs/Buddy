@@ -9,6 +9,7 @@ import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import { SendableAction } from '@/types/sendable-action.js';
 import { ExecuteResult } from '@coffic/buddy-types';
 import { appStateManager } from '../providers/state/StateManager.js';
+import { app } from 'electron';
 
 export function registerActionsRoutes(): void {
   // 获取插件动作列表
@@ -19,6 +20,7 @@ export function registerActionsRoutes(): void {
       const actions = await PluginFacade.actions({
         keyword,
         overlaidApp: overlaidApp?.name,
+        version: app.getVersion(),
       });
       return actions.map((action) => action.toSendableAction());
     }
