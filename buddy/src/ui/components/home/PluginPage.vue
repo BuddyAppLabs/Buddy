@@ -24,6 +24,8 @@ const elementInfo = ref({
 
 const { registerView, unregisterView } = useViewLayoutManager()
 
+const STATUS_BAR_HEIGHT = 40;
+
 // 获取元素信息
 const updateElementInfo = () => {
     if (container.value) {
@@ -39,9 +41,9 @@ const updateElementInfo = () => {
         const visibleRight = Math.min(viewportWidth, rect.right)
         const visibleWidth = Math.max(0, visibleRight - visibleLeft)
 
-        // 计算可见的高度
+        // 计算可见的高度，考虑底部状态栏
         const visibleTop = Math.max(0, rect.top)
-        const visibleBottom = Math.min(viewportHeight, rect.bottom)
+        const visibleBottom = Math.min(viewportHeight - STATUS_BAR_HEIGHT, rect.bottom)
         const visibleHeight = Math.max(0, visibleBottom - visibleTop)
 
         elementInfo.value = {
@@ -89,7 +91,7 @@ onMounted(async () => {
 
     // 注册到集中式管理器
     if (container.value && props.plugin.pagePath) {
-        // registerView(props.plugin.pagePath, container.value)
+        registerView(props.plugin.pagePath, container.value)
     }
 
     // 初始化元素信息
