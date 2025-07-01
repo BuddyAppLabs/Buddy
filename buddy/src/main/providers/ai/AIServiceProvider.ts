@@ -4,39 +4,32 @@
  */
 import { ServiceProvider } from '@coffic/cosy-framework';
 import { AIManager } from './AIManager.js';
-import { AIContract } from './contracts/AIContract.js';
 
 export class AIServiceProvider extends ServiceProvider {
-    /**
-     * 注册AI服务
-     */
-    public register(): void {
-        // 注册AI管理器
-        this.app.container().singleton('ai', () => {
-            return AIManager.getInstance();
-        });
-    }
+  /**
+   * 注册AI服务
+   */
+  public register(): void {
+    // 注册AI管理器
+    this.app.container().singleton('ai', () => {
+      return new AIManager();
+    });
+  }
 
-    /**
-     * 启动AI服务
-     */
-    public async boot(): Promise<void> {
-        const manager = this.app.make<AIContract>('ai');
-        await manager.start();
-    }
+  /**
+   * 启动AI服务
+   */
+  public async boot(): Promise<void> {}
 
-    /**
-     * 关闭AI服务
-     */
-    public async shutdown(): Promise<void> {
-        const manager = this.app.make<AIContract>('ai');
-        manager.cleanup();
-    }
+  /**
+   * 关闭AI服务
+   */
+  public async shutdown(): Promise<void> {}
 
-    /**
-     * 获取提供的服务
-     */
-    public provides(): string[] {
-        return ['ai'];
-    }
-} 
+  /**
+   * 获取提供的服务
+   */
+  public provides(): string[] {
+    return ['ai'];
+  }
+}

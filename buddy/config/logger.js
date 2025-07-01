@@ -9,6 +9,11 @@ export default {
       channels: ['console', 'file'],
     },
 
+    ai: {
+      driver: 'console',
+      level: ILogLevel.DEBUG,
+    },
+
     action: {
       driver: 'console',
       level: ILogLevel.DEBUG,
@@ -45,7 +50,7 @@ export default {
     },
 
     plugin: {
-      driver: 'console',
+      driver: null,
       level: ILogLevel.DEBUG,
     },
 
