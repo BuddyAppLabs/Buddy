@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { SendablePlugin } from '@/types/sendable-plugin'
 import { useViewLayoutManager } from '@renderer/composables/useViewLayoutManager'
 
@@ -9,7 +9,85 @@ interface Props {
 
 const props = defineProps<Props>()
 const container = ref<HTMLElement | null>(null)
+const elementInfo = ref({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    scrollTop: 0,
+    scrollLeft: 0,
+    offsetTop: 0,
+    offsetLeft: 0,
+    fullWidth: 0,
+    fullHeight: 0,
+    visibleRatio: {
+        width: 0,
+        height: 0
+    }
+})
+
 const { registerView, unregisterView } = useViewLayoutManager()
+
+// 获取元素信息
+const updateElementInfo = () => {
+    if (container.value) {
+        const rect = container.value.getBoundingClientRect()
+        const element = container.value
+
+        // 获取视口尺寸
+        const viewportWidth = window.innerWidth
+        const viewportHeight = window.innerHeight
+
+        // 计算可见的宽度
+        const visibleLeft = Math.max(0, rect.left)
+        const visibleRight = Math.min(viewportWidth, rect.right)
+        const visibleWidth = Math.max(0, visibleRight - visibleLeft)
+
+        // 计算可见的高度
+        const visibleTop = Math.max(0, rect.top)
+        const visibleBottom = Math.min(viewportHeight, rect.bottom)
+        const visibleHeight = Math.max(0, visibleBottom - visibleTop)
+
+        elementInfo.value = {
+            x: Math.round(rect.x),
+            y: Math.round(rect.y),
+            width: Math.round(visibleWidth),
+            height: Math.round(visibleHeight),
+            scrollTop: Math.round(element.scrollTop),
+            scrollLeft: Math.round(element.scrollLeft),
+            offsetTop: Math.round(element.offsetTop),
+            offsetLeft: Math.round(element.offsetLeft),
+            fullWidth: Math.round(rect.width),
+            fullHeight: Math.round(rect.height),
+            visibleRatio: {
+                width: rect.width > 0 ? Math.round((visibleWidth / rect.width) * 100) : 0,
+                height: rect.height > 0 ? Math.round((visibleHeight / rect.height) * 100) : 0
+            }
+        }
+    }
+}
+
+// 创建背景图样式
+const createInfoBackgroundImage = () => {
+    const info = elementInfo.value
+    const text = `坐标: (${info.x}, ${info.y}) | 可见: ${info.width}x${info.height} (${info.visibleRatio.width}%x${info.visibleRatio.height}%) | 完整: ${info.fullWidth}x${info.fullHeight} | 偏移: (${info.offsetLeft}, ${info.offsetTop})`
+
+    // 创建SVG背景图
+    const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <defs>
+                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e7eb" stroke-width="1" opacity="0.3"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)"/>
+            <rect width="100%" height="30" fill="rgba(0,0,0,0.8)"/>
+            <text x="10" y="20" font-family="monospace" font-size="12" fill="white">${text}</text>
+        </svg>
+    `
+
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
+}
 
 onMounted(async () => {
     console.log('PluginPage: 挂载插件视图', props.plugin.pagePath)
@@ -19,8 +97,15 @@ onMounted(async () => {
 
     // 注册到集中式管理器
     if (container.value && props.plugin.pagePath) {
-        registerView(props.plugin.pagePath, container.value)
+        // registerView(props.plugin.pagePath, container.value)
     }
+
+    // 初始化元素信息
+    updateElementInfo()
+
+    // 监听窗口大小变化和滚动事件
+    window.addEventListener('resize', updateElementInfo)
+    window.addEventListener('scroll', updateElementInfo, true)
 })
 
 onUnmounted(() => {
@@ -30,9 +115,28 @@ onUnmounted(() => {
     if (props.plugin.pagePath) {
         unregisterView(props.plugin.pagePath)
     }
+
+    // 移除事件监听器
+    window.removeEventListener('resize', updateElementInfo)
+    window.removeEventListener('scroll', updateElementInfo, true)
 })
+
+// 监听 container 的变化
+watch(container, () => {
+    updateElementInfo()
+}, { flush: 'post' })
 </script>
 
 <template>
-    <div class="h-56 w-full" ref="container"></div>
+    <div class="relative">
+        <!-- 原始容器 -->
+        <div class="h-56 w-full border-2 bg-red-500" ref="container"></div>
+
+        <!-- 信息显示区域 - 以背景图形式在底部 -->
+        <div class="absolute top-0 left-0 right-0 h-8 z-10" :style="{
+            backgroundImage: createInfoBackgroundImage(),
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat'
+        }"></div>
+    </div>
 </template>

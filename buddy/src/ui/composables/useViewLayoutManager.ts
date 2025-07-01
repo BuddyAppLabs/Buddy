@@ -2,7 +2,7 @@
  * 集中式视图布局管理器
  * 统一管理所有插件视图的位置更新，避免重复的事件监听和IPC通信
  */
-import { ref, reactive, nextTick, onUnmounted } from 'vue';
+import { reactive, onUnmounted } from 'vue';
 import { useDebounceFn, useThrottleFn } from '@vueuse/core';
 import { viewIpc } from '@renderer/ipc/view-ipc';
 import { createViewArgs } from '@/types/args';
@@ -54,10 +54,6 @@ class ViewLayoutManager {
 
     this.resizeObserver?.observe(element);
     this.intersectionObserver?.observe(element);
-
-    console.log(
-      `ViewLayoutManager: 注册视图 ${pagePath}，当前视图数量: ${this.views.size}`
-    );
   }
 
   /**
@@ -111,8 +107,13 @@ class ViewLayoutManager {
     // 监听窗口大小变化
     window.addEventListener('resize', this.debouncedUpdatePositions);
 
-    // 监听自定义滚动事件
-    document.addEventListener('content-scroll', this.throttledUpdatePositions);
+    // 监听自定义滚动事件，从事件详情中获取滚动信息
+    document.addEventListener('content-scroll', (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const scrollInfo = customEvent.detail || {};
+      console.log('ViewLayoutManager: 收到滚动事件', scrollInfo);
+      this.throttledUpdatePositions();
+    });
   }
 
   /**
@@ -132,30 +133,31 @@ class ViewLayoutManager {
    */
   private async updateAllPositions() {
     const updates: createViewArgs[] = [];
-    const statusBarHeight = 80;
 
     for (const [pagePath, viewInfo] of this.views) {
-      if (!viewInfo.isVisible) continue;
-
-      const rect = viewInfo.element.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      const containerBottom = rect.y + rect.height;
-
-      // 调整高度避免覆盖状态栏
-      let adjustedHeight = rect.height;
-      if (containerBottom > windowHeight - statusBarHeight) {
-        adjustedHeight = Math.max(100, windowHeight - statusBarHeight - rect.y);
+      if (!viewInfo.isVisible) {
+        console.log(`ViewLayoutManager: 视图 ${pagePath} 不可见，跳过`);
+        continue;
       }
 
+      // 获取元素相对于视口的位置
+      const rect = viewInfo.element.getBoundingClientRect();
+
+      // 计算相对于Electron窗口的绝对位置
+      const absoluteX = rect.left;
+      const absoluteY = rect.top;
+      const height = rect.height;
+
       const bounds = {
-        x: Math.round(rect.x),
-        y: Math.round(rect.y),
-        width: Math.round(rect.width),
-        height: Math.round(adjustedHeight),
+        x: absoluteX,
+        y: absoluteY,
+        width: rect.width,
+        height: height,
       };
 
       // 检查是否有变化
-      if (this.boundsChanged(viewInfo.lastBounds, bounds)) {
+      const hasChanged = this.boundsChanged(viewInfo.lastBounds, bounds);
+      if (hasChanged) {
         updates.push({
           ...bounds,
           pagePath,
@@ -166,7 +168,10 @@ class ViewLayoutManager {
 
     // 批量更新
     if (updates.length > 0) {
+      console.log(`ViewLayoutManager: 准备批量更新 ${updates.length} 个视图`);
       await this.batchUpdateViews(updates);
+    } else {
+      console.log(`ViewLayoutManager: 没有视图需要更新`);
     }
   }
 

@@ -73,11 +73,6 @@ export class ViewManager {
 
     view.setBounds(viewBounds);
 
-    LogFacade.channel('pluginView').info(
-      '[ViewManager] 创建视图边界已设置:',
-      viewBounds
-    );
-
     // 设置视图自动调整大小
     mainWindow.on('resize', () => {
       LogFacade.channel('pluginView').info(
@@ -201,7 +196,7 @@ export class ViewManager {
   }
 
   /**
-   * 验证并调整视图边界，确保不覆盖状态栏
+   * 验证并调整视图边界，确保不覆盖状态栏和搜索栏
    * @param bounds 原始边界
    * @returns 调整后的边界
    */
@@ -210,18 +205,44 @@ export class ViewManager {
     if (!mainWindow) return bounds;
 
     const windowBounds = mainWindow.getBounds();
-    const statusBarHeight = 40; // 状态栏高度（h-10 = 40px）
+    const statusBarHeight = 40; // 状态栏在底部，高度40px
+    const searchBarHeight = 56; // 搜索栏高度约56px
+
+    // 计算可用的内容区域
+    const availableContentHeight =
+      windowBounds.height - searchBarHeight - statusBarHeight;
+    const maxAllowedBottom = searchBarHeight + availableContentHeight;
+    const minAllowedTop = searchBarHeight;
+
+    // 确保视图Y坐标不小于搜索栏高度
+    const adjustedY = Math.max(minAllowedTop, bounds.y);
 
     // 确保视图不会延伸到状态栏区域
-    const maxHeight = windowBounds.height - bounds.y - statusBarHeight;
+    const maxHeight = maxAllowedBottom - adjustedY;
     const adjustedHeight = Math.min(bounds.height, Math.max(100, maxHeight));
 
-    return {
-      x: Math.max(0, bounds.x),
-      y: Math.max(0, bounds.y),
+    const result = {
+      x: Math.max(0, Math.min(bounds.x, windowBounds.width - 100)),
+      y: adjustedY,
       width: Math.max(100, Math.min(bounds.width, windowBounds.width)),
       height: adjustedHeight,
     };
+
+    // 如果视图被调整得太小或位置不合理，记录警告
+    if (result.height < 100 || result.y >= maxAllowedBottom) {
+      LogFacade.channel('pluginView').warn(
+        '[ViewManager] 视图边界不合理，可能无法正常显示:',
+        {
+          original: bounds,
+          adjusted: result,
+          windowBounds,
+          searchBarHeight,
+          statusBarHeight,
+        }
+      );
+    }
+
+    return result;
   }
 
   public async upsertView(args: createViewArgs): Promise<void> {
@@ -238,11 +259,6 @@ export class ViewManager {
     });
 
     view.setBounds(validatedBounds);
-
-    LogFacade.channel('pluginView').info(
-      '[ViewManager] 视图边界已设置:',
-      validatedBounds
-    );
   }
 
   /**
