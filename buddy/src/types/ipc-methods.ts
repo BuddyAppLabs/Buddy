@@ -50,6 +50,10 @@ export const IPC_METHODS = {
   AI_CHAT: 'ai/chats',
   AI_CHAT_SEND: 'ai/chats/messages',
   AI_CHAT_CANCEL: 'ai/chats/cancel',
+  AI_SET_API_KEY: 'ai/api-key/set',
+  AI_GET_AVAILABLE_MODELS: 'ai/models/get',
+  AI_GET_DEFAULT_MODEL: 'ai/models/default/get',
+  AI_SET_DEFAULT_MODEL: 'ai/models/default/set',
 
   // AI Chat Streams 相关的路由
   AI_CHAT_STREAM_CHUNK: 'ai/chats/streams/chunks',

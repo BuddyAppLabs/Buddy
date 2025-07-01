@@ -94,4 +94,69 @@ export function registerAIRoutes(): void {
       '1': { required: true, type: 'string' },
     })
     .description('取消AI聊天请求');
+
+  // 设置AI提供商的API密钥
+  RouteFacade.handle(
+    IPC_METHODS.AI_SET_API_KEY,
+    async (
+      _event,
+      provider: 'openai' | 'anthropic' | 'deepseek',
+      key: string
+    ): Promise<IpcResponse<void>> => {
+      try {
+        await AIFacade.setApiKey(provider, key);
+        return { success: true };
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    }
+  );
+
+  // 获取可用的AI模型列表
+  RouteFacade.handle(
+    IPC_METHODS.AI_GET_AVAILABLE_MODELS,
+    (): IpcResponse<Record<'openai' | 'anthropic' | 'deepseek', string[]>> => {
+      try {
+        const models = AIFacade.getAvailableModels();
+        return { success: true, data: models };
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    }
+  );
+
+  // 获取默认模型配置
+  RouteFacade.handle(IPC_METHODS.AI_GET_DEFAULT_MODEL, () => {
+    try {
+      const config = AIFacade.getDefaultModelConfig();
+      return { success: true, data: config };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  });
+
+  // 设置默认模型配置
+  RouteFacade.handle(
+    IPC_METHODS.AI_SET_DEFAULT_MODEL,
+    async (_event, config) => {
+      try {
+        await AIFacade.setDefaultModel(config);
+        return { success: true };
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    }
+  );
 }

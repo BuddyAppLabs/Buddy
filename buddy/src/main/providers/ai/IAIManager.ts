@@ -46,4 +46,17 @@ export interface IAIManager {
    * 重置配置
    */
   resetConfig(): void;
+
+  /**
+   * 设置指定AI提供商的API密钥
+   * @param provider AI提供商
+   * @param key API密钥
+   */
+  setApiKey(provider: AIModelType, key: string): Promise<void>;
+
+  /**
+   * 获取指定AI提供商的API密钥
+   * @param provider AI提供商
+   */
+  getApiKey(provider: AIModelType): Promise<string | undefined>;
 }

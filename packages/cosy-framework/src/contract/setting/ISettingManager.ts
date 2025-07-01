@@ -30,6 +30,13 @@ export interface ISettingManager {
   has(key: string): boolean;
 
   /**
+   * Remove a setting value.
+   *
+   * @param key
+   */
+  remove(key: string): Promise<void>;
+
+  /**
    * Get all settings.
    */
   all(): Record<string, any>;

@@ -57,6 +57,11 @@ export class SettingManager implements ISettingManager {
     return this._settings.has(key);
   }
 
+  public async remove(key: string): Promise<void> {
+    this._settings.delete(key);
+    await this.save();
+  }
+
   public all(): Record<string, any> {
     return Object.fromEntries(this._settings);
   }
