@@ -20,10 +20,6 @@ const elementInfo = ref({
     offsetLeft: 0,
     fullWidth: 0,
     fullHeight: 0,
-    visibleRatio: {
-        width: 0,
-        height: 0
-    }
 })
 
 const { registerView, unregisterView } = useViewLayoutManager()
@@ -59,10 +55,6 @@ const updateElementInfo = () => {
             offsetLeft: Math.round(element.offsetLeft),
             fullWidth: Math.round(rect.width),
             fullHeight: Math.round(rect.height),
-            visibleRatio: {
-                width: rect.width > 0 ? Math.round((visibleWidth / rect.width) * 100) : 0,
-                height: rect.height > 0 ? Math.round((visibleHeight / rect.height) * 100) : 0
-            }
         }
     }
 }
@@ -70,7 +62,7 @@ const updateElementInfo = () => {
 // 创建背景图样式
 const createInfoBackgroundImage = () => {
     const info = elementInfo.value
-    const text = `坐标: (${info.x}, ${info.y}) | 可见: ${info.width}x${info.height} (${info.visibleRatio.width}%x${info.visibleRatio.height}%) | 完整: ${info.fullWidth}x${info.fullHeight} | 偏移: (${info.offsetLeft}, ${info.offsetTop})`
+    const text = `坐标: (${info.x}, ${info.y}) | 可见: ${info.width}x${info.height} | 完整: ${info.fullWidth}x${info.fullHeight} | 偏移: (${info.offsetLeft}, ${info.offsetTop})`
 
     // 创建SVG背景图
     const svg = `
