@@ -3,7 +3,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@/ui/stores/app-store'
 import StatusBar from '@renderer/components/cosy/StatusBar.vue'
 import StatusBarItem from '@renderer/components/cosy/StatusBarItem.vue'
-import { fileIpc } from '@renderer/ipc/file-ipc'
 
 const router = useRouter()
 const route = useRoute()
@@ -26,16 +25,6 @@ const goToChat = () => {
     router.push('/chat')
     appStore.setView('chat')
 }
-
-// 打开配置文件夹
-const openConfigFolder = async () => {
-    try {
-        await fileIpc.openConfigFolder()
-        console.log('已打开配置文件夹')
-    } catch (error) {
-        console.error('打开配置文件夹失败:', error)
-    }
-}
 </script>
 
 <template>
@@ -53,14 +42,6 @@ const openConfigFolder = async () => {
             <StatusBarItem clickable @click="goToChat" :active="route.path === '/chat'"
                 :variant="route.path === '/chat' ? 'primary' : 'default'">
                 聊天
-            </StatusBarItem>
-        </template>
-
-        <!-- 右侧状态栏 -->
-        <template #right>
-            <!-- 配置文件夹按钮 -->
-            <StatusBarItem clickable @click="openConfigFolder" title="打开配置文件夹">
-                配置
             </StatusBarItem>
         </template>
     </StatusBar>
