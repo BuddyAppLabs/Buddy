@@ -65,37 +65,6 @@ export class ViewManager {
 
     view.setBounds(args);
 
-    // 设置视图自动调整大小
-    mainWindow.on('resize', () => {
-      LogFacade.channel('pluginView').info(
-        '[ViewManager] 主窗口调整大小，调整视图大小'
-      );
-    });
-
-    mainWindow.on('maximize', () => {
-      LogFacade.channel('pluginView').info(
-        '[ViewManager] 主窗口最大化，调整视图大小'
-      );
-    });
-
-    mainWindow.on('unmaximize', () => {
-      LogFacade.channel('pluginView').info(
-        '[ViewManager] 主窗口取消最大化，调整视图大小'
-      );
-    });
-
-    mainWindow.on('minimize', () => {
-      LogFacade.channel('pluginView').info(
-        '[ViewManager] 主窗口最小化，调整视图大小'
-      );
-    });
-
-    mainWindow.on('restore', () => {
-      LogFacade.channel('pluginView').info(
-        '[ViewManager] 主窗口还原，调整视图大小'
-      );
-    });
-
     mainWindow.on('close', () => {
       LogFacade.channel('pluginView').info(
         '[ViewManager] 主窗口关闭，销毁所有视图'
