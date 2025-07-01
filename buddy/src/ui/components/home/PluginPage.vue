@@ -22,8 +22,8 @@ const elementInfo = ref({
 
 const { registerView, unregisterView, updateViewPosition } = useViewLayoutManager()
 
-const TOP_BAR_HEIGHT = 80;
-const STATUS_BAR_HEIGHT = 40;
+const TOP_BAR_HEIGHT = 0;
+const STATUS_BAR_HEIGHT = 120;
 
 // 获取元素信息
 const updateElementInfo = () => {
@@ -99,12 +99,12 @@ function throttle(fn: (...args: any[]) => void, delay: number) {
 const throttledUpdateViewPosition = throttle(() => {
     if (props.plugin.pagePath) {
         const info = elementInfo.value
-        const offsetY = info.y > TOP_BAR_HEIGHT ? 0 : info.fullHeight - info.height
+        const inTopBar = info.y < TOP_BAR_HEIGHT
         updateViewPosition(props.plugin.pagePath, {
             x: info.x,
-            y: info.y + offsetY,
+            y: info.y,
             width: info.width,
-            height: info.height,
+            height: inTopBar ? info.fullHeight : info.height,
         })
     }
 }, 5)

@@ -115,11 +115,6 @@ onUnmounted(() => {
 
 <template>
     <div class="flex flex-col h-screen frosted-glass">
-        <!-- 搜索区域 - 这里是可拖动区域 -->
-        <div class="h-16 mt-4 px-4 pb-4 shadow-lg">
-            <SearchBar />
-        </div>
-
         <!-- 全局进度条 -->
         <div class="absolute top-14 left-1/2 transform -translate-x-1/2">
             <Progress v-if="globalProgress.state.value.show" :value="globalProgress.state.value.value"
@@ -139,13 +134,17 @@ onUnmounted(() => {
                 </transition>
             </router-view>
         </div>
+        <ErrorNotification />
+
+        <!-- 搜索区域 - 这里是可拖动区域 -->
+        <div class="h-16 mt-4 px-4 pb-4 shadow-lg">
+            <SearchBar />
+        </div>
 
         <!-- 状态栏 -->
         <div class="h-10 z-50 border-t border-base-200 dark:border-base-300 no-drag-region">
             <StatusBar />
         </div>
-
-        <ErrorNotification />
     </div>
 
     <!-- 版本信息对话框 -->
