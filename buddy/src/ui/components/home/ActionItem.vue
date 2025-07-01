@@ -5,9 +5,11 @@ import { logger } from '@renderer/utils/logger';
 import { useActionStore } from '@renderer/stores/actionStore';
 import { computed, ref } from 'vue';
 import { onKeyStroke, useFocus } from '@vueuse/core';
+import { useToast } from '@renderer/composables/useToast';
 
 const debug = false;
 const actionStore = useActionStore()
+const globalToaster = useToast()
 const props = defineProps<{
     action: SendableAction
     index: number
@@ -60,9 +62,11 @@ onKeyStroke('ArrowDown', () => {
 })
 
 // 处理动作选择
-const handleClick = () => {
+const handleClick = async () => {
     logger.info('handleActionClicked 🍋', props.action.globalId);
-    actionStore.setWillRun(props.action.globalId)
+    const result = await actionStore.setWillRun(props.action.globalId)
+    logger.info('handleActionClicked 🍋', result);
+    globalToaster.success(JSON.stringify(result, null, 2));
 }
 </script>
 

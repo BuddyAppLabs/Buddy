@@ -67,7 +67,7 @@ const { isLoading, state: actionResult, error: actionError } = useAsyncState(
         viewState.value.currentAction = action
 
         // 执行动作
-        const result = await actionStore.execute(action.globalId)
+        // const result = await actionStore.execute(action.globalId)
 
         // 如果有视图路径，根据viewMode决定显示方式
         if (action.viewPath) {
@@ -80,7 +80,7 @@ const { isLoading, state: actionResult, error: actionError } = useAsyncState(
             }
         }
 
-        return result
+        // return result
     },
     null,
     { immediate: false, resetOnExecute: true, onError: handleError }
@@ -142,8 +142,14 @@ async function createEmbeddedView(action: SendableAction) {
 
 // 实际创建嵌入式视图的函数
 async function createEmbeddedViewImmediate() {
-    if (!embeddedViewContainer.value || !viewState.value.currentAction?.viewPath) {
-        logger.error('PluginView: 视图容器不存在或视图路径无效')
+
+    if (!viewState.value.currentAction?.viewPath) {
+
+        return
+    }
+
+    if (!embeddedViewContainer.value) {
+        logger.error('PluginView: 视图容器不存在')
         return
     }
 

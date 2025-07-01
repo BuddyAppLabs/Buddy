@@ -50,7 +50,7 @@ export default {
     },
 
     plugin: {
-      driver: null,
+      driver: 'console',
       level: ILogLevel.DEBUG,
     },
 

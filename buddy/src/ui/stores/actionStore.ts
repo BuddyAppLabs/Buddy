@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { actionIpc } from '@renderer/ipc/action-ipc';
-import { AppEvents } from '@coffic/buddy-types';
+import { AppEvents, ExecuteResult } from '@coffic/buddy-types';
 import { SendableAction } from '@/types/sendable-action';
 import { useErrorStore } from './errorStore.js';
 
@@ -75,7 +75,7 @@ export const useActionStore = defineStore('action', {
     /**
      * 执行指定动作
      */
-    async execute(actionGlobalId: string): Promise<any> {
+    async execute(actionGlobalId: string): Promise<ExecuteResult> {
       this.selected = actionGlobalId;
       const action = this.find(actionGlobalId);
 
@@ -91,7 +91,7 @@ export const useActionStore = defineStore('action', {
         throw new Error(`动作ID为空: ${actionGlobalId}`);
       }
 
-      return actionIpc.executeAction(action.globalId, this.keyword);
+      return await actionIpc.executeAction(action.globalId, this.keyword);
     },
 
     /**
@@ -121,9 +121,10 @@ export const useActionStore = defineStore('action', {
       this.selected = actionId;
     },
 
-    setWillRun(actionId: string) {
+    async setWillRun(actionId: string): Promise<ExecuteResult> {
       this.selected = actionId;
       this.willRun = actionId;
+      return await this.execute(actionId);
     },
 
     getActions(): SendableAction[] {
@@ -139,7 +140,10 @@ export const useActionStore = defineStore('action', {
     },
 
     hasWillRun(): boolean {
-      return this.willRun !== null;
+      const action = this.find(this.willRun || '');
+      const viewPath = action?.viewPath;
+
+      return action !== undefined && viewPath !== undefined && viewPath !== '';
     },
 
     /**

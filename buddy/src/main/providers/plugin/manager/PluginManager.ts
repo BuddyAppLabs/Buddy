@@ -77,7 +77,15 @@ export class PluginManager implements IPluginManager {
       throw new Error(`插件不存在: ${pluginId}`);
     }
 
-    return plugin.executeAction(actionLocalId, keyword);
+    let result = await plugin.executeAction(actionLocalId, keyword);
+
+    LogFacade.channel('plugin').info(`[PluginManager] 执行插件动作`, {
+      actionId,
+      keyword,
+      result,
+    });
+
+    return result;
   }
 
   /**
