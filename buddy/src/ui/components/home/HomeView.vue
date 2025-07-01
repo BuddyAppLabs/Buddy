@@ -3,6 +3,8 @@ import { useActionStore } from '@renderer/stores/actionStore';
 import ActionListView from '@renderer/components/home/ActionListView.vue';
 import PluginView from './PluginView.vue';
 import PluginPageGrid from './PluginPageGrid.vue';
+import { onUnmounted } from 'vue';
+import { viewIpc } from '@/ui/ipc/view-ipc';
 
 const actionStore = useActionStore();
 
@@ -10,6 +12,10 @@ const actionStore = useActionStore();
 const handleBackToList = () => {
     actionStore.clearSelected();
 };
+
+onUnmounted(() => {
+    viewIpc.destroyViews()
+})
 </script>
 
 <template>

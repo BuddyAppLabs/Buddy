@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { SendablePlugin } from '@/types/sendable-plugin'
-import { useViewLayoutManager } from '@renderer/composables/useViewLayoutManager'
+import { viewIpc } from '@/ui/ipc/view-ipc'
 
 interface Props {
     plugin: SendablePlugin
 }
 
-const debug = false
+const debug = true
 const showView = true
 const props = defineProps<Props>()
 const container = ref<HTMLElement | null>(null)
@@ -19,8 +19,6 @@ const elementInfo = ref({
     fullWidth: 0,
     fullHeight: 0,
 })
-
-const { registerView, unregisterView, updateViewPosition } = useViewLayoutManager()
 
 const TOP_BAR_HEIGHT = 0;
 const STATUS_BAR_HEIGHT = 120;
@@ -100,11 +98,12 @@ const throttledUpdateViewPosition = throttle(() => {
     if (props.plugin.pagePath) {
         const info = elementInfo.value
         const inTopBar = info.y < TOP_BAR_HEIGHT
-        updateViewPosition(props.plugin.pagePath, {
+        viewIpc.upsertView({
             x: info.x,
             y: info.y,
             width: info.width,
             height: inTopBar ? info.fullHeight : info.height,
+            pagePath: props.plugin.pagePath,
         })
     }
 }, 5)
@@ -115,11 +114,6 @@ onMounted(async () => {
     // 等待DOM渲染完成
     await nextTick()
 
-    // 注册到集中式管理器
-    if (container.value && props.plugin.pagePath && showView) {
-        registerView(props.plugin.pagePath)
-    }
-
     // 初始化元素信息
     updateElementInfo()
 
@@ -129,14 +123,6 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-    console.log('PluginPage: 卸载插件视图', props.plugin.pagePath)
-
-    // 从集中式管理器注销
-    if (props.plugin.pagePath) {
-        unregisterView(props.plugin.pagePath)
-    }
-
-    // 移除事件监听器
     window.removeEventListener('resize', updateElementInfo)
     window.removeEventListener('scroll', updateElementInfo, true)
 })
@@ -157,7 +143,7 @@ watch(elementInfo, () => {
 <template>
     <div class="relative">
         <!-- 原始容器 -->
-        <div class="h-56 w-full" ref="container"></div>
+        <div class="h-56 w-full" :class="{ 'bg-red-500': debug }" ref="container"></div>
 
         <!-- 信息显示区域 - 以背景图形式在底部 -->
         <div v-if="debug" class="absolute top-0 left-0 right-0 h-8 z-10" :style="{

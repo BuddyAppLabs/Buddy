@@ -116,6 +116,12 @@ export class PluginManager implements IPluginManager {
           });
 
           allActions = [...allActions, ...processedActions];
+
+          // 按照globalID去重
+          allActions = allActions.filter(
+            (action, index, self) =>
+              index === self.findIndex((t) => t.globalId === action.globalId)
+          );
         } catch (error) {
           // 获取详细的错误信息
           const errorDetail =

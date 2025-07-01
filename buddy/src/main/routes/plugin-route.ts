@@ -79,7 +79,7 @@ export function registerPluginRoutes(): void {
   RouteFacade.handle(
     IPC_METHODS.GET_REMOTE_PLUGINS,
     async (_event): Promise<SendablePlugin[]> => {
-      LogFacade.channel('market').info('[MarketRoute] 获取远程插件列表');
+      LogFacade.channel('plugin').info('[PluginRoute] 获取远程插件列表');
       return await remotePluginDB.getSendablePlugins();
     }
   ).description('获取远程可下载的插件列表');
