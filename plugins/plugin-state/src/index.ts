@@ -31,7 +31,6 @@ export const plugin: SuperPlugin = {
   author: 'Coffic',
   path: '',
   type: 'user',
-  pagePath: 'dist/views/state.html',
   devTools: true,
 
   async getActions(args: GetActionsArgs): Promise<SuperAction[]> {
