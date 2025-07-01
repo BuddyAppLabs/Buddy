@@ -101,6 +101,47 @@ export class WindowManager implements IWindowManager {
         },
       });
 
+      // 创建帮助窗口
+      const helpWindow = new BrowserWindow({
+        width: 300,
+        height: 200,
+        parent: this.mainWindow, // 可选
+        frame: false,
+        alwaysOnTop: true,
+        resizable: false,
+        transparent: true,
+        show: true,
+        backgroundColor: '#00000000',
+        webPreferences: {
+          contextIsolation: true,
+          nodeIntegration: false,
+        },
+      });
+      helpWindow.loadURL(
+        'data:text/html,<body style="background:rgba(0,0,0,0.7);color:white;display:flex;align-items:center;justify-content:center;height:100%"><h2>Hello World</h2></body>'
+      );
+
+      // 跟随主窗口移动和缩放，显示在主窗口正上方
+      const updateHelpWindowPosition = () => {
+        if (!this.mainWindow || helpWindow.isDestroyed()) return;
+        const [x, y] = this.mainWindow.getPosition();
+        const [width] = this.mainWindow.getSize();
+        const helpHeight = helpWindow.getBounds().height;
+        helpWindow.setBounds({
+          x,
+          y: y - helpHeight,
+          width,
+          height: helpHeight,
+        });
+      };
+      this.mainWindow.on('move', updateHelpWindowPosition);
+      this.mainWindow.on('resize', () => {
+        updateHelpWindowPosition();
+      });
+      this.mainWindow.on('show', () => helpWindow.show());
+      this.mainWindow.on('hide', () => helpWindow.hide());
+      setTimeout(updateHelpWindowPosition, 100);
+
       // 设置窗口事件处理
       this.setupWindowEvents();
 
