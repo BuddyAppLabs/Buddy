@@ -8,6 +8,7 @@ import { readPackageJson, hasPackageJson } from '../util/PackageUtils.js';
 import {
   ExecuteActionArgs,
   ExecuteResult,
+  GetActionsArgs,
   PluginStatus,
   PluginType,
   SuperPlugin,
@@ -236,7 +237,7 @@ export class PluginEntity {
    * @param keyword 搜索关键词（可选）
    * @returns 插件动作列表
    */
-  async getActions(keyword: string = ''): Promise<ActionEntity[]> {
+  async getActions(args: GetActionsArgs): Promise<ActionEntity[]> {
     // 如果插件未加载或状态不正常，返回空数组
     if (this.status !== 'active') {
       LogFacade.channel('plugin').warn(
@@ -256,7 +257,7 @@ export class PluginEntity {
       }
 
       // 假设插件实例有一个 getActions 方法
-      const rawActions = await this.instance.getActions({ keyword });
+      const rawActions = await this.instance.getActions(args);
 
       // 在这里创建 ActionEntity
       return rawActions.map((rawAction: any) =>
@@ -310,7 +311,7 @@ export class PluginEntity {
   }
 
   async getAction(actionId: string): Promise<ActionEntity | null> {
-    const actions = await this.getActions();
+    const actions = await this.getActions({});
     return actions.find((action) => action.id === actionId) || null;
   }
 

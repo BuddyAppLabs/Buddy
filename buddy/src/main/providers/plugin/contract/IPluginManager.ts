@@ -2,7 +2,7 @@
  * 插件系统相关契约
  */
 
-import { ExecuteResult } from '@coffic/buddy-types';
+import { ExecuteResult, GetActionsArgs } from '@coffic/buddy-types';
 import { PluginEntity } from '../model/PluginEntity.js';
 import { ActionEntity } from '../model/ActionEntity.js';
 
@@ -30,7 +30,7 @@ export interface IPluginManager {
    * 获取插件动作
    * @param keyword 关键词
    */
-  actions(keyword: string): Promise<ActionEntity[]>;
+  actions(args: GetActionsArgs): Promise<ActionEntity[]>;
 
   /**
    * 执行插件动作

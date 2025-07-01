@@ -8,13 +8,18 @@ import { RouteFacade } from '@coffic/cosy-framework';
 import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import { SendableAction } from '@/types/sendable-action.js';
 import { ExecuteResult } from '@coffic/buddy-types';
+import { appStateManager } from '../providers/state/StateManager.js';
 
 export function registerActionsRoutes(): void {
   // 获取插件动作列表
   RouteFacade.handle(
     IPC_METHODS.GET_ACTIONS,
-    async (_event, keyword = ''): Promise<SendableAction[]> => {
-      const actions = await PluginFacade.actions(keyword);
+    async (_event, keyword: string = ''): Promise<SendableAction[]> => {
+      const overlaidApp = appStateManager.getOverlaidApp();
+      const actions = await PluginFacade.actions({
+        keyword,
+        overlaidApp: overlaidApp?.name,
+      });
       return actions.map((action) => action.toSendableAction());
     }
   )

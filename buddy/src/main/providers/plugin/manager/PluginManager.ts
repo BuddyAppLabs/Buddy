@@ -11,7 +11,7 @@ import { ActionEntity } from '../model/ActionEntity.js';
 import fs from 'fs';
 import path from 'path';
 import { Downloader } from '@/main/service/Downloader.js';
-import { ExecuteResult } from '@coffic/buddy-types';
+import { ExecuteResult, GetActionsArgs } from '@coffic/buddy-types';
 
 export class PluginManager implements IPluginManager {
   /**
@@ -85,7 +85,7 @@ export class PluginManager implements IPluginManager {
    * @param keyword 搜索关键词
    * @returns 匹配的插件动作列表
    */
-  async actions(keyword: string = ''): Promise<ActionEntity[]> {
+  async actions(args: GetActionsArgs): Promise<ActionEntity[]> {
     let allActions: ActionEntity[] = [];
 
     try {
@@ -93,13 +93,12 @@ export class PluginManager implements IPluginManager {
       const plugins = await this.all();
       for (const plugin of plugins) {
         LogFacade.channel('plugin').debug(`[PluginManager] 获取插件动作`, {
-          keyword,
+          args,
           pluginId: plugin.id,
         });
 
         try {
-          const pluginActions: ActionEntity[] =
-            await plugin.getActions(keyword);
+          const pluginActions: ActionEntity[] = await plugin.getActions(args);
 
           // 为每个动作设置插件 ID 和全局 ID
           const processedActions = pluginActions.map((action) => {

@@ -23,6 +23,7 @@ import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import { WindowServiceProvider } from '../providers/window/WindowServiceProvider.js';
 import { electronApp } from '@electron-toolkit/utils';
 import { StateServiceProvider } from '../providers/state/StateServiceProvider.js';
+import { StateManager } from '../providers/state/StateManager.js';
 
 // 应用配置
 const config: ApplicationConfig = {
@@ -65,6 +66,11 @@ export async function bootApplication(): Promise<void> {
     // 监听应用的日志事件
     application.on('log', (level, message, context) => {
       logger?.channel()[level](message, context);
+    });
+
+    application.on('window:show', () => {
+      const stateManager = application.make<StateManager>('state');
+      stateManager.updateActiveApp('window:show');
     });
 
     // 等待插件系统初始化完成

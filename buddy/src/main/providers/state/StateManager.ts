@@ -10,7 +10,7 @@ import { LogFacade } from '@coffic/cosy-logger';
  * 应用状态管理器
  * 负责监控应用的激活状态以及其他应用的状态
  */
-class StateManager {
+export class StateManager {
   private static instance: StateManager;
   private overlaidApp: SuperApp | null = null;
 
@@ -50,7 +50,6 @@ class StateManager {
 
     // 监听应用失去焦点事件
     app.on('browser-window-blur', () => {
-      this.updateActiveApp('browser-window-blur');
       this.emitAndBroadcast(AppEvents.DEACTIVATED);
     });
 

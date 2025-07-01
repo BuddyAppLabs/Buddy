@@ -26,7 +26,8 @@ export class WindowServiceProvider extends ServiceProvider {
           alwaysOnTop: true,
           opacity: 0.99,
         } as IWindowConfig,
-        logger
+        logger,
+        this.app
       );
     });
 
