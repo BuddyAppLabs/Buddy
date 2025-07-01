@@ -96,7 +96,9 @@ export class StateManager {
    * 获取当前活跃的应用信息
    */
   getCurrentActiveApp(reason: string): ActiveApplication | null {
-    LogFacade.channel('state').debug('获取当前活跃应用信息', reason);
+    LogFacade.channel('state').debug('[StateManager] 获取当前活跃应用信息', {
+      reason,
+    });
     if (process.platform !== 'darwin') {
       return null;
     }

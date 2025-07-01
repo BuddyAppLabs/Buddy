@@ -9,7 +9,7 @@
 
 import { createRouter, createWebHashHistory } from 'vue-router';
 import PluginStoreView from '@/ui/components/market/MarketView.vue';
-import { useAppStore } from '@renderer/stores/appStore';
+import { useAppStore } from '@/ui/stores/app-store';
 import HomeView from '@/ui/components/home/HomeView.vue';
 import ChatView from '@/ui/components/chat/ChatView.vue';
 

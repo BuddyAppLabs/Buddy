@@ -55,7 +55,7 @@ export default {
     },
 
     pluginView: {
-      driver: 'null',
+      driver: 'console',
       level: ILogLevel.DEBUG,
     },
 

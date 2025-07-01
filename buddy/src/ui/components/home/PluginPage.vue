@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { SendablePlugin } from '@/types/sendable-plugin'
 import { viewIpc } from '@/ui/ipc/view-ipc'
+import { AppEvents } from '@coffic/buddy-types'
 
 interface Props {
     plugin: SendablePlugin
@@ -120,6 +121,11 @@ onMounted(async () => {
     // 监听窗口大小变化和滚动事件
     window.addEventListener('resize', updateElementInfo)
     window.addEventListener('scroll', updateElementInfo, true)
+
+    // 监听窗口激活事件
+    window.ipc.receive(AppEvents.ACTIVATED, () => {
+        updateElementInfo()
+    });
 })
 
 onUnmounted(() => {

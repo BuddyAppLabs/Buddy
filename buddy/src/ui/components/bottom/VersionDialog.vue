@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useAppStore } from '@renderer/stores/appStore'
+import { useAppStore } from '@/ui/stores/app-store'
 import { IPC_METHODS } from '@/types/ipc-methods';
 import { globalToast } from '@renderer/composables/useToast';
 

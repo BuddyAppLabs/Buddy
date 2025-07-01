@@ -217,10 +217,9 @@ export class WindowManager implements IWindowManager {
    * 处理窗口显示
    */
   private async handleWindowShow(): Promise<void> {
-    console.log(`${EMOJI} [WindowManager] 处理窗口显示`);
     if (!this.mainWindow || this.mainWindow.isDestroyed()) return;
 
-    this.logger.info('窗口当前不可见，执行显示操作');
+    this.logger.info('[WindowManager] 显示窗口');
 
     this.app.emit('window:show');
 

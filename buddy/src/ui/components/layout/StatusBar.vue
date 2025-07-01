@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useAppStore } from '@renderer/stores/appStore'
+import { useAppStore } from '@/ui/stores/app-store'
 import StatusBar from '@renderer/components/cosy/StatusBar.vue'
 import StatusBarItem from '@renderer/components/cosy/StatusBarItem.vue'
 import { fileIpc } from '@renderer/ipc/file-ipc'
