@@ -1,19 +1,15 @@
-/**
- * 应用状态管理器
- * 负责监控应用的激活状态以及其他应用的状态
- */
 import { app, BrowserWindow } from 'electron';
 import {
   ActiveApplication,
   getFrontmostApplication,
 } from '@coffic/active-app-monitor';
 import { AppEvents, SuperApp } from '@coffic/buddy-types';
-import { EMOJI } from '../constants.js';
+import { LogFacade } from '@coffic/cosy-logger';
 
-const logger = console;
-
-const verbose = false;
-
+/**
+ * 应用状态管理器
+ * 负责监控应用的激活状态以及其他应用的状态
+ */
 class StateManager {
   private static instance: StateManager;
   private overlaidApp: SuperApp | null = null;
@@ -39,7 +35,6 @@ class StateManager {
    * @param args 事件参数
    */
   private emitAndBroadcast(channel: string, ...args: any[]): void {
-    // 用于向所有渲染进程广播事件
     this.broadcastToAllWindows(channel, ...args);
   }
 
@@ -49,12 +44,13 @@ class StateManager {
   private setupAppStateListeners(): void {
     // 监听应用激活事件
     app.on('activate', () => {
-      logger.info(`${EMOJI} [StateManager] 应用激活事件`);
+      this.updateActiveApp('activate');
       this.emitAndBroadcast(AppEvents.ACTIVATED);
     });
 
     // 监听应用失去焦点事件
     app.on('browser-window-blur', () => {
+      this.updateActiveApp('browser-window-blur');
       this.emitAndBroadcast(AppEvents.DEACTIVATED);
     });
 
@@ -100,8 +96,8 @@ class StateManager {
   /**
    * 获取当前活跃的应用信息
    */
-  getCurrentActiveApp(): ActiveApplication | null {
-    logger.debug('获取当前活跃应用信息');
+  getCurrentActiveApp(reason: string): ActiveApplication | null {
+    LogFacade.channel('state').debug('获取当前活跃应用信息', reason);
     if (process.platform !== 'darwin') {
       return null;
     }
@@ -109,14 +105,10 @@ class StateManager {
     try {
       const frontmostApp = getFrontmostApplication();
       if (frontmostApp) {
-        if (verbose) {
-          logger.debug('当前活跃应用信息:', frontmostApp);
-        }
-
         return frontmostApp;
       }
     } catch (error) {
-      logger.error('获取当前活跃应用信息失败', { error });
+      LogFacade.channel('state').error('获取当前活跃应用信息失败', { error });
     }
     return null;
   }
@@ -125,17 +117,20 @@ class StateManager {
    * 更新当前活跃的应用信息
    * 获取当前活跃的应用并更新状态
    */
-  updateActiveApp(): void {
+  updateActiveApp(reason: string): void {
     if (process.platform !== 'darwin') {
       return;
     }
 
-    const frontmostApp = this.getCurrentActiveApp();
+    const frontmostApp = this.getCurrentActiveApp(reason);
     if (frontmostApp) {
-      logger.debug('更新被覆盖的应用信息');
+      LogFacade.channel('state').debug('更新被覆盖的应用信息', frontmostApp);
       this.setOverlaidApp(frontmostApp);
     } else {
-      logger.debug('无法获取当前活跃的应用信息');
+      LogFacade.channel('state').debug(
+        '无法获取当前活跃的应用信息',
+        frontmostApp
+      );
       this.setOverlaidApp(null);
     }
   }

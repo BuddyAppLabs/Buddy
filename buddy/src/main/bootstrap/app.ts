@@ -22,6 +22,7 @@ import { PluginServiceProvider } from '../providers/plugin/PluginServiceProvider
 import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import { WindowServiceProvider } from '../providers/window/WindowServiceProvider.js';
 import { electronApp } from '@electron-toolkit/utils';
+import { StateServiceProvider } from '../providers/state/StateServiceProvider.js';
 
 // 应用配置
 const config: ApplicationConfig = {
@@ -38,6 +39,7 @@ const config: ApplicationConfig = {
     PluginServiceProvider,
     WindowServiceProvider,
     McpServiceProvider,
+    StateServiceProvider,
   ],
   paths: {
     userData: app.getPath('userData'),
