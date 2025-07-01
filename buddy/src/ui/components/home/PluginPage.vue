@@ -8,6 +8,7 @@ interface Props {
 }
 
 const debug = false
+const showView = true
 const props = defineProps<Props>()
 const container = ref<HTMLElement | null>(null)
 const elementInfo = ref({
@@ -21,6 +22,7 @@ const elementInfo = ref({
 
 const { registerView, unregisterView, updateViewPosition } = useViewLayoutManager()
 
+const TOP_BAR_HEIGHT = 80;
 const STATUS_BAR_HEIGHT = 40;
 
 // 获取元素信息
@@ -37,8 +39,8 @@ const updateElementInfo = () => {
         const visibleRight = Math.min(viewportWidth, rect.right)
         const visibleWidth = Math.max(0, visibleRight - visibleLeft)
 
-        // 计算可见的高度，考虑底部状态栏
-        const visibleTop = Math.max(0, rect.top)
+        // 计算可见的高度，考虑顶部topBar和底部statusBar
+        const visibleTop = Math.max(TOP_BAR_HEIGHT, rect.top)
         const visibleBottom = Math.min(viewportHeight - STATUS_BAR_HEIGHT, rect.bottom)
         const visibleHeight = Math.max(0, visibleBottom - visibleTop)
 
@@ -97,11 +99,12 @@ function throttle(fn: (...args: any[]) => void, delay: number) {
 const throttledUpdateViewPosition = throttle(() => {
     if (props.plugin.pagePath) {
         const info = elementInfo.value
+        const offsetY = info.y > TOP_BAR_HEIGHT ? 0 : info.fullHeight - info.height
         updateViewPosition(props.plugin.pagePath, {
             x: info.x,
-            y: info.y,
+            y: info.y + offsetY,
             width: info.width,
-            height: info.height
+            height: info.height,
         })
     }
 }, 5)
@@ -113,7 +116,7 @@ onMounted(async () => {
     await nextTick()
 
     // 注册到集中式管理器
-    if (container.value && props.plugin.pagePath) {
+    if (container.value && props.plugin.pagePath && showView) {
         registerView(props.plugin.pagePath)
     }
 
@@ -145,7 +148,9 @@ watch(container, () => {
 
 // 监听 elementInfo 变化，节流同步到 useViewLayoutManager
 watch(elementInfo, () => {
-    throttledUpdateViewPosition()
+    if (showView) {
+        throttledUpdateViewPosition()
+    }
 })
 </script>
 
@@ -156,6 +161,13 @@ watch(elementInfo, () => {
 
         <!-- 信息显示区域 - 以背景图形式在底部 -->
         <div v-if="debug" class="absolute top-0 left-0 right-0 h-8 z-10" :style="{
+            backgroundImage: createInfoBackgroundImage(),
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat'
+        }"></div>
+
+        <!-- 信息显示区域 - 以背景图形式在底部 -->
+        <div v-if="debug" class="absolute bottom-0 left-0 right-0 h-8 z-10" :style="{
             backgroundImage: createInfoBackgroundImage(),
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat'

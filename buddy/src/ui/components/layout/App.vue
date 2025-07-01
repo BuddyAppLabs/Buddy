@@ -116,7 +116,7 @@ onUnmounted(() => {
 <template>
     <div class="flex flex-col h-screen frosted-glass">
         <!-- 搜索区域 - 这里是可拖动区域 -->
-        <div class="h-10 mt-4 px-4">
+        <div class="h-16 mt-4 px-4 pb-4 shadow-lg">
             <SearchBar />
         </div>
 

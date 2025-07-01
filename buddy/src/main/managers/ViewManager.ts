@@ -178,11 +178,6 @@ export class ViewManager {
     }
 
     view.setBounds(bounds);
-
-    LogFacade.channel('pluginView').info(
-      '[ViewManager] 视图位置已更新:',
-      bounds
-    );
   }
 
   public async upsertView(args: createViewArgs): Promise<void> {
