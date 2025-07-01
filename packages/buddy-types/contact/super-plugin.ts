@@ -1,11 +1,11 @@
-import { SuperAction } from "./super-action.js";
+import { SuperAction } from './super-action.js';
 
 /**
  * 验证结果
  */
 export interface ValidationResult {
-    isValid: boolean;
-    errors: string[];
+  isValid: boolean;
+  errors: string[];
 }
 
 /**
@@ -25,83 +25,88 @@ export type PluginStatus = 'inactive' | 'active' | 'error' | 'disabled';
 export type PluginType = 'user' | 'dev' | 'remote';
 
 export interface GetActionsArgs {
-    keyword?: string;
-    overlaidApp?: string;
+  keyword?: string;
+  overlaidApp?: string;
 }
 
 export interface ExecuteActionArgs {
-    actionId: string;
-    keyword?: string;
+  actionId: string;
+  keyword?: string;
 }
 
 /**
  * 执行结果
  */
 export interface ExecuteResult {
-    success: boolean;
-    message: string;
+  success: boolean;
+  message: string;
 }
 
 /**
  * 插件信息接口
  */
 export interface SuperPlugin {
-    /**
-     * 插件ID
-     */
-    id: string;
+  /**
+   * 插件ID
+   */
+  id: string;
 
-    /**
-     * 插件名称
-     */
-    name: string;
+  /**
+   * 插件名称
+   */
+  name: string;
 
-    /**
-     * 插件描述
-     */
-    description: string;
+  /**
+   * 插件描述
+   */
+  description: string;
 
-    /**
-     * 插件版本
-     */
-    version: string;
+  /**
+   * 插件版本
+   */
+  version: string;
 
-    /**
-     * 插件作者
-     */
-    author: string;
+  /**
+   * 插件作者
+   */
+  author: string;
 
-    /**
-     * 插件主入口
-     */
-    main?: string;
+  /**
+   * 插件主入口
+   */
+  main?: string;
 
-    /**
-     * 插件路径
-     */
-    path: string;
+  /**
+   * 插件路径
+   */
+  path: string;
 
-    /**
-     * 插件验证状态
-     */
-    validation?: ValidationResult | null;
+  /**
+   * 插件验证状态
+   */
+  validation?: ValidationResult | null;
 
-    /**
-     * 插件类型
-     */
-    type: PluginType;
+  /**
+   * 插件类型
+   */
+  type: PluginType;
 
-    /**
-     * NPM包名称，用于远程插件
-     */
-    npmPackage?: string;
+  /**
+   * NPM包名称，用于远程插件
+   */
+  npmPackage?: string;
 
-    /**
-     * 插件主页面路径
-     */
-    pagePath?: string;
+  /**
+   * 插件主页面路径
+   */
+  pagePath?: string;
 
-    getActions(args: GetActionsArgs): Promise<SuperAction[]>;
+  /**
+   * 是否为插件视图打开开发者工具
+   */
+  devTools?: boolean;
 
-    executeAction(args: ExecuteActionArgs): Promise<ExecuteResult>;
+  getActions(args: GetActionsArgs): Promise<SuperAction[]>;
+
+  executeAction(args: ExecuteActionArgs): Promise<ExecuteResult>;
 }

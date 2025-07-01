@@ -22,10 +22,6 @@ const {
     switchTab,
     openCurrentPluginDirectory
 } = useMarket()
-
-onMounted(() => {
-    marketStore.onMounted();
-});
 </script>
 
 <template>

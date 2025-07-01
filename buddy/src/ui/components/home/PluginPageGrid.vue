@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { useMarketStore } from '@renderer/stores/market-store'
-import { onUnmounted, computed } from 'vue'
+import { onUnmounted, computed, onMounted } from 'vue'
 import { logger } from '@renderer/utils/logger'
 import { viewIpc } from '@renderer/ipc/view-ipc'
 import PluginPage from '@/ui/components/home/PluginPage.vue'
 
 const marketStore = useMarketStore()
 const plugins = computed(() => marketStore.pluginsWithPage)
+
+onMounted(() => {
+    console.log('PluginPageGrid: 挂载插件视图, 插件数量:', plugins.value.length)
+})
 
 onUnmounted(() => {
     logger.info('PluginView: 卸载插件视图')

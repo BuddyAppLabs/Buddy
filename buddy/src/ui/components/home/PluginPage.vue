@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { watch, ref, onUnmounted, onMounted, nextTick } from 'vue'
 import { useElementBounding, useMutationObserver } from '@vueuse/core'
-import { viewIpc } from '../../ipc/view-ipc'
+import { viewIpc } from '@renderer/ipc/view-ipc'
 import { SendablePlugin } from '@/types/sendable-plugin';
 import { createViewArgs } from '@/types/args';
 
@@ -65,6 +65,7 @@ const handlePositionChange = () => {
 }
 
 onMounted(async () => {
+    console.log('PluginPage: 挂载插件视图', props.plugin.pagePath)
     // 在挂载和nextTick后执行初始更新
     await nextTick()
     update()

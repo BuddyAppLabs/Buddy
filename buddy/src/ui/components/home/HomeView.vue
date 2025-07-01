@@ -27,7 +27,7 @@ const handleBackToList = () => {
             <ActionListView />
 
             <!-- 插件视图网格 -->
-            <div class="min-h-96 w-full z-30" v-if="false">
+            <div class="min-h-96 w-full z-30">
                 <PluginPageGrid />
             </div>
         </div>

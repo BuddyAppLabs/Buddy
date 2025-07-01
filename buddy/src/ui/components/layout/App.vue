@@ -36,11 +36,13 @@ import { useAppStore } from '@renderer/stores/appStore'
 import ErrorNotification from '@/ui/components/layout/ErrorNotification.vue'
 import { useErrorStore } from '@renderer/stores/errorStore'
 import VersionDialog from '@/ui/components/bottom/VersionDialog.vue'
+import { useMarketStore } from '@renderer/stores/market-store'
 
 const actionStore = useActionStore()
 const appStore = useAppStore()
 const errorStore = useErrorStore()
 const content = ref<HTMLElement | null>(null)
+const marketStore = useMarketStore()
 
 // 全局错误处理
 const handleGlobalError = (event: ErrorEvent) => {
@@ -93,6 +95,9 @@ onMounted(async () => {
                 document.dispatchEvent(contentScrollEvent)
             })
         }
+
+        // 初始化市场
+        marketStore.onMounted();
     } catch (error) {
         errorStore.addError(error instanceof Error ? error.message : String(error))
     }

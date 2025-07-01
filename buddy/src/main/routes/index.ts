@@ -8,6 +8,7 @@ import { registerCommonRoutes } from './common-route.js';
 import { registerSettingRoutes } from './setting-route.js';
 import { registerPluginRoutes } from './plugin-route.js';
 import { registerStateRoutes } from './state-route.js';
+import { registerIpcRoutes } from './ipc.js';
 
 export function registerRoutes(): void {
   registerActionsRoutes();
@@ -16,4 +17,5 @@ export function registerRoutes(): void {
   registerSettingRoutes();
   registerPluginRoutes();
   registerStateRoutes();
+  registerIpcRoutes();
 }
