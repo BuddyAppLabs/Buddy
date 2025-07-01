@@ -39,7 +39,7 @@ export class WindowServiceProvider extends ServiceProvider {
   public async boot(): Promise<void> {
     // 在启动阶段设置配置
     const windowConfig = {
-      showTrafficLights: true,
+      showTrafficLights: false,
       showDebugToolbar: process.env.NODE_ENV === 'development',
       debugToolbarPosition: 'right',
       hotkey: 'Option+Space',
