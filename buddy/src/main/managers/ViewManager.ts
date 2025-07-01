@@ -10,8 +10,6 @@ import { readFileSync } from 'fs';
 import { WindowFacade } from '../providers/window/WindowFacade.js';
 import { LogFacade } from '@coffic/cosy-logger';
 
-const logger = console;
-
 const verbose = false;
 
 export class ViewManager {

@@ -6,8 +6,6 @@ import {
     ChatMessage,
     StreamChunkResponse,
     StreamDoneResponse,
-    IAIModelConfig,
-    IpcResponse,
     AIModelType,
 } from '@coffic/buddy-types';
 import ApiKeyInput from './ApiKeyInput.vue';
