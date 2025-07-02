@@ -93,8 +93,8 @@ export const marketIpc = {
     }
   },
 
-  // 设置开发插件目录
-  async setDevPluginDirectory(): Promise<string | null> {
+  // 设置开发插件目录，返回设置后的目录
+  async setDevPluginDirectory(): Promise<string> {
     let response = await ipc.invoke(IPC_METHODS.SET_PLUGIN_DIRECTORIES_DEV);
     if (response.success) {
       return response.data;

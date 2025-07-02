@@ -2,7 +2,6 @@ import { computed, ref } from 'vue';
 import { useMarketStore } from '../stores/market-store';
 import { useStorage } from '@vueuse/core';
 import { useAlert } from './useAlert';
-import { globalToast } from './useToast';
 import { marketIpc } from '../ipc/market-ipc';
 import { fileIpc } from '../ipc/file-ipc';
 

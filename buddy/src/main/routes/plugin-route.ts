@@ -3,10 +3,11 @@ import { remotePluginDB } from '../providers/plugin/repo/PluginRepoRemote.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { RouteFacade, SettingFacade } from '@coffic/cosy-framework';
-
 import { LogFacade } from '@coffic/cosy-logger';
 import { userPluginDB } from '../providers/plugin/repo/UserPluginRepo.js';
 import { PluginFacade } from '../providers/plugin/PluginFacade.js';
+
+const KEY_PLUGIN_DEV_PATH = 'plugins.dev.path';
 
 /**
  * 插件市场路由
@@ -68,12 +69,12 @@ export function registerPluginRoutes(): void {
       }
 
       const newPath = filePaths[0];
-      SettingFacade.set('plugins.dev.path', newPath);
+      SettingFacade.set(KEY_PLUGIN_DEV_PATH, newPath);
       PluginFacade.updateDevPluginRootDir(newPath);
 
       return newPath;
     }
-  ).description('设置开发插件的根目录');
+  ).description('设置开发仓库的根目录');
 
   // 获取远程插件列表
   RouteFacade.handle(
