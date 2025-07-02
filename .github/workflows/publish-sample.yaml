@@ -62,13 +62,13 @@ jobs:
 
       - name: Build and Test
         run: |
-          cd packages/plugin-sample
+          cd plugins/plugin-sample
           pnpm run build
 
       - name: Bump version
         id: version
         run: |
-          cd packages/plugin-sample
+          cd plugins/plugin-sample
           # 获取当前版本号
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           # 直接用Node.js脚本修改版本号
@@ -86,7 +86,7 @@ jobs:
 
       - name: Commit changes
         run: |
-          cd packages/plugin-sample
+          cd plugins/plugin-sample
           git pull
           git add package.json
           git commit -m "chore(plugin-sample): bump version to ${{ steps.version.outputs.new_version }}"
