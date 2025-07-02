@@ -1,0 +1,26 @@
+{
+  "name": "@coffic/cosy-logger",
+  "version": "0.1.0",
+  "description": "Cozy Framework 的日志系统",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@coffic/cosy-framework": "workspace:*",
+    "chalk": "^4.1.2",
+    "safe-stable-stringify": "^2.5.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

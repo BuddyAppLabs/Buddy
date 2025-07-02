@@ -10,7 +10,7 @@ export const AppEvents = {
    * 窗口激活事件
    * 当应用窗口获得焦点或被激活时触发
    */
-  ActIVATED: 'app-activated',
+  ACTIVATED: 'app-activated',
 
   MainWindowScroll: 'main-window-scroll',
 

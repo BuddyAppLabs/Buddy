@@ -1,7 +1,7 @@
 packages:
+  - 'packages/*'
   - 'buddy'
   - 'plugins/*'
-  - 'packages/*'
-  - 'components/*'
-  # exclude packages that are inside test directories
-  - '!**/test/**' 
+
+onlyBuiltDependencies:
+  - electron

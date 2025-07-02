@@ -5,9 +5,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as tar from 'tar';
-import { logger } from '../managers/LogManager.js';
 import axios from 'axios';
 import { npmRegistryService } from './NpmRegistryService.js';
+
+const logger = console;
 
 export class Downloader {
   private static instance: Downloader;
