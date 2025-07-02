@@ -94,7 +94,7 @@ export class WindowManager implements IWindowManager {
           sandbox: false,
           contextIsolation: true,
           nodeIntegration: false,
-          devTools: false,
+          devTools: true,
           spellcheck: false,
           preload: join(app.getAppPath(), 'out/preload/framework-preload.mjs'),
         },

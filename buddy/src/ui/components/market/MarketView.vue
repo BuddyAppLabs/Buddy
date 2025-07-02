@@ -16,7 +16,6 @@ const {
     devPlugins,
     remotePlugins,
     isLoading,
-    setDevPluginDir,
     loadPlugins,
     switchTab,
     openCurrentPluginDirectory
@@ -56,30 +55,8 @@ const { isDev } = useApp()
             </ToolBar>
         </div>
 
-        <!-- 开发仓库目录信息 -->
-        <div v-if="marketStore.activeTab === 'dev'" class="mb-4">
-            <div v-if="marketStore.devPluginDirectory"
-                class="flex items-center justify-between p-2 rounded-md bg-base-200 text-sm">
-                <span>当前开发目录: <code>{{ marketStore.devPluginDirectory }}</code></span>
-                <button class="btn btn-xs btn-outline" @click="setDevPluginDir">更改</button>
-            </div>
-            <div v-else class="flex items-center justify-between p-2 rounded-md bg-warning/20 text-warning text-sm">
-                <span>尚未配置开发插件目录</span>
-                <button class="btn btn-xs btn-warning" @click="setDevPluginDir">立即配置</button>
-            </div>
-        </div>
-
-        <!-- 插件列表 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <template v-if="marketStore.activeTab === 'user'">
-                <UserRepoList :plugins="userPlugins" />
-            </template>
-            <template v-if="marketStore.activeTab === 'remote'">
-                <RemoteRepoList :plugins="remotePlugins" />
-            </template>
-            <template v-if="marketStore.activeTab === 'dev'">
-                <DevRepoList :plugins="devPlugins" />
-            </template>
-        </div>
+        <UserRepoList :plugins="userPlugins" v-if="marketStore.activeTab === 'user'" />
+        <RemoteRepoList :plugins="remotePlugins" v-if="marketStore.activeTab === 'remote'" />
+        <DevRepoList :plugins="devPlugins" v-if="marketStore.activeTab === 'dev'" />
     </div>
 </template>
