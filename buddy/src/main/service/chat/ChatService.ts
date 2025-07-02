@@ -1,25 +1,21 @@
-import { streamText, appendResponseMessages } from 'ai';
+import { streamText, appendResponseMessages, wrapLanguageModel } from 'ai';
 import { getTools } from './tools';
-import type {
-  CoreMessage,
-  LanguageModelV1,
-  StreamTextResult,
-  UIMessage,
-} from 'ai';
+import { createDeepSeek } from '@ai-sdk/deepseek';
+import { createAnthropic } from '@ai-sdk/anthropic';
+import { createLogMiddleware } from './middleware/log.mid';
+import { PROVIDERS } from './constants';
+import { IModel } from './contract/IModel';
+import { IProvider, ProviderType } from './contract/IProvider';
+import { createOpenAI } from '@ai-sdk/openai';
+import type { LanguageModelV1, StreamTextResult, UIMessage } from 'ai';
 import type { IChatLogger } from './contract/IChatLogger.js';
 import type { IConversationRepo } from './contract/IConversationRepo.js';
-import { ModelService } from './ModelService';
-const ALL_PROVIDER_NAMES = ['deepseek', 'openai'] as const;
-
-export type ProviderName = (typeof ALL_PROVIDER_NAMES)[number];
-
-export const providerNames: ProviderName[] = [...ALL_PROVIDER_NAMES];
 
 export class ChatService {
+  providers = PROVIDERS;
   private conversationRepo: IConversationRepo | null = null;
   private logger: IChatLogger | null = null;
   private systemPrompt: string | null = null;
-  private modelService: ModelService;
 
   constructor(
     conversationRepo?: IConversationRepo,
@@ -29,7 +25,8 @@ export class ChatService {
     this.conversationRepo = conversationRepo ?? null;
     this.logger = logger ?? null;
     this.systemPrompt = systemPrompt ?? null;
-    this.modelService = new ModelService();
+
+    this.logger?.info('ChatService constructor');
   }
 
   createStream(
@@ -42,6 +39,8 @@ export class ChatService {
     let model = this.getModel(modelId, key);
     const conversationRepo = this.conversationRepo;
     const logger = this.logger;
+
+    logger?.info('[ChatService] createStream with modelId:' + modelId);
 
     return streamText({
       model: model,
@@ -70,7 +69,6 @@ export class ChatService {
         }
 
         logger?.error('streamText error', { statusCode, message });
-        throw error;
       },
       async onFinish({ response }) {
         // onFinish负责保存消息，中间件负责生成标题
@@ -97,11 +95,62 @@ export class ChatService {
     });
   }
 
-  getModel(modelId: string, key: string): LanguageModelV1 {
-    return this.modelService.getModel(modelId, key, this.logger);
+  getModel(
+    modelId: string,
+    key: string,
+    logger: IChatLogger | null = null
+  ): LanguageModelV1 {
+    if (!this.isModelSupported(modelId)) {
+      throw new Error(`Unsupported Model: ${modelId}`);
+    }
+
+    const provider = this.getProvider(modelId);
+    if (!provider) {
+      throw new Error(`Unsupported Model: ${modelId}`);
+    }
+
+    let model: LanguageModelV1;
+    switch (provider.type) {
+      case ProviderType.DEEPSEEK:
+        model = createDeepSeek({ apiKey: key })(modelId);
+        break;
+      case ProviderType.OPENAI:
+        model = createOpenAI({ apiKey: key })(modelId);
+        break;
+      case ProviderType.ANTHROPIC:
+        model = createAnthropic({ apiKey: key })(modelId);
+        break;
+      default:
+        throw new Error(`Unsupported Model: ${modelId}`);
+    }
+
+    return wrapLanguageModel({
+      model: model,
+      middleware: [
+        // extractReasoningMiddleware({ tagName: 'think' }),
+        // simulateStreamingMiddleware(),
+        createLogMiddleware(logger),
+        // createCacheMiddleware(this.cacheRepo),
+      ],
+    });
   }
 
-  getModelList() {
-    return this.modelService.getModelList();
+  public getModelList(): IModel[] {
+    const models: IModel[] = [];
+    this.providers.forEach((provider) => {
+      models.push(...provider.models);
+    });
+
+    return models;
+  }
+
+  private isModelSupported(modelId: string): boolean {
+    return this.getModelList().some((model) => model.id === modelId);
+  }
+
+  public getProvider(modelId: string): IProvider | undefined {
+    return this.providers.find((provider) =>
+      provider.models.some((model) => model.id === modelId)
+    );
   }
 }

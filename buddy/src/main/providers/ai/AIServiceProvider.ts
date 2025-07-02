@@ -11,9 +11,8 @@ export class AIServiceProvider extends ServiceProvider {
    * 注册AI服务
    */
   public register(): void {
-    // 注册AI管理器
     this.app.container().singleton('ai', () => {
-      return new AIManager();
+      return new AIManager(this.app.make('log'));
     });
   }
 
@@ -25,6 +24,7 @@ export class AIServiceProvider extends ServiceProvider {
     new AIServer({
       port: 7878,
       logger: this.app.make('log'),
+      aiManager: this.app.make('ai'),
     }).start();
   }
 

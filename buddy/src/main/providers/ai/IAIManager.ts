@@ -3,7 +3,10 @@
  * 定义了AI管理器需要实现的方法
  */
 
-import { IAIModelConfig, ChatMessage } from '@coffic/buddy-types';
+import { IModel } from '@/main/service/chat/contract/IModel';
+import { IProvider } from '@/main/service/chat/contract/IProvider';
+import { IAIModelConfig } from '@coffic/buddy-types';
+import { StreamTextResult, UIMessage } from 'ai';
 
 // AI模型类型
 export type AIModelType = 'openai' | 'anthropic' | 'deepseek';
@@ -13,13 +16,11 @@ export interface IAIManager {
    * 发送聊天消息
    * 返回流式响应
    */
-  sendChatMessage(
-    messages: ChatMessage[],
-    onChunk: (chunk: string) => void,
-    onFinish: () => void,
-    modelConfig?: Partial<IAIModelConfig>,
-    requestId?: string
-  ): Promise<void>;
+  createStream(
+    modelId: string,
+    apiKey: string,
+    messages: UIMessage[]
+  ): Promise<StreamTextResult<any, any>>;
 
   /**
    * 取消指定ID的请求
@@ -37,9 +38,14 @@ export interface IAIManager {
   getDefaultModelConfig(): IAIModelConfig;
 
   /**
+   * 获取支持的供应商列表
+   */
+  getAvailableProviders(): IProvider[];
+
+  /**
    * 获取支持的模型列表
    */
-  getAvailableModels(): { [key in AIModelType]: string[] };
+  getAvailableModels(): IModel[];
 
   /**
    * 重置配置
