@@ -6,8 +6,7 @@ import { RouteFacade, SettingFacade } from '@coffic/cosy-framework';
 import { LogFacade } from '@coffic/cosy-logger';
 import { userPluginDB } from '../providers/plugin/repo/UserPluginRepo.js';
 import { PluginFacade } from '../providers/plugin/PluginFacade.js';
-
-const KEY_PLUGIN_DEV_PATH = 'plugins.dev.path';
+import { KEY_PLUGIN_DEV_PATH } from '../constants.js';
 
 /**
  * 插件市场路由

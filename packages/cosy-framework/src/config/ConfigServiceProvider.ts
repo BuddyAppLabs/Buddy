@@ -2,34 +2,31 @@
  * 配置服务提供者
  */
 
-import { ServiceProvider } from '../providers/ServiceProvider.js';
+import { ServiceProvider } from '../setting/ServiceProvider.js';
 import { ConfigManager, ConfigLoaderOptions } from './types.js';
 import { Manager } from './Manager.js';
 import { Config } from './facades/Config.js';
 import { join } from 'path';
 import { app } from 'electron';
+import { ConfigAbstract } from '../constants.js';
 
 export class ConfigServiceProvider extends ServiceProvider {
   /**
    * 注册配置服务
    */
   public register(): void {
+    const manager = new Manager(undefined, this.app.config().debug);
+
     // 注册配置管理器
-    this.app.singleton('config.manager', () => {
-      return new Manager();
-    });
+    this.app.singleton(ConfigAbstract, () => manager);
 
     // 注册配置门面的管理器
-    this.app.singleton('config', () => {
-      const manager = this.app.make<ConfigManager>('config.manager');
-      Config.setManager(manager);
-      return manager;
-    });
+    Config.setManager(manager);
 
     // 注册配置助手函数到容器
     this.app.bind('config.helper', () => {
       return (key?: string, defaultValue?: any) => {
-        const manager = this.app.make<ConfigManager>('config');
+        const manager = this.app.make<ConfigManager>(ConfigAbstract);
         if (!key) {
           return manager.all();
         }
@@ -42,7 +39,7 @@ export class ConfigServiceProvider extends ServiceProvider {
    * 启动配置服务
    */
   public override async boot(): Promise<void> {
-    const manager = this.app.make<ConfigManager>('config');
+    const manager = this.app.make<ConfigManager>(ConfigAbstract);
 
     // 获取应用基础路径
     const basePath = this.getBasePath();

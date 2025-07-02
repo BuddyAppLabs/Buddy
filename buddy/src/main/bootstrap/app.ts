@@ -21,7 +21,6 @@ import { McpServiceProvider } from '../providers/mcp/McpServiceProvider.js';
 import { PluginServiceProvider } from '../providers/plugin/PluginServiceProvider.js';
 import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import { WindowServiceProvider } from '../providers/window/WindowServiceProvider.js';
-import { electronApp } from '@electron-toolkit/utils';
 import { StateServiceProvider } from '../providers/state/StateServiceProvider.js';
 import { StateManager } from '../providers/state/StateManager.js';
 
@@ -29,8 +28,8 @@ import { StateManager } from '../providers/state/StateManager.js';
 const config: ApplicationConfig = {
   name: 'Buddy',
   version: '1.3.18',
-  env: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  debug: process.env.NODE_ENV !== 'production',
+  env: app.isPackaged ? 'production' : 'development',
+  debug: true,
   providers: [
     LogServiceProvider,
     SettingServiceProvider,
@@ -81,12 +80,7 @@ export async function bootApplication(): Promise<void> {
 
     setupIPCHandlers(application);
 
-    logger.channel('app').info('✅ 应用核心服务已启动');
-
-    // Set app user model id for windows
-    electronApp.setAppUserModelId('com.electron');
-
-    // ... 你可以在这里放置其他仅在app ready后执行的代码
+    logger.channel('app').info('✅ [Bootstrap] 应用核心服务已启动');
   } catch (error) {
     const errorMessage = '❌ Application failed to start';
     if (logger) {

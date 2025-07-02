@@ -2,7 +2,7 @@ import { Application } from '../application/Application.js';
 import { ApplicationConfig } from '../application/ApplicationConfig.js';
 import { Router } from '../routing/Router.js';
 import electron from 'electron';
-import { EMOJI, IPC_CHANNELS } from '../constants.js';
+import { IPC_CHANNELS, RouterAbstract } from '../constants.js';
 import { ConfigServiceProvider } from '../config/ConfigServiceProvider.js';
 import { Facade } from '../facades/Facade.js';
 import { RouteServiceProvider } from '../routing/RouteServiceProvider.js';
@@ -39,7 +39,7 @@ export async function createElectronApp(
   }
 
   // 注册全局中间件
-  const router = app.container().resolve<Router>('router');
+  const router = app.container().resolve<Router>(RouterAbstract);
   finalConfig.middleware.forEach((middleware) => {
     router.use(middleware);
   });
@@ -53,7 +53,7 @@ export async function createElectronApp(
  * 设置 IPC 处理器
  */
 export function setupIPCHandlers(app: Application): void {
-  const router = app.container().resolve<Router>('router');
+  const router = app.container().resolve<Router>(RouterAbstract);
 
   // 处理所有 IPC 调用
   ipcMain.handle(

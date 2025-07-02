@@ -1,17 +1,21 @@
+import { EventEmitter } from 'events';
+import { ServiceContainer } from '../container/ServiceContainer.js';
+import { ServiceProvider } from '../setting/ServiceProvider.js';
+import { ApplicationConfig } from './ApplicationConfig.js';
+import { IApplication } from '../contract/IApplication.js';
+import {
+  AppAbstract,
+  AppAlias,
+  ContainerAbstract,
+  ContainerAlias,
+  EMOJI,
+} from '../constants.js';
+
 /**
  * 应用主类 - 应用程序的核心
  * 参考 Laravel Application 设计
  * 负责应用的启动、配置加载和服务提供者注册
  */
-import { EventEmitter } from 'events';
-import { ServiceContainer } from '../container/ServiceContainer.js';
-import { ServiceProvider } from '../providers/ServiceProvider.js';
-import { EMOJI } from '../constants.js';
-import { ApplicationConfig } from './ApplicationConfig.js';
-import { IApplication } from '../contract/IApplication.js';
-
-export const AppContract = 'app';
-
 export class Application extends EventEmitter implements IApplication {
   private static _instance: Application;
   private _container: ServiceContainer;
@@ -28,8 +32,19 @@ export class Application extends EventEmitter implements IApplication {
     this._config = config;
     this._container = ServiceContainer.getInstance();
     this.registerBaseBindings();
+
+    if (this.config().debug) {
+      console.log(
+        `${EMOJI} [Application] Application created(📢 Debug Mode 📢)`
+      );
+    }
   }
 
+  /**
+   * 获取应用实例
+   * @param config 应用配置
+   * @returns 应用实例
+   */
   public static getInstance(config?: ApplicationConfig): Application {
     if (!Application._instance) {
       if (!config) {
@@ -46,10 +61,16 @@ export class Application extends EventEmitter implements IApplication {
    * 注册基础绑定
    */
   private registerBaseBindings(): void {
-    this._container.instance('app', this);
-    this._container.instance('container', this._container);
-    this._container.alias('Application', 'app');
-    this._container.alias('ServiceContainer', 'container');
+    this._container.instance(AppAbstract, this);
+    this._container.instance(ContainerAbstract, this._container);
+
+    // 注册别名
+    AppAlias.forEach((alias) => {
+      this._container.alias(alias, AppAbstract);
+    });
+    ContainerAlias.forEach((alias) => {
+      this._container.alias(alias, ContainerAbstract);
+    });
   }
 
   /**

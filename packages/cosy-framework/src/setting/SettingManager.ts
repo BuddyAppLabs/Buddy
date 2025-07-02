@@ -1,11 +1,19 @@
 import { ISettingManager } from '../contract/setting/ISettingManager';
 import { promises as fs } from 'fs';
 import * as path from 'path';
+import { EMOJI } from '../constants.js';
 
 export class SettingManager implements ISettingManager {
   private _settings: Map<string, any> = new Map();
 
-  constructor(private readonly filePath: string) {}
+  private debug: boolean;
+
+  constructor(
+    private readonly filePath: string,
+    debug?: boolean
+  ) {
+    this.debug = debug || false;
+  }
 
   public async load(): Promise<void> {
     try {
@@ -13,7 +21,12 @@ export class SettingManager implements ISettingManager {
       const parsed = JSON.parse(data);
       this._settings = new Map(Object.entries(parsed));
 
-      console.log('loaded settings', this._settings);
+      if (this.debug) {
+        console.log(
+          `${EMOJI} [SettingManager] loaded settings`,
+          this._settings
+        );
+      }
     } catch (error: any) {
       if (error.code === 'ENOENT') {
         this._settings = new Map();

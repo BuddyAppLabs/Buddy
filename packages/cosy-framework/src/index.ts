@@ -8,8 +8,8 @@ export { Application } from './application/Application.js';
 export { ApplicationConfig } from './application/ApplicationConfig.js';
 
 // Service Provider
-export { ServiceProvider } from './providers/ServiceProvider.js';
-export { SettingServiceProvider } from './providers/SettingServiceProvider.js';
+export { ServiceProvider } from './setting/ServiceProvider.js';
+export { SettingServiceProvider } from './setting/SettingServiceProvider.js';
 
 // Config
 export * from './config/index.js';
