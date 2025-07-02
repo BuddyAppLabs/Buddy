@@ -58,4 +58,10 @@ export interface IAIManager {
    * @param provider AI提供商
    */
   getApiKey(provider: AIModelType): Promise<string | undefined>;
+
+  /**
+   * 获取指定大模型的API密钥
+   * @param modelId 大模型ID
+   */
+  getModelApiKey(modelId: string): Promise<string | undefined>;
 }

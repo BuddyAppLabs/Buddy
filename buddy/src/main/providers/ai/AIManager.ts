@@ -178,4 +178,13 @@ export class AIManager implements IAIManager {
   public async getApiKey(provider: AIModelType): Promise<string | undefined> {
     return SettingFacade.get<string>(`ai.keys.${provider}`);
   }
+
+  /**
+   * 获取指定大模型的API密钥
+   */
+  public async getModelApiKey(modelId: string): Promise<string | undefined> {
+    const provider = 'deepseek';
+
+    return this.getApiKey(provider); // 获取模型对应的提供商的API密钥
+  }
 }
