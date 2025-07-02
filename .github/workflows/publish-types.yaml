@@ -28,7 +28,7 @@ on:
     branches:
       - main
     paths:
-      - '.github/workflows/types-publish.yaml'
+      - '.github/workflows/publish-types.yaml'
       - 'packages/buddy-types/**'
 
 jobs:
@@ -50,7 +50,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 9
 
       - name: Install dependencies
         run: pnpm install
@@ -60,10 +60,8 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Build and Test
-        run: |
-          cd packages/buddy-types
-          pnpm run build
+      - name: Build
+        run: pnpm run build:types
 
       - name: Bump version
         id: version
