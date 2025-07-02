@@ -2,12 +2,12 @@
 import ButtonFolder from '@renderer/components/cosy/ButtonFolder.vue'
 import ButtonRefresh from '@renderer/components/cosy/ButtonRefresh.vue'
 import ToolBar from '@renderer/components/cosy/ToolBar.vue'
-import { useMarket } from '../../composables/useMarket'
-import { useMarketStore } from '../../stores/market-store'
+import { useMarket } from '../composables/useMarket'
+import { useMarketStore } from '../stores/market-store'
 import { useApp } from '@renderer/composables/useApp'
-import UserRepoList from './UserRepoList.vue'
-import RemoteRepoList from './RemoteRepoList.vue'
-import DevRepoList from './DevRepoList.vue'
+import UserRepoList from '@renderer/components/market/UserRepoList.vue'
+import RemoteRepoList from '@renderer/components/market/RemoteRepoList.vue'
+import DevRepoList from '@renderer/components/market/DevRepoList.vue'
 
 const marketStore = useMarketStore()
 

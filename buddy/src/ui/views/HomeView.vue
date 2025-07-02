@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useActionStore } from '@renderer/stores/actionStore';
-import ActionListView from '@renderer/components/home/ActionListView.vue';
-import PluginView from './PluginView.vue';
-import PluginPageGrid from './PluginPageGrid.vue';
+import ActionListView from '@/ui/components/home/ActionList.vue';
+import PluginView from '@renderer/components/home/PluginView.vue';
+import PluginPageGrid from '@renderer/components/home/PluginPageGrid.vue';
 import { onUnmounted } from 'vue';
 import { viewIpc } from '@/ui/ipc/view-ipc';
 

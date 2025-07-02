@@ -8,7 +8,7 @@ import {
     StreamDoneResponse,
     AIModelType,
 } from '@coffic/buddy-types';
-import ApiKeyInput from './ApiKeyInput.vue';
+import ApiKeyInput from '@renderer/components/chat/ApiKeyInput.vue';
 
 // 输入消息
 const message = ref('');
