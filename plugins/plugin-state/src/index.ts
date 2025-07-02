@@ -38,15 +38,7 @@ export const plugin: SuperPlugin = {
       `获取动作列表，关键词: "${args.keyword}", 被覆盖应用: "${args.overlaidApp}"`
     );
 
-    // 创建基础动作列表
-    const actions: SuperAction[] = [
-      {
-        id: `hello`,
-        description: '当前应用：' + args.overlaidApp,
-        icon: '👋',
-        globalId: '',
-        pluginId: '',
-      },
+    let actions: SuperAction[] = [
       {
         id: `version`,
         description: '当前版本：' + args.version,
@@ -55,6 +47,16 @@ export const plugin: SuperPlugin = {
         pluginId: '',
       },
     ];
+
+    if (args.overlaidApp) {
+      actions.push({
+        id: `hello`,
+        description: '当前应用：' + args.overlaidApp,
+        icon: '👋',
+        globalId: '',
+        pluginId: '',
+      });
+    }
 
     log.debug(`基础动作列表: ${actions.length} 个动作`);
 
