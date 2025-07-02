@@ -75,6 +75,15 @@ export function registerPluginRoutes(): void {
     }
   ).description('设置开发仓库的根目录');
 
+  // 重置开发插件目录
+  RouteFacade.handle(
+    IPC_METHODS.RESET_PLUGIN_DIRECTORIES_DEV,
+    (_event): void => {
+      SettingFacade.set(KEY_PLUGIN_DEV_PATH, '');
+      PluginFacade.updateDevPluginRootDir('');
+    }
+  ).description('重置开发仓库的根目录');
+
   // 获取远程插件列表
   RouteFacade.handle(
     IPC_METHODS.GET_REMOTE_PLUGINS,

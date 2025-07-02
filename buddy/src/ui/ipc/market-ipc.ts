@@ -103,6 +103,16 @@ export const marketIpc = {
     }
   },
 
+  // 重置开发插件目录
+  async resetDevPluginDirectory(): Promise<void> {
+    let response = await ipc.invoke(IPC_METHODS.RESET_PLUGIN_DIRECTORIES_DEV);
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
   // 判断某个插件是否已经安装
   async isInstalled(pluginId: string): Promise<boolean> {
     logger.debug('判断插件是否已经安装', pluginId);

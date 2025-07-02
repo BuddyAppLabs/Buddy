@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, nextTick } from 'vue'
 import { useActionStore } from '@renderer/stores/actionStore'
-import { RiSearchLine, RiHomeLine, RiStore2Fill, RiStore2Line } from '@remixicon/vue'
+import { RiSearchLine, RiStore2Line } from '@remixicon/vue'
 import router from '@/ui/router'
 import { useAppStore } from '@/ui/stores/app-store'
 

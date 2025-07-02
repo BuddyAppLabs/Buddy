@@ -27,6 +27,11 @@ export function useMarket() {
     }
   };
 
+  const resetDevPluginDir = async () => {
+    await marketIpc.resetDevPluginDirectory();
+    await loadPlugins();
+  };
+
   const loadPlugins = async () => {
     if (isLoading.value) {
       console.log('loadPlugins is loading, skip');
@@ -105,6 +110,7 @@ export function useMarket() {
     shouldShowEmpty,
     uninstallStates,
     setDevPluginDir,
+    resetDevPluginDir,
     switchTab,
     clearUninstallError,
     uninstallPlugin: marketStore.uninstallPlugin,

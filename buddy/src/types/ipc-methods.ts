@@ -43,6 +43,7 @@ export const IPC_METHODS = {
   GET_PLUGIN_DIRECTORIES_USER: 'plugins/directories/user',
   GET_PLUGIN_DIRECTORIES_DEV: 'plugins/directories/dev',
   SET_PLUGIN_DIRECTORIES_DEV: 'plugins/directories/dev/set',
+  RESET_PLUGIN_DIRECTORIES_DEV: 'plugins/directories/dev/reset',
 
   // Overlaid Apps 相关的路由
   Get_Current_App: 'overlaid-apps/current',
