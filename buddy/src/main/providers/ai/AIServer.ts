@@ -42,7 +42,8 @@ export class AIServer {
 
     // 设置供应商的key
     this.app.post('/api/providers/:provider/keys', async (req, res) => {
-      const { provider, key } = req.body;
+      const provider = req.params.provider;
+      const { key } = req.body;
       if (!provider || !key) {
         return res.status(400).json({
           error: {
@@ -51,7 +52,7 @@ export class AIServer {
           },
         });
       }
-      this.aiManager.setApiKey(provider, key);
+      await this.aiManager.setApiKey(provider, key);
       res.json({ message: 'Key set successfully' });
     });
 
