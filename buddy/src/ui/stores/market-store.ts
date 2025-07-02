@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import { marketIpc } from '../ipc/market-ipc.js';
 import { SendablePlugin } from '@/types/sendable-plugin';
+import { MarketTab } from '@/types/market-type';
+import { SuperPlugin } from '@coffic/buddy-types';
 
 const verbose = true;
 const title = '🛍️ 插件市场';
@@ -18,7 +20,9 @@ interface MarketState {
   uninstallingPlugins: Set<string>;
   userPluginDirectory: string;
   devPluginDirectory: string;
-  activeTab: 'user' | 'remote' | 'dev';
+  devPackageDirectory: string;
+  devPackage: SendablePlugin | null;
+  activeTab: MarketTab;
 }
 
 export const useMarketStore = defineStore('market', {
@@ -34,6 +38,8 @@ export const useMarketStore = defineStore('market', {
     uninstallingPlugins: new Set<string>(),
     userPluginDirectory: '',
     devPluginDirectory: '',
+    devPackageDirectory: '',
+    devPackage: null,
     activeTab: 'user',
   }),
 
@@ -45,9 +51,11 @@ export const useMarketStore = defineStore('market', {
       this.activeTab = 'user';
       this.userPluginDirectory = await marketIpc.getUserPluginDirectory();
       this.devPluginDirectory = await marketIpc.getDevPluginDirectory();
+      this.devPackageDirectory = await marketIpc.getDevPackageDirectory();
       await this.loadUserPlugins();
       await this.loadRemotePlugins();
       await this.loadDevPlugins();
+      await this.loadDevPackage();
     },
 
     // 加载开发插件列表
@@ -76,6 +84,12 @@ export const useMarketStore = defineStore('market', {
           );
         }
       }
+    },
+
+    // 加载开发包
+    async loadDevPackage(): Promise<void> {
+      this.devPackage = await marketIpc.getDevPackage();
+      console.log('loadDevPackage', this.devPackage);
     },
 
     // 加载用户插件列表
@@ -158,10 +172,15 @@ export const useMarketStore = defineStore('market', {
       this.devPluginDirectory = await marketIpc.getDevPluginDirectory();
     },
 
+    // 更新开发包目录
+    async updateDevPackageDirectory() {
+      this.devPackageDirectory = await marketIpc.getDevPackageDirectory();
+    },
+
     getCurrentPluginDirectory(): string | null {
       console.log('getCurrentPluginDirectory', this.activeTab);
 
-      if (this.activeTab === 'dev') {
+      if (this.activeTab === 'devRepo') {
         return this.devPluginDirectory;
       }
 

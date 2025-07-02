@@ -22,7 +22,7 @@ import { ActionEntity } from './ActionEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
 import { PluginContext } from './PluginContext.js';
 
-const verbose = false;
+const verbose = true;
 const title = '🧩 PluginEntity';
 
 /**
@@ -144,6 +144,7 @@ export class PluginEntity {
    * 获取插件主文件的完整路径
    */
   get mainFilePath(): string {
+    console.log('[PluginEntity] mainFilePath', this.path, this.main);
     return join(this.path, this.main);
   }
 
@@ -399,17 +400,22 @@ export class PluginEntity {
    * @returns 插件的SendablePlugin对象
    */
   public async getSendablePlugin(): Promise<SendablePlugin> {
-    return {
-      id: this.id,
-      name: this.name,
-      description: this.description,
-      version: this.version,
-      author: this.author,
-      path: this.path,
-      validationError: this.validationError,
-      status: this.status,
-      type: this.type,
-      pagePath: await this.getPagePath(),
-    };
+    try {
+      return {
+        id: this.id,
+        name: this.name,
+        description: this.description,
+        version: this.version,
+        author: this.author,
+        path: this.path,
+        validationError: this.validationError,
+        status: this.status,
+        type: this.type,
+        pagePath: await this.getPagePath(),
+      };
+    } catch (error) {
+      console.error('[PluginEntity] getSendablePlugin', error);
+      throw error;
+    }
   }
 }

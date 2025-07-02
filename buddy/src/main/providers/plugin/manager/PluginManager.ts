@@ -12,13 +12,17 @@ import fs from 'fs';
 import path from 'path';
 import { Downloader } from '@/main/service/Downloader.js';
 import { ExecuteResult, GetActionsArgs } from '@coffic/buddy-types';
+import { DevPackageRepo } from '../repo/DevPackageRepo.js';
 
 export class PluginManager implements IPluginManager {
   /**
    * 构造函数
    * @param repository 插件仓储
    */
-  constructor(private readonly devPluginDB: DevPluginRepo) {}
+  constructor(
+    private readonly devPluginDB: DevPluginRepo,
+    private readonly devPackageDB: DevPackageRepo
+  ) {}
 
   /**
    * 初始化插件系统
@@ -47,6 +51,13 @@ export class PluginManager implements IPluginManager {
    */
   public async allDev(): Promise<PluginEntity[]> {
     return await this.devPluginDB.getAllPlugins();
+  }
+
+  /**
+   * 获取开发包
+   */
+  public async getDevPackage(): Promise<PluginEntity | null> {
+    return await this.devPackageDB.get();
   }
 
   /**
@@ -197,11 +208,26 @@ export class PluginManager implements IPluginManager {
   }
 
   /**
+   * 获取开发包的根目录
+   */
+  public getDevPackageRootDir(): string {
+    return this.devPackageDB.rootDir;
+  }
+
+  /**
    * 更新开发插件的根目录
    * @param path 新路径
    */
   public updateDevPluginRootDir(path: string): void {
     this.devPluginDB.updatePath(path);
+  }
+
+  /**
+   * 更新开发包的根目录
+   * @param path 新路径
+   */
+  public updateDevPackageRootDir(path: string): void {
+    this.devPackageDB.updatePackagePath(path);
   }
 
   /**
