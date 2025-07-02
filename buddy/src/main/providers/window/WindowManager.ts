@@ -94,7 +94,7 @@ export class WindowManager implements IWindowManager {
           sandbox: false,
           contextIsolation: true,
           nodeIntegration: false,
-          devTools: false,
+          devTools: true,
           spellcheck: false,
           preload: join(app.getAppPath(), 'out/preload/framework-preload.mjs'),
         },
@@ -148,7 +148,7 @@ export class WindowManager implements IWindowManager {
       this.logger
         .channel()
         .info(
-          `${EMOJI} [WindowManager] 开发模式：加载开发服务器URL -> ${process.env['ELECTRON_RENDERER_URL']}`
+          `${EMOJI} [WindowManager] 开发模式，加载 -> ${process.env['ELECTRON_RENDERER_URL']}`
         );
 
       this.mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);

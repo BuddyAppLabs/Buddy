@@ -15,6 +15,8 @@ import {
 import { mergeConfig, parseEnvValue } from './utils.js';
 import { EMOJI } from '../constants.js';
 
+const debug = false;
+
 export class Loader implements ConfigLoader {
   /** 支持的配置文件扩展名 */
   private readonly supportedExtensions = ['.js', '.mjs', '.ts', '.json'];
@@ -30,7 +32,9 @@ export class Loader implements ConfigLoader {
     if (options.cache?.enabled) {
       const cachedConfig = await this.loadFromCache(options.cache);
       if (cachedConfig) {
-        console.log('⚡ 从缓存加载配置');
+        if (debug) {
+          console.log('⚡ 从缓存加载配置');
+        }
         return cachedConfig;
       }
     }
@@ -52,7 +56,9 @@ export class Loader implements ConfigLoader {
         const fileConfig = await this.loadConfigFile(file);
         config = mergeConfig(config, { [file.name]: fileConfig });
 
-        console.log(`${EMOJI} [ConfigLoader] 已加载配置文件: ${file.name}`);
+        if (debug) {
+          console.log(`${EMOJI} [ConfigLoader] 已加载配置文件: ${file.name}`);
+        }
       } catch (error) {
         const message = `加载配置文件失败: ${file.path}`;
 

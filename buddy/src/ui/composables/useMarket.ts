@@ -2,13 +2,11 @@ import { computed, ref } from 'vue';
 import { useMarketStore } from '../stores/market-store';
 import { useStorage } from '@vueuse/core';
 import { useAlert } from './useAlert';
-import { globalToast } from './useToast';
 import { marketIpc } from '../ipc/market-ipc';
 import { fileIpc } from '../ipc/file-ipc';
 
 export function useMarket() {
   const { error } = useAlert();
-  const isDev = import.meta.env.DEV;
 
   const marketStore = useMarketStore();
   const userPlugins = computed(() => marketStore.userPlugins);
@@ -53,11 +51,6 @@ export function useMarket() {
         default:
           error('未知标签');
       }
-
-      globalToast.success(`刷新成功`, {
-        duration: 2000,
-        position: 'bottom-center',
-      });
     } catch (err) {
       error('刷新失败' + err);
     } finally {
@@ -82,12 +75,6 @@ export function useMarket() {
     uninstallError: new Map<string, string>(),
   });
 
-  // 刷新按钮点击事件
-  const handleRefresh = () => {
-    console.log('handleRefresh');
-    loadPlugins();
-  };
-
   // 切换标签并加载对应插件
   const switchTab = (tab: 'user' | 'remote' | 'dev') => {
     marketStore.activeTab = tab;
@@ -110,15 +97,14 @@ export function useMarket() {
   };
 
   return {
-    isDev,
     userPlugins,
     devPlugins,
     remotePlugins,
     isLoading,
+    loadPlugins,
     shouldShowEmpty,
     uninstallStates,
     setDevPluginDir,
-    handleRefresh,
     switchTab,
     clearUninstallError,
     uninstallPlugin: marketStore.uninstallPlugin,
