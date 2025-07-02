@@ -1,28 +1,6 @@
-<!--
-App.vue - 应用程序入口组件
-
-这是应用的根组件，主要负责：
-1. 组织整体布局结构
-2. 管理插件系统的生命周期
-3. 处理插件消息通信
-4. 管理全局快捷键
-5. 管理窗口激活状态监听
-
-技术栈：
-- Vue 3 组合式API
-- Pinia 状态管理
-- Electron IPC通信
-
-注意事项：
-- 所有的状态管理都通过pinia store处理
-- 插件通信使用electron的IPC机制
-- 组件间通过store而不是props通信
--->
-
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import SearchBar from '@/ui/components/layout/SearchBar.vue'
-import StatusBar from '@/ui/components/layout/StatusBar.vue'
 import Confirm from '@renderer/components/cosy/Confirm.vue'
 import Toast from '@renderer/components/cosy/Toast.vue'
 import Alert from '@renderer/components/cosy/Alert.vue'
@@ -117,7 +95,8 @@ onUnmounted(() => {
     <div class="flex flex-col h-screen frosted-glass">
 
         <!-- 搜索区域 - 这里是可拖动区域 -->
-        <div class="h-16 mt-4 px-4 pb-4 shadow-lg">
+        <div class="h-16 mt-4 px-4 pb-4 shadow-lg flex justify-between">
+
             <SearchBar />
         </div>
         <!-- 全局进度条 -->
@@ -140,11 +119,6 @@ onUnmounted(() => {
             </router-view>
         </div>
         <ErrorNotification />
-
-        <!-- 状态栏 -->
-        <div class="h-10 z-50 border-t border-base-200 dark:border-base-300 no-drag-region">
-            <StatusBar />
-        </div>
     </div>
 
     <!-- 版本信息对话框 -->

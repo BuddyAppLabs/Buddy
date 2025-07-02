@@ -11,7 +11,6 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import PluginStoreView from '@/ui/views/MarketView.vue';
 import { useAppStore } from '@/ui/stores/app-store';
 import HomeView from '@/ui/views/HomeView.vue';
-import ChatView from '@/ui/views/ChatView.vue';
 
 // 路由配置
 const routes = [
@@ -31,15 +30,6 @@ const routes = [
     meta: {
       title: '插件商店',
       viewType: 'plugins',
-    },
-  },
-  {
-    path: '/chat',
-    name: 'chat',
-    component: ChatView,
-    meta: {
-      title: '聊天',
-      viewType: 'chat',
     },
   },
 ];
