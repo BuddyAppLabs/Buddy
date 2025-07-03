@@ -34,6 +34,7 @@ Props:
 
   // 颜色变体类型
   type ColorVariant =
+    | 'default'
     | 'neutral'
     | 'primary'
     | 'secondary'
@@ -134,6 +135,7 @@ Props:
         'btn-success': buttonColor.value === 'success',
         'btn-warning': buttonColor.value === 'warning',
         'btn-error': buttonColor.value === 'error',
+        // default 不需要特殊的类名
       },
       // 样式类 - 显式列出所有可能的类名
       {
