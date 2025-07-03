@@ -9,6 +9,10 @@
   const debug = false;
   const actionStore = useActionStore();
   const globalAlert = useAlert();
+
+  // 本地加载状态
+  const isLoading = ref(false);
+
   const props = defineProps<{
     action: SendableAction;
     index: number;
@@ -38,7 +42,7 @@
   onKeyStroke(
     ['Enter', ' '],
     (e) => {
-      if (focused.value) {
+      if (focused.value && !isLoading.value) {
         e.preventDefault();
         handleClick();
       }
@@ -66,14 +70,27 @@
 
   // 处理动作选择
   const handleClick = async () => {
-    const result = await actionStore.setWillRun(props.action.globalId);
-    console.log('handleClick', result);
-    if (result.success) {
-      if (result.alert) {
-        globalAlert.success(result.alert);
+    if (isLoading.value) return; // 防止重复点击
+
+    try {
+      isLoading.value = true;
+      const result = await actionStore.setWillRun(props.action.globalId);
+      console.log('handleClick', result);
+
+      if (result.success) {
+        if (result.alert) {
+          globalAlert.success(result.alert);
+        }
+      } else {
+        globalAlert.error(result.message, { duration: 3000 });
       }
-    } else {
-      globalAlert.error(result.message, { duration: 3000 });
+    } catch (error) {
+      globalAlert.error('执行动作时发生错误', { duration: 3000 });
+    } finally {
+      // 添加最小延迟以确保用户能看到加载动画
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 300);
     }
   };
 </script>
@@ -82,6 +99,7 @@
   <ListItem
     ref="itemRef"
     :selected="selected"
+    :loading="isLoading"
     :description="
       debug ? `${action.globalId} - ${action.description}` : action.description
     "

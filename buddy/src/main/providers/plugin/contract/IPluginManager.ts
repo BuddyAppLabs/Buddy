@@ -5,7 +5,6 @@
 import { ExecuteResult, GetActionsArgs } from '@coffic/buddy-types';
 import { PluginEntity } from '../model/PluginEntity.js';
 import { ActionEntity } from '../model/ActionEntity.js';
-import { SendablePlugin } from '@/types/sendable-plugin.js';
 
 /**
  * 插件管理器契约

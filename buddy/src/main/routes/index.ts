@@ -1,5 +1,4 @@
 import { registerActionsRoutes } from './actions-route.js';
-import { registerAIRoutes } from './ai-route.js';
 import { registerCommonRoutes } from './common-route.js';
 import { registerSettingRoutes } from './setting-route.js';
 import { registerPluginRoutes } from './plugin-route.js';
@@ -9,7 +8,6 @@ import { registerViewRoutes } from './view-route.js';
 
 export function registerRoutes(): void {
   registerActionsRoutes();
-  registerAIRoutes();
   registerCommonRoutes();
   registerSettingRoutes();
   registerPluginRoutes();

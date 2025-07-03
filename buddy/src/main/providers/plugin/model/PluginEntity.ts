@@ -20,7 +20,6 @@ import { PackageJson } from '@/types/package-json.js';
 
 import { ActionEntity } from './ActionEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
-import { PluginContext } from './PluginContext.js';
 
 const title = '[PluginEntity] 🧩';
 

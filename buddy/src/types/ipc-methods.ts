@@ -52,19 +52,6 @@ export const IPC_METHODS = {
   // Overlaid Apps 相关的路由
   Get_Current_App: 'overlaid-apps/current',
 
-  // AI Chats 相关的路由
-  AI_CHAT: 'ai/chats',
-  AI_CHAT_SEND: 'ai/chats/messages',
-  AI_CHAT_CANCEL: 'ai/chats/cancel',
-  AI_SET_API_KEY: 'ai/api-key/set',
-  AI_GET_AVAILABLE_MODELS: 'ai/models/get',
-  AI_GET_DEFAULT_MODEL: 'ai/models/default/get',
-  AI_SET_DEFAULT_MODEL: 'ai/models/default/set',
-
-  // AI Chat Streams 相关的路由
-  AI_CHAT_STREAM_CHUNK: 'ai/chats/streams/chunks',
-  AI_CHAT_STREAM_DONE: 'ai/chats/streams/completion',
-
   // Configs 相关的路由
   CONFIG_GET_ALL: 'configs',
   CONFIG_GET: 'configs/items/get',
