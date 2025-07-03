@@ -24,7 +24,13 @@ export class UpdateManager implements IUpdateManager {
       this.mainWindow = window;
     });
 
-    const updaterConfig = this.config.get<IUpdateConfig>('updater', {});
+    const updaterConfig = this.config.get<IUpdateConfig>('updater', {
+      allowDowngrade: true,
+      allowPrerelease: true,
+      forceDevUpdateConfig: false,
+      autoCheck: true,
+      autoCheckDelay: 3000,
+    });
     autoUpdater.logger = this.logger.createChannel('update', {
       driver: 'file',
       level: ILogLevel.INFO,

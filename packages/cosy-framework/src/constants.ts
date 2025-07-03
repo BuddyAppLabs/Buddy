@@ -20,3 +20,8 @@ export const ConfigAlias = ['ConfigManager'];
 
 export const SettingAbstract = 'setting';
 export const SettingAlias = ['SettingManager'];
+
+export const UpdateContract = 'update';
+
+export const LogAbstract = 'log';
+export const LogAlias = ['LogManager'];

@@ -74,12 +74,12 @@ watch(() => actionStore.keyword, async () => {
     <div class="action-list-view" ref="actionListRef">
         <div>
             <!-- 加载状态 -->
-            <div v-if="isLoading" class="text-center py-4 text-base-content/60">
+            <div v-if="isLoading" class="text-center py-4">
                 <p>加载中...</p>
             </div>
 
             <!-- 空状态 -->
-            <div v-else-if="actionStore.getActionCount() === 0" class="text-center py-8 text-base-content/60">
+            <div v-else-if="actionStore.getActionCount() === 0" class="text-center py-8">
                 <p>没有找到匹配的动作</p>
                 <p class="text-sm mt-2">尝试其他关键词或安装更多插件</p>
             </div>
