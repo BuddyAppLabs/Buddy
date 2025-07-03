@@ -30,6 +30,7 @@
     "@coffic/cosy-framework": "workspace:*",
     "@coffic/cosy-keyboard": "workspace:*",
     "@coffic/cosy-logger": "workspace:*",
+    "@coffic/cosy-ui": "^0.8.16",
     "@coffic/key-listener": "^1.0.3",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",

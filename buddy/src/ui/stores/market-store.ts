@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 import { marketIpc } from '../ipc/market-ipc.js';
 import { SendablePlugin } from '@/types/sendable-plugin';
 import { MarketTab } from '@/types/market-type';
-import { SuperPlugin } from '@coffic/buddy-types';
 
 const verbose = true;
 const title = '🛍️ 插件市场';

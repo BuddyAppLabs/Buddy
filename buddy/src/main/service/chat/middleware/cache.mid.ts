@@ -27,7 +27,7 @@ export function createCacheMiddleware(
       return result;
     },
 
-    wrapStream: async ({ doStream, params }) => {
+    wrapStream: async ({ doStream }) => {
       // 对于流式处理，暂时不实现缓存
       // 因为流式响应的特殊性，缓存流式内容会比较复杂
       return await doStream();

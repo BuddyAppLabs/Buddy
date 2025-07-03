@@ -107,11 +107,11 @@ export function registerPluginRoutes(): void {
   // 获取开发包
   RouteFacade.handle(
     IPC_METHODS.GET_DEV_PACKAGE,
-    async (_event): Promise<SendablePlugin | null> => {
+    async (_event): Promise<SendablePlugin | null | undefined> => {
       const plugin = await PluginFacade.getDevPackage();
-      console.log('[plugin-route] getDevPackage', plugin);
-      console.log(plugin?.getSendablePlugin());
-      return null;
+      const sendablePlugin = await plugin?.getSendablePlugin();
+      console.log('[plugin-route] getDevPackage', sendablePlugin);
+      return sendablePlugin;
     }
   ).description('获取开发包');
 

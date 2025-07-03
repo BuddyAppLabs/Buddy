@@ -4,6 +4,7 @@ import { useActionStore } from '@renderer/stores/actionStore'
 import { RiSearchLine, RiStore2Line } from '@remixicon/vue'
 import router from '@/ui/router'
 import { useAppStore } from '@/ui/stores/app-store'
+import Button from '@/ui/components/cosy/Button.vue'
 
 const appStore = useAppStore()
 const actionStore = useActionStore()
@@ -64,8 +65,12 @@ onMounted(() => {
 <template>
     <div
         class="relative w-full h-full flex items-center drag-region ring-2 bg-amber-100/10 ring-blue-500/40 rounded-lg">
-        <RiStore2Line class="w-10 h-8 no-drag-region" @click="goToPluginStore" />
-        <RiSearchLine class="w-10 h-8 no-drag-region" @click="goToHome" />
+        <Button>
+            <RiStore2Line class="w-10 h-8 no-drag-region" @click="goToPluginStore" />
+        </Button>
+        <Button>
+            <RiSearchLine class="w-10 h-8 no-drag-region" @click="goToHome" />
+        </Button>
         <div class="relative flex-grow h-full">
             <span class="invisible whitespace-pre" ref="measureText">{{ keyword || 'Search' }}</span>
             <input ref="searchInput" v-model="keyword" @keydown="handleKeyDown"
