@@ -84,7 +84,7 @@
           globalAlert.success(result.message, { duration: 3000 });
         }
       } else {
-        globalAlert.error(result.message, { duration: 3000 });
+        globalAlert.error(result.message);
       }
     } catch (error) {
       globalAlert.error('执行动作时发生错误', { duration: 3000 });
