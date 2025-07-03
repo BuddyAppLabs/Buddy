@@ -126,7 +126,8 @@
 <template>
   <div class="flex flex-col h-screen frosted-glass">
     <!-- 搜索区域 - 这里是可拖动区域 -->
-    <div class="h-16 mt-4 px-4 pb-4 shadow-lg flex justify-between">
+    <div
+      class="h-12 mt-0 px-4 pb-0 flex justify-between bg-gradient-to-r from-primary-content/50 to-primary-content/10 bg-opacity-50 shadow-lg">
       <SearchBar />
     </div>
     <!-- 全局进度条 -->
@@ -139,7 +140,9 @@
     </div>
 
     <!-- 内容区域 -->
-    <div class="flex-1 overflow-auto no-drag-region" ref="content">
+    <div
+      class="flex-1 overflow-auto no-drag-region bg-gradient-to-b from-accent-content/50 to-accent-content/0 py-4"
+      ref="content">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
