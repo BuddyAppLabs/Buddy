@@ -11,7 +11,6 @@ interface MarketState {
   error: string;
   userPlugins: SendablePlugin[];
   devPlugins: SendablePlugin[];
-  pluginsWithPage: SendablePlugin[];
   remotePlugins: SendablePlugin[];
   loadingPlugins: boolean;
   loadingRemotePlugins: boolean;
@@ -29,7 +28,6 @@ export const useMarketStore = defineStore('market', {
     error: '',
     userPlugins: [],
     devPlugins: [],
-    pluginsWithPage: [],
     remotePlugins: [],
     loadingPlugins: false,
     loadingRemotePlugins: false,
@@ -70,25 +68,28 @@ export const useMarketStore = defineStore('market', {
         throw err;
       } finally {
         this.loadingPlugins = false;
-        this.pluginsWithPage = this.devPlugins.filter(
-          (plugin) => plugin.pagePath
-        );
 
         if (verbose) {
           logger.debug(
             `${title} 加载开发插件列表完成，插件数量：${this.devPlugins.length}`
           );
-          logger.debug(
-            `${title} 加载开发插件列表完成，有视图插件数量：${this.pluginsWithPage.length}`
-          );
         }
       }
+    },
+
+    getPluginsWithPage(): SendablePlugin[] {
+      return [
+        ...this.devPlugins.filter((plugin) => plugin.pagePath),
+        ...this.userPlugins.filter((plugin) => plugin.pagePath),
+        ...(this.devPackage
+          ? [this.devPackage].filter((plugin) => plugin.pagePath)
+          : []),
+      ];
     },
 
     // 加载开发包
     async loadDevPackage(): Promise<void> {
       this.devPackage = await marketIpc.getDevPackage();
-      console.log('loadDevPackage', this.devPackage);
     },
 
     // 加载用户插件列表

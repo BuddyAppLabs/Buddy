@@ -11,6 +11,7 @@ import { globalToast } from '@renderer/composables/useToast'
 import { marketIpc } from '../../ipc/market-ipc'
 import { SendablePlugin } from '@/types/sendable-plugin'
 import { useAsyncState, useTimeoutFn } from '@vueuse/core'
+import { RiAlertLine } from '@remixicon/vue'
 
 const props = defineProps<{
     plugin: SendablePlugin
@@ -56,7 +57,7 @@ const { state: isUninstalling, execute: executeUninstall } = useAsyncState(
 // 计算卡片样式
 const cardClass = computed(() => {
     if (props.plugin.type === 'remote') return 'bg-primary/10'
-    if (props.plugin.type === 'dev') return 'bg-secondary/40'
+    if (props.plugin.type === 'dev') return 'bg-secondary/10'
 
     return {
         'bg-base-100': props.plugin.status === 'inactive',
@@ -106,6 +107,12 @@ const uninstallingPlugins = computed(() => marketStore.uninstallingPlugins)
 
             <!-- 插件基本信息 -->
             <p class="text-base-content/70 text-sm mb-4">{{ plugin.description }}</p>
+
+            <!-- 插件错误信息 -->
+            <p class="text-error text-sm mb-4 flex items-center" v-if="plugin.error">
+                <RiAlertLine class="h-5 w-5 mr-1" />
+                {{ plugin.error }}
+            </p>
 
             <!-- 操作区域 -->
             <div class="mt-4 flex flex-wrap gap-2 items-center" v-if="plugin.type != 'dev'">

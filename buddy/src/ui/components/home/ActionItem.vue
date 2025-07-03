@@ -2,7 +2,7 @@
 import { SendableAction } from '@/types/sendable-action.js';
 import ListItem from '@renderer/components/cosy/ListItem.vue'
 import { logger } from '@renderer/utils/logger';
-import { useActionStore } from '@renderer/stores/actionStore';
+import { useActionStore } from '@/ui/stores/action-store';
 import { computed, ref } from 'vue';
 import { onKeyStroke, useFocus } from '@vueuse/core';
 import { useToast } from '@renderer/composables/useToast';

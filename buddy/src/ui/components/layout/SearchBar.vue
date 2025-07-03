@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, nextTick } from 'vue'
-import { useActionStore } from '@renderer/stores/actionStore'
+import { useActionStore } from '@/ui/stores/action-store'
 import { RiSearchLine, RiStore2Line } from '@remixicon/vue'
-import router from '@/ui/router'
-import { useAppStore } from '@/ui/stores/app-store'
 import Button from '@/ui/components/cosy/Button.vue'
+import { useNavigation } from '@/ui/composables/useNavigation'
 
-const appStore = useAppStore()
 const actionStore = useActionStore()
 const keyword = ref(actionStore.keyword)
 const measureText = ref<HTMLElement | null>(null)
 const inputWidth = ref(200)
 const searchInput = ref<HTMLInputElement | null>(null)
+const { goToPluginStore, goToHome } = useNavigation()
 
 // 监听本地关键词变化并更新 actionStore
 watch(keyword, async (newKeyword) => {
@@ -27,19 +26,6 @@ watch(keyword, async (newKeyword) => {
 // 处理键盘事件
 const handleKeyDown = (event: KeyboardEvent) => {
     actionStore.handleKeyDown(event)
-}
-
-// 跳转到插件商店
-const goToPluginStore = () => {
-    router.push('/plugins')
-    appStore.setView('plugins')
-    searchInput.value?.blur()
-}
-
-const goToHome = () => {
-    router.push('/')
-    appStore.setView('home')
-    searchInput.value?.blur()
 }
 
 

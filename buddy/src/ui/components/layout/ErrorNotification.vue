@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { useErrorStore } from '@renderer/stores/errorStore';
+import { useErrorStore } from '@/ui/stores/error-store';
 
 const errorStore = useErrorStore();
 </script>

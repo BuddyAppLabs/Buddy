@@ -125,11 +125,14 @@ export class StateManager {
 
     const frontmostApp = this.getCurrentActiveApp(reason);
     if (frontmostApp) {
-      LogFacade.channel('state').debug('更新被覆盖的应用信息', frontmostApp);
+      LogFacade.channel('state').debug(
+        '[StateManager] 更新被覆盖的应用信息',
+        frontmostApp
+      );
       this.setOverlaidApp(frontmostApp);
     } else {
       LogFacade.channel('state').debug(
-        '无法获取当前活跃的应用信息',
+        '[StateManager] 无法获取当前活跃的应用信息',
         frontmostApp
       );
       this.setOverlaidApp(null);

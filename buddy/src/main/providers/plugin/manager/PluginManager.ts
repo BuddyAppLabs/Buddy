@@ -40,9 +40,11 @@ export class PluginManager implements IPluginManager {
    * 获取所有插件
    */
   public async all(): Promise<PluginEntity[]> {
+    const devPackage = await this.getDevPackage();
     return [
       ...(await userPluginDB.getAllPlugins()),
       ...(await this.devPluginDB.getAllPlugins()),
+      ...(devPackage ? [devPackage] : []),
     ];
   }
 

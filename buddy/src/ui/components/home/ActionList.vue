@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { watch, ref, nextTick } from 'vue'
 import ActionItem from '@/ui/components/home/ActionItem.vue'
-import { useActionStore } from '@renderer/stores/actionStore'
-import { logger } from '@renderer/utils/logger'
+import { useActionStore } from '@/ui/stores/action-store'
+import { logger } from '@/ui/utils/logger'
 import { useAsyncState } from '@vueuse/core'
 
 const actionStore = useActionStore()
@@ -93,13 +93,3 @@ watch(() => actionStore.keyword, async () => {
         </div>
     </div>
 </template>
-
-<style scoped>
-.action-list-view {
-    padding: 1rem 0;
-}
-
-.empty-state {
-    border: 1px dashed var(--base-content/30);
-}
-</style>

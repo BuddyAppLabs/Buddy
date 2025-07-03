@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import { useMarketStore } from '@renderer/stores/market-store'
-import { computed } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import PluginPage from '@/ui/components/home/PluginPage.vue'
 
 const marketStore = useMarketStore()
-const plugins = computed(() => marketStore.pluginsWithPage)
+const plugins = computed(() => marketStore.getPluginsWithPage())
+
+watch(plugins, () => {
+    console.log('plugins with page count', plugins.value.length)
+})
+
+onMounted(() => {
+    console.log('[PluginPageGrid] onMounted')
+    console.log('plugins with page count', plugins.value.length)
+})
 
 </script>
 

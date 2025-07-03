@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { actionIpc } from '@renderer/ipc/action-ipc';
 import { AppEvents, ExecuteResult } from '@coffic/buddy-types';
 import { SendableAction } from '@/types/sendable-action';
-import { useErrorStore } from './errorStore.js';
+import { useErrorStore } from './error-store.js';
 
 const ipc = window.ipc;
 const logger = console;
@@ -12,7 +12,6 @@ const logger = console;
  *
  * 负责管理动作列表、搜索、执行等功能
  */
-
 interface ActionState {
   list: SendableAction[];
   isLoading: boolean;

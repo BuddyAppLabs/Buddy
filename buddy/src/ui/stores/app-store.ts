@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia';
 import { AppEvents, SuperAction, SuperApp } from '@coffic/buddy-types';
 import { stateApi } from '../ipc/state-api';
+import { ViewType } from '../router';
 
 const ipc = window.ipc;
-
-export type ViewType = 'home' | 'plugins' | 'chat' | 'plugin-grid';
 
 interface AppState {
   currentView: ViewType;

@@ -11,6 +11,9 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import PluginStoreView from '@/ui/views/MarketView.vue';
 import { useAppStore } from '@/ui/stores/app-store';
 import HomeView from '@/ui/views/HomeView.vue';
+import HeroView from '@/ui/views/HeroView.vue';
+
+export type ViewType = 'home' | 'plugins' | 'chat' | 'plugin-grid' | 'hero';
 
 // 路由配置
 const routes = [
@@ -31,6 +34,11 @@ const routes = [
       title: '插件商店',
       viewType: 'plugins',
     },
+  },
+  {
+    path: '/hero',
+    name: 'hero',
+    component: HeroView,
   },
 ];
 

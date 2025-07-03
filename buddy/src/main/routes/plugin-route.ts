@@ -110,7 +110,6 @@ export function registerPluginRoutes(): void {
     async (_event): Promise<SendablePlugin | null | undefined> => {
       const plugin = await PluginFacade.getDevPackage();
       const sendablePlugin = await plugin?.getSendablePlugin();
-      console.log('[plugin-route] getDevPackage', sendablePlugin);
       return sendablePlugin;
     }
   ).description('获取开发包');

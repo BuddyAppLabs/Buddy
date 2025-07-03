@@ -22,8 +22,7 @@ import { ActionEntity } from './ActionEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
 import { PluginContext } from './PluginContext.js';
 
-const verbose = true;
-const title = '🧩 PluginEntity';
+const title = '[PluginEntity] 🧩';
 
 /**
  * 插件实体类
@@ -61,12 +60,10 @@ export class PluginEntity {
       throw new Error(`插件目录 ${pluginPath} 缺少 package.json`);
     }
 
-    if (verbose) {
-      LogFacade.channel('plugin').debug('[PluginEntity] 🧩 读取插件目录', {
-        pluginPath,
-        type,
-      });
-    }
+    LogFacade.channel('plugin').debug('[PluginEntity] 🧩 读取插件目录', {
+      pluginPath,
+      type,
+    });
 
     const packageJson = await readPackageJson(pluginPath);
     const plugin = new PluginEntity(packageJson, pluginPath, type);
@@ -144,7 +141,6 @@ export class PluginEntity {
    * 获取插件主文件的完整路径
    */
   get mainFilePath(): string {
-    console.log('[PluginEntity] mainFilePath', this.path, this.main);
     return join(this.path, this.main);
   }
 
@@ -244,7 +240,8 @@ export class PluginEntity {
     // 如果插件未加载或状态不正常，返回空数组
     if (this.status !== 'active') {
       LogFacade.channel('plugin').warn(
-        `插件 ${this.id} 未加载或状态不正常(${this.status})，返回空动作列表`
+        `[PluginEntity] 插件 ${this.id} 未加载或状态不正常(${this.status})，返回空动作列表`,
+        await this.getSendablePlugin()
       );
       return [];
     }
@@ -368,11 +365,9 @@ export class PluginEntity {
    * @returns 插件主页面路径
    */
   async getPagePath(): Promise<string> {
-    if (verbose) {
-      LogFacade.channel('plugin').info(
-        `${title} 获取插件 ${this.id} 的主页面路径`
-      );
-    }
+    LogFacade.channel('plugin').debug(
+      `${title} 获取插件 ${this.id} 的主页面路径`
+    );
 
     const module = await this.load();
     if (!module) {
@@ -385,11 +380,9 @@ export class PluginEntity {
     const pagePath = module.pagePath || '';
     const absolutePagePath = join(this.path, pagePath);
 
-    if (verbose) {
-      LogFacade.channel('plugin').info(
-        `${title} 插件 ${this.id} 的主页面路径: ${absolutePagePath}`
-      );
-    }
+    LogFacade.channel('plugin').debug(
+      `${title} 插件 ${this.id} 的主页面路径: ${absolutePagePath}`
+    );
 
     return pagePath ? absolutePagePath : '';
   }
@@ -411,10 +404,13 @@ export class PluginEntity {
         validationError: this.validationError,
         status: this.status,
         type: this.type,
+        error: this.error || undefined,
         pagePath: await this.getPagePath(),
       };
     } catch (error) {
-      console.error('[PluginEntity] getSendablePlugin', error);
+      LogFacade.channel('plugin').error('[PluginEntity] getSendablePlugin', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
