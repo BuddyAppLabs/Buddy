@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onUnmounted, onMounted, nextTick } from 'vue'
-import { useActionStore } from '@renderer/stores/actionStore'
+import { useActionStore } from '@/ui/stores/action-store'
 import { logger } from '@renderer/utils/logger'
 import { ViewBounds } from '@coffic/buddy-types'
 import { SendableAction } from '@/types/sendable-action'

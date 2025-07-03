@@ -1,24 +1,31 @@
+import { IPluginManager } from '@/main/providers/plugin/contract/IPluginManager.js';
+import { PluginEntity } from '@/main/providers/plugin/model/PluginEntity.js';
+import { userPluginDB } from '@/main/providers/plugin/repo/UserPluginRepo.js';
+import { ActionEntity } from '@/main/providers/plugin/model/ActionEntity.js';
+import { DevPackageRepo } from '@/main/providers/plugin/repo/DevPackageRepo.js';
+import { PluginContext } from '@/main/providers/plugin/model/PluginContext.js';
+import { DevPluginRepo } from '@/main/providers/plugin/repo/DevPluginRepo.js';
+import { ExecuteResult, GetActionsArgs } from '@coffic/buddy-types';
+import { Downloader } from '@/main/service/Downloader.js';
+import { LogFacade } from '@coffic/cosy-logger';
+import fs from 'fs';
+import path from 'path';
+import { IAIManager } from '../../ai/IAIManager';
+
 /**
  * 插件管理器
  * 负责插件的加载、管理和通信
  */
-import { IPluginManager } from '../contract/IPluginManager.js';
-import { PluginEntity } from '../model/PluginEntity.js';
-import { LogFacade } from '@coffic/cosy-logger';
-import { DevPluginRepo } from '../repo/DevPluginRepo.js';
-import { userPluginDB } from '../repo/UserPluginRepo.js';
-import { ActionEntity } from '../model/ActionEntity.js';
-import fs from 'fs';
-import path from 'path';
-import { Downloader } from '@/main/service/Downloader.js';
-import { ExecuteResult, GetActionsArgs } from '@coffic/buddy-types';
-
 export class PluginManager implements IPluginManager {
   /**
    * 构造函数
    * @param repository 插件仓储
    */
-  constructor(private readonly devPluginDB: DevPluginRepo) {}
+  constructor(
+    private readonly devPluginDB: DevPluginRepo,
+    private readonly devPackageDB: DevPackageRepo,
+    private readonly aiManager: IAIManager
+  ) {}
 
   /**
    * 初始化插件系统
@@ -36,9 +43,11 @@ export class PluginManager implements IPluginManager {
    * 获取所有插件
    */
   public async all(): Promise<PluginEntity[]> {
+    const devPackage = await this.getDevPackage();
     return [
       ...(await userPluginDB.getAllPlugins()),
       ...(await this.devPluginDB.getAllPlugins()),
+      ...(devPackage ? [devPackage] : []),
     ];
   }
 
@@ -50,11 +59,22 @@ export class PluginManager implements IPluginManager {
   }
 
   /**
+   * 获取开发包
+   */
+  public async getDevPackage(): Promise<PluginEntity | null> {
+    return await this.devPackageDB.get();
+  }
+
+  /**
    * 获取指定插件
    * @param id 插件ID
    */
   public async find(id: string): Promise<PluginEntity | null> {
-    return (await userPluginDB.find(id)) || (await this.devPluginDB.find(id));
+    return (
+      (await userPluginDB.find(id)) ||
+      (await this.devPluginDB.find(id)) ||
+      (await this.devPackageDB.get())
+    );
   }
 
   /**
@@ -69,15 +89,22 @@ export class PluginManager implements IPluginManager {
     const [pluginId, actionLocalId] = actionId.split(':');
     const plugin = await this.find(pluginId);
     if (!plugin) {
-      LogFacade.channel('plugin').error(`[PluginManager] 插件不存在`, {
-        pluginId,
-        actionId,
-        keyword,
-      });
-      throw new Error(`插件不存在: ${pluginId}`);
+      LogFacade.channel('plugin').error(
+        `[PluginManager] 执行插件动作失败，插件不存在`,
+        {
+          pluginId,
+          actionId,
+          keyword,
+        }
+      );
+      throw new Error(`[PluginManager] 插件不存在: ${pluginId}`);
     }
 
-    let result = await plugin.executeAction(actionLocalId, keyword);
+    let result = await plugin.executeAction({
+      actionId: actionLocalId,
+      keyword,
+      context: PluginContext.createPluginContext(plugin, this.aiManager),
+    });
 
     LogFacade.channel('plugin').info(`[PluginManager] 执行插件动作`, {
       actionId,
@@ -197,11 +224,26 @@ export class PluginManager implements IPluginManager {
   }
 
   /**
+   * 获取开发包的根目录
+   */
+  public getDevPackageRootDir(): string {
+    return this.devPackageDB.rootDir;
+  }
+
+  /**
    * 更新开发插件的根目录
    * @param path 新路径
    */
   public updateDevPluginRootDir(path: string): void {
     this.devPluginDB.updatePath(path);
+  }
+
+  /**
+   * 更新开发包的根目录
+   * @param path 新路径
+   */
+  public updateDevPackageRootDir(path: string): void {
+    this.devPackageDB.updatePackagePath(path);
   }
 
   /**

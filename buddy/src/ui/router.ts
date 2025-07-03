@@ -8,10 +8,12 @@
  */
 
 import { createRouter, createWebHashHistory } from 'vue-router';
-import PluginStoreView from '@/ui/components/market/MarketView.vue';
+import PluginStoreView from '@/ui/views/MarketView.vue';
 import { useAppStore } from '@/ui/stores/app-store';
-import HomeView from '@/ui/components/home/HomeView.vue';
-import ChatView from '@/ui/components/chat/ChatView.vue';
+import HomeView from '@/ui/views/HomeView.vue';
+import HeroView from '@/ui/views/HeroView.vue';
+
+export type ViewType = 'home' | 'plugins' | 'chat' | 'plugin-grid' | 'hero';
 
 // 路由配置
 const routes = [
@@ -34,13 +36,9 @@ const routes = [
     },
   },
   {
-    path: '/chat',
-    name: 'chat',
-    component: ChatView,
-    meta: {
-      title: '聊天',
-      viewType: 'chat',
-    },
+    path: '/hero',
+    name: 'hero',
+    component: HeroView,
   },
 ];
 

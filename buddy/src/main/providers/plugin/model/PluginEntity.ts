@@ -20,10 +20,8 @@ import { PackageJson } from '@/types/package-json.js';
 
 import { ActionEntity } from './ActionEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
-import { PluginContext } from './PluginContext.js';
 
-const verbose = false;
-const title = '🧩 PluginEntity';
+const title = '[PluginEntity] 🧩';
 
 /**
  * 插件实体类
@@ -61,12 +59,10 @@ export class PluginEntity {
       throw new Error(`插件目录 ${pluginPath} 缺少 package.json`);
     }
 
-    if (verbose) {
-      LogFacade.channel('plugin').debug('[PluginEntity] 🧩 读取插件目录', {
-        pluginPath,
-        type,
-      });
-    }
+    LogFacade.channel('plugin').debug(`${title} 读取插件目录`, {
+      pluginPath,
+      type,
+    });
 
     const packageJson = await readPackageJson(pluginPath);
     const plugin = new PluginEntity(packageJson, pluginPath, type);
@@ -231,7 +227,7 @@ export class PluginEntity {
     }
 
     fs.rmdirSync(pluginPath, { recursive: true });
-    LogFacade.channel('plugin').info(`插件 ${this.id} 删除成功`);
+    LogFacade.channel('plugin').info(`${title} 插件 ${this.id} 删除成功`);
   }
 
   /**
@@ -243,7 +239,8 @@ export class PluginEntity {
     // 如果插件未加载或状态不正常，返回空数组
     if (this.status !== 'active') {
       LogFacade.channel('plugin').warn(
-        `插件 ${this.id} 未加载或状态不正常(${this.status})，返回空动作列表`
+        `${title} 插件 ${this.id} 未加载或状态不正常(${this.status})，返回空动作列表`,
+        await this.getSendablePlugin()
       );
       return [];
     }
@@ -266,7 +263,7 @@ export class PluginEntity {
         ActionEntity.fromRawAction(rawAction, this)
       );
     } catch (error) {
-      LogFacade.channel('plugin').error(`[PluginEntity] 获取动作列表失败`, {
+      LogFacade.channel('plugin').error(`${title} 获取动作列表失败`, {
         error: error instanceof Error ? error.message : String(error),
       });
       return [];
@@ -277,43 +274,36 @@ export class PluginEntity {
    * 执行插件动作
    * @returns 执行结果
    */
-  async executeAction(
-    actionId: string,
-    keyword: string
-  ): Promise<ExecuteResult> {
-    LogFacade.channel('plugin').info(`${this.id} 执行动作: ${actionId}`);
+  async executeAction(args: ExecuteActionArgs): Promise<ExecuteResult> {
+    const { actionId } = args;
+
+    LogFacade.channel('plugin').info(`${title} 执行动作`, {
+      id: this.id,
+      args,
+    });
 
     const pluginModule = await this.load();
     if (!pluginModule) {
       LogFacade.channel('plugin').warn(
-        `插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`
+        `${title} 插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`
       );
       return {
         success: false,
-        message: `插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`,
+        message: `${title} 插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`,
       };
     }
 
     if (typeof pluginModule.executeAction !== 'function') {
       LogFacade.channel('plugin').warn(
-        `插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`
+        `${title} 插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`
       );
       return {
         success: false,
-        message: `插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`,
+        message: `${title} 插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`,
       };
     }
 
-    // 创建插件上下文，提供主进程能力
-    const pluginContext = PluginContext.createPluginContext(this);
-
-    const context: ExecuteActionArgs = {
-      actionId,
-      keyword,
-      context: pluginContext, // 注入插件上下文
-    };
-
-    return pluginModule.executeAction(context);
+    return pluginModule.executeAction(args);
   }
 
   async getAction(actionId: string): Promise<ActionEntity | null> {
@@ -345,7 +335,7 @@ export class PluginEntity {
     try {
       const mainFilePath = this.mainFilePath;
       if (!fs.existsSync(mainFilePath)) {
-        throw new Error(`插件入口文件不存在: ${mainFilePath}`);
+        throw new Error(`${title} 插件入口文件不存在: ${mainFilePath}`);
       }
 
       delete require.cache[require.resolve(mainFilePath)];
@@ -367,28 +357,22 @@ export class PluginEntity {
    * @returns 插件主页面路径
    */
   async getPagePath(): Promise<string> {
-    if (verbose) {
-      LogFacade.channel('plugin').info(
-        `${title} 获取插件 ${this.id} 的主页面路径`
-      );
-    }
-
     const module = await this.load();
     if (!module) {
       LogFacade.channel('plugin').warn(
-        `${title} 插件 ${this.id} 加载失败，无法获取主页面路径`
+        `${title} 插件 ${this.id} 加载失败，无法获取主页面路径`,
+        {
+          id: this.id,
+          path: this.path,
+          main: this.main,
+          mainFilePath: this.mainFilePath,
+        }
       );
       return '';
     }
 
     const pagePath = module.pagePath || '';
     const absolutePagePath = join(this.path, pagePath);
-
-    if (verbose) {
-      LogFacade.channel('plugin').info(
-        `${title} 插件 ${this.id} 的主页面路径: ${absolutePagePath}`
-      );
-    }
 
     return pagePath ? absolutePagePath : '';
   }
@@ -399,17 +383,25 @@ export class PluginEntity {
    * @returns 插件的SendablePlugin对象
    */
   public async getSendablePlugin(): Promise<SendablePlugin> {
-    return {
-      id: this.id,
-      name: this.name,
-      description: this.description,
-      version: this.version,
-      author: this.author,
-      path: this.path,
-      validationError: this.validationError,
-      status: this.status,
-      type: this.type,
-      pagePath: await this.getPagePath(),
-    };
+    try {
+      return {
+        id: this.id,
+        name: this.name,
+        description: this.description,
+        version: this.version,
+        author: this.author,
+        path: this.path,
+        validationError: this.validationError,
+        status: this.status,
+        type: this.type,
+        error: this.error || undefined,
+        pagePath: await this.getPagePath(),
+      };
+    } catch (error) {
+      LogFacade.channel('plugin').error(`${title} 获取插件SendablePlugin失败`, {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
   }
 }

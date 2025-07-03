@@ -1,38 +1,16 @@
-<!--
- * SearchBar.vue - 搜索栏组件
- * 
- * 这个组件负责提供搜索功能的用户界面：
- * 1. 搜索输入框
- * 2. 搜索图标
- * 
- * 主要功能：
- * - 提供搜索输入界面
- * - 通过actionStore管理搜索状态
- * - 实时更新搜索关键词
- * - 自动获取焦点
- * 
- * 技术栈：
- * - Vue 3
- * - Pinia (actionStore)
- * - TailwindCSS
- * - DaisyUI
- * 
- * 注意事项：
- * - 搜索状态完全由actionStore管理
- * - 组件只负责UI交互，不直接处理搜索逻辑
- * - 使用v-model实现双向绑定
- -->
-
 <script setup lang="ts">
 import { ref, watch, onMounted, nextTick } from 'vue'
-import { useActionStore } from '@renderer/stores/actionStore'
-import { RiSearchLine } from '@remixicon/vue'
+import { useActionStore } from '@/ui/stores/action-store'
+import { RiSearchLine, RiStore2Line } from '@remixicon/vue'
+import Button from '@/ui/components/cosy/Button.vue'
+import { useNavigation } from '@/ui/composables/useNavigation'
 
 const actionStore = useActionStore()
 const keyword = ref(actionStore.keyword)
 const measureText = ref<HTMLElement | null>(null)
 const inputWidth = ref(200)
 const searchInput = ref<HTMLInputElement | null>(null)
+const { goToPluginStore, goToHome } = useNavigation()
 
 // 监听本地关键词变化并更新 actionStore
 watch(keyword, async (newKeyword) => {
@@ -49,6 +27,7 @@ watch(keyword, async (newKeyword) => {
 const handleKeyDown = (event: KeyboardEvent) => {
     actionStore.handleKeyDown(event)
 }
+
 
 // 计算并更新输入框宽度
 const updateInputWidth = () => {
@@ -72,7 +51,12 @@ onMounted(() => {
 <template>
     <div
         class="relative w-full h-full flex items-center drag-region ring-2 bg-amber-100/10 ring-blue-500/40 rounded-lg">
-        <RiSearchLine class="w-10 h-8" />
+        <Button>
+            <RiStore2Line class="w-10 h-8 no-drag-region" @click="goToPluginStore" />
+        </Button>
+        <Button>
+            <RiSearchLine class="w-10 h-8 no-drag-region" @click="goToHome" />
+        </Button>
         <div class="relative flex-grow h-full">
             <span class="invisible whitespace-pre" ref="measureText">{{ keyword || 'Search' }}</span>
             <input ref="searchInput" v-model="keyword" @keydown="handleKeyDown"

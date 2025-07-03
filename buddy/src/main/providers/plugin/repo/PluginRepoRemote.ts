@@ -73,7 +73,7 @@ export class PluginRepoRemote implements IPluginRepo {
    * 获取远程插件列表
    */
   public async getPlugins(): Promise<PluginEntity[]> {
-    LogFacade.channel('plugin').info('getPlugins');
+    LogFacade.channel('plugin').info('[PluginRepoRemote] 获取远程插件列表');
     const packages = await this.getPackages();
     const plugins: PluginEntity[] = [];
     for (const pkg of packages) {

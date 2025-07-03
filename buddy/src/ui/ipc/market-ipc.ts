@@ -27,6 +27,19 @@ export const marketIpc = {
     }
   },
 
+  // 获取开发包
+  async getDevPackage(): Promise<SendablePlugin> {
+    let response = await ipc.invoke(IPC_METHODS.GET_DEV_PACKAGE);
+
+    console.log('[market-ipc] getDevPackage', response);
+
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
   // 获取用户插件目录
   async getUserPluginDirectory(): Promise<string> {
     let response = await ipc.invoke(IPC_METHODS.GET_PLUGIN_DIRECTORIES_USER);
@@ -93,9 +106,55 @@ export const marketIpc = {
     }
   },
 
+  // 获取开发包目录
+  async getDevPackageDirectory(): Promise<string> {
+    let response = await ipc.invoke(
+      IPC_METHODS.GET_PLUGIN_DIRECTORIES_DEV_PACKAGE
+    );
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
   // 设置开发插件目录，返回设置后的目录
   async setDevPluginDirectory(): Promise<string> {
     let response = await ipc.invoke(IPC_METHODS.SET_PLUGIN_DIRECTORIES_DEV);
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 设置开发包目录，返回设置后的目录
+  async setDevPackageDirectory(): Promise<string> {
+    let response = await ipc.invoke(
+      IPC_METHODS.SET_PLUGIN_DIRECTORIES_DEV_PACKAGE
+    );
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 重置开发包目录
+  async resetDevPackageDirectory(): Promise<void> {
+    let response = await ipc.invoke(
+      IPC_METHODS.RESET_PLUGIN_DIRECTORIES_DEV_PACKAGE
+    );
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 重置开发插件目录
+  async resetDevPluginDirectory(): Promise<void> {
+    let response = await ipc.invoke(IPC_METHODS.RESET_PLUGIN_DIRECTORIES_DEV);
     if (response.success) {
       return response.data;
     } else {

@@ -4,7 +4,7 @@ import Empty from '@renderer/components/cosy/Empty.vue'
 import { useMarketStore } from '../../stores/market-store'
 import { useMarket } from '../../composables/useMarket'
 const marketStore = useMarketStore()
-const { setDevPluginDir } = useMarket()
+const { setDevPluginDir, resetDevPluginDir } = useMarket()
 defineProps<{ plugins: any[] }>()
 </script>
 
@@ -15,6 +15,7 @@ defineProps<{ plugins: any[] }>()
             class="flex items-center justify-between p-2 rounded-md bg-base-200 text-sm w-full">
             <span>当前开发目录: <code>{{ marketStore.devPluginDirectory }}</code></span>
             <button class="btn btn-xs btn-outline" @click="setDevPluginDir">更改</button>
+            <button class="btn btn-xs btn-outline" @click="resetDevPluginDir">重置</button>
         </div>
         <div v-else class="flex items-center justify-between p-2 rounded-md bg-warning/20 text-warning text-sm">
             <span>尚未配置开发插件目录</span>

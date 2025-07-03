@@ -21,8 +21,8 @@ const elementInfo = ref({
     fullHeight: 0,
 })
 
-const TOP_BAR_HEIGHT = 0;
-const STATUS_BAR_HEIGHT = 120;
+const TOP_BAR_HEIGHT = 80;
+const STATUS_BAR_HEIGHT = 40;
 
 // 获取元素信息
 const updateElementInfo = () => {

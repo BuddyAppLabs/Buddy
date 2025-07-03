@@ -4,6 +4,7 @@ import { useStorage } from '@vueuse/core';
 import { useAlert } from './useAlert';
 import { marketIpc } from '../ipc/market-ipc';
 import { fileIpc } from '../ipc/file-ipc';
+import { MarketTab } from '@/types/market-type';
 
 export function useMarket() {
   const { error } = useAlert();
@@ -27,7 +28,26 @@ export function useMarket() {
     }
   };
 
+  const setDevPackageDir = async () => {
+    const newPath = await marketIpc.setDevPackageDirectory();
+    if (newPath) {
+      marketStore.devPackageDirectory = newPath;
+      await loadPlugins(); // 重新加载插件
+    }
+  };
+
+  const resetDevPackageDir = async () => {
+    await marketIpc.resetDevPackageDirectory();
+    await loadPlugins();
+  };
+
+  const resetDevPluginDir = async () => {
+    await marketIpc.resetDevPluginDirectory();
+    await loadPlugins();
+  };
+
   const loadPlugins = async () => {
+    console.log('loadPlugins', marketStore.activeTab);
     if (isLoading.value) {
       console.log('loadPlugins is loading, skip');
       return;
@@ -35,9 +55,14 @@ export function useMarket() {
 
     isLoading.value = true;
     try {
-      if (marketStore.activeTab === 'dev') {
+      if (marketStore.activeTab === 'devRepo') {
         await marketStore.updateDevPluginDirectory();
       }
+
+      if (marketStore.activeTab === 'devPackage') {
+        await marketStore.updateDevPluginDirectory();
+      }
+
       switch (marketStore.activeTab) {
         case 'remote':
           await marketStore.loadRemotePlugins();
@@ -45,8 +70,12 @@ export function useMarket() {
         case 'user':
           await marketStore.loadUserPlugins();
           break;
-        case 'dev':
+        case 'devRepo':
           await marketStore.loadDevPlugins();
+          break;
+        case 'devPackage':
+          console.log('loadDevPackage');
+          await marketStore.loadDevPackage();
           break;
         default:
           error('未知标签');
@@ -64,7 +93,7 @@ export function useMarket() {
       (marketStore.activeTab === 'remote' &&
         remotePlugins.value.length === 0) ||
       (marketStore.activeTab === 'user' && userPlugins.value.length === 0) ||
-      (marketStore.activeTab === 'dev' && devPlugins.value.length === 0)
+      (marketStore.activeTab === 'devRepo' && devPlugins.value.length === 0)
     );
   });
 
@@ -76,7 +105,7 @@ export function useMarket() {
   });
 
   // 切换标签并加载对应插件
-  const switchTab = (tab: 'user' | 'remote' | 'dev') => {
+  const switchTab = (tab: MarketTab) => {
     marketStore.activeTab = tab;
     loadPlugins();
   };
@@ -105,6 +134,9 @@ export function useMarket() {
     shouldShowEmpty,
     uninstallStates,
     setDevPluginDir,
+    setDevPackageDir,
+    resetDevPackageDir,
+    resetDevPluginDir,
     switchTab,
     clearUninstallError,
     uninstallPlugin: marketStore.uninstallPlugin,

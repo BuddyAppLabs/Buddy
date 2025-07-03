@@ -14,9 +14,18 @@ export type ActionStatus =
   | 'disabled';
 
 /**
-* 动作视图模式
-*/
+ * 动作视图模式
+ */
 export type ViewMode = 'embedded' | 'window';
+
+/**
+ * 执行结果
+ */
+export interface ExecuteResult {
+  success: boolean;
+  message: string;
+  alert?: string;
+}
 
 /**
  * 插件动作接口
@@ -64,7 +73,7 @@ export interface SuperAction {
 
   /**
    * 可执行函数
-   * @returns 任意返回值
+   * @returns 执行结果
    */
-  execute?: () => any;
+  execute?: () => Promise<ExecuteResult>;
 }

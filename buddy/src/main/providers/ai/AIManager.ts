@@ -1,11 +1,13 @@
-import { ChatMessage, IAIModelConfig } from '@coffic/buddy-types';
-import { IAIManager, AIModelType } from './IAIManager.js';
-import { SettingFacade } from '@coffic/cosy-framework';
-import { CoreMessage, streamText } from 'ai';
-import { createOpenAI } from '@ai-sdk/openai';
-import { LogFacade } from '@coffic/cosy-logger';
+import { AIModelType, IAIModelConfig } from '@coffic/buddy-types';
+import { IAIManager } from './IAIManager.js';
+import { ILogManager, SettingFacade } from '@coffic/cosy-framework';
+import { StreamTextResult, UIMessage } from 'ai';
+import { ChatService } from '@/main/service/chat/ChatService.js';
+import { IModel } from '@/main/service/chat/contract/IModel.js';
+import { IProvider } from '@/main/service/chat/contract/IProvider.js';
 
 const DEFAULT_OPENAI_MODEL = 'gpt-4o';
+
 /**
  * AI管理器
  * 对主应用中的AIManager进行封装，提供统一的AI服务接口
@@ -13,101 +15,71 @@ const DEFAULT_OPENAI_MODEL = 'gpt-4o';
  */
 export class AIManager implements IAIManager {
   private activeRequests = new Map<string, AbortController>();
+  private chatService: ChatService;
+  private logger: ILogManager;
+  private modelConfig: IAIModelConfig;
 
-  private defaultModelConfig: IAIModelConfig = {
-    type: 'openai',
-    modelName: DEFAULT_OPENAI_MODEL,
-    apiKey: '',
-  };
+  constructor(logger: ILogManager) {
+    this.logger = logger;
+    this.chatService = new ChatService(
+      undefined,
+      '你是AI助手，请根据用户的问题给出回答',
+      logger
+    );
 
-  constructor() {
+    this.modelConfig = this.getDefaultModelConfig();
     this.loadDefaultModelConfig();
   }
 
   private async loadDefaultModelConfig() {
     const savedConfig = SettingFacade.get<IAIModelConfig>('ai.defaultModel');
     if (savedConfig) {
-      this.defaultModelConfig = savedConfig;
-      LogFacade.channel('ai').info(
-        '已加载保存的默认模型配置:',
-        this.defaultModelConfig
-      );
+      this.modelConfig = savedConfig;
+      this.logger.info('已加载保存的默认模型配置', {
+        defaultModelConfig: this.modelConfig,
+      });
     }
   }
+
   /**
    * 发送聊天消息
    * 返回流式响应
    */
-  public async sendChatMessage(
-    messages: ChatMessage[],
-    onChunk: (chunk: string) => void,
-    onFinish: () => void,
-    modelConfig?: Partial<IAIModelConfig>,
-    requestId?: string
-  ): Promise<void> {
-    const config = { ...this.defaultModelConfig, ...modelConfig };
-    const apiKey = await this.getApiKey(config.type);
-
-    if (!apiKey) {
-      const toolCallPayload = {
-        type: 'tool-call',
-        toolCall: {
-          toolCallId: `tool_call_${requestId}`,
-          toolName: 'require_api_key',
-          args: { provider: config.type },
-        },
-      };
-
-      onChunk(JSON.stringify(toolCallPayload));
-      onFinish();
-      return;
+  public async createStream(
+    modelId: string,
+    messages: UIMessage[]
+  ): Promise<StreamTextResult<any, any>> {
+    const modelApiKey = await this.getModelApiKey(modelId);
+    if (!modelApiKey) {
+      throw new Error('Model key not found');
     }
 
-    const abortController = new AbortController();
-    const id = requestId || Math.random().toString(36).substring(2, 15);
-    this.activeRequests.set(id, abortController);
+    return this.chatService.createStream(modelId, modelApiKey, messages);
+  }
 
-    try {
-      let provider;
-      switch (config.type) {
-        case 'openai':
-          provider = createOpenAI({
-            apiKey: apiKey,
-          });
-          break;
-        case 'anthropic':
-          // a holder for anthropic
-          throw new Error('Anthropic not implemented');
-        case 'deepseek':
-          // a holder for deepseek
-          throw new Error('Deepseek not implemented');
-        default:
-          throw new Error(`不支持的模型类型: ${config.type}`);
-      }
-
-      const result = await streamText({
-        model: provider(config.modelName),
-        messages: messages as CoreMessage[],
-        system: config.system,
-        temperature: config.temperature,
-        maxTokens: config.maxTokens,
-        onFinish: onFinish,
-        abortSignal: abortController.signal,
-      });
-
-      for await (const chunk of result.textStream) {
-        onChunk(chunk);
-      }
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
-        LogFacade.channel('ai').info(`请求 ${id} 已被用户取消`);
-      } else {
-        LogFacade.channel('ai').error(`AI聊天出错:`, error);
-        throw error; // rethrow to be handled by the caller
-      }
-    } finally {
-      this.activeRequests.delete(id);
+  /**
+   * 生成文本
+   * @param prompt 提示词
+   * @returns 文本
+   */
+  public async generateText(prompt: string): Promise<string> {
+    const model = this.chatService.getDefaultModel();
+    if (!model) {
+      return '没有默认模型';
     }
+
+    const modelApiKey = await this.getModelApiKey(model.id);
+    if (!modelApiKey) {
+      throw new Error('Model key not found');
+    }
+
+    const result = await this.chatService.generateText(
+      model.id,
+      modelApiKey,
+      prompt
+    );
+
+    return result;
   }
 
   /**
@@ -127,8 +99,8 @@ export class AIManager implements IAIManager {
    * 设置默认模型配置
    */
   public async setDefaultModel(config: Partial<IAIModelConfig>): Promise<void> {
-    const newConfig = { ...this.defaultModelConfig, ...config };
-    this.defaultModelConfig = newConfig;
+    const newConfig = { ...this.modelConfig, ...config };
+    this.modelConfig = newConfig;
     await SettingFacade.set('ai.defaultModel', newConfig);
   }
 
@@ -136,29 +108,41 @@ export class AIManager implements IAIManager {
    * 获取默认模型配置
    */
   public getDefaultModelConfig(): IAIModelConfig {
-    return this.defaultModelConfig;
+    const model = this.chatService.getDefaultModel();
+    if (!model) {
+      return {
+        type: 'openai',
+        modelName: DEFAULT_OPENAI_MODEL,
+        apiKey: '',
+      };
+    }
+
+    return {
+      type: model.provider as AIModelType,
+      modelName: model.id,
+      apiKey: '',
+    };
+  }
+
+  /**
+   * 获取支持的供应商列表
+   */
+  public getAvailableProviders(): IProvider[] {
+    return this.chatService.providers;
   }
 
   /**
    * 获取支持的模型列表
    */
-  public getAvailableModels(): { [key in AIModelType]: string[] } {
-    return {
-      openai: ['gpt-4o', 'gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo'],
-      anthropic: ['claude-3-opus-20240229', 'claude-3-sonnet-20240229'],
-      deepseek: ['deepseek-chat', 'deepseek-coder'],
-    };
+  public getAvailableModels(): IModel[] {
+    return this.chatService.getModelList();
   }
 
   /**
    * 重置配置
    */
   public async resetConfig(): Promise<void> {
-    this.defaultModelConfig = {
-      type: 'openai',
-      modelName: DEFAULT_OPENAI_MODEL,
-      apiKey: '',
-    };
+    this.modelConfig = this.getDefaultModelConfig();
     await SettingFacade.remove('ai.defaultModel');
     await SettingFacade.remove('ai.keys.openai');
     await SettingFacade.remove('ai.keys.anthropic');
@@ -177,5 +161,18 @@ export class AIManager implements IAIManager {
    */
   public async getApiKey(provider: AIModelType): Promise<string | undefined> {
     return SettingFacade.get<string>(`ai.keys.${provider}`);
+  }
+
+  /**
+   * 获取指定大模型的API密钥
+   */
+  public async getModelApiKey(modelId: string): Promise<string | undefined> {
+    const provider = this.chatService.getProvider(modelId)?.type;
+
+    if (!provider) {
+      return undefined;
+    }
+
+    return this.getApiKey(provider); // 获取模型对应的提供商的API密钥
   }
 }

@@ -1,10 +1,11 @@
-import { SuperContext } from '@coffic/buddy-types';
+import { AIModelType, SuperContext } from '@coffic/buddy-types';
 import { LogFacade } from '@coffic/cosy-logger';
 import { resolve, isAbsolute } from 'path';
 import fs from 'fs';
 import { SettingFacade } from '@coffic/cosy-framework';
 import { PluginEntity } from './PluginEntity';
 import { shell } from 'electron';
+import { IAIManager } from '@/main/providers/ai/IAIManager';
 
 export class PluginContext {
   /**
@@ -13,7 +14,10 @@ export class PluginContext {
    *
    * @returns 插件上下文对象
    */
-  static createPluginContext(plugin: PluginEntity): SuperContext {
+  static createPluginContext(
+    plugin: PluginEntity,
+    aiManager: IAIManager
+  ): SuperContext {
     return {
       // 日志能力
       logger: {
@@ -97,6 +101,19 @@ export class PluginContext {
         name: plugin.name,
         version: plugin.version,
         path: plugin.path,
+      },
+
+      // AI能力
+      ai: {
+        generateText: async (prompt: string): Promise<string> => {
+          return await aiManager.generateText(prompt);
+        },
+        setModelApiKey: async (
+          provider: AIModelType,
+          key: string
+        ): Promise<void> => {
+          return await aiManager.setApiKey(provider, key);
+        },
       },
     };
   }

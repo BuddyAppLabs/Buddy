@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { marketIpc } from '../ipc/market-ipc.js';
 import { SendablePlugin } from '@/types/sendable-plugin';
+import { MarketTab } from '@/types/market-type';
 
 const verbose = true;
 const title = '🛍️ 插件市场';
@@ -10,7 +11,6 @@ interface MarketState {
   error: string;
   userPlugins: SendablePlugin[];
   devPlugins: SendablePlugin[];
-  pluginsWithPage: SendablePlugin[];
   remotePlugins: SendablePlugin[];
   loadingPlugins: boolean;
   loadingRemotePlugins: boolean;
@@ -18,7 +18,9 @@ interface MarketState {
   uninstallingPlugins: Set<string>;
   userPluginDirectory: string;
   devPluginDirectory: string;
-  activeTab: 'user' | 'remote' | 'dev';
+  devPackageDirectory: string;
+  devPackage: SendablePlugin | null;
+  activeTab: MarketTab;
 }
 
 export const useMarketStore = defineStore('market', {
@@ -26,7 +28,6 @@ export const useMarketStore = defineStore('market', {
     error: '',
     userPlugins: [],
     devPlugins: [],
-    pluginsWithPage: [],
     remotePlugins: [],
     loadingPlugins: false,
     loadingRemotePlugins: false,
@@ -34,6 +35,8 @@ export const useMarketStore = defineStore('market', {
     uninstallingPlugins: new Set<string>(),
     userPluginDirectory: '',
     devPluginDirectory: '',
+    devPackageDirectory: '',
+    devPackage: null,
     activeTab: 'user',
   }),
 
@@ -45,9 +48,11 @@ export const useMarketStore = defineStore('market', {
       this.activeTab = 'user';
       this.userPluginDirectory = await marketIpc.getUserPluginDirectory();
       this.devPluginDirectory = await marketIpc.getDevPluginDirectory();
+      this.devPackageDirectory = await marketIpc.getDevPackageDirectory();
       await this.loadUserPlugins();
       await this.loadRemotePlugins();
       await this.loadDevPlugins();
+      await this.loadDevPackage();
     },
 
     // 加载开发插件列表
@@ -63,19 +68,28 @@ export const useMarketStore = defineStore('market', {
         throw err;
       } finally {
         this.loadingPlugins = false;
-        this.pluginsWithPage = this.devPlugins.filter(
-          (plugin) => plugin.pagePath
-        );
 
         if (verbose) {
           logger.debug(
             `${title} 加载开发插件列表完成，插件数量：${this.devPlugins.length}`
           );
-          logger.debug(
-            `${title} 加载开发插件列表完成，有视图插件数量：${this.pluginsWithPage.length}`
-          );
         }
       }
+    },
+
+    getPluginsWithPage(): SendablePlugin[] {
+      return [
+        ...this.devPlugins.filter((plugin) => plugin.pagePath),
+        ...this.userPlugins.filter((plugin) => plugin.pagePath),
+        ...(this.devPackage
+          ? [this.devPackage].filter((plugin) => plugin.pagePath)
+          : []),
+      ];
+    },
+
+    // 加载开发包
+    async loadDevPackage(): Promise<void> {
+      this.devPackage = await marketIpc.getDevPackage();
     },
 
     // 加载用户插件列表
@@ -158,10 +172,15 @@ export const useMarketStore = defineStore('market', {
       this.devPluginDirectory = await marketIpc.getDevPluginDirectory();
     },
 
+    // 更新开发包目录
+    async updateDevPackageDirectory() {
+      this.devPackageDirectory = await marketIpc.getDevPackageDirectory();
+    },
+
     getCurrentPluginDirectory(): string | null {
       console.log('getCurrentPluginDirectory', this.activeTab);
 
-      if (this.activeTab === 'dev') {
+      if (this.activeTab === 'devRepo') {
         return this.devPluginDirectory;
       }
 

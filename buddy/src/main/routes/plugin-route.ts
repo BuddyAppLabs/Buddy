@@ -6,7 +6,10 @@ import { RouteFacade, SettingFacade } from '@coffic/cosy-framework';
 import { LogFacade } from '@coffic/cosy-logger';
 import { userPluginDB } from '../providers/plugin/repo/UserPluginRepo.js';
 import { PluginFacade } from '../providers/plugin/PluginFacade.js';
-import { KEY_PLUGIN_DEV_PATH } from '../constants.js';
+import {
+  SETTING_KEY_PLUGIN_DEV_PACKAGE_PATH,
+  SETTING_KEY_PLUGIN_DEV_PATH,
+} from '../constants.js';
 
 /**
  * 插件市场路由
@@ -55,6 +58,14 @@ export function registerPluginRoutes(): void {
     }
   ).description('获取开发插件的根目录');
 
+  // 获取开发包目录
+  RouteFacade.handle(
+    IPC_METHODS.GET_PLUGIN_DIRECTORIES_DEV_PACKAGE,
+    (_event): string => {
+      return PluginFacade.getDevPackageRootDir();
+    }
+  ).description('获取开发包的根目录');
+
   // 设置开发插件目录
   RouteFacade.handle(
     IPC_METHODS.SET_PLUGIN_DIRECTORIES_DEV,
@@ -68,12 +79,62 @@ export function registerPluginRoutes(): void {
       }
 
       const newPath = filePaths[0];
-      SettingFacade.set(KEY_PLUGIN_DEV_PATH, newPath);
+      SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PATH, newPath);
       PluginFacade.updateDevPluginRootDir(newPath);
 
       return newPath;
     }
   ).description('设置开发仓库的根目录');
+
+  // 重置开发插件目录
+  RouteFacade.handle(
+    IPC_METHODS.RESET_PLUGIN_DIRECTORIES_DEV,
+    (_event): void => {
+      SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PATH, '');
+      PluginFacade.updateDevPluginRootDir('');
+    }
+  ).description('重置开发仓库的根目录');
+
+  // 重置开发包目录
+  RouteFacade.handle(
+    IPC_METHODS.RESET_PLUGIN_DIRECTORIES_DEV_PACKAGE,
+    (_event): void => {
+      SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PACKAGE_PATH, '');
+      PluginFacade.updateDevPackageRootDir('');
+    }
+  ).description('重置开发包的根目录');
+
+  // 获取开发包
+  RouteFacade.handle(
+    IPC_METHODS.GET_DEV_PACKAGE,
+    async (_event): Promise<SendablePlugin | null | undefined> => {
+      const plugin = await PluginFacade.getDevPackage();
+      const sendablePlugin = await plugin?.getSendablePlugin();
+      return sendablePlugin;
+    }
+  ).description('获取开发包');
+
+  // 设置开发包目录
+  RouteFacade.handle(
+    IPC_METHODS.SET_PLUGIN_DIRECTORIES_DEV_PACKAGE,
+    async (_event): Promise<string | null> => {
+      const { canceled, filePaths } = await dialog.showOpenDialog({
+        properties: ['openDirectory'],
+      });
+
+      if (canceled || filePaths.length === 0) {
+        return null;
+      }
+
+      const newPath = filePaths[0];
+      SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PACKAGE_PATH, newPath);
+      PluginFacade.updateDevPackageRootDir(newPath);
+
+      return newPath;
+    }
+  )
+    .description('设置开发包的根目录')
+    .validation({});
 
   // 获取远程插件列表
   RouteFacade.handle(

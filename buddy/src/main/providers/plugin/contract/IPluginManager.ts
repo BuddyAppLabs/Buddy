@@ -68,7 +68,22 @@ export interface IPluginManager {
   getDevPluginRootDir(): string;
 
   /**
+   * 获取开发包的根目录
+   */
+  getDevPackageRootDir(): string;
+
+  /**
+   * 获取开发包
+   */
+  getDevPackage(): Promise<PluginEntity | null>;
+
+  /**
    * 更新开发插件的根目录
    */
   updateDevPluginRootDir(path: string): void;
+
+  /**
+   * 更新开发包的根目录
+   */
+  updateDevPackageRootDir(path: string): void;
 }

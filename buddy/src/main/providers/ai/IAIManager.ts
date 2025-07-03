@@ -1,25 +1,28 @@
+import { IModel } from '@/main/service/chat/contract/IModel';
+import { IProvider } from '@/main/service/chat/contract/IProvider';
+import { AIModelType, IAIModelConfig } from '@coffic/buddy-types';
+import { StreamTextResult, UIMessage } from 'ai';
+
 /**
  * AI服务契约
  * 定义了AI管理器需要实现的方法
  */
-
-import { IAIModelConfig, ChatMessage } from '@coffic/buddy-types';
-
-// AI模型类型
-export type AIModelType = 'openai' | 'anthropic' | 'deepseek';
-
 export interface IAIManager {
   /**
    * 发送聊天消息
    * 返回流式响应
    */
-  sendChatMessage(
-    messages: ChatMessage[],
-    onChunk: (chunk: string) => void,
-    onFinish: () => void,
-    modelConfig?: Partial<IAIModelConfig>,
-    requestId?: string
-  ): Promise<void>;
+  createStream(
+    modelId: string,
+    messages: UIMessage[]
+  ): Promise<StreamTextResult<any, any>>;
+
+  /**
+   * 生成文本
+   * @param prompt 提示词
+   * @returns 文本
+   */
+  generateText(prompt: string): Promise<string>;
 
   /**
    * 取消指定ID的请求
@@ -37,9 +40,14 @@ export interface IAIManager {
   getDefaultModelConfig(): IAIModelConfig;
 
   /**
+   * 获取支持的供应商列表
+   */
+  getAvailableProviders(): IProvider[];
+
+  /**
    * 获取支持的模型列表
    */
-  getAvailableModels(): { [key in AIModelType]: string[] };
+  getAvailableModels(): IModel[];
 
   /**
    * 重置配置
@@ -58,4 +66,10 @@ export interface IAIManager {
    * @param provider AI提供商
    */
   getApiKey(provider: AIModelType): Promise<string | undefined>;
+
+  /**
+   * 获取指定大模型的API密钥
+   * @param modelId 大模型ID
+   */
+  getModelApiKey(modelId: string): Promise<string | undefined>;
 }
