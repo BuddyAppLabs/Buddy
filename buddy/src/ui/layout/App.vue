@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import SearchBar from '@/ui/layout/SearchBar.vue';
 import Confirm from '@renderer/components/cosy/Confirm.vue';
 import Alert from '@renderer/components/cosy/Alert.vue';
@@ -18,7 +18,6 @@ import { computed } from 'vue';
 const actionStore = useActionStore();
 const appStore = useAppStore();
 const errorStore = useErrorStore();
-const content = ref<HTMLElement | null>(null);
 const marketStore = useMarketStore();
 
 // 计算 Alert 容器的样式类
