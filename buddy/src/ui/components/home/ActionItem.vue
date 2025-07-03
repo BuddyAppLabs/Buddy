@@ -80,6 +80,8 @@
       if (result.success) {
         if (result.alert) {
           globalAlert.success(result.alert);
+        } else {
+          globalAlert.success(result.message, { duration: 3000 });
         }
       } else {
         globalAlert.error(result.message, { duration: 3000 });
