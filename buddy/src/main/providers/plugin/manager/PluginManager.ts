@@ -1,14 +1,16 @@
-import { IPluginManager } from '../contract/IPluginManager.js';
-import { PluginEntity } from '../model/PluginEntity.js';
+import { IPluginManager } from '@/main/providers/plugin/contract/IPluginManager.js';
+import { PluginEntity } from '@/main/providers/plugin/model/PluginEntity.js';
+import { userPluginDB } from '@/main/providers/plugin/repo/UserPluginRepo.js';
+import { ActionEntity } from '@/main/providers/plugin/model/ActionEntity.js';
+import { DevPackageRepo } from '@/main/providers/plugin/repo/DevPackageRepo.js';
+import { PluginContext } from '@/main/providers/plugin/model/PluginContext.js';
+import { DevPluginRepo } from '@/main/providers/plugin/repo/DevPluginRepo.js';
+import { ExecuteResult, GetActionsArgs } from '@coffic/buddy-types';
+import { Downloader } from '@/main/service/Downloader.js';
 import { LogFacade } from '@coffic/cosy-logger';
-import { DevPluginRepo } from '../repo/DevPluginRepo.js';
-import { userPluginDB } from '../repo/UserPluginRepo.js';
-import { ActionEntity } from '../model/ActionEntity.js';
 import fs from 'fs';
 import path from 'path';
-import { Downloader } from '@/main/service/Downloader.js';
-import { ExecuteResult, GetActionsArgs } from '@coffic/buddy-types';
-import { DevPackageRepo } from '../repo/DevPackageRepo.js';
+import { IAIManager } from '../../ai/IAIManager';
 
 /**
  * 插件管理器
@@ -21,7 +23,8 @@ export class PluginManager implements IPluginManager {
    */
   constructor(
     private readonly devPluginDB: DevPluginRepo,
-    private readonly devPackageDB: DevPackageRepo
+    private readonly devPackageDB: DevPackageRepo,
+    private readonly aiManager: IAIManager
   ) {}
 
   /**
@@ -97,7 +100,11 @@ export class PluginManager implements IPluginManager {
       throw new Error(`[PluginManager] 插件不存在: ${pluginId}`);
     }
 
-    let result = await plugin.executeAction(actionLocalId, keyword);
+    let result = await plugin.executeAction({
+      actionId: actionLocalId,
+      keyword,
+      context: PluginContext.createPluginContext(plugin, this.aiManager),
+    });
 
     LogFacade.channel('plugin').info(`[PluginManager] 执行插件动作`, {
       actionId,

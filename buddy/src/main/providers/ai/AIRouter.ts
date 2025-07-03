@@ -63,22 +63,8 @@ export function createAIRouter(server: AIServer) {
       });
     }
 
-    const modelApiKey = await server.aiManager.getModelApiKey(model);
-    if (!modelApiKey) {
-      return res.status(400).json({
-        error: {
-          message: 'Model key not found',
-          type: 'invalid_request_error',
-        },
-      });
-    }
-
     try {
-      const response = await server.aiManager.createStream(
-        model,
-        modelApiKey,
-        messages
-      );
+      const response = await server.aiManager.createStream(model, messages);
       response.pipeDataStreamToResponse(res);
     } catch (error) {
       server.logger.error('[AIRouter] Error creating stream', {

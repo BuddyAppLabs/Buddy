@@ -1,3 +1,5 @@
+import { AIModelType } from './api-ai.js';
+
 /**
  * 插件上下文接口
  * 定义了插件可以访问的主进程能力
@@ -87,5 +89,21 @@ export interface SuperContext {
      * 插件路径
      */
     path: string;
+  };
+
+  /**
+   * AI能力
+   */
+  ai: {
+    // 生成文本，比如：提供一段话，生成总结
+    generateText: (prompt: string) => Promise<string>;
+
+    /**
+     * 设置AI模型API密钥
+     * @param provider 提供者名称
+     * @param key 密钥
+     * @returns 是否成功
+     */
+    setModelApiKey: (provider: AIModelType, key: string) => Promise<void>;
   };
 }

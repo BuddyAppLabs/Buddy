@@ -1,4 +1,4 @@
-import { SuperAction } from './super-action.js';
+import { ExecuteResult, SuperAction } from './super-action.js';
 import { SuperContext } from './super-context.js';
 
 /**
@@ -32,20 +32,20 @@ export interface GetActionsArgs {
 }
 
 export interface ExecuteActionArgs {
+  /**
+   * 动作ID
+   */
   actionId: string;
+
+  /**
+   * 搜索关键词
+   */
   keyword?: string;
+
   /**
    * 插件上下文，提供主进程能力
    */
   context?: SuperContext;
-}
-
-/**
- * 执行结果
- */
-export interface ExecuteResult {
-  success: boolean;
-  message: string;
 }
 
 /**
@@ -112,7 +112,13 @@ export interface SuperPlugin {
    */
   devTools?: boolean;
 
+  /**
+   * 获取动作列表
+   */
   getActions(args: GetActionsArgs): Promise<SuperAction[]>;
 
+  /**
+   * 执行动作
+   */
   executeAction(args: ExecuteActionArgs): Promise<ExecuteResult>;
 }

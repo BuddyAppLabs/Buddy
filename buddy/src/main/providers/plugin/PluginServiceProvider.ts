@@ -7,6 +7,11 @@ import { PluginManager } from './manager/PluginManager.js';
 import { IPluginManager } from './contract/IPluginManager.js';
 import { DevPluginRepo } from './repo/DevPluginRepo.js';
 import { DevPackageRepo } from './repo/DevPackageRepo.js';
+import {
+  SETTING_KEY_PLUGIN_DEV_PACKAGE_PATH,
+  SETTING_KEY_PLUGIN_DEV_PATH,
+} from '@/main/constants.js';
+import { IAIManager } from '../ai/IAIManager.js';
 
 export class PluginServiceProvider extends ServiceProvider {
   /**
@@ -15,15 +20,16 @@ export class PluginServiceProvider extends ServiceProvider {
   public register(): void {
     // 注册插件管理器
     this.app.container().singleton('plugin', () => {
-      const devPath = SettingFacade.get('plugins.dev.path', null);
+      const devPath = SettingFacade.get(SETTING_KEY_PLUGIN_DEV_PATH, null);
       const devPackagePath = SettingFacade.get(
-        'plugins.dev.package.path',
+        SETTING_KEY_PLUGIN_DEV_PACKAGE_PATH,
         null
       );
       const devPluginDB = new DevPluginRepo(devPath);
       const devPackageDB = new DevPackageRepo(devPackagePath);
+      const aiManager = this.app.make<IAIManager>('ai');
 
-      return new PluginManager(devPluginDB, devPackageDB);
+      return new PluginManager(devPluginDB, devPackageDB, aiManager);
     });
   }
 

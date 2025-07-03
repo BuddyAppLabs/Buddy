@@ -5,13 +5,14 @@
 import { ServiceProvider } from '@coffic/cosy-framework';
 import { AIManager } from './AIManager.js';
 import { AIServer } from './AIServer.js';
+import { SERVICE_ABSTRACT_NAME_AI } from '@/main/constants.js';
 
 export class AIServiceProvider extends ServiceProvider {
   /**
    * 注册AI服务
    */
   public register(): void {
-    this.app.container().singleton('ai', () => {
+    this.app.container().singleton(SERVICE_ABSTRACT_NAME_AI, () => {
       return new AIManager(this.app.make('log'));
     });
   }
@@ -24,7 +25,7 @@ export class AIServiceProvider extends ServiceProvider {
     new AIServer({
       port: 7878,
       logger: this.app.make('log'),
-      aiManager: this.app.make('ai'),
+      aiManager: this.app.make(SERVICE_ABSTRACT_NAME_AI),
     }).start();
   }
 
@@ -37,6 +38,6 @@ export class AIServiceProvider extends ServiceProvider {
    * 获取提供的服务
    */
   public provides(): string[] {
-    return ['ai'];
+    return [SERVICE_ABSTRACT_NAME_AI];
   }
 }

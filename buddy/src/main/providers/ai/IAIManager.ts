@@ -1,16 +1,12 @@
+import { IModel } from '@/main/service/chat/contract/IModel';
+import { IProvider } from '@/main/service/chat/contract/IProvider';
+import { AIModelType, IAIModelConfig } from '@coffic/buddy-types';
+import { StreamTextResult, UIMessage } from 'ai';
+
 /**
  * AI服务契约
  * 定义了AI管理器需要实现的方法
  */
-
-import { IModel } from '@/main/service/chat/contract/IModel';
-import { IProvider } from '@/main/service/chat/contract/IProvider';
-import { IAIModelConfig } from '@coffic/buddy-types';
-import { StreamTextResult, UIMessage } from 'ai';
-
-// AI模型类型
-export type AIModelType = 'openai' | 'anthropic' | 'deepseek';
-
 export interface IAIManager {
   /**
    * 发送聊天消息
@@ -18,9 +14,15 @@ export interface IAIManager {
    */
   createStream(
     modelId: string,
-    apiKey: string,
     messages: UIMessage[]
   ): Promise<StreamTextResult<any, any>>;
+
+  /**
+   * 生成文本
+   * @param prompt 提示词
+   * @returns 文本
+   */
+  generateText(prompt: string): Promise<string>;
 
   /**
    * 取消指定ID的请求

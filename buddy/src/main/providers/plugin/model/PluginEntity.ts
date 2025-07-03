@@ -275,14 +275,12 @@ export class PluginEntity {
    * 执行插件动作
    * @returns 执行结果
    */
-  async executeAction(
-    actionId: string,
-    keyword: string
-  ): Promise<ExecuteResult> {
+  async executeAction(args: ExecuteActionArgs): Promise<ExecuteResult> {
+    const { actionId } = args;
+
     LogFacade.channel('plugin').info(`${title} 执行动作`, {
       id: this.id,
-      actionId,
-      keyword,
+      args,
     });
 
     const pluginModule = await this.load();
@@ -306,16 +304,7 @@ export class PluginEntity {
       };
     }
 
-    // 创建插件上下文，提供主进程能力
-    const pluginContext = PluginContext.createPluginContext(this);
-
-    const context: ExecuteActionArgs = {
-      actionId,
-      keyword,
-      context: pluginContext, // 注入插件上下文
-    };
-
-    return pluginModule.executeAction(context);
+    return pluginModule.executeAction(args);
   }
 
   async getAction(actionId: string): Promise<ActionEntity | null> {

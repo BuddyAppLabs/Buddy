@@ -1,4 +1,9 @@
-import { streamText, appendResponseMessages, wrapLanguageModel } from 'ai';
+import {
+  streamText,
+  appendResponseMessages,
+  wrapLanguageModel,
+  generateText,
+} from 'ai';
 import { getTools } from './tools';
 import { createDeepSeek } from '@ai-sdk/deepseek';
 import { createAnthropic } from '@ai-sdk/anthropic';
@@ -10,6 +15,7 @@ import { createOpenAI } from '@ai-sdk/openai';
 import type { LanguageModelV1, StreamTextResult, UIMessage } from 'ai';
 import type { IChatLogger } from './contract/IChatLogger.js';
 import type { IConversationRepo } from './contract/IConversationRepo.js';
+import { randomUUID } from 'crypto';
 
 export class ChatService {
   providers = PROVIDERS;
@@ -27,6 +33,20 @@ export class ChatService {
     this.systemPrompt = systemPrompt ?? null;
 
     this.logger?.info('ChatService constructor');
+  }
+
+  async generateText(
+    modelId: string,
+    key: string,
+    prompt: string
+  ): Promise<string> {
+    const model = this.getModel(modelId, key);
+    const { text } = await generateText({
+      model: model,
+      prompt: prompt,
+    });
+
+    return text;
   }
 
   createStream(
@@ -152,5 +172,24 @@ export class ChatService {
     return this.providers.find((provider) =>
       provider.models.some((model) => model.id === modelId)
     );
+  }
+
+  public getDefaultProvider(): IProvider | undefined {
+    return this.providers.find(
+      (provider) => provider.type === ProviderType.DEEPSEEK
+    );
+  }
+
+  public getDefaultModel(): IModel | undefined {
+    const provider = this.getDefaultProvider();
+    if (!provider) {
+      return undefined;
+    }
+
+    return provider.models[0];
+  }
+
+  public makeMessageID(): string {
+    return randomUUID();
   }
 }

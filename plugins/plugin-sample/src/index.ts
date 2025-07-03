@@ -51,6 +51,20 @@ const plugin: SuperPlugin = {
         pluginId: '',
       },
       {
+        id: `ai_generate_text`,
+        description: 'AI生成文本',
+        icon: '🤖',
+        globalId: '',
+        pluginId: '',
+      },
+      {
+        id: `set_ai_provider_key_deepseek`,
+        description: '设置DeepSeek密钥',
+        icon: '🤖',
+        globalId: '',
+        pluginId: '',
+      },
+      {
         id: `time`,
         description: '显示当前时间',
         icon: '🕒',
@@ -79,18 +93,17 @@ const plugin: SuperPlugin = {
       },
     ];
 
-    log.debug(`基础动作列表: ${actions.length} 个动作`);
-
     // 如果有关键词，过滤匹配的动作
     if (args.keyword) {
       const lowerKeyword = args.keyword.toLowerCase();
-      log.debug(`过滤包含关键词 "${lowerKeyword}" 的动作`);
 
-      const filteredActions = actions.filter((action) =>
-        action.description.toLowerCase().includes(lowerKeyword)
+      const filteredActions = actions.filter(
+        (action) =>
+          action.description.toLowerCase().includes(lowerKeyword) ||
+          action.id.toLowerCase().includes(lowerKeyword) ||
+          action.id == 'set_ai_provider_key_deepseek'
       );
 
-      log.info(`过滤后返回 ${filteredActions.length} 个动作`);
       return filteredActions;
     }
 
@@ -100,13 +113,11 @@ const plugin: SuperPlugin = {
 
   /**
    * 执行插件动作
-   * @param {string} actionId 要执行的动作ID
-   * @param {string} keyword 搜索关键词
-   * @param {SuperContext} context 插件上下文
+   * @param {ExecuteActionArgs} args 动作执行参数
    * @returns {Promise<ExecuteResult>} 动作执行结果
    */
   async executeAction(args: ExecuteActionArgs): Promise<ExecuteResult> {
-    const { actionId, keyword, context } = args;
+    const { actionId, context } = args;
 
     // 使用插件上下文提供的日志功能
     if (context && context.logger) {
@@ -120,6 +131,27 @@ const plugin: SuperPlugin = {
         case `hello`:
           log.debug(`执行打招呼动作`);
           return { success: true, message: '你好，这是来自示例插件的问候！' };
+
+        case `ai_generate_text`:
+          const result = await context?.ai.generateText('生成简短的问候语');
+          return {
+            success: true,
+            message: result ? `成功` : '没有结果',
+            alert: result,
+          };
+
+        case `set_ai_provider_key_deepseek`:
+          log.debug(`执行设置DeepSeek密钥动作`);
+          try {
+            await context?.ai.setModelApiKey('deepseek', args.keyword ?? '');
+            return { success: true, message: '密钥设置成功' };
+          } catch (error) {
+            log.error(`设置DeepSeek密钥失败:`, error);
+            return {
+              success: false,
+              message: '设置密钥失败' + (error as Error).message,
+            };
+          }
 
         case `time`:
           log.debug(`执行时间动作（有自定义视图）`);

@@ -7,8 +7,8 @@ import { LogFacade } from '@coffic/cosy-logger';
 import { userPluginDB } from '../providers/plugin/repo/UserPluginRepo.js';
 import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import {
-  KEY_PLUGIN_DEV_PACKAGE_PATH,
-  KEY_PLUGIN_DEV_PATH,
+  SETTING_KEY_PLUGIN_DEV_PACKAGE_PATH,
+  SETTING_KEY_PLUGIN_DEV_PATH,
 } from '../constants.js';
 
 /**
@@ -79,7 +79,7 @@ export function registerPluginRoutes(): void {
       }
 
       const newPath = filePaths[0];
-      SettingFacade.set(KEY_PLUGIN_DEV_PATH, newPath);
+      SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PATH, newPath);
       PluginFacade.updateDevPluginRootDir(newPath);
 
       return newPath;
@@ -90,7 +90,7 @@ export function registerPluginRoutes(): void {
   RouteFacade.handle(
     IPC_METHODS.RESET_PLUGIN_DIRECTORIES_DEV,
     (_event): void => {
-      SettingFacade.set(KEY_PLUGIN_DEV_PATH, '');
+      SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PATH, '');
       PluginFacade.updateDevPluginRootDir('');
     }
   ).description('重置开发仓库的根目录');
@@ -99,7 +99,7 @@ export function registerPluginRoutes(): void {
   RouteFacade.handle(
     IPC_METHODS.RESET_PLUGIN_DIRECTORIES_DEV_PACKAGE,
     (_event): void => {
-      SettingFacade.set(KEY_PLUGIN_DEV_PACKAGE_PATH, '');
+      SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PACKAGE_PATH, '');
       PluginFacade.updateDevPackageRootDir('');
     }
   ).description('重置开发包的根目录');
@@ -127,7 +127,7 @@ export function registerPluginRoutes(): void {
       }
 
       const newPath = filePaths[0];
-      SettingFacade.set(KEY_PLUGIN_DEV_PACKAGE_PATH, newPath);
+      SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PACKAGE_PATH, newPath);
       PluginFacade.updateDevPackageRootDir(newPath);
 
       return newPath;

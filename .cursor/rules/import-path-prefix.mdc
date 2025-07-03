@@ -1,0 +1,21 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 导入路径规范
+
+所有导入（import）语句的路径，统一使用 `@` 开头，表示从项目根目录（或约定的别名）进行路径引用。
+
+- ✅ 正确示例：
+  ```ts
+  import { Something } from '@/utils/something'
+  import MyComponent from '@/components/MyComponent.vue'
+  ```
+- ❌ 错误示例：
+  ```ts
+  import { Something } from '../../utils/something'
+  import MyComponent from '../components/MyComponent.vue'
+  ```
+
+此规范适用于整个项目，确保导入路径简洁、统一、易于维护。
