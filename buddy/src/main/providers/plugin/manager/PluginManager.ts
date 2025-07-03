@@ -1,7 +1,3 @@
-/**
- * 插件管理器
- * 负责插件的加载、管理和通信
- */
 import { IPluginManager } from '../contract/IPluginManager.js';
 import { PluginEntity } from '../model/PluginEntity.js';
 import { LogFacade } from '@coffic/cosy-logger';
@@ -14,6 +10,10 @@ import { Downloader } from '@/main/service/Downloader.js';
 import { ExecuteResult, GetActionsArgs } from '@coffic/buddy-types';
 import { DevPackageRepo } from '../repo/DevPackageRepo.js';
 
+/**
+ * 插件管理器
+ * 负责插件的加载、管理和通信
+ */
 export class PluginManager implements IPluginManager {
   /**
    * 构造函数
@@ -67,7 +67,11 @@ export class PluginManager implements IPluginManager {
    * @param id 插件ID
    */
   public async find(id: string): Promise<PluginEntity | null> {
-    return (await userPluginDB.find(id)) || (await this.devPluginDB.find(id));
+    return (
+      (await userPluginDB.find(id)) ||
+      (await this.devPluginDB.find(id)) ||
+      (await this.devPackageDB.get())
+    );
   }
 
   /**
@@ -82,12 +86,15 @@ export class PluginManager implements IPluginManager {
     const [pluginId, actionLocalId] = actionId.split(':');
     const plugin = await this.find(pluginId);
     if (!plugin) {
-      LogFacade.channel('plugin').error(`[PluginManager] 插件不存在`, {
-        pluginId,
-        actionId,
-        keyword,
-      });
-      throw new Error(`插件不存在: ${pluginId}`);
+      LogFacade.channel('plugin').error(
+        `[PluginManager] 执行插件动作失败，插件不存在`,
+        {
+          pluginId,
+          actionId,
+          keyword,
+        }
+      );
+      throw new Error(`[PluginManager] 插件不存在: ${pluginId}`);
     }
 
     let result = await plugin.executeAction(actionLocalId, keyword);
