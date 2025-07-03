@@ -141,12 +141,9 @@ export const useMarketStore = defineStore('market', {
 
     // 加载远程插件列表
     async loadRemotePlugins(): Promise<void> {
-      console.log('loadRemotePlugins');
       if (this.loadingRemotePlugins) {
-        console.log('loadRemotePlugins already loading');
+        console.warn('loadRemotePlugins already loading');
         return;
-      } else {
-        console.log('loadRemotePlugins');
       }
 
       this.loadingRemotePlugins = true;
