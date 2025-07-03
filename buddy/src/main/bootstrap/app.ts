@@ -27,7 +27,6 @@ import { StateManager } from '../providers/state/StateManager.js';
 // 应用配置
 const config: ApplicationConfig = {
   name: 'Buddy',
-  version: '1.3.18',
   env: app.isPackaged ? 'production' : 'development',
   debug: true,
   providers: [
