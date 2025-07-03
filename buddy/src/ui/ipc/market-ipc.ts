@@ -31,8 +31,6 @@ export const marketIpc = {
   async getDevPackage(): Promise<SendablePlugin> {
     let response = await ipc.invoke(IPC_METHODS.GET_DEV_PACKAGE);
 
-    console.log('[market-ipc] getDevPackage', response);
-
     if (response.success) {
       return response.data;
     } else {

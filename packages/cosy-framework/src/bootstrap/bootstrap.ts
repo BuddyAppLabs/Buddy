@@ -6,11 +6,11 @@ import { IPC_CHANNELS, RouterAbstract } from '../constants.js';
 import { ConfigServiceProvider } from '../config/ConfigServiceProvider.js';
 import { Facade } from '../facades/Facade.js';
 import { RouteServiceProvider } from '../routing/RouteServiceProvider.js';
-import { ErrorHandlingMiddleware } from '../middleware/ErrorHandlingMiddleware.js';
 import { IpcResponse } from '@coffic/buddy-types/contact/ipc-response.js';
+import { IMiddleware } from '../contract/IMiddleware.js';
 const { ipcMain } = electron;
 
-const defaultMiddleware = [ErrorHandlingMiddleware];
+const defaultMiddleware: IMiddleware[] = [];
 
 const defaultProviders = [ConfigServiceProvider, RouteServiceProvider];
 

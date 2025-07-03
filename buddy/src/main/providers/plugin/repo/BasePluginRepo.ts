@@ -39,12 +39,10 @@ export abstract class BasePluginRepo implements IPluginRepo {
    * 获取插件列表
    */
   public async getAllPlugins(): Promise<PluginEntity[]> {
-    if (verbose) {
-      LogFacade.channel('plugin').info(
-        `[BasePluginRepo] 获取插件列表，根目录是`,
-        { rootDir: this.rootDir }
-      );
-    }
+    LogFacade.channel('plugin').info(
+      `[BasePluginRepo] 获取插件列表，根目录是`,
+      { rootDir: this.rootDir }
+    );
 
     if (!fs.existsSync(this.rootDir)) {
       return [];

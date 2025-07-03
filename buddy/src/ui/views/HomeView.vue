@@ -17,7 +17,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="w-full flex flex-col">
+    <div class="w-full">
         <!-- 提示 -->
         <div v-if="actionStore.getActionCount() === 0" class="p-4">
             <h2 class="text-2xl font-bold mb-4">欢迎使用</h2>
@@ -27,13 +27,11 @@ onUnmounted(() => {
         </div>
 
         <!-- 插件动作列表 -->
-        <div v-else class="flex-1 w-full px-1">
+        <div v-else class="w-full px-1">
             <ActionList />
 
             <!-- 插件视图网格 -->
-            <div class="min-h-96 w-full z-30 my-24">
-                <PluginPageGrid />
-            </div>
+            <PluginPageGrid />
         </div>
     </div>
 </template>

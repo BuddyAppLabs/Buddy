@@ -26,7 +26,7 @@ const { isDev } = useApp()
 </script>
 
 <template>
-    <div class="p-4 h-full flex flex-col">
+    <div class="flex flex-col">
         <!-- 操作栏 -->
         <div class="mb-4 sticky top-0">
             <ToolBar variant="compact" :bordered="false">

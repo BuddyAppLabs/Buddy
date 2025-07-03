@@ -59,11 +59,6 @@ export class PluginEntity {
       throw new Error(`插件目录 ${pluginPath} 缺少 package.json`);
     }
 
-    LogFacade.channel('plugin').debug(`${title} 读取插件目录`, {
-      pluginPath,
-      type,
-    });
-
     const packageJson = await readPackageJson(pluginPath);
     const plugin = new PluginEntity(packageJson, pluginPath, type);
 
@@ -287,20 +282,20 @@ export class PluginEntity {
       LogFacade.channel('plugin').warn(
         `${title} 插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`
       );
-      return {
-        success: false,
-        message: `${title} 插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`,
-      };
+
+      throw new Error(
+        `${title} 插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`
+      );
     }
 
     if (typeof pluginModule.executeAction !== 'function') {
       LogFacade.channel('plugin').warn(
         `${title} 插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`
       );
-      return {
-        success: false,
-        message: `${title} 插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`,
-      };
+
+      throw new Error(
+        `${title} 插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`
+      );
     }
 
     return pluginModule.executeAction(args);
@@ -383,25 +378,34 @@ export class PluginEntity {
    * @returns 插件的SendablePlugin对象
    */
   public async getSendablePlugin(): Promise<SendablePlugin> {
-    try {
-      return {
-        id: this.id,
-        name: this.name,
-        description: this.description,
-        version: this.version,
-        author: this.author,
-        path: this.path,
-        validationError: this.validationError,
-        status: this.status,
-        type: this.type,
-        error: this.error || undefined,
-        pagePath: await this.getPagePath(),
-      };
-    } catch (error) {
-      LogFacade.channel('plugin').error(`${title} 获取插件SendablePlugin失败`, {
-        error: error instanceof Error ? error.message : String(error),
-      });
-      throw error;
+    let pagePath = '';
+    let errors: string[] = [];
+
+    if (this.error) {
+      errors.push(this.error);
     }
+
+    try {
+      pagePath = await this.getPagePath();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      errors.push(errorMessage);
+    }
+
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      version: this.version,
+      author: this.author,
+      path: this.path,
+      validationError: this.validationError,
+      status: this.status,
+      type: this.type,
+      error: errors.join(', '),
+      pagePath: pagePath || '',
+    };
   }
 }

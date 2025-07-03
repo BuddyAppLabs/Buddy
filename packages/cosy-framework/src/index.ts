@@ -37,9 +37,6 @@ export { IContextualLogger } from './contract/logger/IContextualLogger.js';
 export { ISettingManager } from './contract/setting/ISettingManager.js';
 export { IPreloadApi } from './contract/IPreloadApi.js';
 
-// Middleware
-export { ErrorHandlingMiddleware } from './middleware/ErrorHandlingMiddleware.js';
-
 // Setting
 export { SettingManager } from './setting/SettingManager.js';
 
