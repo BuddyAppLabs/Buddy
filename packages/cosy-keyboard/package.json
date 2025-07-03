@@ -18,10 +18,10 @@
   "dependencies": {
     "@coffic/cosy-framework": "workspace:*",
     "@coffic/cosy-logger": "workspace:*",
-    "@coffic/key-listener": "^1.0.3",
-    "electron": "^37.1.0"
+    "@coffic/key-listener": "^1.0.3"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "electron": "^37.1.0"
   }
 }

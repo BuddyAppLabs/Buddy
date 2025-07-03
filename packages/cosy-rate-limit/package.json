@@ -15,7 +15,7 @@
   ],
   "author": "",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "electron": "^37.1.0"
   },
   "peerDependencies": {
