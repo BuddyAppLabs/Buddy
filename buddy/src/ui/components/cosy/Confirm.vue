@@ -40,68 +40,69 @@ Confirm 组件
 -->
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import Button from './Button.vue'
+  import { ref, watch } from 'vue';
+  import { Button } from '@coffic/cosy-ui/vue';
 
-interface Props {
-  // 控制对话框显示/隐藏
-  modelValue: boolean
-  // 对话框标题
-  title?: string
-  // 确认消息
-  message?: string
-  // 确认按钮文本
-  confirmText?: string
-  // 取消按钮文本
-  cancelText?: string
-  // 确认按钮样式
-  confirmVariant?: 'default' | 'primary' | 'secondary' | 'accent' | 'ghost'
-  // 取消按钮样式
-  cancelVariant?: 'default' | 'primary' | 'secondary' | 'accent' | 'ghost'
-  // 确认按钮是否处于加载状态
-  loading?: boolean
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  title: '',
-  message: '',
-  confirmText: '确认',
-  cancelText: '取消',
-  confirmVariant: 'primary',
-  cancelVariant: 'ghost',
-  loading: false
-})
-
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void
-  (e: 'confirm'): void
-  (e: 'cancel'): void
-}>()
-
-
-
-// 处理确认
-const handleConfirm = () => {
-  emit('confirm')
-}
-
-// 对话框引用
-const modalRef = ref<HTMLDialogElement | null>(null)
-
-// 监听 modelValue 变化
-watch(() => props.modelValue, (newVal) => {
-  if (newVal && modalRef.value) {
-    modalRef.value.showModal()
-  } else if (modalRef.value) {
-    modalRef.value.close()
+  interface Props {
+    // 控制对话框显示/隐藏
+    modelValue: boolean;
+    // 对话框标题
+    title?: string;
+    // 确认消息
+    message?: string;
+    // 确认按钮文本
+    confirmText?: string;
+    // 取消按钮文本
+    cancelText?: string;
+    // 确认按钮样式
+    confirmVariant?: 'default' | 'primary' | 'secondary' | 'accent' | 'ghost';
+    // 取消按钮样式
+    cancelVariant?: 'default' | 'primary' | 'secondary' | 'accent' | 'ghost';
+    // 确认按钮是否处于加载状态
+    loading?: boolean;
   }
-})
 
-// 处理取消
-const handleCancel = () => {
-  emit('update:modelValue', false)
-  emit('cancel')
-}
+  const props = withDefaults(defineProps<Props>(), {
+    title: '',
+    message: '',
+    confirmText: '确认',
+    cancelText: '取消',
+    confirmVariant: 'primary',
+    cancelVariant: 'ghost',
+    loading: false,
+  });
+
+  const emit = defineEmits<{
+    (e: 'update:modelValue', value: boolean): void;
+    (e: 'confirm'): void;
+    (e: 'cancel'): void;
+  }>();
+
+  // 处理确认
+  const handleConfirm = () => {
+    emit('confirm');
+  };
+
+  // 对话框引用
+  const modalRef = ref<HTMLDialogElement | null>(null);
+
+  // 监听 modelValue 变化
+  watch(
+    () => props.modelValue,
+    (newVal) => {
+      if (newVal && modalRef.value) {
+        modalRef.value.showModal();
+      } else if (modalRef.value) {
+        modalRef.value.close();
+      }
+    }
+  );
+
+  // 处理取消
+  const handleCancel = () => {
+    emit('update:modelValue', false);
+    emit('cancel');
+  };
 </script>
 
 <template>
@@ -117,15 +118,15 @@ const handleCancel = () => {
 
       <!-- 按钮组 -->
       <div class="modal-action">
-        <Button :variant="cancelVariant" @click="handleCancel">
+        <Button @click="handleCancel">
           {{ cancelText }}
         </Button>
-        <Button :variant="confirmVariant" :loading="loading" @click="handleConfirm">
+        <Button :loading="loading" @click="handleConfirm">
           {{ confirmText }}
         </Button>
       </div>
     </div>
-    
+
     <!-- 遮罩层 -->
     <form method="dialog" class="modal-backdrop">
       <button @click="handleCancel">close</button>

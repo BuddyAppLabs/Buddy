@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { computed } from 'vue';
   import { RiCheckLine, RiDeleteBinLine } from '@remixicon/vue';
-  import Button from '@renderer/components/cosy/Button.vue';
+  import { Button } from '@coffic/cosy-ui/vue';
   import { globalConfirm } from '@renderer/composables/useConfirm';
   import { useMarketStore } from '@/ui/stores/market-store';
   import { globalAlert } from '@renderer/composables/useAlert';
