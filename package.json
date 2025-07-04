@@ -22,6 +22,7 @@
     "dev:buddy": "clear && pnpm --filter buddy dev",
     "dev:deps": "turbo dev --filter='@coffic/cosy-*' --parallel",
     "dev:all": "turbo dev --parallel",
+    "dev": "pnpm dev:buddy",
     "ext": "nodemon pipeline.mjs",
     "mcp": "pnpm --filter mcp-core test",
     "lint": "turbo lint",
