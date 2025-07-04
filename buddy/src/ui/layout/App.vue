@@ -155,7 +155,7 @@
       :class="[alertContainerClass, alertPositionClass]">
       <Alert
         :type="globalAlert.state.value.type"
-        :message="globalAlert.state.value.message"
+        :title="globalAlert.state.value.message"
         :closable="globalAlert.state.value.closable"
         :position="globalAlert.state.value.position"
         @close="globalAlert.close" />
