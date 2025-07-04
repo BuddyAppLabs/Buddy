@@ -79,7 +79,7 @@
         if (result.alert) {
           globalAlert.success(result.alert);
         } else {
-          globalAlert.success(result.message, { duration: 5000 });
+          globalAlert.success(result.message);
         }
       } else {
         globalAlert.error(result.message);
