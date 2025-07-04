@@ -1,4 +1,5 @@
 import './app.css';
+import '../../node_modules/@coffic/cosy-ui/dist/app.css';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from '@/ui/layout/App.vue';
