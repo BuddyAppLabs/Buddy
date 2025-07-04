@@ -6,9 +6,6 @@ export interface ApplicationConfig {
   // 应用名称
   name: string;
 
-  // 版本
-  version: string;
-
   // 环境
   env: 'development' | 'production' | 'test';
 
