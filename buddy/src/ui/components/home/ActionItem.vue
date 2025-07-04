@@ -1,12 +1,10 @@
 <script setup lang="ts">
   import { SendableAction } from '@/types/sendable-action.js';
-  import ListItem from '@renderer/components/cosy/ListItem.vue';
   import { useActionStore } from '@/ui/stores/action-store';
   import { computed, ref } from 'vue';
   import { onKeyStroke, useFocus } from '@vueuse/core';
   import { useAlert } from '@renderer/composables/useAlert';
 
-  const debug = false;
   const actionStore = useActionStore();
   const globalAlert = useAlert();
 
@@ -98,14 +96,42 @@
 </script>
 
 <template>
-  <ListItem
+  <div
     ref="itemRef"
-    :selected="selected"
-    :loading="isLoading"
-    :description="
-      debug ? `${action.globalId} - ${action.description}` : action.description
-    "
-    :icon="action.icon"
+    class="flex items-center p-3 transition-colors duration-200 rounded-md"
+    :class="{
+      'bg-primary/60': selected,
+      'border-b border-base-200': true,
+      'bg-base-100': !selected,
+      'hover:bg-primary/40': !selected && !isLoading,
+      'cursor-pointer': !isLoading,
+      'cursor-wait': isLoading,
+      'opacity-70': isLoading,
+    }"
     :tabindex="index + 1"
-    @click="handleClick" />
+    @click="handleClick">
+    <!-- 加载状态显示 loading spinner -->
+    <div v-if="isLoading" class="mr-3">
+      <span class="loading loading-spinner loading-sm text-primary"></span>
+    </div>
+    <!-- 选中状态显示 emoji 图标 -->
+    <span
+      v-else-if="selected && action.icon"
+      class="mr-3 text-primary text-lg"
+      >{{ action.icon }}</span
+    >
+    <span v-else-if="action.icon" class="mr-3 text-base-content/70 text-lg">{{
+      action.icon
+    }}</span>
+
+    <div class="flex-1 flex flex-col gap-1">
+      <p class="text-sm">
+        {{ action.description }}
+      </p>
+
+      <p class="text-xs text-secondary/70">
+        {{ action.pluginId }}
+      </p>
+    </div>
+  </div>
 </template>
