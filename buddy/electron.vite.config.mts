@@ -30,7 +30,7 @@ export default defineConfig({
         input: {
           'framework-preload': resolve(
             __dirname,
-            '../packages/cosy-framework/src/preload/index.ts'
+            'node_modules/@coffic/cosy-framework/dist/preload/index.js'
           ),
           'plugin-preload': resolve(__dirname, 'src/preload/preload-plugin.ts'),
         },

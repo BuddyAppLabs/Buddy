@@ -58,7 +58,7 @@
   },
   "scripts": {
     "dev": "vite build --watch",
-    "build": "vite build",
+    "build": "",
     "preview": "vite preview",
     "lint": "eslint src --ext ts",
     "dev:vscode": "bash -exec 'code --extensionDevelopmentPath=$(pwd)'",
