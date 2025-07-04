@@ -63,7 +63,6 @@
     "@electron-toolkit/eslint-config-ts": "^3.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@types/cors": "^2.8.19",
-    "@types/electron": "^1.6.12",
     "@types/node": "^22.14.0",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^5.2.3",
