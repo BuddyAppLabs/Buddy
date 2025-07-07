@@ -5,6 +5,7 @@
   import { Button } from '@coffic/cosy-ui/vue';
   import { useNavigation } from '@/ui/composables/useNavigation';
   import { eventBus } from '@/ui/event-bus';
+  import { AppEvents } from '@coffic/buddy-types';
 
   const actionStore = useActionStore();
   const keyword = ref(actionStore.keyword);
@@ -46,11 +47,22 @@
     }
   }
 
+  function reset() {
+    keyword.value = '';
+    actionStore.updateKeyword('');
+  }
+
   onMounted(() => {
+    reset();
     nextTick(() => {
       searchInput.value?.focus();
     });
     eventBus.on('globalKey', insertCharFromGlobalKey);
+
+    // 监听窗口激活事件，重置搜索框
+    window.ipc.receive(AppEvents.ACTIVATED, () => {
+      reset();
+    });
   });
 
   onUnmounted(() => {
