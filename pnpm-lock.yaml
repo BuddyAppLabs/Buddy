@@ -67,8 +67,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2
       '@coffic/cosy-framework':
-        specifier: ^1.0.5
-        version: 1.0.5
+        specifier: ^1.0.6
+        version: 1.0.6
       '@coffic/cosy-keyboard':
         specifier: ^0.2.1
         version: 0.2.5(electron@37.1.0)
@@ -577,8 +577,8 @@ packages:
   '@coffic/cosy-framework@1.0.2':
     resolution: {integrity: sha512-S3Q27Wamc9NBNNSrpssCyTwBQlQuA0Wl5OWn6H0eqtgUcv8IRZZ/enFbd3/btLrQn7dM9UGDCmX0ga0drJYg4w==}
 
-  '@coffic/cosy-framework@1.0.5':
-    resolution: {integrity: sha512-iE/8yn1KLZElmHqnTrmjQo+FcaCaeZzIU3Hm1ueOXVrw4MOeaInRif4a5LeAN1CS4u87+RS86Fho6tKAeAzoeA==}
+  '@coffic/cosy-framework@1.0.6':
+    resolution: {integrity: sha512-jvIxyN+69QlEQZNhNcTd5AgjqEaaMi7EjrmpagLYBtZZfyVXvHSBXBRwvX89MgZ0U9zLsxT+3namEVzQLmoVVg==}
 
   '@coffic/cosy-keyboard@0.2.5':
     resolution: {integrity: sha512-v3MltgQSLiimb0eJ8nE/7LyiGDS+6qJlXjixn0J3GoGUFPGxquWYdvUDDiQkRN7y/jl81RzP6DICGInAvllsaQ==}
@@ -6286,7 +6286,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@coffic/cosy-framework@1.0.5':
+  '@coffic/cosy-framework@1.0.6':
     dependencies:
       '@coffic/buddy-types': 1.1.2
       electron-updater: 6.6.2

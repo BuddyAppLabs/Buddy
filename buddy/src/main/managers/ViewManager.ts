@@ -75,10 +75,9 @@ export class ViewManager {
     try {
       htmlContent = readFileSync(args.pagePath, 'utf-8');
     } catch (error) {
-      LogFacade.channel('pluginView').warn(
-        '[ViewManager] 加载HTML内容失败:',
-        error
-      );
+      LogFacade.channel('pluginView').warn('[ViewManager] 加载HTML内容失败:', {
+        error,
+      });
       htmlContent = '加载HTML内容失败: ' + error;
     }
 
