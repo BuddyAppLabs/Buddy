@@ -2,7 +2,7 @@ import { AIModelType, SuperContext } from '@coffic/buddy-types';
 import { LogFacade } from '@coffic/cosy-logger';
 import { resolve, isAbsolute } from 'path';
 import fs from 'fs';
-import { SettingFacade } from '@coffic/cosy-framework';
+import { SettingFacade, UpdateFacade } from '@coffic/cosy-framework';
 import { PluginEntity } from './PluginEntity';
 import { shell } from 'electron';
 import { IAIManager } from '@/main/providers/ai/IAIManager';
@@ -113,6 +113,13 @@ export class PluginContext {
           key: string
         ): Promise<void> => {
           return await aiManager.setApiKey(provider, key);
+        },
+      },
+
+      // 版本信息
+      version: {
+        checkForUpdates: async (): Promise<string> => {
+          return await UpdateFacade.checkForUpdates();
         },
       },
     };

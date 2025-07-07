@@ -9,7 +9,7 @@
   },
   "homepage": "https://github.com/cofficlab/buddy/tree/main/packages/plugin-sample",
   "devDependencies": {
-    "@coffic/buddy-types": "workspace:*",
+    "@coffic/buddy-types": "^1.1.0",
     "@types/node": "^22.14.1",
     "typescript": "^5.8.3"
   },

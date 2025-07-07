@@ -26,7 +26,7 @@
     "@ai-sdk/openai": "^1.3.6",
     "@ai-sdk/vue": "^1.2.4",
     "@coffic/active-app-monitor": "^1.0.2",
-    "@coffic/buddy-types": "workspace:*",
+    "@coffic/buddy-types": "^1.1.0",
     "@coffic/cosy-framework": "^1.0.1",
     "@coffic/cosy-keyboard": "^0.1.1",
     "@coffic/cosy-logger": "^0.1.1",

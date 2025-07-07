@@ -1,0 +1,47 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    devDependencies:
+      '@coffic/buddy-types':
+        specifier: '*'
+        version: 1.0.2
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.19.4
+      typescript:
+        specifier: ^5.3.3
+        version: 5.8.3
+
+packages:
+
+  '@coffic/buddy-types@1.0.2':
+    resolution: {integrity: sha512-oXrbacODnPdEIWB/7IAHFy2LpKeog/PHUGgBxKEqiZOalInuy9bDGeIAjLHxEE+M1qbaRaxU9b4qKhzj008LWg==}
+
+  '@types/node@20.19.4':
+    resolution: {integrity: sha512-OP+We5WV8Xnbuvw0zC2m4qfB/BJvjyCwtNjhHdJxV1639SGSKrLmJkc3fMnp2Qy8nJyHp8RO6umxELN/dS1/EA==}
+
+  typescript@5.8.3:
+    resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
+  undici-types@6.21.0:
+    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
+
+snapshots:
+
+  '@coffic/buddy-types@1.0.2': {}
+
+  '@types/node@20.19.4':
+    dependencies:
+      undici-types: 6.21.0
+
+  typescript@5.8.3: {}
+
+  undici-types@6.21.0: {}
