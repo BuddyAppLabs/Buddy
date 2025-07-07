@@ -1,53 +1,26 @@
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted } from 'vue';
-  import { eventBus } from '@/ui/event-bus';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { eventBus } from '@/ui/event-bus';
 
-  const lastKey = ref<string | null>(null);
+const lastKey = ref<string | null>(null);
+let timer: ReturnType<typeof setTimeout> | null = null;
 
-  const handleKeydown = (event: KeyboardEvent) => {
-    // 只显示可打印字符和常用控制键
-    if (
-      event.key.length === 1 ||
-      [
-        'Enter',
-        'Escape',
-        'Backspace',
-        'Tab',
-        'Shift',
-        'Control',
-        'Alt',
-        'Meta',
-        'ArrowUp',
-        'ArrowDown',
-        'ArrowLeft',
-        'ArrowRight',
-        'CapsLock',
-        'Delete',
-        'Home',
-        'End',
-        'PageUp',
-        'PageDown',
-      ].includes(event.key)
-    ) {
-      let key = event.key;
-      if (key === ' ') key = 'Space';
-      lastKey.value = key;
-      // 新增：如果是字母键，发出事件
-      if (/^[a-zA-Z]$/.test(event.key)) {
-        eventBus.emit('globalKey', event.key);
-      }
-    } else {
-      lastKey.value = null;
-    }
-  };
+function showKey(key: string) {
+  lastKey.value = key;
+  if (timer) clearTimeout(timer);
+  timer = setTimeout(() => {
+    lastKey.value = null;
+  }, 3000);
+}
 
-  onMounted(() => {
-    window.addEventListener('keydown', handleKeydown);
-  });
+onMounted(() => {
+  eventBus.on('showKey', showKey);
+});
 
-  onUnmounted(() => {
-    window.removeEventListener('keydown', handleKeydown);
-  });
+onUnmounted(() => {
+  eventBus.off('showKey', showKey);
+  if (timer) clearTimeout(timer);
+});
 </script>
 
 <template>
@@ -61,15 +34,15 @@
 </template>
 
 <style scoped>
-  .key-fade-enter-active,
-  .key-fade-leave-active {
-    transition:
-      opacity 0.2s,
-      transform 0.2s;
-  }
-  .key-fade-enter-from,
-  .key-fade-leave-to {
-    opacity: 0;
-    transform: translateY(20px);
-  }
+.key-fade-enter-active,
+.key-fade-leave-active {
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+.key-fade-enter-from,
+.key-fade-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
 </style>

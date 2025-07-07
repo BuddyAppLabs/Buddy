@@ -15,6 +15,7 @@
   import { useMarketStore } from '@renderer/stores/market-store';
   import { computed } from 'vue';
   import KeyDisplay from '@/ui/components/KeyDisplay.vue';
+  import KeyListener from '@/ui/components/KeyListener.vue';
 
   const actionStore = useActionStore();
   const appStore = useAppStore();
@@ -131,7 +132,6 @@
       </router-view>
     </div>
     <ErrorNotification />
-    <KeyDisplay />
   </div>
 
   <!-- 版本信息对话框 -->
@@ -163,6 +163,9 @@
         @close="globalAlert.close" />
     </div>
   </Transition>
+
+  <KeyListener />
+  <KeyDisplay />
 </template>
 
 <style>
