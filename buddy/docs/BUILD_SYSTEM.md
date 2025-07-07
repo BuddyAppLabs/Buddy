@@ -5,7 +5,7 @@ Buddy 项目现在使用现代化的构建系统，结合了 **Turbo** 和 **PNP
 ## 📦 项目依赖图
 
 ```
-@coffic/cosy-framework ← @coffic/cosy-logger ← @coffic/cosy-keyboard
+@coffic/cosy-framework ← @coffic/cosy-framework ← @coffic/cosy-keyboard
                      ↘
 @coffic/buddy-types ← buddy (主应用)
                  ↘
@@ -102,6 +102,7 @@ pnpm smart:dev
 ```
 
 这会：
+
 1. 🔧 启动所有依赖包的 watch 模式
 2. ⏳ 等待依赖包构建完成
 3. 🎯 启动主应用开发服务器
@@ -207,4 +208,4 @@ pnpm exec turbo run build --graph
 4. **🛡️ 错误预防**: 循环依赖检测和类型安全
 5. **📊 可视化**: 构建图和性能统计
 
-现在你可以更加高效地开发 Buddy 项目了！🎯 
+现在你可以更加高效地开发 Buddy 项目了！🎯

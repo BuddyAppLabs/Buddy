@@ -6,16 +6,16 @@
 
 import { app } from 'electron';
 import { registerRoutes } from '../routes/index.js';
-import { LoggingMiddleware, LogServiceProvider } from '@coffic/cosy-logger';
 import {
   ApplicationConfig,
   createElectronApp,
   ILogManager,
   setupIPCHandlers,
   SettingServiceProvider,
+  LoggingMiddleware,
 } from '@coffic/cosy-framework';
 import { UpdateServiceProvider } from '@coffic/cosy-framework/update';
-import { KeyboardServiceProvider } from '@coffic/cosy-keyboard';
+// import { KeyboardServiceProvider } from '@coffic/cosy-keyboard';
 import { AIServiceProvider } from '../providers/ai/AIServiceProvider.js';
 import { McpServiceProvider } from '../providers/mcp/McpServiceProvider.js';
 import { PluginServiceProvider } from '../providers/plugin/PluginServiceProvider.js';
@@ -30,9 +30,8 @@ const config: ApplicationConfig = {
   env: app.isPackaged ? 'production' : 'development',
   debug: true,
   providers: [
-    LogServiceProvider,
     SettingServiceProvider,
-    KeyboardServiceProvider,
+    // KeyboardServiceProvider,
     UpdateServiceProvider,
     AIServiceProvider,
     PluginServiceProvider,

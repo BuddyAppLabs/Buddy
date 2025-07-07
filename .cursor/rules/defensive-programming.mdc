@@ -1,6 +1,6 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: true
 ---
 # 防御性编程 (Defensive Programming) 设计思想
@@ -19,7 +19,7 @@ alwaysApply: true
     *   **示例**: 在我们的日志系统中，当一个指定的日志通道（channel）找不到时，系统会回退到一个默认的备用通道，而不是直接报错。
 
 3.  **为最坏情况设计"保险丝"**: 考虑到即使是备用方案也可能失败的极端情况，并为此设计最终的保护机制。
-    *   **示例**: 我们在 [packages/cosy-logger/src/LogManager.ts](mdc:packages/cosy-logger/src/LogManager.ts) 的 `createFallbackChannel` 方法中实现了这一点。如果连备用的`console`驱动都找不到，系统不会崩溃，而是会打印一条致命错误到控制台，并返回一个静默的"空壳"日志对象。这确保了应用在日志系统完全失效时依然能够存活。
+    *   **示例**: 我们在 [packages/cosy-framework/src/LogManager.ts](mdc:packages/cosy-framework/src/LogManager.ts) 的 `createFallbackChannel` 方法中实现了这一点。如果连备用的`console`驱动都找不到，系统不会崩溃，而是会打印一条致命错误到控制台，并返回一个静默的"空壳"日志对象。这确保了应用在日志系统完全失效时依然能够存活。
 
 4.  **校验外部输入**: 任何来自用户、API、文件或其他外部来源的数据，在使用前都必须经过严格的校验。
 

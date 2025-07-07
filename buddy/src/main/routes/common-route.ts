@@ -8,7 +8,7 @@ import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { RouteFacade } from '@coffic/cosy-framework';
 import { app } from 'electron';
 import { UpdateFacade } from '@coffic/cosy-framework';
-import { LogFacade } from '@coffic/cosy-logger';
+import { LogFacade } from '@coffic/cosy-framework';
 
 export function registerCommonRoutes(): void {
   // 打开文件夹

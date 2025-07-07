@@ -1,5 +1,5 @@
 import { AIModelType, SuperContext } from '@coffic/buddy-types';
-import { LogFacade } from '@coffic/cosy-logger';
+import { LogFacade } from '@coffic/cosy-framework';
 import { resolve, isAbsolute } from 'path';
 import fs from 'fs';
 import { SettingFacade, UpdateFacade } from '@coffic/cosy-framework';

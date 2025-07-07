@@ -7,7 +7,7 @@ import { PluginContext } from '@/main/providers/plugin/model/PluginContext.js';
 import { DevPluginRepo } from '@/main/providers/plugin/repo/DevPluginRepo.js';
 import { ExecuteResult, GetActionsArgs } from '@coffic/buddy-types';
 import { Downloader } from '@/main/service/Downloader.js';
-import { LogFacade } from '@coffic/cosy-logger';
+import { LogFacade } from '@coffic/cosy-framework';
 import fs from 'fs';
 import path from 'path';
 import { IAIManager } from '../../ai/IAIManager';

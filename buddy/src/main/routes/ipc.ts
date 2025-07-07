@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import { LogFacade } from '@coffic/cosy-logger';
+import { LogFacade } from '@coffic/cosy-framework';
 
 /**
  * 注册所有 IPC 事件监听器

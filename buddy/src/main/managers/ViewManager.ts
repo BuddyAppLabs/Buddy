@@ -8,7 +8,7 @@ import { ViewBounds } from '@coffic/buddy-types';
 import { createViewArgs } from '@/types/args.js';
 import { readFileSync } from 'fs';
 import { WindowFacade } from '../providers/window/WindowFacade.js';
-import { LogFacade } from '@coffic/cosy-logger';
+import { LogFacade } from '@coffic/cosy-framework';
 
 const verbose = false;
 

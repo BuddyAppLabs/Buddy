@@ -4,7 +4,7 @@ import {
   getFrontmostApplication,
 } from '@coffic/active-app-monitor';
 import { AppEvents, SuperApp } from '@coffic/buddy-types';
-import { LogFacade } from '@coffic/cosy-logger';
+import { LogFacade } from '@coffic/cosy-framework';
 
 /**
  * 应用状态管理器

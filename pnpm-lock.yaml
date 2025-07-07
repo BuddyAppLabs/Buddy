@@ -67,14 +67,11 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2
       '@coffic/cosy-framework':
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.5
+        version: 1.0.5
       '@coffic/cosy-keyboard':
-        specifier: ^0.1.1
-        version: 0.1.3(electron@37.1.0)
-      '@coffic/cosy-logger':
-        specifier: ^0.1.1
-        version: 0.1.2
+        specifier: ^0.2.1
+        version: 0.2.5(electron@37.1.0)
       '@coffic/cosy-ui':
         specifier: ^0.8.17
         version: 0.8.17(astro@5.11.0(@azure/identity@4.8.0)(@types/node@22.14.1)(encoding@0.1.13)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.44.2)(typescript@5.8.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.3))
@@ -577,14 +574,14 @@ packages:
   '@coffic/buddy-types@1.1.2':
     resolution: {integrity: sha512-Cjf80yI6VY/L+gE+CwnQBlgEozOS975YhLvRfQYIvnHBWqbxM345uCXVMOT4HL86fh3fX/t4Gyelplo6aSZ9RQ==}
 
-  '@coffic/cosy-framework@1.0.1':
-    resolution: {integrity: sha512-VzT0OKyYcf8uHxlK7H8Kc1G9V6eJqBUHAdCC4gHycs7hVxHnraF7QGtBhX4YAPtU73R2c9gCxJ7+BJflTLJy5g==}
+  '@coffic/cosy-framework@1.0.2':
+    resolution: {integrity: sha512-S3Q27Wamc9NBNNSrpssCyTwBQlQuA0Wl5OWn6H0eqtgUcv8IRZZ/enFbd3/btLrQn7dM9UGDCmX0ga0drJYg4w==}
 
-  '@coffic/cosy-keyboard@0.1.3':
-    resolution: {integrity: sha512-ip4J0wIqzeRvYAUy0NfDMUs3RcnM4adYwHdVrAkrNPwSbyaggiMX2zL+wu8o/zZY/0kaJmuitME5tybJG04D+Q==}
+  '@coffic/cosy-framework@1.0.5':
+    resolution: {integrity: sha512-iE/8yn1KLZElmHqnTrmjQo+FcaCaeZzIU3Hm1ueOXVrw4MOeaInRif4a5LeAN1CS4u87+RS86Fho6tKAeAzoeA==}
 
-  '@coffic/cosy-logger@0.1.2':
-    resolution: {integrity: sha512-R5qpy3ooObJYNaC3B2zs5YqQH5g8JiPf5d3piKoMX9Uzril/VBAMTlPPyfqQxsqWWSIZ+D/A5XtsKbrPdk2GfA==}
+  '@coffic/cosy-keyboard@0.2.5':
+    resolution: {integrity: sha512-v3MltgQSLiimb0eJ8nE/7LyiGDS+6qJlXjixn0J3GoGUFPGxquWYdvUDDiQkRN7y/jl81RzP6DICGInAvllsaQ==}
 
   '@coffic/cosy-ui@0.8.17':
     resolution: {integrity: sha512-NYppDuZynScXqysOyMTgSGRVpOHEajoTKy91Pifjj9Sur1JGrbrU+Fm0+AhDVA7GZv7MSclpOR++S9hAeNY1EA==}
@@ -680,8 +677,8 @@ packages:
     resolution: {integrity: sha512-fKpv9kg4SPmt+hY7SVBnIYULE9QJl8L3sCfcBsnqbJwwBwAeTLokJ9TRt9y7bK0JAzIW2y78TVVjvnQEms/yyA==}
     engines: {node: '>=16.4'}
 
-  '@emnapi/runtime@1.4.3':
-    resolution: {integrity: sha512-pBPWdu6MLKROBX05wSNKcNb++m5Er+KQ9QkB+WVM+pW2Kx9hoSrVTnu3BdkI5eBLZoKu/J6mW/B6i6bJB2ytXQ==}
+  '@emnapi/runtime@1.4.4':
+    resolution: {integrity: sha512-hHyapA4A3gPaDCNfiqyZUStTMqIkKRshqPIuDOXv1hcBnD4U3l8cP0T1HMCfGRxQ6V64TGCcoswChANyOAwbQg==}
 
   '@esbuild/aix-ppc64@0.25.1':
     resolution: {integrity: sha512-kfYGy8IdzTGy+z0vFGvExZtxkFlA4zAxgKEahG9KE1ScBjpQnFsNOX8KTU5ojNru5ed5CVoJYXFtoxaq5nFbjQ==}
@@ -4927,10 +4924,6 @@ packages:
   safe-buffer@5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
 
-  safe-stable-stringify@2.5.0:
-    resolution: {integrity: sha512-b3rppTKm9T+PsVCBEOUR46GWI7fdOs00VKZ1+9c1EWDaDMvjQc6tUwuFyIprgGgTcWoVHSKrU8H31ZHA2e0RHA==}
-    engines: {node: '>=10'}
-
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
@@ -6284,7 +6277,7 @@ snapshots:
 
   '@coffic/buddy-types@1.1.2': {}
 
-  '@coffic/cosy-framework@1.0.1':
+  '@coffic/cosy-framework@1.0.2':
     dependencies:
       '@coffic/buddy-types': 1.1.2
       electron-updater: 6.6.2
@@ -6293,22 +6286,22 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@coffic/cosy-keyboard@0.1.3(electron@37.1.0)':
+  '@coffic/cosy-framework@1.0.5':
     dependencies:
-      '@coffic/cosy-framework': 1.0.1
-      '@coffic/cosy-logger': 0.1.2
+      '@coffic/buddy-types': 1.1.2
+      electron-updater: 6.6.2
+      jiti: 2.4.2
+      reflect-metadata: 0.2.2
+    transitivePeerDependencies:
+      - supports-color
+
+  '@coffic/cosy-keyboard@0.2.5(electron@37.1.0)':
+    dependencies:
+      '@coffic/cosy-framework': 1.0.2
       '@coffic/key-listener': 1.0.3(electron@37.1.0)
       '@electron-toolkit/utils': 4.0.0(electron@37.1.0)
     transitivePeerDependencies:
       - electron
-      - supports-color
-
-  '@coffic/cosy-logger@0.1.2':
-    dependencies:
-      '@coffic/cosy-framework': 1.0.1
-      chalk: 4.1.2
-      safe-stable-stringify: 2.5.0
-    transitivePeerDependencies:
       - supports-color
 
   '@coffic/cosy-ui@0.8.17(astro@5.11.0(@azure/identity@4.8.0)(@types/node@22.14.1)(encoding@0.1.13)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.44.2)(typescript@5.8.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.3))':
@@ -6476,7 +6469,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@emnapi/runtime@1.4.3':
+  '@emnapi/runtime@1.4.4':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -6779,7 +6772,7 @@ snapshots:
 
   '@img/sharp-wasm32@0.33.5':
     dependencies:
-      '@emnapi/runtime': 1.4.3
+      '@emnapi/runtime': 1.4.4
     optional: true
 
   '@img/sharp-win32-ia32@0.33.5':
@@ -11399,8 +11392,6 @@ snapshots:
   safe-buffer@5.1.2: {}
 
   safe-buffer@5.2.1: {}
-
-  safe-stable-stringify@2.5.0: {}
 
   safer-buffer@2.1.2: {}
 

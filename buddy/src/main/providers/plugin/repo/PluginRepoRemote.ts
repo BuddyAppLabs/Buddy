@@ -9,7 +9,7 @@ import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PluginEntity } from '../model/PluginEntity.js';
 import { IPluginRepo } from '../contract/IPluginRepo.js';
 import { EMOJI } from '../../../constants.js';
-import { LogFacade } from '@coffic/cosy-logger';
+import { LogFacade } from '@coffic/cosy-framework';
 
 const verbose = false;
 const logger = console;
