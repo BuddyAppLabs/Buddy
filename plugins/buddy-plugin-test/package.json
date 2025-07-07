@@ -1,7 +1,7 @@
 {
-  "name": "@coffic/buddy-plugin-counter",
-  "version": "1.0.0",
-  "description": "A sample plugin with a page view",
+  "name": "@coffic/buddy-plugin-test",
+  "version": "1.0.3",
+  "description": "A sample plugin for buddy",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "devDependencies": {
@@ -10,7 +10,7 @@
     "typescript": "^5.3.3"
   },
   "scripts": {
-    "build": "tsc && cp -r src/views dist/",
+    "build": "tsc",
     "dev": "tsc --watch",
     "prepublishOnly": "npm run build"
   },

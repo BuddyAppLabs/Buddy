@@ -2,10 +2,11 @@ import { AIModelType, SuperContext } from '@coffic/buddy-types';
 import { LogFacade } from '@coffic/cosy-logger';
 import { resolve, isAbsolute } from 'path';
 import fs from 'fs';
-import { SettingFacade } from '@coffic/cosy-framework';
+import { SettingFacade, UpdateFacade } from '@coffic/cosy-framework';
 import { PluginEntity } from './PluginEntity';
 import { shell } from 'electron';
 import { IAIManager } from '@/main/providers/ai/IAIManager';
+import os from 'os';
 
 export class PluginContext {
   /**
@@ -93,6 +94,25 @@ export class PluginContext {
           const settingPath = SettingFacade.getDirectoryPath();
           shell.openPath(settingPath);
         },
+        openLogsFolder: async (): Promise<void> => {
+          const logsPath = `${os.homedir()}/Library/Logs/Buddy`;
+          try {
+            const result = await shell.openPath(logsPath);
+            if (result) {
+              // result 非空字符串表示有错误
+              LogFacade.channel(`plugin`).error(
+                `打开日志文件夹失败: ${result}`
+              );
+            } else {
+              LogFacade.channel(`plugin`).info(`已打开日志文件夹: ${logsPath}`);
+            }
+          } catch (error) {
+            LogFacade.channel(`plugin`).error(
+              `打开日志文件夹异常: ${logsPath}`,
+              error
+            );
+          }
+        },
       },
 
       // 插件元数据
@@ -113,6 +133,13 @@ export class PluginContext {
           key: string
         ): Promise<void> => {
           return await aiManager.setApiKey(provider, key);
+        },
+      },
+
+      // 版本信息
+      version: {
+        checkForUpdates: async (): Promise<string> => {
+          return await UpdateFacade.checkForUpdates();
         },
       },
     };

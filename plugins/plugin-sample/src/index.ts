@@ -91,6 +91,13 @@ const plugin: SuperPlugin = {
         globalId: '',
         pluginId: '',
       },
+      {
+        id: `open_logs`,
+        description: '打开日志文件夹',
+        icon: '📝',
+        globalId: '',
+        pluginId: '',
+      },
     ];
 
     // 如果有关键词，过滤匹配的动作
@@ -177,6 +184,12 @@ const plugin: SuperPlugin = {
           return {
             success: false,
             message: '无法访问文件系统API',
+          };
+        case `open_logs`:
+          context?.config.openLogsFolder();
+          return {
+            success: true,
+            message: `日志已打开`,
           };
         default:
           const errorMsg = `未知的动作ID: ${actionId}`;
