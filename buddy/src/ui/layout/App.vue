@@ -14,8 +14,7 @@
   import VersionDialog from '@/ui/components/bottom/VersionDialog.vue';
   import { useMarketStore } from '@renderer/stores/market-store';
   import { computed } from 'vue';
-  import KeyDisplay from '@/ui/components/KeyDisplay.vue';
-  import KeyListener from '@/ui/components/KeyListener.vue';
+  import KeyCatcher from '@/ui/components/KeyCatcher.vue';
 
   const actionStore = useActionStore();
   const appStore = useAppStore();
@@ -164,8 +163,7 @@
     </div>
   </Transition>
 
-  <KeyListener />
-  <KeyDisplay />
+  <KeyCatcher :showKey="true" />
 </template>
 
 <style>
