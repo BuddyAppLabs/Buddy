@@ -14,6 +14,7 @@
   import VersionDialog from '@/ui/components/bottom/VersionDialog.vue';
   import { useMarketStore } from '@renderer/stores/market-store';
   import { computed } from 'vue';
+  import KeyCatcher from '@/ui/components/KeyCatcher.vue';
 
   const actionStore = useActionStore();
   const appStore = useAppStore();
@@ -161,6 +162,8 @@
         @close="globalAlert.close" />
     </div>
   </Transition>
+
+  <KeyCatcher :showKey="true" />
 </template>
 
 <style>
