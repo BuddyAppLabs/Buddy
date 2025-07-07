@@ -64,8 +64,8 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2
       '@coffic/buddy-types':
-        specifier: ^1.1.0
-        version: 1.1.1
+        specifier: ^1.1.2
+        version: 1.1.2
       '@coffic/cosy-framework':
         specifier: ^1.0.1
         version: 1.0.1
@@ -276,8 +276,8 @@ importers:
   plugins/buddy-plugin-test:
     devDependencies:
       '@coffic/buddy-types':
-        specifier: ^1.1.0
-        version: 1.1.1
+        specifier: ^1.1.2
+        version: 1.1.2
       '@types/node':
         specifier: ^20.10.4
         version: 20.17.30
@@ -288,8 +288,8 @@ importers:
   plugins/plugin-counter-view:
     devDependencies:
       '@coffic/buddy-types':
-        specifier: ^1.1.0
-        version: 1.1.1
+        specifier: ^1.1.2
+        version: 1.1.2
       '@types/node':
         specifier: ^20.10.4
         version: 20.17.30
@@ -300,8 +300,8 @@ importers:
   plugins/plugin-sample:
     devDependencies:
       '@coffic/buddy-types':
-        specifier: ^1.1.0
-        version: 1.1.1
+        specifier: ^1.1.2
+        version: 1.1.2
       '@types/node':
         specifier: ^22.14.1
         version: 22.14.1
@@ -312,8 +312,8 @@ importers:
   plugins/plugin-time-view:
     devDependencies:
       '@coffic/buddy-types':
-        specifier: ^1.1.0
-        version: 1.1.1
+        specifier: ^1.1.2
+        version: 1.1.2
 
 packages:
 
@@ -574,8 +574,8 @@ packages:
     engines: {node: '>=14.0.0'}
     os: [darwin]
 
-  '@coffic/buddy-types@1.1.1':
-    resolution: {integrity: sha512-xK8FUKYoCBS5tDlBVW3NgnpMVj8d+DG/rZal2gfrEBvDR3oKDYEazlEpEJJb9M1DwOVoO+0Uq/351L/ZH9m0Hw==}
+  '@coffic/buddy-types@1.1.2':
+    resolution: {integrity: sha512-Cjf80yI6VY/L+gE+CwnQBlgEozOS975YhLvRfQYIvnHBWqbxM345uCXVMOT4HL86fh3fX/t4Gyelplo6aSZ9RQ==}
 
   '@coffic/cosy-framework@1.0.1':
     resolution: {integrity: sha512-VzT0OKyYcf8uHxlK7H8Kc1G9V6eJqBUHAdCC4gHycs7hVxHnraF7QGtBhX4YAPtU73R2c9gCxJ7+BJflTLJy5g==}
@@ -6282,11 +6282,11 @@ snapshots:
     dependencies:
       node-addon-api: 8.3.1
 
-  '@coffic/buddy-types@1.1.1': {}
+  '@coffic/buddy-types@1.1.2': {}
 
   '@coffic/cosy-framework@1.0.1':
     dependencies:
-      '@coffic/buddy-types': 1.1.1
+      '@coffic/buddy-types': 1.1.2
       electron-updater: 6.6.2
       jiti: 2.4.2
       reflect-metadata: 0.2.2
