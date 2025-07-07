@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { ref, onMounted, onUnmounted } from 'vue';
+  import { eventBus } from '@/ui/event-bus';
 
   const lastKey = ref<string | null>(null);
 
@@ -31,6 +32,10 @@
       let key = event.key;
       if (key === ' ') key = 'Space';
       lastKey.value = key;
+      // 新增：如果是字母键，发出事件
+      if (/^[a-zA-Z]$/.test(event.key)) {
+        eventBus.emit('globalKey', event.key);
+      }
     } else {
       lastKey.value = null;
     }
