@@ -14,6 +14,7 @@
   import VersionDialog from '@/ui/components/bottom/VersionDialog.vue';
   import { useMarketStore } from '@renderer/stores/market-store';
   import { computed } from 'vue';
+  import KeyDisplay from '@/ui/components/KeyDisplay.vue';
 
   const actionStore = useActionStore();
   const appStore = useAppStore();
@@ -130,6 +131,7 @@
       </router-view>
     </div>
     <ErrorNotification />
+    <KeyDisplay />
   </div>
 
   <!-- 版本信息对话框 -->
