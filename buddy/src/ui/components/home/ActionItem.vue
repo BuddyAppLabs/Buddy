@@ -98,7 +98,7 @@
 <template>
   <div
     ref="itemRef"
-    class="flex items-center p-3 transition-colors duration-200 rounded-md"
+    class="flex items-center p-3 transition-colors duration-200 rounded-md justify-between flex-row"
     :class="{
       'bg-primary/60': selected,
       'border-b border-base-200': true,
@@ -131,6 +131,16 @@
 
       <p class="text-xs text-secondary/70">
         {{ action.pluginId }}
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <p
+        class="text-sm badge"
+        :class="
+          action.pluginType === 'user' ? 'badge-primary' : 'badge-secondary'
+        ">
+        {{ action.pluginType }}
       </p>
     </div>
   </div>

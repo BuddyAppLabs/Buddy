@@ -1,3 +1,5 @@
+import { PluginType } from '@coffic/buddy-types';
+
 /**
  * 动作状态
  * - ready: 就绪，可以执行
@@ -36,6 +38,11 @@ export interface SendableAction {
    * 插件ID
    */
   pluginId: string;
+
+  /**
+   * 插件类型
+   */
+  pluginType: PluginType;
 
   /**
    * 动作描述
