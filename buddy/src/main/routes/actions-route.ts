@@ -10,6 +10,7 @@ import { SendableAction } from '@/types/sendable-action.js';
 import { appStateManager } from '../providers/state/StateManager.js';
 import { ContextManager } from '../providers/plugin/manager/ContextManager.js';
 import { ActionResult } from '@coffic/buddy-it';
+import { AIFacade } from '../providers/ai/AIFacade.js';
 
 export function registerActionsRoutes(): void {
   // 获取插件动作列表
@@ -50,10 +51,12 @@ export function registerActionsRoutes(): void {
       keyword: string
     ): Promise<ActionResult> => {
       const overlaidApp = appStateManager.getOverlaidApp()?.name ?? '';
+      const aiManager = AIFacade;
+      const plugin = await PluginFacade.find(actionId);
       return await PluginFacade.executeAction(
         ContextManager.createContext(
-          undefined,
-          undefined,
+          plugin,
+          aiManager,
           actionId,
           keyword,
           overlaidApp

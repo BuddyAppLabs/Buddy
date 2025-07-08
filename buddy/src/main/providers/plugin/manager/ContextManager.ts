@@ -16,7 +16,7 @@ export class ContextManager {
    * @returns 上下文对象
    */
   static createContext(
-    plugin: PluginEntity | undefined,
+    plugin: PluginEntity | undefined | null,
     aiManager: IAIManager | undefined,
     actionId: string,
     keyword: string,
