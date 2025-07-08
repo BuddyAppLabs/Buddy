@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { AppEvents, SuperAction, SuperApp } from '@coffic/buddy-types';
+import { AppEvents, SuperAction, SuperApp } from '@coffic/buddy-it';
 import { stateApi } from '../ipc/state-api';
 import { ViewType } from '../router';
 

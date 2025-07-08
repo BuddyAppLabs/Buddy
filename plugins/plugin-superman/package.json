@@ -1,16 +1,16 @@
 {
-  "name": "@coffic/buddy-plugin-example",
+  "name": "@coffic/buddy-plugin-superman",
   "version": "1.1.5",
-  "description": "Buddy示例插件",
+  "description": "Buddy超级英雄插件",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "https://github.com/cofficlab/buddy/tree/main/packages/plugin-sample",
+  "homepage": "https://github.com/cofficlab/buddy/tree/main/packages/plugin-superman",
   "devDependencies": {
     "@coffic/buddy-types": "^1.1.2",
-    "@types/node": "^22.14.1",
+    "@types/node": "^24.0.10",
     "typescript": "^5.8.3"
   },
   "keywords": [

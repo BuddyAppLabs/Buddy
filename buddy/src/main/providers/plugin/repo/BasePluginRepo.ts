@@ -7,7 +7,7 @@ import fs from 'fs';
 import { IPluginRepo } from '../contract/IPluginRepo.js';
 import { PluginEntity } from '../model/PluginEntity.js';
 import { LogFacade } from '@coffic/cosy-framework';
-import { PluginType } from '@coffic/buddy-types';
+import { PluginType } from '@coffic/buddy-it';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 
 const verbose = false;

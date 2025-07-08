@@ -4,7 +4,7 @@
 import { WebContentsView } from 'electron';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
-import { ViewBounds } from '@coffic/buddy-types';
+import { ViewBounds } from '@coffic/buddy-it';
 import { createViewArgs } from '@/types/args.js';
 import { readFileSync } from 'fs';
 import { WindowFacade } from '../providers/window/WindowFacade.js';
@@ -37,10 +37,9 @@ export class ViewManager {
 
     // 创建视图
     const preloadPath = join(__dirname, '../preload/plugin-preload.mjs');
-    LogFacade.channel('pluginView').info(
-      '[ViewManager] preloadPath',
-      preloadPath
-    );
+    LogFacade.channel('pluginView').info('[ViewManager] preloadPath', {
+      preloadPath,
+    });
     const view = new WebContentsView({
       webPreferences: {
         preload: preloadPath,
@@ -57,7 +56,9 @@ export class ViewManager {
       view.webContents.openDevTools({ mode: 'detach' });
       LogFacade.channel('pluginView').info(
         '[ViewManager] 为视图打开开发者工具:',
-        args.pagePath
+        {
+          pagePath: args.pagePath,
+        }
       );
     }
 
@@ -91,7 +92,9 @@ export class ViewManager {
 
     LogFacade.channel('pluginView').info(
       '[ViewManager] 视图创建成功，当前视图个数',
-      this.views.size
+      {
+        viewsCount: this.views.size,
+      }
     );
 
     return view;
@@ -102,17 +105,18 @@ export class ViewManager {
    */
   public destroyView(pagePath: string): void {
     if (verbose) {
-      LogFacade.channel('pluginView').info(
-        '[ViewManager] destroy view:',
-        pagePath
-      );
+      LogFacade.channel('pluginView').info('[ViewManager] destroy view:', {
+        pagePath,
+      });
     }
 
     const view = this.views.get(pagePath);
     if (!view) {
       LogFacade.channel('pluginView').warn(
         '[ViewManager] 试图销毁不存在的视图:',
-        pagePath
+        {
+          pagePath,
+        }
       );
       return;
     }
@@ -133,13 +137,17 @@ export class ViewManager {
   public updateViewPosition(pagePath: string, bounds: ViewBounds): void {
     LogFacade.channel('pluginView').info(
       '[ViewManager] update view position:',
-      pagePath,
-      bounds
+      {
+        pagePath,
+        bounds,
+      }
     );
 
     const view = this.views.get(pagePath);
     if (!view) {
-      LogFacade.channel('pluginView').warn('试图更新不存在的视图:', pagePath);
+      LogFacade.channel('pluginView').warn('试图更新不存在的视图:', {
+        pagePath,
+      });
       return;
     }
 
@@ -179,7 +187,9 @@ export class ViewManager {
         } catch (error) {
           LogFacade.channel('pluginView').error(
             `[ViewManager] 批量更新视图失败 ${args.pagePath}:`,
-            error
+            {
+              error,
+            }
           );
           return { success: false, pagePath: args.pagePath, error };
         }

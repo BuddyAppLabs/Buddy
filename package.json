@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "build": "turbo build",
-    "build:deps": "turbo build --filter='@coffic/cosy-*' --filter='@coffic/buddy-types'",
+    "build:deps": "pnpm build --filter='@coffic/cosy-*' --filter='@coffic/buddy-it'",
     "build:buddy": "turbo build --filter='buddy'",
     "build:framework": "clear && turbo build --filter='@coffic/cosy-framework'",
     "build:buddy:mac": "pnpm run build:buddy && pnpm --filter buddy build:mac",

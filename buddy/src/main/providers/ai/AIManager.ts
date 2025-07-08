@@ -1,4 +1,4 @@
-import { AIModelType, IAIModelConfig } from '@coffic/buddy-types';
+import { AIModelType, IAIModelConfig } from '@coffic/buddy-it';
 import { IAIManager } from './IAIManager.js';
 import { ILogManager, SettingFacade } from '@coffic/cosy-framework';
 import { StreamTextResult, UIMessage } from 'ai';

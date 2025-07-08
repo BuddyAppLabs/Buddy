@@ -1,10 +1,9 @@
 import {
-  ExecuteActionArgs,
-  ExecuteResult,
-  GetActionsArgs,
+  ActionResult,
+  SuperContext,
   SuperAction,
   SuperPlugin,
-} from '@coffic/buddy-types';
+} from '@coffic/buddy-it';
 
 // 插件ID
 const PLUGIN_ID = 'sample-plugin-with-page';
@@ -21,11 +20,11 @@ export const plugin: SuperPlugin = {
   pagePath: 'dist/views/counter.html',
   devTools: true,
 
-  async getActions(args: GetActionsArgs): Promise<SuperAction[]> {
+  async getActions(context: SuperContext): Promise<SuperAction[]> {
     return [];
   },
 
-  async executeAction(args: ExecuteActionArgs): Promise<ExecuteResult> {
+  async executeAction(context: SuperContext): Promise<ActionResult> {
     return { success: true, message: '不支持执行动作' };
   },
 };

@@ -1,20 +1,14 @@
-/**
- * 插件实体类
- * 用于管理插件的所有相关信息，包括基本信息、路径、状态等
- */
-
 import { join } from 'path';
 import fs from 'fs';
 import { readPackageJson, hasPackageJson } from '../util/PackageUtils.js';
 import {
-  ExecuteActionArgs,
-  ExecuteResult,
-  GetActionsArgs,
+  ActionResult,
   PluginStatus,
   PluginType,
+  SuperContext,
   SuperPlugin,
   ValidationResult,
-} from '@coffic/buddy-types';
+} from '@coffic/buddy-it';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PackageJson } from '@/types/package-json.js';
 
@@ -25,6 +19,7 @@ const title = '[PluginEntity] 🧩';
 
 /**
  * 插件实体类
+ * 用于管理插件的所有相关信息，包括基本信息、路径、状态等
  */
 export class PluginEntity {
   // 基本信息
@@ -230,7 +225,7 @@ export class PluginEntity {
    * @param keyword 搜索关键词（可选）
    * @returns 插件动作列表
    */
-  async getActions(args: GetActionsArgs): Promise<ActionEntity[]> {
+  async getActions(context: SuperContext): Promise<ActionEntity[]> {
     // 如果插件未加载或状态不正常，返回空数组
     if (this.status !== 'active') {
       LogFacade.channel('plugin').warn(
@@ -251,7 +246,7 @@ export class PluginEntity {
       }
 
       // 假设插件实例有一个 getActions 方法
-      const rawActions = await this.instance.getActions(args);
+      const rawActions = await this.instance.getActions(context);
 
       // 在这里创建 ActionEntity
       return rawActions.map((rawAction: any) =>
@@ -269,40 +264,43 @@ export class PluginEntity {
    * 执行插件动作
    * @returns 执行结果
    */
-  async executeAction(args: ExecuteActionArgs): Promise<ExecuteResult> {
-    const { actionId } = args;
-
+  async executeAction(context: SuperContext): Promise<ActionResult> {
     LogFacade.channel('plugin').info(`${title} 执行动作`, {
       id: this.id,
-      args,
+      args: {
+        context,
+      },
     });
 
     const pluginModule = await this.load();
     if (!pluginModule) {
       LogFacade.channel('plugin').warn(
-        `${title} 插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`
+        `${title} 插件模块加载失败: ${this.id}, 无法执行动作: ${context.actionId}`
       );
 
       throw new Error(
-        `${title} 插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`
+        `${title} 插件模块加载失败: ${this.id}, 无法执行动作: ${context.actionId}`
       );
     }
 
     if (typeof pluginModule.executeAction !== 'function') {
       LogFacade.channel('plugin').warn(
-        `${title} 插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`
+        `${title} 插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${context.actionId}`
       );
 
       throw new Error(
-        `${title} 插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`
+        `${title} 插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${context.actionId}`
       );
     }
 
-    return pluginModule.executeAction(args);
+    return pluginModule.executeAction(context);
   }
 
-  async getAction(actionId: string): Promise<ActionEntity | null> {
-    const actions = await this.getActions({ version: '1.0.0' });
+  async getAction(
+    actionId: string,
+    context: SuperContext
+  ): Promise<ActionEntity | null> {
+    const actions = await this.getActions(context);
     return actions.find((action) => action.id === actionId) || null;
   }
 

@@ -7,21 +7,25 @@ import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { RouteFacade } from '@coffic/cosy-framework';
 import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import { SendableAction } from '@/types/sendable-action.js';
-import { ExecuteResult } from '@coffic/buddy-types';
 import { appStateManager } from '../providers/state/StateManager.js';
-import { app } from 'electron';
+import { ContextManager } from '../providers/plugin/manager/ContextManager.js';
+import { ActionResult } from '@coffic/buddy-it';
 
 export function registerActionsRoutes(): void {
   // 获取插件动作列表
   RouteFacade.handle(
     IPC_METHODS.GET_ACTIONS,
     async (_event, keyword: string = ''): Promise<SendableAction[]> => {
-      const overlaidApp = appStateManager.getOverlaidApp();
-      const actions = await PluginFacade.actions({
-        keyword,
-        overlaidApp: overlaidApp?.name,
-        version: app.getVersion(),
-      });
+      const overlaidApp = appStateManager.getOverlaidApp()?.name ?? '';
+      const actions = await PluginFacade.actions(
+        ContextManager.createContext(
+          undefined,
+          undefined,
+          '',
+          keyword,
+          overlaidApp
+        )
+      );
       return actions.map((action) => action.toSendableAction());
     }
   )
@@ -44,8 +48,17 @@ export function registerActionsRoutes(): void {
       _event,
       actionId: string,
       keyword: string
-    ): Promise<ExecuteResult> => {
-      return await PluginFacade.executeAction(actionId, keyword);
+    ): Promise<ActionResult> => {
+      const overlaidApp = appStateManager.getOverlaidApp()?.name ?? '';
+      return await PluginFacade.executeAction(
+        ContextManager.createContext(
+          undefined,
+          undefined,
+          actionId,
+          keyword,
+          overlaidApp
+        )
+      );
     }
   )
     .validation({

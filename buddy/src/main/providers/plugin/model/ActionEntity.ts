@@ -4,7 +4,7 @@ import {
   SuperAction,
   ValidationResult,
   ViewMode,
-} from '@coffic/buddy-types';
+} from '@coffic/buddy-it';
 import { PluginEntity } from './PluginEntity.js';
 import { SendableAction } from '@/types/sendable-action.js';
 

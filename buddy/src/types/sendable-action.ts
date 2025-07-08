@@ -1,4 +1,4 @@
-import { PluginType } from '@coffic/buddy-types';
+import { PluginType } from '@coffic/buddy-it';
 
 /**
  * 动作状态

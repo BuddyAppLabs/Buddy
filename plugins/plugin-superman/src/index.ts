@@ -1,11 +1,10 @@
 import {
-  GetActionsArgs,
+  ActionResult,
   SuperAction,
+  SuperContext,
   SuperPlugin,
-  ExecuteResult,
-  ExecuteActionArgs,
-} from '@coffic/buddy-types';
-import { actions } from './actions';
+} from '@coffic/buddy-it';
+import { actions } from './actions/index.js';
 
 // 日志函数
 const log = {
@@ -33,14 +32,14 @@ const plugin: SuperPlugin = {
   /**
    * 获取插件提供的动作列表
    */
-  async getActions(args: GetActionsArgs): Promise<SuperAction[]> {
+  async getActions(context: SuperContext): Promise<SuperAction[]> {
     log.info(
-      `获取动作列表，关键词: "${args.keyword}", 被覆盖应用: "${args.overlaidApp}"`
+      `获取动作列表，关键词: "${context.keyword}", 被覆盖应用: "${context.overlaidApp}"`
     );
     // 只返回元数据部分
     let filtered = actions;
-    if (args.keyword) {
-      const lowerKeyword = args.keyword.toLowerCase();
+    if (context.keyword) {
+      const lowerKeyword = context.keyword.toLowerCase();
       filtered = actions.filter(
         (action) =>
           action.description.toLowerCase().includes(lowerKeyword) ||
@@ -59,10 +58,10 @@ const plugin: SuperPlugin = {
   /**
    * 执行插件动作
    */
-  async executeAction(args: ExecuteActionArgs): Promise<ExecuteResult> {
-    const { actionId } = args;
-    if (args.context && args.context.logger) {
-      args.context.logger.info(`执行动作: ${actionId}`);
+  async executeAction(context: SuperContext): Promise<ActionResult> {
+    const { actionId } = context;
+    if (context.logger) {
+      context.logger.info(`执行动作: ${actionId}`);
     } else {
       log.info(`执行动作: ${actionId}`);
     }
@@ -73,7 +72,7 @@ const plugin: SuperPlugin = {
       throw new Error(errorMsg);
     }
     try {
-      return await action.run(args);
+      return await action.run(context);
     } catch (error) {
       log.error(`执行动作 ${actionId} 失败:`, error);
       throw error;

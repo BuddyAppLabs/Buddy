@@ -1,25 +1,32 @@
-import { AIModelType, SuperContext } from '@coffic/buddy-types';
+import { AIModelType, SuperContext } from '@coffic/buddy-it';
+import { SettingFacade, UpdateFacade } from '@coffic/cosy-framework';
+import { IAIManager } from '@/main/providers/ai/IAIManager';
+import { PluginEntity } from '../model/PluginEntity';
 import { LogFacade } from '@coffic/cosy-framework';
 import { resolve, isAbsolute } from 'path';
 import fs from 'fs';
-import { SettingFacade, UpdateFacade } from '@coffic/cosy-framework';
-import { PluginEntity } from './PluginEntity';
-import { shell } from 'electron';
-import { IAIManager } from '@/main/providers/ai/IAIManager';
+import { app, shell } from 'electron';
 import os from 'os';
 
-export class PluginContext {
+export class ContextManager {
   /**
-   * 创建插件上下文，提供主进程能力
+   * 创建上下文，提供主进程能力
    * 这个上下文对象会被注入到插件的执行环境中
    *
-   * @returns 插件上下文对象
+   * @returns 上下文对象
    */
-  static createPluginContext(
-    plugin: PluginEntity,
-    aiManager: IAIManager
+  static createContext(
+    plugin: PluginEntity | undefined,
+    aiManager: IAIManager | undefined,
+    actionId: string,
+    keyword: string,
+    overlaidApp: string
   ): SuperContext {
     return {
+      actionId,
+      keyword,
+      overlaidApp,
+
       // 日志能力
       logger: {
         info: (message: string, ...args: any[]) => {
@@ -39,6 +46,10 @@ export class PluginContext {
       // 文件系统能力（安全受限版本）
       fs: {
         readFile: async (filePath: string): Promise<string> => {
+          if (!plugin) {
+            throw new Error('插件不存在');
+          }
+
           // 安全检查：确保路径在插件目录内
           if (!this.isPathSafe(filePath, plugin)) {
             throw new Error('安全限制：无法访问插件目录外的文件');
@@ -47,14 +58,17 @@ export class PluginContext {
           try {
             return fs.readFileSync(filePath, 'utf-8');
           } catch (error) {
-            LogFacade.channel(`plugin`).error(
-              `读取文件失败: ${filePath}`,
-              error
-            );
+            LogFacade.channel(`plugin`).error(`读取文件失败: ${filePath}`, {
+              error,
+            });
             throw error;
           }
         },
         writeFile: async (filePath: string, content: string): Promise<void> => {
+          if (!plugin) {
+            throw new Error('插件不存在');
+          }
+
           // 安全检查：确保路径在插件目录内
           if (!this.isPathSafe(filePath, plugin)) {
             throw new Error('安全限制：无法访问插件目录外的文件');
@@ -63,14 +77,17 @@ export class PluginContext {
           try {
             fs.writeFileSync(filePath, content, 'utf-8');
           } catch (error) {
-            LogFacade.channel(`plugin`).error(
-              `写入文件失败: ${filePath}`,
-              error
-            );
+            LogFacade.channel(`plugin`).error(`写入文件失败: ${filePath}`, {
+              error,
+            });
             throw error;
           }
         },
         exists: (filePath: string): boolean => {
+          if (!plugin) {
+            throw new Error('插件不存在');
+          }
+
           // 安全检查：确保路径在插件目录内
           if (!this.isPathSafe(filePath, plugin)) {
             throw new Error('安全限制：无法访问插件目录外的文件');
@@ -83,10 +100,18 @@ export class PluginContext {
       // 配置能力
       config: {
         get: (key: string, defaultValue?: any): any => {
+          if (!plugin) {
+            throw new Error('插件不存在');
+          }
+
           const configKey = `plugins.${plugin.id}.${key}`;
           return SettingFacade.get(configKey, defaultValue);
         },
         set: (key: string, value: any): void => {
+          if (!plugin) {
+            throw new Error('插件不存在');
+          }
+
           const configKey = `plugins.${plugin.id}.${key}`;
           SettingFacade.set(configKey, value);
         },
@@ -109,35 +134,40 @@ export class PluginContext {
           } catch (error) {
             LogFacade.channel(`plugin`).error(
               `打开日志文件夹异常: ${logsPath}`,
-              error
+              {
+                error,
+              }
             );
           }
         },
       },
 
-      // 插件元数据
-      meta: {
-        id: plugin.id,
-        name: plugin.name,
-        version: plugin.version,
-        path: plugin.path,
-      },
-
       // AI能力
       ai: {
         generateText: async (prompt: string): Promise<string> => {
+          if (!aiManager) {
+            throw new Error('AI管理器不存在');
+          }
+
           return await aiManager.generateText(prompt);
         },
         setModelApiKey: async (
           provider: AIModelType,
           key: string
         ): Promise<void> => {
+          if (!aiManager) {
+            throw new Error('AI管理器不存在');
+          }
+
           return await aiManager.setApiKey(provider, key);
         },
       },
 
       // 版本信息
       version: {
+        getCurrentVersion: (): string => {
+          return app.getVersion();
+        },
         checkForUpdates: async (): Promise<string> => {
           return await UpdateFacade.checkForUpdates();
         },

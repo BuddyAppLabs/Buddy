@@ -63,9 +63,6 @@ importers:
       '@coffic/active-app-monitor':
         specifier: ^1.0.2
         version: 1.0.2
-      '@coffic/buddy-types':
-        specifier: ^1.1.2
-        version: 1.1.2
       '@coffic/cosy-framework':
         specifier: ^1.0.7
         version: 1.0.7
@@ -157,6 +154,9 @@ importers:
         specifier: ^2.7.1
         version: 2.7.1
     devDependencies:
+      '@coffic/buddy-it':
+        specifier: workspace:*
+        version: link:../packages/buddy-it
       '@electron-toolkit/eslint-config-prettier':
         specifier: 3.0.0
         version: 3.0.0(eslint@9.23.0(jiti@2.4.2))(prettier@3.5.3)
@@ -218,6 +218,12 @@ importers:
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.8.3)
 
+  packages/buddy-it:
+    devDependencies:
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+
   packages/vsc_extension:
     dependencies:
       chalk:
@@ -272,7 +278,7 @@ importers:
 
   plugins/buddy-plugin-test:
     devDependencies:
-      '@coffic/buddy-types':
+      '@coffic/buddy-it':
         specifier: ^1.1.2
         version: 1.1.2
       '@types/node':
@@ -284,7 +290,7 @@ importers:
 
   plugins/plugin-counter-view:
     devDependencies:
-      '@coffic/buddy-types':
+      '@coffic/buddy-it':
         specifier: ^1.1.2
         version: 1.1.2
       '@types/node':
@@ -296,7 +302,7 @@ importers:
 
   plugins/plugin-sample:
     devDependencies:
-      '@coffic/buddy-types':
+      '@coffic/buddy-it':
         specifier: ^1.1.2
         version: 1.1.2
       '@types/node':
@@ -308,7 +314,7 @@ importers:
 
   plugins/plugin-time-view:
     devDependencies:
-      '@coffic/buddy-types':
+      '@coffic/buddy-it':
         specifier: ^1.1.2
         version: 1.1.2
 
@@ -571,7 +577,7 @@ packages:
     engines: {node: '>=14.0.0'}
     os: [darwin]
 
-  '@coffic/buddy-types@1.1.2':
+  '@coffic/buddy-it@1.1.2':
     resolution: {integrity: sha512-Cjf80yI6VY/L+gE+CwnQBlgEozOS975YhLvRfQYIvnHBWqbxM345uCXVMOT4HL86fh3fX/t4Gyelplo6aSZ9RQ==}
 
   '@coffic/cosy-framework@1.0.7':
@@ -6280,11 +6286,11 @@ snapshots:
     dependencies:
       node-addon-api: 8.3.1
 
-  '@coffic/buddy-types@1.1.2': {}
+  '@coffic/buddy-it@1.1.2': {}
 
   '@coffic/cosy-framework@1.0.7':
     dependencies:
-      '@coffic/buddy-types': 1.1.2
+      '@coffic/buddy-it': 1.1.2
       electron-updater: 6.6.2
       jiti: 2.4.2
       reflect-metadata: 0.2.2
