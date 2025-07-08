@@ -1,9 +1,10 @@
 import {
   ActionStatus,
+  PluginType,
   SuperAction,
   ValidationResult,
   ViewMode,
-} from '@coffic/buddy-types';
+} from '@coffic/buddy-it';
 import { PluginEntity } from './PluginEntity.js';
 import { SendableAction } from '@/types/sendable-action.js';
 
@@ -19,6 +20,7 @@ export class ActionEntity implements SuperAction {
   description: string;
   icon: string;
   pluginId: string;
+  pluginType: PluginType;
   keywords: string[];
   category?: string;
 
@@ -45,6 +47,7 @@ export class ActionEntity implements SuperAction {
       description?: string;
       icon?: string;
       pluginId: string;
+      pluginType: PluginType;
       keywords?: string[];
       category?: string;
       viewPath?: string;
@@ -58,6 +61,7 @@ export class ActionEntity implements SuperAction {
     this.description = action.description || '';
     this.icon = action.icon || '';
     this.pluginId = action.pluginId;
+    this.pluginType = action.pluginType;
     this.keywords = action.keywords || [];
     this.category = action.category;
     this.viewPath = action.viewPath;
@@ -110,6 +114,7 @@ export class ActionEntity implements SuperAction {
       {
         ...action,
         pluginId: plugin.id,
+        pluginType: plugin.type,
         keywords: [],
       },
       plugin
@@ -230,6 +235,7 @@ export class ActionEntity implements SuperAction {
       globalId: this.globalId,
       id: this.id,
       pluginId: this.pluginId,
+      pluginType: this.pluginType,
       viewPath: this.viewPath,
       viewMode: this.viewMode,
       devTools: this.devTools,

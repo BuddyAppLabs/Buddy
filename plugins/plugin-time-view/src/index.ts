@@ -4,11 +4,10 @@
  */
 import {
   SuperPlugin,
-  GetActionsArgs,
   SuperAction,
-  ExecuteActionArgs,
-  ExecuteResult,
-} from '@coffic/buddy-types';
+  SuperContext,
+  ActionResult,
+} from '@coffic/buddy-it';
 
 // 插件ID
 const PLUGIN_ID = 'sample-plugin-time';
@@ -29,12 +28,12 @@ const plugin: SuperPlugin = {
    * @param {ActionContext} context 上下文信息
    * @returns {Promise<Action[]>} 动作列表
    */
-  async getActions(context: GetActionsArgs): Promise<SuperAction[]> {
+  async getActions(context: SuperContext): Promise<SuperAction[]> {
     return [];
   },
 
-  executeAction: function (args: ExecuteActionArgs): Promise<ExecuteResult> {
-    throw new Error('Function not implemented.');
+  async executeAction(context: SuperContext): Promise<ActionResult> {
+    return { success: true, message: '不支持执行动作' };
   },
 };
 

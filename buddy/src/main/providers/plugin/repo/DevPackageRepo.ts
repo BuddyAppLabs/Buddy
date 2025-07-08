@@ -1,5 +1,5 @@
 import { PluginEntity } from '../model/PluginEntity.js';
-import { PluginType } from '@coffic/buddy-types';
+import { PluginType } from '@coffic/buddy-it';
 
 export class DevPackageRepo {
   private enabled: boolean = true;

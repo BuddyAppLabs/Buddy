@@ -1,4 +1,4 @@
-import { PluginIpc } from '@coffic/buddy-types';
+import { PluginIpc } from '@coffic/buddy-it';
 import { contextBridge, ipcRenderer } from 'electron';
 
 declare global {

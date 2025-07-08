@@ -3,7 +3,7 @@
  * 负责从开发目录读取插件信息
  */
 import { BasePluginRepo } from './BasePluginRepo.js';
-import { PluginType } from '@coffic/buddy-types';
+import { PluginType } from '@coffic/buddy-it';
 
 export class DevPluginRepo extends BasePluginRepo {
   private enabled: boolean = true;

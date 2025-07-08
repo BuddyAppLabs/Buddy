@@ -5,7 +5,7 @@
   import { Button } from '@coffic/cosy-ui/vue';
   import { useNavigation } from '@/ui/composables/useNavigation';
   import { eventBus } from '@/ui/event-bus';
-  import { AppEvents } from '@coffic/buddy-types';
+  import { AppEvents } from '@coffic/buddy-it';
 
   const actionStore = useActionStore();
   const keyword = ref(actionStore.keyword);

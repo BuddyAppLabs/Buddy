@@ -3,8 +3,8 @@ import {
   ActiveApplication,
   getFrontmostApplication,
 } from '@coffic/active-app-monitor';
-import { AppEvents, SuperApp } from '@coffic/buddy-types';
-import { LogFacade } from '@coffic/cosy-logger';
+import { AppEvents, SuperApp } from '@coffic/buddy-it';
+import { LogFacade } from '@coffic/cosy-framework';
 
 /**
  * 应用状态管理器
@@ -125,15 +125,16 @@ export class StateManager {
 
     const frontmostApp = this.getCurrentActiveApp(reason);
     if (frontmostApp) {
-      LogFacade.channel('state').debug(
-        '[StateManager] 更新被覆盖的应用信息',
-        frontmostApp
-      );
+      LogFacade.channel('state').debug('[StateManager] 更新被覆盖的应用信息', {
+        frontmostApp,
+      });
       this.setOverlaidApp(frontmostApp);
     } else {
       LogFacade.channel('state').debug(
         '[StateManager] 无法获取当前活跃的应用信息',
-        frontmostApp
+        {
+          frontmostApp,
+        }
       );
       this.setOverlaidApp(null);
     }

@@ -2,9 +2,9 @@
  * 插件系统相关契约
  */
 
-import { ExecuteResult, GetActionsArgs } from '@coffic/buddy-types';
 import { PluginEntity } from '../model/PluginEntity.js';
 import { ActionEntity } from '../model/ActionEntity.js';
+import { ActionResult, SuperContext } from '@coffic/buddy-it';
 
 /**
  * 插件管理器契约
@@ -30,14 +30,14 @@ export interface IPluginManager {
    * 获取插件动作
    * @param keyword 关键词
    */
-  actions(args: GetActionsArgs): Promise<ActionEntity[]>;
+  actions(context: SuperContext): Promise<ActionEntity[]>;
 
   /**
    * 执行插件动作
    * @param actionId 动作ID
    * @param keyword 关键词
    */
-  executeAction(actionId: string, keyword: string): Promise<ExecuteResult>;
+  executeAction(context: SuperContext): Promise<ActionResult>;
 
   /**
    * 初始化插件系统

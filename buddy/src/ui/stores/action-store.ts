@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { actionIpc } from '@renderer/ipc/action-ipc';
-import { AppEvents, ExecuteResult } from '@coffic/buddy-types';
+import { AppEvents, ActionResult } from '@coffic/buddy-it';
 import { SendableAction } from '@/types/sendable-action';
 import { useErrorStore } from './error-store.js';
 
@@ -74,7 +74,7 @@ export const useActionStore = defineStore('action', {
     /**
      * 执行指定动作
      */
-    async execute(actionGlobalId: string): Promise<ExecuteResult> {
+    async execute(actionGlobalId: string): Promise<ActionResult> {
       this.selected = actionGlobalId;
       const action = this.find(actionGlobalId);
 
@@ -120,7 +120,7 @@ export const useActionStore = defineStore('action', {
       this.selected = actionId;
     },
 
-    async setWillRun(actionId: string): Promise<ExecuteResult> {
+    async setWillRun(actionId: string): Promise<ActionResult> {
       this.selected = actionId;
       this.willRun = actionId;
       return await this.execute(actionId);

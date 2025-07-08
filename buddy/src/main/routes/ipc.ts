@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import { LogFacade } from '@coffic/cosy-logger';
+import { LogFacade } from '@coffic/cosy-framework';
 
 /**
  * 注册所有 IPC 事件监听器
@@ -27,13 +27,13 @@ export function registerIpcRoutes(): void {
       const context = { viewId, from: 'pluginView' };
       switch (level) {
         case 'info':
-          logger.info(...args, context);
+          logger.info(args.map(String).join(' '), context);
           break;
         case 'warn':
-          logger.warn(...args, context);
+          logger.warn(args.map(String).join(' '), context);
           break;
         case 'error':
-          logger.error(...args, context);
+          logger.error(args.map(String).join(' '), context);
           break;
         default:
           // 对于未知的级别，可以记录为调试信息

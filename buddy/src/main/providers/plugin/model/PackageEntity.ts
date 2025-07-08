@@ -1,5 +1,5 @@
 import { readPackageJson, hasPackageJson } from '../util/PackageUtils.js';
-import { PluginType, ValidationResult } from '@coffic/buddy-types';
+import { PluginType, ValidationResult } from '@coffic/buddy-it';
 import { PluginEntity } from './PluginEntity.js';
 import { PackageJson } from '@/types/package-json.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';

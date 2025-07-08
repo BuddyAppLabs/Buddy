@@ -3,14 +3,14 @@ import { PluginEntity } from '@/main/providers/plugin/model/PluginEntity.js';
 import { userPluginDB } from '@/main/providers/plugin/repo/UserPluginRepo.js';
 import { ActionEntity } from '@/main/providers/plugin/model/ActionEntity.js';
 import { DevPackageRepo } from '@/main/providers/plugin/repo/DevPackageRepo.js';
-import { PluginContext } from '@/main/providers/plugin/model/PluginContext.js';
+import { ContextManager } from '@/main/providers/plugin/manager/ContextManager.js';
 import { DevPluginRepo } from '@/main/providers/plugin/repo/DevPluginRepo.js';
-import { ExecuteResult, GetActionsArgs } from '@coffic/buddy-types';
 import { Downloader } from '@/main/service/Downloader.js';
-import { LogFacade } from '@coffic/cosy-logger';
+import { LogFacade } from '@coffic/cosy-framework';
 import fs from 'fs';
 import path from 'path';
 import { IAIManager } from '../../ai/IAIManager';
+import { ActionResult, SuperContext } from '@coffic/buddy-it';
 
 /**
  * 插件管理器
@@ -82,33 +82,34 @@ export class PluginManager implements IPluginManager {
    * @param actionId 动作ID
    * @param keyword 关键词
    */
-  public async executeAction(
-    actionId: string,
-    keyword: string
-  ): Promise<ExecuteResult> {
-    const [pluginId, actionLocalId] = actionId.split(':');
+  public async executeAction(context: SuperContext): Promise<ActionResult> {
+    const [pluginId, actionLocalId] = context.actionId.split(':');
     const plugin = await this.find(pluginId);
     if (!plugin) {
       LogFacade.channel('plugin').error(
         `[PluginManager] 执行插件动作失败，插件不存在`,
         {
           pluginId,
-          actionId,
-          keyword,
+          actionId: context.actionId,
+          keyword: context.keyword,
         }
       );
       throw new Error(`[PluginManager] 插件不存在: ${pluginId}`);
     }
 
-    let result = await plugin.executeAction({
-      actionId: actionLocalId,
-      keyword,
-      context: PluginContext.createPluginContext(plugin, this.aiManager),
-    });
+    let result = await plugin.executeAction(
+      ContextManager.createContext(
+        plugin,
+        this.aiManager,
+        actionLocalId,
+        context.keyword,
+        context.overlaidApp
+      )
+    );
 
     LogFacade.channel('plugin').info(`[PluginManager] 执行插件动作`, {
-      actionId,
-      keyword,
+      actionId: context.actionId,
+      keyword: context.keyword,
       result,
     });
 
@@ -120,7 +121,7 @@ export class PluginManager implements IPluginManager {
    * @param keyword 搜索关键词
    * @returns 匹配的插件动作列表
    */
-  async actions(args: GetActionsArgs): Promise<ActionEntity[]> {
+  async actions(context: SuperContext): Promise<ActionEntity[]> {
     let allActions: ActionEntity[] = [];
 
     try {
@@ -128,12 +129,13 @@ export class PluginManager implements IPluginManager {
       const plugins = await this.all();
       for (const plugin of plugins) {
         LogFacade.channel('plugin').debug(`[PluginManager] 获取插件动作`, {
-          args,
+          context,
           pluginId: plugin.id,
         });
 
         try {
-          const pluginActions: ActionEntity[] = await plugin.getActions(args);
+          const pluginActions: ActionEntity[] =
+            await plugin.getActions(context);
 
           // 为每个动作设置插件 ID 和全局 ID
           const processedActions = pluginActions.map((action) => {
