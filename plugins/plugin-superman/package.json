@@ -9,7 +9,7 @@
   },
   "homepage": "https://github.com/cofficlab/buddy/tree/main/packages/plugin-superman",
   "devDependencies": {
-    "@coffic/buddy-types": "^1.1.2",
+    "@coffic/buddy-it": "workspace:*",
     "@types/node": "^24.0.10",
     "typescript": "^5.8.3"
   },

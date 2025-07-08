@@ -4,7 +4,7 @@ import {
   SuperContext,
   SuperPlugin,
 } from '@coffic/buddy-it';
-import { actions } from './actions/index.js';
+import { getActions } from './actions/index.js';
 
 // 日志函数
 const log = {
@@ -36,22 +36,22 @@ const plugin: SuperPlugin = {
     log.info(
       `获取动作列表，关键词: "${context.keyword}", 被覆盖应用: "${context.overlaidApp}"`
     );
+
     // 只返回元数据部分
-    let filtered = actions;
+    let actions = getActions(context);
     if (context.keyword) {
       const lowerKeyword = context.keyword.toLowerCase();
-      filtered = actions.filter(
+      actions = actions.filter(
         (action) =>
           action.description.toLowerCase().includes(lowerKeyword) ||
           action.id.toLowerCase().includes(lowerKeyword) ||
           action.id == 'set_ai_provider_key_deepseek'
       );
     }
-    // 去除 run 字段，只返回元数据，并补充 globalId 和 pluginId 字段
-    return filtered.map(({ run, ...meta }) => ({
+
+    // 去除 run 字段，只返回元数据
+    return actions.map(({ run, ...meta }) => ({
       ...meta,
-      globalId: '', // 由主程序注入
-      pluginId: '', // 由主程序注入
     }));
   },
 
@@ -65,7 +65,7 @@ const plugin: SuperPlugin = {
     } else {
       log.info(`执行动作: ${actionId}`);
     }
-    const action = actions.find((a) => a.id === actionId);
+    const action = getActions(context).find((a) => a.id === actionId);
     if (!action) {
       const errorMsg = `未知的动作ID: ${actionId}`;
       log.error(errorMsg);
