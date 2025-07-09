@@ -1,69 +1,33 @@
 <script setup lang="ts">
-  import { computed } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
   import { RiDeleteBinLine } from '@remixicon/vue';
   import { Button } from '@coffic/cosy-ui/vue';
-  import { globalConfirm } from '@renderer/composables/useConfirm';
   import { useMarketStore } from '@/ui/stores/market-store';
-  import { globalAlert } from '@renderer/composables/useAlert';
-  import { marketIpc } from '../../ipc/market-ipc';
-  import { useAsyncState } from '@vueuse/core';
   import { RiAlertLine } from '@remixicon/vue';
   import { SendablePackage } from '@/types/sendable-package';
-  import { usePackage } from '@/ui/composables/usePackage';
+  import { useDownload } from '@/ui/composables/useDownload';
+  import { useUninstall } from '@/ui/composables/useUninstall';
 
   const props = defineProps<{
     package: SendablePackage;
   }>();
 
   const marketStore = useMarketStore();
-  const { handleDownload, downloadingPackages } = usePackage();
+  const { handleDownload, downloadingPackages, isPackageInstalled } =
+    useDownload();
+  const { confirmUninstall, isUninstalling } = useUninstall();
 
   const isDownloading = computed(() =>
     downloadingPackages.value.has(props.package.id)
   );
 
-  // 检查插件安装状态
-  const { state: isInstalled } = useAsyncState(
-    () => marketIpc.isInstalled(props.package.id),
-    false,
-    { immediate: true }
-  );
-
-  // 卸载状态管理
-  const { state: isUninstalling, execute: executeUninstall } = useAsyncState(
-    async () => {
-      try {
-        await marketStore.uninstallPlugin(props.package.id);
-        setTimeout(() => {
-          globalAlert.success('插件已卸载', { duration: 3000 });
-        }, 500);
-        return true;
-      } catch (err) {
-        globalAlert.error('卸载失败' + err, { duration: 3000 });
-        return false;
-      }
-    },
-    false,
-    { immediate: false }
-  );
-
-  // 判断是否是用户安装的插件（可卸载）
+  const isInstalled = ref(false);
   const isUserPlugin = computed(() => props.package.type === 'user');
-
-  // 显示卸载确认
-  const confirmUninstall = async () => {
-    const confirmed = await globalConfirm.confirm({
-      title: '卸载插件',
-      message: '确定要卸载此插件吗？',
-      confirmText: '确认卸载',
-    });
-
-    if (confirmed) {
-      executeUninstall();
-    }
-  };
-
   const uninstallingPlugins = computed(() => marketStore.uninstallingPlugins);
+
+  onMounted(async () => {
+    isInstalled.value = await isPackageInstalled(props.package.id);
+  });
 </script>
 
 <template>
@@ -100,7 +64,7 @@
             <Button
               size="sm"
               variant="primary"
-              @click="confirmUninstall"
+              @click="confirmUninstall(package.id)"
               :loading="uninstallingPlugins.has(package.id) || isUninstalling">
               <RiDeleteBinLine class="h-4 w-4" />
             </Button>

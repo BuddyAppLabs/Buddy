@@ -3,17 +3,17 @@
   import SearchBar from '@/ui/layout/SearchBar.vue';
   import Confirm from '@renderer/components/cosy/Confirm.vue';
   import { Alert } from '@coffic/cosy-ui/vue';
-  import Progress from '@renderer/components/cosy/Progress.vue';
   import { useActionStore } from '@/ui/stores/action-store';
   import { globalConfirm } from '@renderer/composables/useConfirm';
   import { globalAlert } from '@renderer/composables/useAlert';
-  import { globalProgress } from '@renderer/composables/useProgress';
   import { useAppStore } from '@/ui/stores/app-store';
   import ErrorNotification from '@/ui/layout/ErrorNotification.vue';
   import { useErrorStore } from '@/ui/stores/error-store';
   import VersionDialog from '@/ui/components/bottom/VersionDialog.vue';
   import { useMarketStore } from '@renderer/stores/market-store';
   import { computed } from 'vue';
+  import { globalProgress } from '@renderer/composables/useProgress';
+  import Progress from '@renderer/components/cosy/Progress.vue';
   import KeyCatcher from '@/ui/components/KeyCatcher.vue';
 
   const actionStore = useActionStore();
@@ -117,13 +117,49 @@
         :color="globalProgress.state.value.color" />
     </div>
 
+    <!-- 全局确认对话框 -->
+    <Confirm
+      v-model="globalConfirm.state.value.show"
+      :title="globalConfirm.state.value.title"
+      :message="globalConfirm.state.value.message"
+      :confirm-text="globalConfirm.state.value.confirmText"
+      :cancel-text="globalConfirm.state.value.cancelText"
+      :confirm-variant="globalConfirm.state.value.confirmVariant"
+      :cancel-variant="globalConfirm.state.value.cancelVariant"
+      :loading="globalConfirm.state.value.loading"
+      @confirm="globalConfirm.handleConfirm"
+      @cancel="globalConfirm.handleCancel" />
+
+    <!-- 错误通知 -->
+    <ErrorNotification />
+
+    <!-- 版本信息对话框 -->
+    <VersionDialog v-model="appStore.showVersionDialog" />
+
+    <!-- 全局警告提示 -->
+    <Transition name="alert-fade">
+      <div
+        v-if="globalAlert.state.value.show"
+        :class="[alertContainerClass, alertPositionClass]">
+        <Alert
+          :type="globalAlert.state.value.type"
+          :title="globalAlert.state.value.message"
+          :closable="globalAlert.state.value.closable"
+          :position="globalAlert.state.value.position"
+          @close="globalAlert.close" />
+      </div>
+    </Transition>
+
+    <!-- 键盘事件监听 -->
+    <KeyCatcher :showKey="true" />
+
     <!-- 搜索区域 - 这里是可拖动区域 -->
     <div class="w-full shadow-lg">
       <SearchBar />
     </div>
 
     <!-- 内容区域 -->
-    <div class="overflow-auto px-4 pt-6 pb-24 no-drag-region">
+    <div class="overflow-auto px-4 pt-6 pb-24 no-drag-region h-full">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
@@ -131,42 +167,6 @@
       </router-view>
     </div>
   </div>
-
-  <!-- 错误通知 -->
-  <ErrorNotification />
-
-  <!-- 版本信息对话框 -->
-  <VersionDialog v-model="appStore.showVersionDialog" />
-
-  <!-- 全局确认对话框 -->
-  <Confirm
-    v-model="globalConfirm.state.value.show"
-    :title="globalConfirm.state.value.title"
-    :message="globalConfirm.state.value.message"
-    :confirm-text="globalConfirm.state.value.confirmText"
-    :cancel-text="globalConfirm.state.value.cancelText"
-    :confirm-variant="globalConfirm.state.value.confirmVariant"
-    :cancel-variant="globalConfirm.state.value.cancelVariant"
-    :loading="globalConfirm.state.value.loading"
-    @confirm="globalConfirm.handleConfirm"
-    @cancel="globalConfirm.handleCancel" />
-
-  <!-- 全局警告提示 -->
-  <Transition name="alert-fade">
-    <div
-      v-if="globalAlert.state.value.show"
-      :class="[alertContainerClass, alertPositionClass]">
-      <Alert
-        :type="globalAlert.state.value.type"
-        :title="globalAlert.state.value.message"
-        :closable="globalAlert.state.value.closable"
-        :position="globalAlert.state.value.position"
-        @close="globalAlert.close" />
-    </div>
-  </Transition>
-
-  <!-- 键盘事件监听 -->
-  <KeyCatcher :showKey="true" />
 </template>
 
 <style>
