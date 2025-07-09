@@ -9,7 +9,6 @@
         "../plugins/plugin-chat/absolute-asteroid/src/ChatView.vue"
     ],
     "compilerOptions": {
-        "allowImportingTsExtensions": true,
         "composite": true,
         "module": "esnext",
         "moduleResolution": "bundler",
@@ -44,7 +43,7 @@
             ],
             "@renderer/types/*": [
                 "src/ui/types/*"
-            ],
+            ]
         }
-    },
+    }
 }

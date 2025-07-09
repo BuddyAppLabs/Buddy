@@ -13,7 +13,7 @@ This is a sample GitOK plugin developed using TypeScript. Through this example, 
 
 ## Directory Structure
 
-```
+```tree
 .
 ├── dist/             # Compiled JavaScript files
 ├── src/              # TypeScript source code

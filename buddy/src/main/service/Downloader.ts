@@ -13,7 +13,7 @@ const logger = console;
 export class Downloader {
   private static instance: Downloader;
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): Downloader {
     if (!Downloader.instance) {
@@ -28,72 +28,74 @@ export class Downloader {
    * @param destPath 目标路径
    */
   public async downloadFile(url: string, destPath: string): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      logger.info(`开始下载文件`, {
-        url,
-        destPath,
-      });
-
-      // 确保目标目录存在
-      const destDir = path.dirname(destPath);
-      if (!fs.existsSync(destDir)) {
-        logger.info(`创建目标目录: ${destDir}`);
-        fs.mkdirSync(destDir, { recursive: true });
-      }
-
-      const file = fs.createWriteStream(destPath);
-
-      try {
-        const response = await axios({
-          method: 'get',
-          url: url,
-          responseType: 'stream',
-          maxRedirects: 5,
+    return new Promise((resolve, reject) => {
+      (async () => {
+        logger.info(`开始下载文件`, {
+          url,
+          destPath,
         });
 
-        if (response.status !== 200) {
-          const errorMsg = `下载失败，状态码: ${response.status}`;
+        // 确保目标目录存在
+        const destDir = path.dirname(destPath);
+        if (!fs.existsSync(destDir)) {
+          logger.info(`创建目标目录: ${destDir}`);
+          fs.mkdirSync(destDir, { recursive: true });
+        }
+
+        const file = fs.createWriteStream(destPath);
+
+        try {
+          const response = await axios({
+            method: 'get',
+            url: url,
+            responseType: 'stream',
+            maxRedirects: 5,
+          });
+
+          if (response.status !== 200) {
+            const errorMsg = `下载失败，状态码: ${response.status}`;
+            logger.error(errorMsg, {
+              url,
+              destPath,
+              statusCode: response.status,
+            });
+            reject(new Error(errorMsg));
+            return;
+          }
+
+          response.data.pipe(file);
+
+          file.on('finish', () => {
+            file.close();
+            logger.info(`文件下载完成`, {
+              url,
+              destPath,
+              size: fs.statSync(destPath).size,
+            });
+            resolve();
+          });
+        } catch (err) {
+          fs.unlink(destPath, () => {}); // 清理部分下载的文件
+          const errorMsg = `下载请求失败: ${err instanceof Error ? err.message : String(err)}`;
           logger.error(errorMsg, {
             url,
             destPath,
-            statusCode: response.status,
+            error: err,
           });
           reject(new Error(errorMsg));
-          return;
         }
 
-        response.data.pipe(file);
-
-        file.on('finish', () => {
-          file.close();
-          logger.info(`文件下载完成`, {
+        file.on('error', (err) => {
+          fs.unlink(destPath, () => {}); // 清理部分下载的文件
+          const errorMsg = `文件写入失败: ${err.message}`;
+          logger.error(errorMsg, {
             url,
             destPath,
-            size: fs.statSync(destPath).size,
+            error: err,
           });
-          resolve();
+          reject(new Error(errorMsg));
         });
-      } catch (err) {
-        fs.unlink(destPath, () => { }); // 清理部分下载的文件
-        const errorMsg = `下载请求失败: ${err instanceof Error ? err.message : String(err)}`;
-        logger.error(errorMsg, {
-          url,
-          destPath,
-          error: err,
-        });
-        reject(new Error(errorMsg));
-      }
-
-      file.on('error', (err) => {
-        fs.unlink(destPath, () => { }); // 清理部分下载的文件
-        const errorMsg = `文件写入失败: ${err.message}`;
-        logger.error(errorMsg, {
-          url,
-          destPath,
-          error: err,
-        });
-        reject(new Error(errorMsg));
-      });
+      })().catch(reject);
     });
   }
 
@@ -154,13 +156,16 @@ export class Downloader {
       destinationDir,
     });
 
-    const metadata = await npmRegistryService.fetchPackageMetadata(encodedPackageName);
+    const metadata =
+      await npmRegistryService.fetchPackageMetadata(encodedPackageName);
 
     // 2. 获取最新版本和下载地址
     const latestVersion = metadata['dist-tags'].latest;
     const tarballUrl = metadata.versions?.[latestVersion]?.dist?.tarball;
     if (!tarballUrl) {
-      throw new Error(`无法获取包 ${packageName} 版本 ${latestVersion} 的下载地址`);
+      throw new Error(
+        `无法获取包 ${packageName} 版本 ${latestVersion} 的下载地址`
+      );
     }
 
     logger.info(`获取到包信息`, {

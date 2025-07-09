@@ -56,7 +56,7 @@ export class ChatService {
     user?: any,
     conversationId?: string
   ): StreamTextResult<any, any> {
-    let model = this.getModel(modelId, key);
+    const model = this.getModel(modelId, key);
     const conversationRepo = this.conversationRepo;
     const logger = this.logger;
 

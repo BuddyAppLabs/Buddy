@@ -117,7 +117,7 @@ export function useMarket() {
 
   // 打开当前的插件目录
   const openCurrentPluginDirectory = () => {
-    let currentDirectory = marketStore.getCurrentPluginDirectory();
+    const currentDirectory = marketStore.getCurrentPluginDirectory();
     if (currentDirectory) {
       fileIpc.openFolder(currentDirectory);
     } else {

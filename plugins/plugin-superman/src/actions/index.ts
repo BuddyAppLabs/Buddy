@@ -9,7 +9,7 @@ import { SuperContext } from '@coffic/buddy-it';
 import { getHelloAction } from './hello';
 
 export const getActions = (context: SuperContext) => {
-  let actions = [];
+  const actions = [];
 
   const hello = getHelloAction(context);
   if (hello) {

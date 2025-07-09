@@ -97,7 +97,7 @@ export class PluginManager implements IPluginManager {
       throw new Error(`[PluginManager] 插件不存在: ${pluginId}`);
     }
 
-    let result = await plugin.executeAction(
+    const result = await plugin.executeAction(
       ContextManager.createContext(
         plugin,
         this.aiManager,
