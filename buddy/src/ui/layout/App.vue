@@ -130,8 +130,10 @@
         </transition>
       </router-view>
     </div>
-    <ErrorNotification />
   </div>
+
+  <!-- 错误通知 -->
+  <ErrorNotification />
 
   <!-- 版本信息对话框 -->
   <VersionDialog v-model="appStore.showVersionDialog" />
@@ -163,6 +165,7 @@
     </div>
   </Transition>
 
+  <!-- 键盘事件监听 -->
   <KeyCatcher :showKey="true" />
 </template>
 

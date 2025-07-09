@@ -156,14 +156,6 @@ export class PluginEntity {
   }
 
   /**
-   * 获取page属性对应的文件的源代码
-   * @returns 插件页面视图路径
-   */
-  getPageSourceCode(): string {
-    return 'source code';
-  }
-
-  /**
    * 禁用插件
    */
   disable(): void {
@@ -237,7 +229,7 @@ export class PluginEntity {
 
     try {
       if (!this.instance) {
-        this.instance = await this.load(); // 加载插件实例
+        this.instance = await this.load('getActions'); // 加载插件实例
       }
 
       // 如果插件实例上没有getActions方法，则返回空数组
@@ -272,7 +264,7 @@ export class PluginEntity {
       },
     });
 
-    const pluginModule = await this.load();
+    const pluginModule = await this.load('executeAction');
     if (!pluginModule) {
       LogFacade.channel('plugin').warn(
         `${title} 插件模块加载失败: ${this.id}, 无法执行动作: ${context.actionId}`
@@ -324,7 +316,12 @@ export class PluginEntity {
    * - [ ] 实现插件进程隔离，在单独的进程中运行插件代码
    * - [ ] 定义严格的API接口，限制插件能力范围
    */
-  public async load(): Promise<SuperPlugin> {
+  public async load(reason: string): Promise<SuperPlugin> {
+    LogFacade.channel('plugin').info(`${title} 加载插件`, {
+      id: this.id,
+      reason,
+    });
+
     try {
       const mainFilePath = this.mainFilePath;
       if (!fs.existsSync(mainFilePath)) {
@@ -340,6 +337,12 @@ export class PluginEntity {
       return module.default || module;
     } catch (error: any) {
       this.setStatus('error', error.message);
+      LogFacade.error('[PluginEntity] 加载插件模块失败', {
+        message: error,
+        mainFilePath: this.mainFilePath,
+      });
+
+      console.error(error);
       throw error;
     }
   }
@@ -349,7 +352,7 @@ export class PluginEntity {
    * @returns 插件主页面路径
    */
   async getPagePath(): Promise<string> {
-    const module = await this.load();
+    const module = await this.load('getPagePath');
     if (!module) {
       LogFacade.channel('plugin').warn(
         `${title} 插件 ${this.id} 加载失败，无法获取主页面路径`,

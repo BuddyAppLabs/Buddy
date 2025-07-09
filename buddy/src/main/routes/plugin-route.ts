@@ -10,6 +10,7 @@ import {
   SETTING_KEY_PLUGIN_DEV_PACKAGE_PATH,
   SETTING_KEY_PLUGIN_DEV_PATH,
 } from '../constants.js';
+import { SendablePackage } from '@/types/sendable-package.js';
 
 /**
  * 插件市场路由
@@ -169,12 +170,12 @@ export function registerPluginRoutes(): void {
     .description('设置开发包的根目录')
     .validation({});
 
-  // 获取远程插件列表
+  // 获取远程插件包列表
   RouteFacade.handle(
-    IPC_METHODS.GET_REMOTE_PLUGINS,
-    async (_event): Promise<SendablePlugin[]> => {
-      LogFacade.channel('plugin').info('[PluginRoute] 获取远程插件列表');
-      return await remotePluginDB.getSendablePlugins();
+    IPC_METHODS.GET_REMOTE_PACKAGES,
+    async (_event): Promise<SendablePackage[]> => {
+      LogFacade.channel('plugin').info('[PluginRoute] 获取远程插件包列表');
+      return await remotePluginDB.getSendablePackages();
     }
   ).description('获取远程可下载的插件列表');
 

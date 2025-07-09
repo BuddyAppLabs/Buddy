@@ -254,6 +254,10 @@ export class PluginManager implements IPluginManager {
    * @returns 安装是否成功
    */
   public async install(pluginId: string): Promise<void> {
+    if (!pluginId) {
+      throw new Error('要下载的插件ID不能为空');
+    }
+
     try {
       const userPluginDir = userPluginDB.getRootDir();
       if (!fs.existsSync(userPluginDir)) {

@@ -4,8 +4,10 @@ import { useStorage } from '@vueuse/core';
 import { useAlert } from './useAlert';
 import { fileIpc } from '../ipc/file-ipc';
 import { MarketTab } from '@/types/market-type';
+import { usePackage } from './usePackage';
 
 export function useMarket() {
+  const { loadRemotePackages } = usePackage();
   const { error } = useAlert();
 
   const marketStore = useMarketStore();
@@ -34,7 +36,7 @@ export function useMarket() {
 
       switch (marketStore.activeTab) {
         case 'remote':
-          await marketStore.loadRemotePlugins();
+          await loadRemotePackages();
           break;
         case 'user':
           await marketStore.loadUserPlugins();

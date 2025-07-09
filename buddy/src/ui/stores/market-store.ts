@@ -14,7 +14,7 @@ interface MarketState {
   remotePlugins: SendablePlugin[];
   loadingPlugins: boolean;
   loadingRemotePlugins: boolean;
-  downloadingPlugins: Set<string>;
+  downloadingPackages: Set<string>;
   uninstallingPlugins: Set<string>;
   userPluginDirectory: string;
   devPluginDirectory: string;
@@ -31,7 +31,7 @@ export const useMarketStore = defineStore('market', {
     remotePlugins: [],
     loadingPlugins: false,
     loadingRemotePlugins: false,
-    downloadingPlugins: new Set<string>(),
+    downloadingPackages: new Set<string>(),
     uninstallingPlugins: new Set<string>(),
     userPluginDirectory: '',
     devPluginDirectory: '',
@@ -50,7 +50,6 @@ export const useMarketStore = defineStore('market', {
       this.devPluginDirectory = await marketIpc.getDevPluginDirectory();
       this.devPackageDirectory = await marketIpc.getDevPackageDirectory();
       await this.loadUserPlugins();
-      await this.loadRemotePlugins();
       await this.loadDevPlugins();
       await this.loadDevPackage();
     },
@@ -110,20 +109,6 @@ export const useMarketStore = defineStore('market', {
       }
     },
 
-    // 下载插件
-    async downloadPlugin(plugin: SendablePlugin) {
-      if (this.downloadingPlugins.has(plugin.id)) {
-        console.log('downloadPlugin already downloading', plugin.id);
-        return; // 避免重复下载
-      }
-
-      this.downloadingPlugins.add(plugin.id);
-      await marketIpc.downloadPlugin(plugin.id);
-      this.downloadingPlugins.delete(plugin.id);
-      await this.loadUserPlugins();
-      await this.loadRemotePlugins();
-    },
-
     // 卸载插件
     async uninstallPlugin(pluginId: string) {
       if (this.uninstallingPlugins.has(pluginId)) {
@@ -136,25 +121,6 @@ export const useMarketStore = defineStore('market', {
 
       logger.debug('卸载插件后刷新插件列表', pluginId);
       await this.loadUserPlugins();
-      await this.loadRemotePlugins();
-    },
-
-    // 加载远程插件列表
-    async loadRemotePlugins(): Promise<void> {
-      if (this.loadingRemotePlugins) {
-        console.warn('loadRemotePlugins already loading');
-        return;
-      }
-
-      this.loadingRemotePlugins = true;
-
-      try {
-        const plugins = await marketIpc.getRemotePlugins();
-
-        this.remotePlugins = plugins;
-      } finally {
-        this.loadingRemotePlugins = false;
-      }
     },
 
     // 更新用户插件目录

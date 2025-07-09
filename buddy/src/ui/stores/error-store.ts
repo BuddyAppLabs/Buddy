@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { v4 as uuidv4 } from 'uuid';
 
 const logger = console;
 
@@ -21,7 +22,7 @@ export const useErrorStore = defineStore('error', {
   actions: {
     addError(error: Error | string, type: 'error' | 'warning' = 'error') {
       const message = error instanceof Error ? error.message : error;
-      const id = Date.now().toString();
+      const id = uuidv4();
 
       // 记录到日志
       if (type === 'error') {

@@ -13,7 +13,6 @@
 
   const {
     userPlugins,
-    remotePlugins,
     isLoading,
     loadPlugins,
     switchTab,
@@ -83,9 +82,7 @@
     <UserRepoList
       :plugins="userPlugins"
       v-if="marketStore.activeTab === 'user'" />
-    <RemoteRepoList
-      :plugins="remotePlugins"
-      v-if="marketStore.activeTab === 'remote'" />
+    <RemoteRepoList v-if="marketStore.activeTab === 'remote'" />
     <DevRepoList v-if="marketStore.activeTab === 'devRepo'" />
     <DevPackage v-if="marketStore.activeTab === 'devPackage'" />
   </div>

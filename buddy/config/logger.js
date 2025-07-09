@@ -10,17 +10,17 @@ export default {
     },
 
     ai: {
-      driver: 'console',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 
     action: {
-      driver: 'console',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 
     app: {
-      driver: 'console',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 
@@ -35,7 +35,7 @@ export default {
     },
 
     market: {
-      driver: 'console',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 
@@ -45,7 +45,12 @@ export default {
     },
 
     updater: {
-      driver: 'console',
+      driver: 'null',
+      level: ILogLevel.DEBUG,
+    },
+
+    package: {
+      driver: 'file',
       level: ILogLevel.DEBUG,
     },
 
@@ -60,7 +65,7 @@ export default {
     },
 
     state: {
-      driver: 'console',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 

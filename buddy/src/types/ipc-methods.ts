@@ -35,7 +35,7 @@ export const IPC_METHODS = {
   // Plugin Store 相关的路由
   GET_USER_PLUGINS: 'plugins/store',
   GET_DEV_PLUGINS: 'plugins/dev',
-  GET_REMOTE_PLUGINS: 'plugins/remote',
+  GET_REMOTE_PACKAGES: 'plugins/remote',
   GET_DEV_PACKAGE: 'plugins/dev/package',
   DOWNLOAD_PLUGIN: 'plugins/download',
   UNINSTALL_PLUGIN: 'plugins/uninstall',
