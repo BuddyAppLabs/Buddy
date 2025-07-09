@@ -22,7 +22,6 @@
             "@/*": [
                 "./src/*"
             ],
-        },
-        "allowImportingTsExtensions": true
+        }
     }
 }
