@@ -28,7 +28,7 @@
     "@coffic/active-app-monitor": "^1.0.2",
     "@coffic/cosy-framework": "^1.0.13",
     "@coffic/cosy-keyboard": "^0.2.13",
-    "@coffic/cosy-ui": "^0.8.25",
+    "@coffic/cosy-ui": "^0.8.26",
     "@coffic/key-listener": "^1.0.4",
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",

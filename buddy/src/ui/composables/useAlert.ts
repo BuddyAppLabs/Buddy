@@ -1,50 +1,3 @@
-/**
- * useAlert - 全局警告提示组合式函数
- *
- * 提供简单易用的全局警告提示功能，基于 DaisyUI 的 alert 组件实现。
- * 统一了 Toast 和 Alert 的功能，提供轻量级消息提示和持久性警告。
- *
- * 智能关闭按钮逻辑：
- * - 没有设置 duration 或 duration = 0：显示关闭按钮（持久性提示）
- * - 设置了 duration > 0：不显示关闭按钮（自动关闭）
- * - 明确设置 closable：使用设置的值（覆盖智能逻辑）
- *
- * 使用示例：
- * ```typescript
- * // 引入全局实例
- * import { globalAlert } from '@/composables/useAlert'
- *
- * // 基本使用（显示关闭按钮，需要手动关闭）
- * globalAlert.alert('这是一条警告消息')
- * globalAlert.success('操作成功')
- *
- * // 不同类型的警告（显示关闭按钮）
- * globalAlert.error('发生错误')
- * globalAlert.warning('请注意')
- * globalAlert.info('这是一条提示信息')
- *
- * // 轻量级消息提示（自动关闭，无关闭按钮）
- * globalAlert.success('操作成功', { duration: 3000 })
- * globalAlert.toast('这是一条消息')  // 默认3秒自动关闭
- *
- * // 强制显示/隐藏关闭按钮
- * globalAlert.success('持久提示', { closable: true, duration: 5000 })   // 有关闭按钮且5秒后自动关闭
- * globalAlert.success('无按钮提示', { closable: false })  // 无关闭按钮且不自动关闭
- *
- * // 手动关闭
- * globalAlert.close()
- * ```
- *
- * 可用方法：
- * - alert(message | options): 显示普通警告
- * - toast(message | options): 显示轻量级消息（默认3秒自动关闭）
- * - success(message, options?): 显示成功消息
- * - error(message, options?): 显示错误消息
- * - warning(message, options?): 显示警告消息
- * - info(message, options?): 显示信息消息
- * - close(): 关闭当前显示的警告
- */
-
 import { ref } from 'vue';
 
 // Alert 状态接口
@@ -52,7 +5,6 @@ interface AlertState {
   show: boolean;
   type: 'success' | 'error' | 'warning' | 'info';
   message: string;
-  closable: boolean;
   duration?: number;
   position:
     | 'top-start'
@@ -98,20 +50,10 @@ export function useAlert() {
 
     // 短暂延迟后显示新的 Alert，确保动画效果流畅
     setTimeout(() => {
-      // 智能判断是否显示关闭按钮：
-      // 1. 如果明确设置了 closable，使用设置的值
-      // 2. 如果没有设置 duration 或 duration 为 0，默认显示关闭按钮
-      // 3. 如果设置了 duration > 0，默认不显示关闭按钮（自动关闭）
-      const shouldShowCloseButton =
-        options.closable !== undefined
-          ? options.closable
-          : !options.duration || options.duration === 0;
-
       state.value = {
         ...state.value,
         ...defaultOptions,
         ...options,
-        closable: shouldShowCloseButton,
         show: true,
       };
 
