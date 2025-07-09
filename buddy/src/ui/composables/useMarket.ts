@@ -2,7 +2,6 @@ import { computed, ref } from 'vue';
 import { useMarketStore } from '../stores/market-store';
 import { useStorage } from '@vueuse/core';
 import { useAlert } from './useAlert';
-import { marketIpc } from '../ipc/market-ipc';
 import { fileIpc } from '../ipc/file-ipc';
 import { MarketTab } from '@/types/market-type';
 
@@ -15,36 +14,6 @@ export function useMarket() {
   const remotePlugins = computed(() => marketStore.remotePlugins);
 
   const isLoading = ref(false);
-
-  const setDevPluginDir = async () => {
-    try {
-      const newPath = await marketIpc.setDevPluginDirectory();
-      if (newPath) {
-        marketStore.devPluginDirectory = newPath;
-        await loadPlugins(); // 重新加载插件
-      }
-    } catch (e) {
-      error('设置开发插件目录失败: ' + e);
-    }
-  };
-
-  const setDevPackageDir = async () => {
-    const newPath = await marketIpc.setDevPackageDirectory();
-    if (newPath) {
-      marketStore.devPackageDirectory = newPath;
-      await loadPlugins(); // 重新加载插件
-    }
-  };
-
-  const resetDevPackageDir = async () => {
-    await marketIpc.resetDevPackageDirectory();
-    await loadPlugins();
-  };
-
-  const resetDevPluginDir = async () => {
-    await marketIpc.resetDevPluginDirectory();
-    await loadPlugins();
-  };
 
   const loadPlugins = async () => {
     console.log('loadPlugins', marketStore.activeTab);
@@ -133,10 +102,6 @@ export function useMarket() {
     loadPlugins,
     shouldShowEmpty,
     uninstallStates,
-    setDevPluginDir,
-    setDevPackageDir,
-    resetDevPackageDir,
-    resetDevPluginDir,
     switchTab,
     clearUninstallError,
     uninstallPlugin: marketStore.uninstallPlugin,

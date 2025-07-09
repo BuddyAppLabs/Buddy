@@ -24,6 +24,20 @@ export class DevPluginRepo extends BasePluginRepo {
   }
 
   /**
+   * 禁用仓库
+   */
+  public disable(): void {
+    this.enabled = false;
+  }
+
+  /**
+   * 启用仓库
+   */
+  public enable(): void {
+    this.enabled = true;
+  }
+
+  /**
    * 更新仓库的根目录
    * @param newPath 新的根目录路径
    */

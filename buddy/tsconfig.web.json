@@ -5,8 +5,7 @@
         "src/ui/**/*",
         "src/ui/**/*.vue",
         "src/types/**/*",
-        "vite.config.mjs",
-        "../plugins/plugin-chat/absolute-asteroid/src/ChatView.vue"
+        "vite.config.mjs"
     ],
     "compilerOptions": {
         "composite": true,

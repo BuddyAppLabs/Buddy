@@ -287,4 +287,32 @@ export class PluginManager implements IPluginManager {
       throw error;
     }
   }
+
+  /**
+   * 禁用开发仓库
+   */
+  public disableDevRepo(): void {
+    this.devPluginDB.disable();
+  }
+
+  /**
+   * 启用开发仓库
+   */
+  public enableDevRepo(): void {
+    this.devPluginDB.enable();
+  }
+
+  /**
+   * 禁用开发包
+   */
+  public disableDevPackage(): void {
+    this.devPackageDB.disable();
+  }
+
+  /**
+   * 启用开发包
+   */
+  public enableDevPackage(): void {
+    this.devPackageDB.enable();
+  }
 }

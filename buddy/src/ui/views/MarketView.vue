@@ -87,9 +87,7 @@
     <RemoteRepoList
       :plugins="remotePlugins"
       v-if="marketStore.activeTab === 'remote'" />
-    <DevRepoList
-      :plugins="devPlugins"
-      v-if="marketStore.activeTab === 'devRepo'" />
+    <DevRepoList v-if="marketStore.activeTab === 'devRepo'" />
     <DevPackage v-if="marketStore.activeTab === 'devPackage'" />
   </div>
 </template>
