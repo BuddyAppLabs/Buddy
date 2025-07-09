@@ -28,7 +28,7 @@ export function useDownload() {
       installedPackages.value.add(id);
 
       downloadedPackages.value.add(id);
-      globalAlert.success('插件包下载成功');
+      globalAlert.success('插件包下载成功', { closable: true, duration: 3000 });
     } else {
       throw new Error('下载插件包失败：' + response.error);
     }
