@@ -52,7 +52,7 @@ export function registerPluginRoutes(): void {
 
   // 获取开发插件目录
   RouteFacade.handle(
-    IPC_METHODS.GET_PLUGIN_DIRECTORIES_DEV,
+    IPC_METHODS.GET_PLUGIN_DIRECTORIES_REPO,
     (_event): string => {
       return PluginFacade.getDevPluginRootDir();
     }
@@ -66,9 +66,9 @@ export function registerPluginRoutes(): void {
     }
   ).description('获取开发包的根目录');
 
-  // 设置开发插件目录
+  // 设置开发仓库目录
   RouteFacade.handle(
-    IPC_METHODS.SET_PLUGIN_DIRECTORIES_DEV,
+    IPC_METHODS.SET_PLUGIN_DIRECTORIES_REPO,
     async (_event): Promise<string | null> => {
       const { canceled, filePaths } = await dialog.showOpenDialog({
         properties: ['openDirectory'],
@@ -86,9 +86,42 @@ export function registerPluginRoutes(): void {
     }
   ).description('设置开发仓库的根目录');
 
-  // 重置开发插件目录
+  // 禁用开发仓库
   RouteFacade.handle(
-    IPC_METHODS.RESET_PLUGIN_DIRECTORIES_DEV,
+    IPC_METHODS.DISABLE_PLUGIN_DIRECTORIES_REPO,
+    (_event): void => {
+      PluginFacade.disableDevRepo();
+    }
+  ).description('禁用开发仓库');
+
+  // 启用开发仓库
+
+  RouteFacade.handle(
+    IPC_METHODS.ENABLE_PLUGIN_DIRECTORIES_REPO,
+    (_event): void => {
+      PluginFacade.enableDevRepo();
+    }
+  ).description('启用开发仓库');
+
+  // 禁用开发包
+  RouteFacade.handle(
+    IPC_METHODS.DISABLE_PLUGIN_DIRECTORIES_DEV_PACKAGE,
+    (_event): void => {
+      PluginFacade.disableDevPackage();
+    }
+  ).description('禁用开发包');
+
+  // 启用开发包
+  RouteFacade.handle(
+    IPC_METHODS.ENABLE_PLUGIN_DIRECTORIES_DEV_PACKAGE,
+    (_event): void => {
+      PluginFacade.enableDevPackage();
+    }
+  ).description('启用开发包');
+
+  // 重置开发仓库目录
+  RouteFacade.handle(
+    IPC_METHODS.RESET_PLUGIN_DIRECTORIES_REPO,
     (_event): void => {
       SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PATH, '');
       PluginFacade.updateDevPluginRootDir('');

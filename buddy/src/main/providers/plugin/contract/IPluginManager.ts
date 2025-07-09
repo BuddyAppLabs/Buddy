@@ -86,4 +86,24 @@ export interface IPluginManager {
    * 更新开发包的根目录
    */
   updateDevPackageRootDir(path: string): void;
+
+  /**
+   * 禁用开发仓库
+   */
+  disableDevRepo(): void;
+
+  /**
+   * 启用开发仓库
+   */
+  enableDevRepo(): void;
+
+  /**
+   * 禁用开发包
+   */
+  disableDevPackage(): void;
+
+  /**
+   * 启用开发包
+   */
+  enableDevPackage(): void;
 }

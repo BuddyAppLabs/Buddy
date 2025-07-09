@@ -13,7 +13,7 @@
 
 ## 目录结构
 
-```
+```tree
 .
 ├── dist/             # 编译后的JavaScript文件
 ├── src/              # TypeScript源代码
@@ -69,7 +69,7 @@ pnpm build
 3. 构建项目：`pnpm build`
 4. 在GitOK应用中加载此插件
 
-## Links 
+## Links
 
 - [NPM](https://www.npmjs.com/package/@coffic/buddy-example-plugin)
 

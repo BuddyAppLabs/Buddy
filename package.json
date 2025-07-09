@@ -6,13 +6,23 @@
     "lodash-es": "^4.17.21",
     "nodemon": "^3.1.10",
     "turbo": "^2.5.4",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "@eslint/css": "^0.9.0",
+    "@eslint/js": "^9.30.1",
+    "@eslint/json": "^0.12.0",
+    "@eslint/markdown": "^6.6.0",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/parser": "^8.36.0",
+    "eslint": "^9.30.1",
+    "eslint-plugin-import": "^2.32.0",
+    "globals": "^16.3.0",
+    "typescript-eslint": "^8.36.0"
   },
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo build",
+    "build": "eslint && turbo build",
     "build:deps": "pnpm build --filter='@coffic/cosy-*' --filter='@coffic/buddy-it'",
     "build:buddy": "turbo build --filter='buddy'",
     "build:framework": "clear && turbo build --filter='@coffic/cosy-framework'",
@@ -24,7 +34,7 @@
     "dev": "pnpm dev:buddy",
     "ext": "nodemon pipeline.mjs",
     "mcp": "pnpm --filter mcp-core test",
-    "lint": "turbo lint",
+    "lint": "eslint",
     "test": "turbo test",
     "clean": "turbo clean",
     "typecheck": "turbo typecheck"
@@ -38,7 +48,8 @@
     "@ai-sdk/openai": "^1.3.23",
     "ai": "^4.3.17",
     "electron-log": "^5.4.1",
-    "openai": "^5.8.2",
+    "openai": "^5.8.3",
     "source-map-support": "^0.5.21"
-  }
+  },
+  "type": "module"
 }

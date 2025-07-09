@@ -4,7 +4,7 @@ const ipc = window.ipc;
 
 export const fileIpc = {
   async openFolder(folder: string): Promise<unknown> {
-    let response = await ipc.invoke(IPC_METHODS.OPEN_FOLDER, folder);
+    const response = await ipc.invoke(IPC_METHODS.OPEN_FOLDER, folder);
 
     console.log('response', response);
 

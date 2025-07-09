@@ -331,8 +331,7 @@ export class PluginEntity {
         throw new Error(`${title} 插件入口文件不存在: ${mainFilePath}`);
       }
 
-      delete require.cache[require.resolve(mainFilePath)];
-      const module = require(mainFilePath);
+      const module = await import(mainFilePath);
       // 如果模块导出了plugin对象，使用它
       if (module.plugin) {
         return module.plugin;
@@ -377,7 +376,7 @@ export class PluginEntity {
    */
   public async getSendablePlugin(): Promise<SendablePlugin> {
     let pagePath = '';
-    let errors: string[] = [];
+    const errors: string[] = [];
 
     if (this.error) {
       errors.push(this.error);

@@ -40,14 +40,20 @@ export const IPC_METHODS = {
   DOWNLOAD_PLUGIN: 'plugins/download',
   UNINSTALL_PLUGIN: 'plugins/uninstall',
 
-  // Plugin Directories 相关的路由
+  // Plugin Repo Directories 相关的路由
   GET_PLUGIN_DIRECTORIES_USER: 'plugins/directories/user',
-  GET_PLUGIN_DIRECTORIES_DEV: 'plugins/directories/dev/get',
-  SET_PLUGIN_DIRECTORIES_DEV: 'plugins/directories/dev/set',
-  RESET_PLUGIN_DIRECTORIES_DEV: 'plugins/directories/dev/reset',
-  GET_PLUGIN_DIRECTORIES_DEV_PACKAGE: 'plugins/directories/dev/package/get',
-  SET_PLUGIN_DIRECTORIES_DEV_PACKAGE: 'plugins/directories/dev/package/set',
-  RESET_PLUGIN_DIRECTORIES_DEV_PACKAGE: 'plugins/directories/dev/package/reset',
+  GET_PLUGIN_DIRECTORIES_REPO: 'plugins/directories/repo/get',
+  SET_PLUGIN_DIRECTORIES_REPO: 'plugins/directories/repo/set',
+  DISABLE_PLUGIN_DIRECTORIES_REPO: 'plugins/directories/repo/disable',
+  ENABLE_PLUGIN_DIRECTORIES_REPO: 'plugins/directories/repo/enable',
+  RESET_PLUGIN_DIRECTORIES_REPO: 'plugins/directories/repo/reset',
+  GET_PLUGIN_DIRECTORIES_DEV_PACKAGE: 'plugins/directories/dev-package/get',
+  SET_PLUGIN_DIRECTORIES_DEV_PACKAGE: 'plugins/directories/dev-package/set',
+  DISABLE_PLUGIN_DIRECTORIES_DEV_PACKAGE:
+    'plugins/directories/dev-package/disable',
+  ENABLE_PLUGIN_DIRECTORIES_DEV_PACKAGE:
+    'plugins/directories/dev-package/enable',
+  RESET_PLUGIN_DIRECTORIES_DEV_PACKAGE: 'plugins/directories/dev-package/reset',
 
   // Overlaid Apps 相关的路由
   Get_Current_App: 'overlaid-apps/current',

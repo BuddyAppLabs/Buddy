@@ -37,12 +37,8 @@ export function registerIpcRoutes(): void {
           break;
         default:
           // 对于未知的级别，可以记录为调试信息
-          const exhaustiveCheck: never = level;
-          logger.debug(
-            `Unknown log level: ${exhaustiveCheck}`,
-            ...args,
-            context
-          );
+          logger.debug(`Unknown log level: ${level}`, ...args, context);
+          break;
       }
     }
   );

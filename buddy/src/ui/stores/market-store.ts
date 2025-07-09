@@ -152,8 +152,6 @@ export const useMarketStore = defineStore('market', {
         const plugins = await marketIpc.getRemotePlugins();
 
         this.remotePlugins = plugins;
-      } catch (err) {
-        throw err;
       } finally {
         this.loadingRemotePlugins = false;
       }

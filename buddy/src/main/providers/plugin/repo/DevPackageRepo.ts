@@ -42,4 +42,18 @@ export class DevPackageRepo {
   public getPluginType(): PluginType {
     return 'dev';
   }
+
+  /**
+   * 禁用
+   */
+  public disable(): void {
+    this.enabled = false;
+  }
+
+  /**
+   * 启用
+   */
+  public enable(): void {
+    this.enabled = true;
+  }
 }

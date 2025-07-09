@@ -198,11 +198,11 @@ export class WindowManager implements IWindowManager {
     if (!this.mainWindow || this.mainWindow.isDestroyed()) return;
 
     // 使用标志记录最后一次显示的时间
-    // @ts-ignore 忽略类型检查错误
+    // @ts-expect-error-error
     const lastShowTime = this.mainWindow.lastShowTime || 0;
     const now = Date.now();
 
-    // @ts-ignore 忽略类型检查错误
+    // @ts-expect-error-error
     const justTriggered = this.mainWindow.justTriggered === true;
 
     // 如果是失焦触发的隐藏，且窗口刚刚显示，则忽略
@@ -245,10 +245,10 @@ export class WindowManager implements IWindowManager {
     );
 
     // 记录显示时间戳
-    // @ts-ignore 忽略类型检查错误
+    // @ts-expect-error-error
     this.mainWindow.lastShowTime = Date.now();
     // 设置额外的标志，表示窗口刚刚被通过快捷键打开
-    // @ts-ignore 忽略类型检查错误
+    // @ts-expect-error-error
     this.mainWindow.justTriggered = true;
 
     // 窗口跟随桌面
@@ -314,7 +314,7 @@ export class WindowManager implements IWindowManager {
           // 延迟500毫秒后重置justTriggered标志
           setTimeout(() => {
             if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-              // @ts-ignore 忽略类型检查错误
+              // @ts-expect-error-error
               this.mainWindow.justTriggered = false;
             }
           }, 500);
@@ -356,7 +356,7 @@ export class WindowManager implements IWindowManager {
     await new Promise<void>((resolve) => {
       setTimeout(() => {
         if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-          // @ts-ignore 忽略类型检查错误
+          // @ts-expect-error-error
           this.mainWindow.justTriggered = false;
         }
         resolve();
