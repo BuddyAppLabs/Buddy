@@ -13,7 +13,6 @@
 
   const {
     userPlugins,
-    devPlugins,
     remotePlugins,
     isLoading,
     loadPlugins,

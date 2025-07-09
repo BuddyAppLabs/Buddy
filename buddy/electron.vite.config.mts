@@ -56,7 +56,7 @@ export default defineConfig({
     build: {
       sourcemap: true,
       rollupOptions: {
-        input: 'index.html',
+        input: 'src/ui/index.html',
       },
     },
   },

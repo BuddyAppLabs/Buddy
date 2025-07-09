@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useMarketStore } from '../stores/market-store';
 import { marketIpc } from '../ipc/market-ipc';
 
