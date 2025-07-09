@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, onMounted, ref } from 'vue';
+  import { computed, onMounted } from 'vue';
   import { RiDeleteBinLine } from '@remixicon/vue';
   import { Button } from '@coffic/cosy-ui/vue';
   import { useMarketStore } from '@/ui/stores/market-store';
@@ -13,20 +13,24 @@
   }>();
 
   const marketStore = useMarketStore();
-  const { handleDownload, downloadingPackages, isPackageInstalled } =
-    useDownload();
+  const {
+    handleDownload,
+    downloadingPackages,
+    checkInstallationStatus,
+    isPackageInstalled,
+  } = useDownload();
   const { confirmUninstall, isUninstalling } = useUninstall();
 
   const isDownloading = computed(() =>
     downloadingPackages.value.has(props.package.id)
   );
 
-  const isInstalled = ref(false);
+  const isInstalled = isPackageInstalled(props.package.id);
   const isUserPlugin = computed(() => props.package.type === 'user');
   const uninstallingPlugins = computed(() => marketStore.uninstallingPlugins);
 
   onMounted(async () => {
-    isInstalled.value = await isPackageInstalled(props.package.id);
+    await checkInstallationStatus(props.package.id);
   });
 </script>
 
@@ -58,7 +62,6 @@
         v-if="package.type != 'dev'">
         <!-- 本地插件操作 -->
         <template v-if="package.type === 'user'">
-          <!-- 卸载按钮 (仅用户插件) -->
           <div v-if="isUserPlugin">
             <!-- 卸载按钮 -->
             <Button

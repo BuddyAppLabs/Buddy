@@ -1,13 +1,15 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useMarketStore } from '@/ui/stores/market-store';
 import { IPC_METHODS } from '@/types/ipc-methods';
 import { globalAlert } from './useAlert';
 
 const ipc = window.ipc;
 
+const downloadingPackages = ref<Set<string>>(new Set());
+export const installedPackages = ref<Set<string>>(new Set());
+
 export function useDownload() {
   const marketStore = useMarketStore();
-  const downloadingPackages = ref<Set<string>>(new Set());
   const downloadedPackages = ref<Set<string>>(new Set());
 
   // 下载插件包
@@ -20,11 +22,10 @@ export function useDownload() {
     downloadingPackages.value.add(id);
     const response = await ipc.invoke(IPC_METHODS.DOWNLOAD_PLUGIN, id);
 
-    console.log('downloadPackage response', response);
-
     if (response.success) {
       downloadingPackages.value.delete(id);
       await marketStore.loadUserPlugins();
+      installedPackages.value.add(id);
 
       downloadedPackages.value.add(id);
       globalAlert.success('插件包下载成功');
@@ -34,15 +35,24 @@ export function useDownload() {
   };
 
   // 检查插件安装状态
-  const isPackageInstalled = async (id: string): Promise<boolean> => {
+  const checkInstallationStatus = async (id: string) => {
+    if (installedPackages.value.has(id)) {
+      return;
+    }
     const response = await ipc.invoke(IPC_METHODS.Plugin_Is_Installed, id);
+    if (response.data) {
+      installedPackages.value.add(id);
+    }
+  };
 
-    return response.data;
+  const isPackageInstalled = (id: string) => {
+    return computed(() => installedPackages.value.has(id));
   };
 
   return {
     handleDownload,
     downloadingPackages,
+    checkInstallationStatus,
     isPackageInstalled,
   };
 }

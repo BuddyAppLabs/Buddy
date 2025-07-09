@@ -2,6 +2,7 @@ import { useMarketStore } from '@/ui/stores/market-store';
 import { globalConfirm } from './useConfirm';
 import { useAsyncState } from '@vueuse/core';
 import { globalAlert } from './useAlert';
+import { installedPackages } from './useDownload';
 
 export function useUninstall() {
   const marketStore = useMarketStore();
@@ -11,6 +12,7 @@ export function useUninstall() {
     async (id: string) => {
       try {
         await marketStore.uninstallPlugin(id);
+        installedPackages.value.delete(id);
         setTimeout(() => {
           globalAlert.success('插件已卸载', { duration: 3000 });
         }, 500);
