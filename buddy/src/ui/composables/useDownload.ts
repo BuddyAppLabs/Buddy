@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue';
-import { useMarketStore } from '@/ui/stores/market-store';
+import { useMarketStore } from '@/ui/composables/useUserPackage';
 import { IPC_METHODS } from '@/types/ipc-methods';
 import { globalAlert } from './useAlert';
 
@@ -28,7 +28,7 @@ export function useDownload() {
       installedPackages.value.add(id);
 
       downloadedPackages.value.add(id);
-      globalAlert.success('插件包下载成功', { closable: true, duration: 3000 });
+      globalAlert.success('插件包下载成功', { duration: 3000 });
     } else {
       throw new Error('下载插件包失败：' + response.error);
     }

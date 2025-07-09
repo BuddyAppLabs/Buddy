@@ -1,5 +1,5 @@
 import { computed } from 'vue';
-import { useMarketStore } from '../stores/market-store';
+import { useMarketStore } from './useUserPackage';
 import { marketIpc } from '../ipc/market-ipc';
 
 export function usePluginPackage() {

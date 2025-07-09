@@ -1,4 +1,4 @@
-import { useMarketStore } from '@/ui/stores/market-store';
+import { useMarketStore } from '@/ui/composables/useUserPackage';
 import { globalConfirm } from './useConfirm';
 import { useAsyncState } from '@vueuse/core';
 import { globalAlert } from './useAlert';

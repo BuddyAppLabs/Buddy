@@ -10,7 +10,7 @@ import { useAppStore } from '@/ui/stores/app-store';
 import ErrorNotification from '@/ui/layout/ErrorNotification.vue';
 import { useErrorStore } from '@/ui/stores/error-store';
 import VersionDialog from '@/ui/components/bottom/VersionDialog.vue';
-import { useMarketStore } from '@renderer/stores/market-store';
+import { useMarketStore } from '@/ui/composables/useUserPackage';
 import { computed } from 'vue';
 import { globalProgress } from '@renderer/composables/useProgress';
 import Progress from '@renderer/components/cosy/Progress.vue';

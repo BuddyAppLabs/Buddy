@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue';
-import { useMarketStore } from '../stores/market-store';
+import { useMarketStore } from './useUserPackage';
 import { useStorage } from '@vueuse/core';
 import { useAlert } from './useAlert';
 import { fileIpc } from '../ipc/file-ipc';

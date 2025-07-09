@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import PluginCard from '@/ui/components/home/PackageCard.vue';
-import { useMarketStore } from '@/ui/stores/market-store';
+import { useMarketStore } from '@/ui/composables/useUserPackage';
 import { usePluginRepo } from '@/ui/composables/usePluginRepo';
 import { Alert } from '@coffic/cosy-ui/vue';
 

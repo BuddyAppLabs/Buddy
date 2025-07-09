@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMarketStore } from '@renderer/stores/market-store'
+import { useMarketStore } from '@/ui/composables/useUserPackage'
 import { computed } from 'vue'
 import PluginPage from '@/ui/components/home/PluginPage.vue'
 

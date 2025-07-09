@@ -1,6 +1,6 @@
 import { SendablePackage } from '@/types/sendable-package';
 import { ref } from 'vue';
-import { useMarketStore } from '@/ui/stores/market-store';
+import { useMarketStore } from '@/ui/composables/useUserPackage';
 import { marketIpc } from '@/ui/ipc/market-ipc';
 
 export function usePackage() {
