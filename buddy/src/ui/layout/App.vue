@@ -15,11 +15,14 @@ import { computed } from 'vue';
 import { globalProgress } from '@renderer/composables/useProgress';
 import Progress from '@renderer/components/cosy/Progress.vue';
 import KeyCatcher from '@/ui/components/KeyCatcher.vue';
+import { eventBus } from '../event-bus';
+import { useNavigation } from '@/ui/composables/useNavigation';
 
 const actionStore = useActionStore();
 const appStore = useAppStore();
 const errorStore = useErrorStore();
 const marketStore = useMarketStore();
+const { goToHome } = useNavigation();
 
 // 计算 Alert 容器的样式类
 const alertContainerClass = computed(() => {
@@ -53,6 +56,10 @@ const handleGlobalError = (event: ErrorEvent) => {
 
 const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
     errorStore.addError(event.reason?.message || '未处理的 Promise 错误');
+};
+
+const handleCharFromGlobalKey = (char: string) => {
+    goToHome();
 };
 
 // 在组件加载时注册消息监听和初始化
@@ -94,6 +101,8 @@ onMounted(async () => {
             error instanceof Error ? error.message : String(error)
         );
     }
+
+    eventBus.on('globalKey', handleCharFromGlobalKey);
 });
 
 // 在组件卸载时清理监听器
@@ -103,6 +112,7 @@ onUnmounted(() => {
 
     appStore.onUnmounted();
     actionStore.onUnmounted();
+    eventBus.off('globalKey', handleCharFromGlobalKey);
 });
 </script>
 
