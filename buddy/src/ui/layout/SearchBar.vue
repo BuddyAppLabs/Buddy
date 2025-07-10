@@ -1,27 +1,22 @@
 <script setup lang="ts">
-  import { ref, watch, onMounted, nextTick, onUnmounted } from 'vue';
-  import { useActionStore } from '@/ui/stores/action-store';
+  import { ref, onMounted, nextTick, onUnmounted } from 'vue';
   import { RiSearchLine, RiStore2Line } from '@remixicon/vue';
   import { Button } from '@coffic/cosy-ui/vue';
   import { useNavigation } from '@/ui/composables/useNavigation';
   import { eventBus } from '@/ui/event-bus';
   import { AppEvents } from '@coffic/buddy-it';
+  import { useActions } from '@/ui/composables/useActions';
+  import { useKeywordStore } from '@/ui/stores/keyword-store';
 
-  const actionStore = useActionStore();
-  const keyword = ref(actionStore.keyword);
+  const { onKeyDown } = useActions();
+  const keywordStore = useKeywordStore();
   const searchInput = ref<HTMLInputElement | null>(null);
   const { goToPluginStore, goToHome } = useNavigation();
   const isFocused = ref(false);
 
-  // 监听本地关键词变化并更新 actionStore
-  watch(keyword, async (newKeyword) => {
-    actionStore.updateKeyword(newKeyword);
-    await nextTick();
-  });
-
   // 处理键盘事件
   const handleKeyDown = (event: KeyboardEvent) => {
-    actionStore.handleKeyDown(event);
+    onKeyDown(event);
   };
 
   function onFocus() {
@@ -40,16 +35,14 @@
       const end = input.selectionEnd ?? input.value.length;
       const value = input.value;
       input.value = value.slice(0, start) + char + value.slice(end);
-      keyword.value = input.value;
+      keywordStore.keyword = input.value;
       // 移动光标
       input.selectionStart = input.selectionEnd = start + 1;
-      actionStore.updateKeyword(input.value);
     }
   }
 
   function reset() {
-    keyword.value = '';
-    actionStore.updateKeyword('');
+    keywordStore.keyword = '';
   }
 
   onMounted(() => {
@@ -57,7 +50,7 @@
     nextTick(() => {
       searchInput.value?.focus();
     });
-    eventBus.on('globalKey', insertCharFromGlobalKey);
+    eventBus.on('key', insertCharFromGlobalKey);
 
     // 监听窗口激活事件，重置搜索框
     window.ipc.receive(AppEvents.ACTIVATED, () => {
@@ -66,7 +59,7 @@
   });
 
   onUnmounted(() => {
-    eventBus.off('globalKey', insertCharFromGlobalKey);
+    eventBus.off('key', insertCharFromGlobalKey);
   });
 </script>
 
@@ -78,7 +71,7 @@
         ref="searchInput"
         type="search"
         placeholder="Search"
-        v-model="keyword"
+        v-model="keywordStore.keyword"
         @keydown="handleKeyDown"
         @focus="onFocus"
         @blur="onBlur"

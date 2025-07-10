@@ -1,24 +1,17 @@
-/**
- * 远程插件数据库
- * 负责从远程 npm registry 获取插件并缓存
- */
-import { npmRegistryService } from '../../../service/NpmRegistryService.js';
-import { PackageEntity } from '../model/PackageEntity.js';
+import { npmRegistryService } from '@/main/service/NpmRegistryService.js';
+import { PackageEntity } from '@/main/providers/plugin/model/PackageEntity.js';
 import { PackageJson } from '@/types/package-json.js';
-import { SendablePlugin } from '@/types/sendable-plugin.js';
-import { PluginEntity } from '../model/PluginEntity.js';
-import { IPluginRepo } from '../contract/IPluginRepo.js';
-import { EMOJI } from '../../../constants.js';
+import { EMOJI } from '@/main/constants.js';
 import { LogFacade } from '@coffic/cosy-framework';
+import { SendablePackage } from '@/types/sendable-package';
 
-const verbose = false;
 const logger = console;
 
 /**
  * 远程插件仓库
  * 负责从远程 npm registry 获取插件并缓存
  */
-export class PluginRepoRemote implements IPluginRepo {
+export class PluginRepoRemote {
   private static instance: PluginRepoRemote;
 
   // 缓存刷新时间间隔 (毫秒): 1小时
@@ -63,33 +56,15 @@ export class PluginRepoRemote implements IPluginRepo {
       return this.cachedRemotePackages;
     } catch (error) {
       logger.error(
-        `获取远程插件列表失败: ${error instanceof Error ? error.message : String(error)}`
+        `获取远程插件包列表失败: ${error instanceof Error ? error.message : String(error)}`
       );
       return [];
     }
   }
 
-  /**
-   * 获取远程插件列表
-   */
-  public async getPlugins(): Promise<PluginEntity[]> {
-    LogFacade.channel('plugin').info('[PluginRepoRemote] 获取远程插件列表');
+  public async getSendablePackages(): Promise<SendablePackage[]> {
     const packages = await this.getPackages();
-    const plugins: PluginEntity[] = [];
-    for (const pkg of packages) {
-      const plugin = pkg.getPlugin();
-      if (plugin) {
-        plugins.push(plugin);
-      }
-    }
-    return plugins;
-  }
-
-  public async getSendablePlugins(): Promise<SendablePlugin[]> {
-    const plugins = await this.getPlugins();
-    return await Promise.all(
-      plugins.map((plugin) => plugin.getSendablePlugin())
-    );
+    return packages.map((pkg) => pkg.toSendablePackage());
   }
 
   /**
@@ -100,7 +75,7 @@ export class PluginRepoRemote implements IPluginRepo {
       const packages =
         await npmRegistryService.searchPackagesByKeyword('buddy-plugin');
       return packages.map((pkg: PackageJson) =>
-        PackageEntity.fromNpmPackage(pkg, 'remote')
+        PackageEntity.fromPackageJSON(pkg, 'remote')
       );
     } catch (error) {
       logger.error(
@@ -115,9 +90,7 @@ export class PluginRepoRemote implements IPluginRepo {
    */
   private async refreshRemotePackages(): Promise<void> {
     try {
-      if (verbose) {
-        logger.info('开始刷新远程包列表缓存');
-      }
+      logger.info('开始刷新远程包列表缓存');
 
       // 搜索 buddy-plugin 关键词
       const packages = await this.searchPackages();
@@ -148,26 +121,6 @@ export class PluginRepoRemote implements IPluginRepo {
   private shouldRefreshCache(): boolean {
     const now = Date.now();
     return now - this.lastCacheRefreshTime > this.CACHE_REFRESH_INTERVAL;
-  }
-
-  getRootDir(): string {
-    throw new Error('Method not implemented.');
-  }
-
-  ensureRepoDirs(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-
-  getAllPlugins(): Promise<PluginEntity[]> {
-    throw new Error('Method not implemented.');
-  }
-
-  find(_id: string): Promise<PluginEntity | null> {
-    throw new Error('Method not implemented.');
-  }
-
-  has(_id: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
   }
 
   getPluginType(): 'remote' {

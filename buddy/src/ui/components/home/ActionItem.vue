@@ -1,17 +1,18 @@
 <script setup lang="ts">
   import { SendableAction } from '@/types/sendable-action.js';
-  import { useActionStore } from '@/ui/stores/action-store';
   import { ref } from 'vue';
   import { onKeyStroke, useFocus } from '@vueuse/core';
   import { useAlert } from '@renderer/composables/useAlert';
   import { ListItem } from '@coffic/cosy-ui/vue';
+  import { Badge } from '@coffic/cosy-ui/vue';
+  import { useActions } from '@/ui/composables/useActions';
 
   // 创建引用来使用useFocus
   const itemRef = ref<HTMLElement | null>(null);
   const { focused } = useFocus(itemRef, { initialValue: false });
-  const actionStore = useActionStore();
   const globalAlert = useAlert();
   const isLoading = ref(false);
+  const { execute } = useActions();
 
   const props = defineProps<{
     action: SendableAction;
@@ -66,7 +67,7 @@
 
     try {
       isLoading.value = true;
-      const result = await actionStore.setWillRun(props.action.globalId);
+      const result = await execute(props.action.globalId);
       console.log('handleClick', result);
 
       if (result.success) {
@@ -79,7 +80,7 @@
         globalAlert.error(result.message);
       }
     } catch (error) {
-      globalAlert.error('执行动作时发生错误', { duration: 3000 });
+      globalAlert.error('执行动作时发生错误：' + error);
     } finally {
       // 添加最小延迟以确保用户能看到加载动画
       setTimeout(() => {
@@ -106,14 +107,8 @@
       </p>
     </div>
 
-    <div class="flex flex-col gap-1">
-      <p
-        class="text-sm badge"
-        :class="
-          action.pluginType === 'user' ? 'badge-primary' : 'badge-secondary'
-        ">
-        {{ action.pluginType }}
-      </p>
-    </div>
+    <Badge :variant="action.pluginType === 'user' ? 'primary' : 'secondary'">
+      {{ action.pluginType }}
+    </Badge>
   </ListItem>
 </template>

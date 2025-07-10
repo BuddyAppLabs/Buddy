@@ -30,7 +30,7 @@ export interface IPluginManager {
    * 获取插件动作
    * @param keyword 关键词
    */
-  actions(context: SuperContext): Promise<ActionEntity[]>;
+  getActions(context: SuperContext): Promise<ActionEntity[]>;
 
   /**
    * 执行插件动作

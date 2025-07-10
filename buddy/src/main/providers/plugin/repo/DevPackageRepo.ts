@@ -1,3 +1,4 @@
+import { PackageEntity } from '../model/PackageEntity.js';
 import { PluginEntity } from '../model/PluginEntity.js';
 import { PluginType } from '@coffic/buddy-it';
 
@@ -20,10 +21,18 @@ export class DevPackageRepo {
       return null;
     }
 
-    const plugin = await PluginEntity.fromDir(
+    const packageEntity = await PackageEntity.fromDirectory(
       this.rootDir,
       this.getPluginType()
     );
+
+    const packageJson = packageEntity.packageJson;
+    if (!packageJson) {
+      return null;
+    }
+
+    const plugin = PluginEntity.fromPackage(packageJson, this.getPluginType());
+
     return plugin;
   }
 

@@ -23,21 +23,10 @@
   ],
   "scripts": {
     "build": "eslint && turbo build",
-    "build:deps": "pnpm build --filter='@coffic/cosy-*' --filter='@coffic/buddy-it'",
     "build:buddy": "turbo build --filter='buddy'",
-    "build:framework": "clear && turbo build --filter='@coffic/cosy-framework'",
     "build:buddy:mac": "pnpm run build:buddy && pnpm --filter buddy build:mac",
-    "build:plugins": "turbo build --filter='@coffic/buddy-plugin-*'",
-    "dev:buddy": "clear && pnpm --filter buddy dev",
-    "dev:deps": "turbo dev --filter='@coffic/cosy-*' --parallel",
-    "dev:all": "turbo dev --parallel",
-    "dev": "pnpm dev:buddy",
-    "ext": "nodemon pipeline.mjs",
-    "mcp": "pnpm --filter mcp-core test",
-    "lint": "eslint",
-    "test": "turbo test",
-    "clean": "turbo clean",
-    "typecheck": "turbo typecheck"
+    "dev": "clear && pnpm --filter buddy dev",
+    "lint": "eslint"
   },
   "packageManager": "pnpm@10.12.1",
   "engines": {

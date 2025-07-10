@@ -9,6 +9,7 @@ import { PluginEntity } from '../model/PluginEntity.js';
 import { LogFacade } from '@coffic/cosy-framework';
 import { PluginType } from '@coffic/buddy-it';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
+import { PackageEntity } from '../model/PackageEntity.js';
 
 const verbose = false;
 
@@ -56,15 +57,40 @@ export abstract class BasePluginRepo implements IPluginRepo {
       });
 
       for (const entry of entries) {
-        if (!entry.isDirectory()) continue;
+        if (!entry.isDirectory()) {
+          LogFacade.channel('plugin').debug(`[BasePluginRepo] 跳过非目录`, {
+            entry: entry.name,
+          });
+          continue;
+        }
 
         const pluginPath = join(this.rootDir, entry.name);
 
         try {
-          const plugin = await PluginEntity.fromDir(
+          const packageEntity = await PackageEntity.fromDirectory(
             pluginPath,
             this.getPluginType()
           );
+
+          const packageJson = packageEntity.packageJson;
+          if (!packageJson) {
+            LogFacade.channel('plugin').warn(
+              `[BasePluginRepo] 读取插件信息失败，跳过插件`,
+              { error: packageEntity.error }
+            );
+            continue;
+          }
+
+          const plugin = packageEntity.toPlugin();
+
+          if (!plugin) {
+            LogFacade.channel('plugin').warn(
+              `[BasePluginRepo] 读取插件信息失败，跳过插件`,
+              { error: packageEntity.error }
+            );
+            continue;
+          }
+
           plugins.push(plugin);
         } catch (error) {
           LogFacade.channel('plugin').warn(
@@ -74,24 +100,7 @@ export abstract class BasePluginRepo implements IPluginRepo {
         }
       }
 
-      // 过滤出有效的
-      const validPlugins = plugins.filter(
-        (plugin) => plugin.validation?.isValid
-      );
-      if (validPlugins.length === 0) {
-        return [];
-      } else {
-        if (verbose) {
-          LogFacade.channel('plugin').info(
-            `[BasePluginRepo] 有效的插件数量` + validPlugins.length
-          );
-        }
-      }
-
-      // 排序插件列表
-      validPlugins.sort((a, b) => a.name.localeCompare(b.name));
-
-      return validPlugins;
+      return plugins;
     } catch (error) {
       LogFacade.channel('plugin').error(`[BasePluginRepo] 获取插件列表失败`, {
         error: error instanceof Error ? error.message : String(error),
@@ -105,6 +114,7 @@ export abstract class BasePluginRepo implements IPluginRepo {
    */
   public async getSendablePlugins(): Promise<SendablePlugin[]> {
     const plugins = await this.getAllPlugins();
+    console.log('plugins', plugins);
     return await Promise.all(
       plugins.map((plugin) => plugin.getSendablePlugin())
     );

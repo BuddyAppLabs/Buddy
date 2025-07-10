@@ -1,6 +1,5 @@
 import { join } from 'path';
 import fs from 'fs';
-import { readPackageJson, hasPackageJson } from '../util/PackageUtils.js';
 import {
   ActionResult,
   PluginStatus,
@@ -41,51 +40,6 @@ export class PluginEntity {
   instance?: any; // 插件实例
 
   /**
-   * 从目录创建插件实体
-   *
-   * @param pluginPath 插件目录路径
-   * @param type 插件类型
-   */
-  public static async fromDir(
-    pluginPath: string,
-    type: PluginType
-  ): Promise<PluginEntity> {
-    if (!(await hasPackageJson(pluginPath))) {
-      throw new Error(`插件目录 ${pluginPath} 缺少 package.json`);
-    }
-
-    const packageJson = await readPackageJson(pluginPath);
-    const plugin = new PluginEntity(packageJson, pluginPath, type);
-
-    // 在创建时进行验证
-    const validation = plugin.validatePackage(packageJson);
-    plugin.setValidation(validation);
-
-    return plugin;
-  }
-
-  /**
-   * 从NPM包信息创建插件实体
-   * @param npmPackage NPM包信息
-   * @returns 插件实体
-   */
-  public static fromPackage(
-    npmPackage: PackageJson,
-    type: PluginType
-  ): PluginEntity {
-    // 创建插件实体
-    const plugin = new PluginEntity(npmPackage, '', type);
-
-    // 使用NPM包中的名称作为显示名称（如果有的话）
-    if (npmPackage.name) {
-      // 格式化名称，移除作用域前缀和常见插件前缀
-      plugin.name = PluginEntity.formatPluginName(npmPackage.name);
-    }
-
-    return plugin;
-  }
-
-  /**
    * 格式化插件名称为更友好的显示名称
    * @param packageName 包名
    */
@@ -117,7 +71,7 @@ export class PluginEntity {
    */
   constructor(pkg: PackageJson, path: string, type: PluginType) {
     this.id = pkg.name;
-    this.name = pkg.name;
+    this.name = PluginEntity.formatPluginName(pkg.name);
     this.description = pkg.description || '';
     this.version = pkg.version || '0.0.0';
     this.author = pkg.author || '';
@@ -156,14 +110,6 @@ export class PluginEntity {
   }
 
   /**
-   * 获取page属性对应的文件的源代码
-   * @returns 插件页面视图路径
-   */
-  getPageSourceCode(): string {
-    return 'source code';
-  }
-
-  /**
    * 禁用插件
    */
   disable(): void {
@@ -177,34 +123,6 @@ export class PluginEntity {
     if (this.status === 'disabled') {
       this.status = 'inactive';
     }
-  }
-
-  /**
-   * 验证插件包信息
-   * @param pkg package.json 内容
-   * @returns 验证结果
-   */
-  private validatePackage(pkg: PackageJson): ValidationResult {
-    const errors: string[] = [];
-
-    // 检查基本字段
-    if (!pkg.name) errors.push('缺少插件名称');
-    if (!pkg.version) errors.push('缺少插件版本');
-    if (!pkg.description) errors.push('缺少插件描述');
-    if (!pkg.author) errors.push('缺少作者信息');
-    if (!pkg.main) errors.push('缺少入口文件');
-
-    const validation = {
-      isValid: errors.length === 0,
-      errors,
-    };
-
-    // 如果验证失败，设置错误状态
-    if (!validation.isValid) {
-      this.setStatus('error', `插件验证失败: ${errors.join(', ')} `);
-    }
-
-    return validation;
   }
 
   /**
@@ -237,7 +155,7 @@ export class PluginEntity {
 
     try {
       if (!this.instance) {
-        this.instance = await this.load(); // 加载插件实例
+        this.instance = await this.load('getActions'); // 加载插件实例
       }
 
       // 如果插件实例上没有getActions方法，则返回空数组
@@ -272,7 +190,7 @@ export class PluginEntity {
       },
     });
 
-    const pluginModule = await this.load();
+    const pluginModule = await this.load('executeAction');
     if (!pluginModule) {
       LogFacade.channel('plugin').warn(
         `${title} 插件模块加载失败: ${this.id}, 无法执行动作: ${context.actionId}`
@@ -324,7 +242,12 @@ export class PluginEntity {
    * - [ ] 实现插件进程隔离，在单独的进程中运行插件代码
    * - [ ] 定义严格的API接口，限制插件能力范围
    */
-  public async load(): Promise<SuperPlugin> {
+  public async load(reason: string): Promise<SuperPlugin> {
+    LogFacade.channel('plugin').info(`${title} 加载插件`, {
+      id: this.id,
+      reason,
+    });
+
     try {
       const mainFilePath = this.mainFilePath;
       if (!fs.existsSync(mainFilePath)) {
@@ -340,6 +263,12 @@ export class PluginEntity {
       return module.default || module;
     } catch (error: any) {
       this.setStatus('error', error.message);
+      LogFacade.error('[PluginEntity] 加载插件模块失败', {
+        message: error,
+        mainFilePath: this.mainFilePath,
+      });
+
+      console.error(error);
       throw error;
     }
   }
@@ -349,7 +278,7 @@ export class PluginEntity {
    * @returns 插件主页面路径
    */
   async getPagePath(): Promise<string> {
-    const module = await this.load();
+    const module = await this.load('getPagePath');
     if (!module) {
       LogFacade.channel('plugin').warn(
         `${title} 插件 ${this.id} 加载失败，无法获取主页面路径`,

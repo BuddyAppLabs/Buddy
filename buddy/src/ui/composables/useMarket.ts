@@ -1,22 +1,24 @@
-import { computed, ref } from 'vue';
-import { useMarketStore } from '../stores/market-store';
+import { ref } from 'vue';
 import { useStorage } from '@vueuse/core';
 import { useAlert } from './useAlert';
 import { fileIpc } from '../ipc/file-ipc';
 import { MarketTab } from '@/types/market-type';
+import { useRemote } from './useRemote';
+import { useLocal } from './useLocal';
+import { useDevRepo } from './useDevRepo';
+import { useDevPackage } from './useDevPackage';
 
 export function useMarket() {
+  const { loadRemotePackages } = useRemote();
+  const { loadLocalPlugins } = useLocal();
+  const { loadDevPlugins } = useDevRepo();
   const { error } = useAlert();
-
-  const marketStore = useMarketStore();
-  const userPlugins = computed(() => marketStore.userPlugins);
-  const devPlugins = computed(() => marketStore.devPlugins);
-  const remotePlugins = computed(() => marketStore.remotePlugins);
+  const { devPackageDirectory, loadDevPackage } = useDevPackage();
 
   const isLoading = ref(false);
+  const activeTab = ref<MarketTab>('user');
 
   const loadPlugins = async () => {
-    console.log('loadPlugins', marketStore.activeTab);
     if (isLoading.value) {
       console.log('loadPlugins is loading, skip');
       return;
@@ -24,27 +26,19 @@ export function useMarket() {
 
     isLoading.value = true;
     try {
-      if (marketStore.activeTab === 'devRepo') {
-        await marketStore.updateDevPluginDirectory();
-      }
-
-      if (marketStore.activeTab === 'devPackage') {
-        await marketStore.updateDevPluginDirectory();
-      }
-
-      switch (marketStore.activeTab) {
+      switch (activeTab.value) {
         case 'remote':
-          await marketStore.loadRemotePlugins();
+          await loadRemotePackages();
           break;
         case 'user':
-          await marketStore.loadUserPlugins();
+          await loadLocalPlugins();
           break;
         case 'devRepo':
-          await marketStore.loadDevPlugins();
+          await loadDevPlugins();
           break;
         case 'devPackage':
           console.log('loadDevPackage');
-          await marketStore.loadDevPackage();
+          await loadDevPackage();
           break;
         default:
           error('未知标签');
@@ -56,16 +50,6 @@ export function useMarket() {
     }
   };
 
-  // 简单使用Vue自带的computed
-  const shouldShowEmpty = computed(() => {
-    return (
-      (marketStore.activeTab === 'remote' &&
-        remotePlugins.value.length === 0) ||
-      (marketStore.activeTab === 'user' && userPlugins.value.length === 0) ||
-      (marketStore.activeTab === 'devRepo' && devPlugins.value.length === 0)
-    );
-  });
-
   // 卸载状态 (使用Map合并处理)
   const uninstallStates = useStorage('uninstall-states', {
     uninstallingPlugins: new Set<string>(),
@@ -75,7 +59,7 @@ export function useMarket() {
 
   // 切换标签并加载对应插件
   const switchTab = (tab: MarketTab) => {
-    marketStore.activeTab = tab;
+    activeTab.value = tab;
     loadPlugins();
   };
 
@@ -86,7 +70,7 @@ export function useMarket() {
 
   // 打开当前的插件目录
   const openCurrentPluginDirectory = () => {
-    const currentDirectory = marketStore.getCurrentPluginDirectory();
+    const currentDirectory = devPackageDirectory.value;
     if (currentDirectory) {
       fileIpc.openFolder(currentDirectory);
     } else {
@@ -95,16 +79,12 @@ export function useMarket() {
   };
 
   return {
-    userPlugins,
-    devPlugins,
-    remotePlugins,
     isLoading,
     loadPlugins,
-    shouldShowEmpty,
     uninstallStates,
     switchTab,
+    activeTab,
     clearUninstallError,
-    uninstallPlugin: marketStore.uninstallPlugin,
     openCurrentPluginDirectory,
   };
 }

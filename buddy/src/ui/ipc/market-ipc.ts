@@ -1,6 +1,7 @@
 import { SendablePlugin } from '@/types/sendable-plugin';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { logger } from '../utils/logger.js';
+import { SendablePackage } from '@/types/sendable-package.js';
 
 const ipc = window.ipc;
 
@@ -49,18 +50,6 @@ export const marketIpc = {
     }
   },
 
-  // 下载插件
-  async downloadPlugin(pluginId: string): Promise<void> {
-    console.log('downloadPlugin', pluginId);
-    const response = await ipc.invoke(IPC_METHODS.DOWNLOAD_PLUGIN, pluginId);
-
-    if (response.success) {
-      return response.data;
-    } else {
-      throw new Error(response.error);
-    }
-  },
-
   // 卸载插件
   async uninstallPlugin(pluginId: string): Promise<void> {
     const response = await ipc.invoke(IPC_METHODS.UNINSTALL_PLUGIN, pluginId);
@@ -72,9 +61,9 @@ export const marketIpc = {
     }
   },
 
-  // 获取远程插件列表
-  async getRemotePlugins(): Promise<SendablePlugin[]> {
-    const response = await ipc.invoke(IPC_METHODS.GET_REMOTE_PLUGINS);
+  // 获取远程插件包列表
+  async getRemotePackages(): Promise<SendablePackage[]> {
+    const response = await ipc.invoke(IPC_METHODS.GET_REMOTE_PACKAGES);
 
     if (response.success) {
       return response.data;

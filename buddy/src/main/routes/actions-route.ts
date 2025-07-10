@@ -18,7 +18,7 @@ export function registerActionsRoutes(): void {
     IPC_METHODS.GET_ACTIONS,
     async (_event, keyword: string = ''): Promise<SendableAction[]> => {
       const overlaidApp = appStateManager.getOverlaidApp()?.name ?? '';
-      const actions = await PluginFacade.actions(
+      const actions = await PluginFacade.getActions(
         ContextManager.createContext(
           undefined,
           undefined,
