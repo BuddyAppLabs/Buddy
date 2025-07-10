@@ -121,71 +121,60 @@ export class PluginManager implements IPluginManager {
    * @param keyword 搜索关键词
    * @returns 匹配的插件动作列表
    */
-  async actions(context: SuperContext): Promise<ActionEntity[]> {
+  async getActions(context: SuperContext): Promise<ActionEntity[]> {
     let allActions: ActionEntity[] = [];
 
-    try {
-      // 从所有加载的插件中获取动作
-      const plugins = await this.all();
-      for (const plugin of plugins) {
-        LogFacade.channel('plugin').debug(`[PluginManager] 获取插件动作`, {
-          context,
-          pluginId: plugin.id,
+    // 从所有加载的插件中获取动作
+    const plugins = await this.all();
+    for (const plugin of plugins) {
+      try {
+        const pluginActions: ActionEntity[] = await plugin.getActions(context);
+
+        // 为每个动作设置插件 ID 和全局 ID
+        const processedActions = pluginActions.map((action) => {
+          action.pluginId = plugin.id; // 注入插件 ID
+          action.globalId = `${plugin.id}:${action.id}`; // 创建全局唯一 ID
+          return action;
         });
 
-        try {
-          const pluginActions: ActionEntity[] =
-            await plugin.getActions(context);
+        allActions = [...allActions, ...processedActions];
 
-          // 为每个动作设置插件 ID 和全局 ID
-          const processedActions = pluginActions.map((action) => {
-            action.pluginId = plugin.id; // 注入插件 ID
-            action.globalId = `${plugin.id}:${action.id}`; // 创建全局唯一 ID
-            return action;
-          });
+        // 按照globalID去重
+        allActions = allActions.filter(
+          (action, index, self) =>
+            index === self.findIndex((t) => t.globalId === action.globalId)
+        );
+      } catch (error) {
+        // 获取详细的错误信息
+        const errorDetail =
+          error instanceof Error
+            ? {
+                message: error.message,
+                stack: error.stack,
+                name: error.name,
+              }
+            : String(error);
 
-          allActions = [...allActions, ...processedActions];
-
-          // 按照globalID去重
-          allActions = allActions.filter(
-            (action, index, self) =>
-              index === self.findIndex((t) => t.globalId === action.globalId)
-          );
-        } catch (error) {
-          // 获取详细的错误信息
-          const errorDetail =
-            error instanceof Error
-              ? {
-                  message: error.message,
-                  stack: error.stack,
-                  name: error.name,
-                }
-              : String(error);
-
-          LogFacade.channel('action').error(
-            `[ActionManager] 插件 ${plugin.id} 获取动作失败`,
-            {
-              error: errorDetail,
-              pluginInfo: {
-                id: plugin.id,
-                name: plugin.name,
-                version: plugin.version,
-                path: plugin.path,
-              },
-            }
-          );
-
-          throw new Error(`获取插件 ${plugin.id} 的动作失败，但不影响其他插件`);
-        }
+        LogFacade.channel('action').error(
+          `[ActionManager] 插件 ${plugin.id} 获取动作失败`,
+          {
+            error: errorDetail,
+            pluginInfo: {
+              id: plugin.id,
+              name: plugin.name,
+              version: plugin.version,
+              path: plugin.path,
+            },
+          }
+        );
       }
-
-      LogFacade.channel('plugin').info(
-        `[PluginManager] 找到 ${allActions.length} 个动作`
-      );
-      return allActions;
-    } catch (error) {
-      throw new Error(`获取插件动作失败: ${error}`);
     }
+
+    LogFacade.channel('plugin').info(
+      `[PluginManager] 找到 ${allActions.length} 个动作`
+    );
+
+    return allActions;
   }
 
   /**

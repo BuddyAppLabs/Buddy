@@ -3,14 +3,12 @@
   import SearchBar from '@/ui/layout/SearchBar.vue';
   import { ConfirmDialog } from '@coffic/cosy-ui/vue';
   import { Alert } from '@coffic/cosy-ui/vue';
-  import { useActionStore } from '@/ui/stores/action-store';
   import { globalConfirm } from '@renderer/composables/useConfirm';
   import { globalAlert } from '@renderer/composables/useAlert';
   import { useAppStore } from '@/ui/stores/app-store';
   import ErrorNotification from '@/ui/layout/ErrorNotification.vue';
   import { useErrorStore } from '@/ui/stores/error-store';
   import VersionDialog from '@/ui/components/bottom/VersionDialog.vue';
-  import { useMarketStore } from '@/ui/composables/useUserPackage';
   import { computed } from 'vue';
   import { globalProgress } from '@renderer/composables/useProgress';
   import { Progress } from '@coffic/cosy-ui/vue';
@@ -18,10 +16,8 @@
   import { eventBus } from '../event-bus';
   import { useNavigation } from '@/ui/composables/useNavigation';
 
-  const actionStore = useActionStore();
   const appStore = useAppStore();
   const errorStore = useErrorStore();
-  const marketStore = useMarketStore();
   const { goToHome } = useNavigation();
 
   // 计算 Alert 容器的样式类
@@ -85,18 +81,6 @@
             (error instanceof Error ? error.message : String(error))
         );
       }
-
-      try {
-        await actionStore.onMounted();
-      } catch (error) {
-        errorStore.addError(
-          '动作列表加载失败: ' +
-            (error instanceof Error ? error.message : String(error))
-        );
-      }
-
-      // 初始化市场
-      marketStore.onMounted();
     } catch (error) {
       errorStore.addError(
         error instanceof Error ? error.message : String(error)
@@ -110,7 +94,6 @@
     window.removeEventListener('unhandledrejection', handleUnhandledRejection);
 
     appStore.onUnmounted();
-    actionStore.onUnmounted();
   });
 </script>
 

@@ -1,11 +1,10 @@
 import { SendablePackage } from '@/types/sendable-package';
-import { ref } from 'vue';
-import { useMarketStore } from '@/ui/composables/useUserPackage';
 import { marketIpc } from '@/ui/ipc/market-ipc';
+import { ref } from 'vue';
 
-export function usePackage() {
-  const marketStore = useMarketStore();
+export function useRemote() {
   const remotePackages = ref<SendablePackage[]>([]);
+  const loadingRemotePlugins = ref(false);
 
   // 加载远程插件包列表
   const loadRemotePackages = async () => {
@@ -14,7 +13,7 @@ export function usePackage() {
 
       remotePackages.value = plugins;
     } finally {
-      marketStore.loadingRemotePlugins = false;
+      loadingRemotePlugins.value = false;
     }
   };
 

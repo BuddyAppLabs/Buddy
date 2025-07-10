@@ -15,7 +15,7 @@ export default {
     },
 
     action: {
-      driver: 'null',
+      driver: 'console',
       level: ILogLevel.DEBUG,
     },
 

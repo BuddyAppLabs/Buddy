@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import PluginCard from '@/ui/components/home/PackageCard.vue';
   import { Alert } from '@coffic/cosy-ui/vue';
-  import { usePackage } from '@/ui/composables/usePackage';
+  import { useRemote } from '@/ui/composables/useRemote';
   import { onMounted } from 'vue';
 
-  const { remotePackages, loadRemotePackages } = usePackage();
+  const { remotePackages, loadRemotePackages } = useRemote();
 
   onMounted(async () => {
     await loadRemotePackages();

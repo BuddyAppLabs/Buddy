@@ -97,8 +97,8 @@ importers:
         specifier: ^1.0.15
         version: 1.0.15
       '@coffic/cosy-keyboard':
-        specifier: ^0.2.14
-        version: 0.2.14(@coffic/cosy-framework@1.0.15)(electron@37.2.0)
+        specifier: ^0.2.15
+        version: 0.2.15(@coffic/cosy-framework@1.0.15)(electron@37.2.0)
       '@coffic/cosy-ui':
         specifier: ^0.8.27
         version: 0.8.27(astro@5.11.0(@azure/identity@4.10.2)(@types/node@24.0.12)(encoding@0.1.13)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.44.2)(typescript@5.8.3)(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))
@@ -554,10 +554,10 @@ packages:
     resolution: {integrity: sha512-AZtZjdJG55mm0pRG9m3LLRiaDv06Rj1J2FQyXAnVsoVSZ4oVIR4zPccJkqoWOb6d6f4auad5yuAflV92iU9IgA==}
     hasBin: true
 
-  '@coffic/cosy-keyboard@0.2.14':
-    resolution: {integrity: sha512-YwRY1/4KBotq2FCEffbQ71bwehVIZujCbBocqqCYKu1obV0Pcnu2eSk8gaBAzyBw/gqYtZO8zVLMdxk7P4W9hQ==}
+  '@coffic/cosy-keyboard@0.2.15':
+    resolution: {integrity: sha512-MH60PcpKUCQDt8MRePQ9aNsuL+G9pJkRXxwTMZFi+Zao8jpGpWRfyOwUqxm6O9ueiFpPKiB7dj5jkB3vhhJu2A==}
     peerDependencies:
-      '@coffic/cosy-framework': 1.0.14
+      '@coffic/cosy-framework': 1.0.15
 
   '@coffic/cosy-ui@0.8.27':
     resolution: {integrity: sha512-8vb8y/6totrToFjIpGdLWU5po2+hbhbmaU6NpCQTTq+RkTuvWx2YlNDdogdKkM/6Yhh9wCYRtic0h2NdRt1kuQ==}
@@ -6525,7 +6525,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@coffic/cosy-keyboard@0.2.14(@coffic/cosy-framework@1.0.15)(electron@37.2.0)':
+  '@coffic/cosy-keyboard@0.2.15(@coffic/cosy-framework@1.0.15)(electron@37.2.0)':
     dependencies:
       '@coffic/cosy-framework': 1.0.15
       '@coffic/key-listener': 1.0.4(electron@37.2.0)

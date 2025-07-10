@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { ref, watch, onUnmounted, onMounted, nextTick } from 'vue';
-  import { useActionStore } from '@/ui/stores/action-store';
   import { logger } from '@renderer/utils/logger';
   import { ViewBounds } from '@coffic/buddy-it';
   import { SendableAction } from '@/types/sendable-action';
@@ -11,8 +10,9 @@
     useDebounceFn,
     useTimeoutFn,
   } from '@vueuse/core';
+  import { useActions } from '@/ui/composables/useActions';
 
-  const actionStore = useActionStore();
+  const { find, selected, execute, willRun } = useActions();
 
   // 视图容器引用
   const embeddedViewContainer = ref<HTMLDivElement | null>(null);
@@ -73,7 +73,7 @@
       };
 
       // 查找动作信息
-      const action = actionStore.find(actionId);
+      const action = find(actionId);
       if (!action) {
         throw new Error(`未找到动作: ${actionId}`);
       }
@@ -263,17 +263,16 @@
   // 返回动作列表
   const goBack = async () => {
     await destroyViews();
-    actionStore.clearWillRun();
   };
 
   // 加载并执行动作
   const loadAndExecuteAction = () => {
-    const actionId = actionStore.getSelectedActionId();
+    const actionId = selected.value;
     if (!actionId) return;
 
     // 手动调用异步函数而不使用execute方法
     destroyViews().then(() => {
-      const action = actionStore.find(actionId);
+      const action = find(actionId);
 
       console.log('action', action);
 
@@ -281,8 +280,7 @@
         // 手动实现原来executeAction的逻辑
         viewState.value.currentAction = action;
 
-        actionStore
-          .execute(action.globalId)
+        execute(action.globalId)
           .then(async () => {
             if (action.viewPath) {
               const viewMode = action.viewMode || 'embedded';
@@ -303,7 +301,7 @@
 
   // 在动作ID变化时重新加载
   watch(
-    () => actionStore.willRun,
+    () => willRun,
     (newId) => {
       if (newId) {
         loadAndExecuteAction();
@@ -325,7 +323,7 @@
 
   // 组件挂载时加载动作
   onMounted(() => {
-    const actionId = actionStore.willRun;
+    const actionId = willRun.value;
     if (actionId) {
       loadAndExecuteAction();
     }

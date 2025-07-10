@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue';
-import { useMarketStore } from '@/ui/composables/useUserPackage';
 import { IPC_METHODS } from '@/types/ipc-methods';
 import { globalAlert } from './useAlert';
+import { useLocal } from './useLocal';
 
 const ipc = window.ipc;
 
@@ -9,7 +9,7 @@ const downloadingPackages = ref<Set<string>>(new Set());
 export const installedPackages = ref<Set<string>>(new Set());
 
 export function useDownload() {
-  const marketStore = useMarketStore();
+  const { loadLocalPlugins } = useLocal();
   const downloadedPackages = ref<Set<string>>(new Set());
 
   // 下载插件包
@@ -24,7 +24,7 @@ export function useDownload() {
 
     if (response.success) {
       downloadingPackages.value.delete(id);
-      await marketStore.loadUserPlugins();
+      await loadLocalPlugins();
       installedPackages.value.add(id);
 
       downloadedPackages.value.add(id);

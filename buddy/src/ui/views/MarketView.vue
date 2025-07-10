@@ -1,18 +1,12 @@
 <script setup lang="ts">
-  import ButtonFolder from '@renderer/components/cosy/ButtonFolder.vue';
-  import ButtonRefresh from '@renderer/components/cosy/ButtonRefresh.vue';
   import { ToolBar } from '@coffic/cosy-ui/vue';
   import { useMarket } from '../composables/useMarket';
-  import { useMarketStore } from '../composables/useUserPackage';
-  import UserRepoList from '@renderer/components/market/UserRepoList.vue';
-  import RemoteRepoList from '@renderer/components/market/RemoteRepoList.vue';
-  import DevRepoList from '@renderer/components/market/DevRepoList.vue';
-  import DevPackage from '@renderer/components/market/DevPackage.vue';
+  import LocalRepo from '@/ui/components/market/LocalRepo.vue';
+  import RemoteRepo from '@/ui/components/market/RemoteRepo.vue';
+  import DevRepo from '@/ui/components/market/DevRepo.vue';
+  import DevPackage from '@/ui/components/market/DevPackage.vue';
 
-  const marketStore = useMarketStore();
-
-  const { isLoading, loadPlugins, switchTab, openCurrentPluginDirectory } =
-    useMarket();
+  const { switchTab, activeTab } = useMarket();
 </script>
 
 <template>
@@ -25,60 +19,39 @@
             <a
               role="tab"
               class="tab"
-              :class="{ 'tab-active': marketStore.activeTab === 'user' }"
+              :class="{ 'tab-active': activeTab === 'user' }"
               @click="switchTab('user')">
               本地仓库
             </a>
             <a
               role="tab"
               class="tab"
-              :class="{ 'tab-active': marketStore.activeTab === 'remote' }"
+              :class="{ 'tab-active': activeTab === 'remote' }"
               @click="switchTab('remote')">
               远程仓库
             </a>
             <a
               role="tab"
               class="tab"
-              :class="{ 'tab-active': marketStore.activeTab === 'devRepo' }"
+              :class="{ 'tab-active': activeTab === 'devRepo' }"
               @click="switchTab('devRepo')">
               开发仓库
             </a>
             <a
               role="tab"
               class="tab"
-              :class="{ 'tab-active': marketStore.activeTab === 'devPackage' }"
+              :class="{ 'tab-active': activeTab === 'devPackage' }"
               @click="switchTab('devPackage')">
               开发包
             </a>
           </div>
         </template>
-
-        <template #right>
-          <div class="flex items-center gap-2">
-            <ButtonFolder
-              v-if="
-                marketStore.activeTab === 'user' ||
-                marketStore.activeTab === 'devRepo'
-              "
-              @click="openCurrentPluginDirectory"
-              shape="circle"
-              size="sm"
-              tooltip="打开插件目录" />
-            <ButtonRefresh
-              @click="loadPlugins"
-              shape="circle"
-              :loading="isLoading"
-              :disabled="isLoading"
-              tooltip="刷新插件列表"
-              size="sm" />
-          </div>
-        </template>
       </ToolBar>
     </div>
 
-    <UserRepoList v-if="marketStore.activeTab === 'user'" />
-    <RemoteRepoList v-if="marketStore.activeTab === 'remote'" />
-    <DevRepoList v-if="marketStore.activeTab === 'devRepo'" />
-    <DevPackage v-if="marketStore.activeTab === 'devPackage'" />
+    <LocalRepo v-if="activeTab === 'user'" />
+    <RemoteRepo v-if="activeTab === 'remote'" />
+    <DevRepo v-if="activeTab === 'devRepo'" />
+    <DevPackage v-if="activeTab === 'devPackage'" />
   </div>
 </template>

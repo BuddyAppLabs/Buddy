@@ -1,30 +1,29 @@
-import { useMarketStore } from '@/ui/composables/useUserPackage';
 import { globalConfirm } from './useConfirm';
-import { useAsyncState } from '@vueuse/core';
 import { globalAlert } from './useAlert';
 import { installedPackages } from './useDownload';
+import { marketIpc } from '../ipc/market-ipc.js';
+import { useLocal } from './useLocal';
 
 export function useUninstall() {
-  const marketStore = useMarketStore();
+  const { loadLocalPlugins } = useLocal();
+  const uninstallingPlugins: Set<string> = new Set();
 
-  // 卸载状态管理
-  const { state: isUninstalling, execute: executeUninstall } = useAsyncState(
-    async (id: string) => {
-      try {
-        await marketStore.uninstallPlugin(id);
-        installedPackages.value.delete(id);
-        setTimeout(() => {
-          globalAlert.success('插件已卸载', { duration: 3000 });
-        }, 500);
-        return true;
-      } catch (err) {
-        globalAlert.error('卸载失败' + err, { duration: 3000 });
-        return false;
-      }
-    },
-    false,
-    { immediate: false }
-  );
+  // 卸载
+  const executeUninstall = async (id: string) => {
+    uninstallingPlugins.add(id);
+    try {
+      await marketIpc.uninstallPlugin(id);
+      installedPackages.value.delete(id);
+      await loadLocalPlugins();
+      setTimeout(() => {
+        globalAlert.success('插件已卸载', { duration: 3000 });
+      }, 500);
+      return true;
+    } catch (err) {
+      globalAlert.error('卸载失败' + err, { duration: 3000 });
+      return false;
+    }
+  };
 
   // 显示卸载确认
   const confirmUninstall = async (id: string) => {
@@ -45,12 +44,12 @@ export function useUninstall() {
     });
 
     if (confirmed) {
-      executeUninstall(1000, id);
+      executeUninstall(id);
     }
   };
 
   return {
     confirmUninstall,
-    isUninstalling,
+    uninstallingPlugins,
   };
 }
