@@ -13,7 +13,7 @@
   import { useMarketStore } from '@/ui/composables/useUserPackage';
   import { computed } from 'vue';
   import { globalProgress } from '@renderer/composables/useProgress';
-  import Progress from '@renderer/components/cosy/Progress.vue';
+  import { Progress } from '@coffic/cosy-ui/vue';
   import { KeyCatcher } from '@coffic/cosy-ui/vue';
   import { eventBus } from '../event-bus';
   import { useNavigation } from '@/ui/composables/useNavigation';
