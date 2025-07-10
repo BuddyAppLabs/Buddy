@@ -1,22 +1,18 @@
 <script setup lang="ts">
-  import { ref, watch, onMounted, nextTick, onUnmounted } from 'vue';
+  import { ref, onMounted, nextTick, onUnmounted } from 'vue';
   import { RiSearchLine, RiStore2Line } from '@remixicon/vue';
   import { Button } from '@coffic/cosy-ui/vue';
   import { useNavigation } from '@/ui/composables/useNavigation';
   import { eventBus } from '@/ui/event-bus';
   import { AppEvents } from '@coffic/buddy-it';
   import { useActions } from '@/ui/composables/useActions';
+  import { useKeywordStore } from '@/ui/stores/keyword-store';
 
-  const { keyword, updateKeyword, onKeyDown } = useActions();
+  const { onKeyDown } = useActions();
+  const keywordStore = useKeywordStore();
   const searchInput = ref<HTMLInputElement | null>(null);
   const { goToPluginStore, goToHome } = useNavigation();
   const isFocused = ref(false);
-
-  // 监听本地关键词变化并更新 actionStore
-  watch(keyword, async (newKeyword) => {
-    updateKeyword(newKeyword);
-    await nextTick();
-  });
 
   // 处理键盘事件
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -39,16 +35,14 @@
       const end = input.selectionEnd ?? input.value.length;
       const value = input.value;
       input.value = value.slice(0, start) + char + value.slice(end);
-      keyword.value = input.value;
+      keywordStore.keyword = input.value;
       // 移动光标
       input.selectionStart = input.selectionEnd = start + 1;
-      updateKeyword(input.value);
     }
   }
 
   function reset() {
-    keyword.value = '';
-    updateKeyword('');
+    keywordStore.keyword = '';
   }
 
   onMounted(() => {
@@ -77,7 +71,7 @@
         ref="searchInput"
         type="search"
         placeholder="Search"
-        v-model="keyword"
+        v-model="keywordStore.keyword"
         @keydown="handleKeyDown"
         @focus="onFocus"
         @blur="onBlur"

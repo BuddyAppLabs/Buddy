@@ -1,12 +1,14 @@
 <script setup lang="ts">
-  import { ref, nextTick, onMounted, onUnmounted } from 'vue';
+  import { ref, nextTick, onMounted, onUnmounted, watch } from 'vue';
   import ActionItem from '@/ui/components/home/ActionItem.vue';
   import { useActions } from '@/ui/composables/useActions';
   import { AppEvents } from '@coffic/buddy-it';
+  import { useKeywordStore } from '@/ui/stores/keyword-store';
 
   const { actions, isLoading, clearSearch, loadActionList } = useActions();
   const activeItemIndex = ref(-1);
   const actionListRef = ref<HTMLElement | null>(null);
+  const keywordStore = useKeywordStore();
 
   // 处理取消操作
   const handleCancel = () => {
@@ -54,6 +56,14 @@
       loadActionList('App deactivated');
     });
   });
+
+  watch(
+    () => keywordStore.keyword,
+    (newKeyword) => {
+      loadActionList('Keyword changed: ' + newKeyword);
+      console.log('Keyword changed: ' + newKeyword);
+    }
+  );
 </script>
 
 <template>

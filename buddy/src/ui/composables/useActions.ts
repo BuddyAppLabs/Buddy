@@ -1,8 +1,9 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { actionIpc } from '../ipc/action-ipc';
 import { SendableAction } from '@/types/sendable-action';
 import { useErrorStore } from '../stores/error-store';
 import { ActionResult } from '@coffic/buddy-it';
+import { useKeywordStore } from '../stores/keyword-store';
 
 export function useActions() {
   const actions = ref<SendableAction[]>([]);
@@ -10,7 +11,8 @@ export function useActions() {
   const errorStore = useErrorStore();
   const selected = ref<string | null>(null);
   const willRun = ref<string | null>(null);
-  const keyword = ref<string>('');
+  const keywordStore = useKeywordStore();
+  const keyword = computed(() => keywordStore.keyword);
 
   /**
    * 加载动作列表
@@ -66,7 +68,7 @@ export function useActions() {
   };
 
   const clearSearch = () => {
-    keyword.value = '';
+    keywordStore.keyword = '';
   };
 
   /**
@@ -75,7 +77,7 @@ export function useActions() {
   const onKeyDown = (event: KeyboardEvent) => {
     // 当按下ESC键，清除搜索
     if (event.key === 'Escape') {
-      keyword.value = '';
+      keywordStore.keyword = '';
       return;
     }
 
@@ -88,12 +90,7 @@ export function useActions() {
     }
   };
 
-  const updateKeyword = (newKeyword: string) => {
-    keyword.value = newKeyword;
-  };
-
   return {
-    updateKeyword,
     onKeyDown,
     execute,
     getSelectedAction,
