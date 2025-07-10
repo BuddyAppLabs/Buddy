@@ -112,6 +112,7 @@ export const useMarketStore = defineStore('market', {
     // 卸载插件
     async uninstallPlugin(pluginId: string) {
       if (this.uninstallingPlugins.has(pluginId)) {
+        console.log('uninstallingPlugins', this.uninstallingPlugins);
         return; // 避免重复操作
       }
 
@@ -119,7 +120,7 @@ export const useMarketStore = defineStore('market', {
       await marketIpc.uninstallPlugin(pluginId);
       this.uninstallingPlugins.delete(pluginId);
 
-      logger.debug('卸载插件后刷新插件列表', pluginId);
+      console.log('卸载插件后刷新插件列表', pluginId);
       await this.loadUserPlugins();
     },
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { onMounted, onUnmounted } from 'vue';
   import SearchBar from '@/ui/layout/SearchBar.vue';
-  import Confirm from '@renderer/components/cosy/Confirm.vue';
+  import { ConfirmDialog } from '@coffic/cosy-ui/vue';
   import { Alert } from '@coffic/cosy-ui/vue';
   import { useActionStore } from '@/ui/stores/action-store';
   import { globalConfirm } from '@renderer/composables/useConfirm';
@@ -126,7 +126,7 @@
     </div>
 
     <!-- 全局确认对话框 -->
-    <Confirm
+    <ConfirmDialog
       v-model="globalConfirm.state.value.show"
       :title="globalConfirm.state.value.title"
       :message="globalConfirm.state.value.message"

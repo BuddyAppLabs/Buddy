@@ -45,7 +45,7 @@ export function useUninstall() {
     });
 
     if (confirmed) {
-      executeUninstall(0, id);
+      executeUninstall(1000, id);
     }
   };
 
