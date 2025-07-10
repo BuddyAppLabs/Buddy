@@ -57,7 +57,7 @@
     nextTick(() => {
       searchInput.value?.focus();
     });
-    eventBus.on('globalKey', insertCharFromGlobalKey);
+    eventBus.on('key', insertCharFromGlobalKey);
 
     // 监听窗口激活事件，重置搜索框
     window.ipc.receive(AppEvents.ACTIVATED, () => {
@@ -66,7 +66,7 @@
   });
 
   onUnmounted(() => {
-    eventBus.off('globalKey', insertCharFromGlobalKey);
+    eventBus.off('key', insertCharFromGlobalKey);
   });
 </script>
 
