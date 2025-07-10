@@ -5,6 +5,7 @@
   import { onKeyStroke, useFocus } from '@vueuse/core';
   import { useAlert } from '@renderer/composables/useAlert';
   import { ListItem } from '@coffic/cosy-ui/vue';
+  import { Badge } from '@coffic/cosy-ui/vue';
 
   // 创建引用来使用useFocus
   const itemRef = ref<HTMLElement | null>(null);
@@ -106,14 +107,8 @@
       </p>
     </div>
 
-    <div class="flex flex-col gap-1">
-      <p
-        class="text-sm badge"
-        :class="
-          action.pluginType === 'user' ? 'badge-primary' : 'badge-secondary'
-        ">
-        {{ action.pluginType }}
-      </p>
-    </div>
+    <Badge :variant="action.pluginType === 'user' ? 'primary' : 'secondary'">
+      {{ action.pluginType }}
+    </Badge>
   </ListItem>
 </template>
