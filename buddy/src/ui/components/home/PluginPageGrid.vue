@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import PluginPage from '@/ui/components/home/PluginPage.vue';
+  //   import PluginPage from '@/ui/components/home/PluginPage.vue';
   import { useLocal } from '@/ui/composables/useLocal';
 
   const { localPackages } = useLocal();

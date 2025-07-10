@@ -11,8 +11,6 @@ import { PluginType } from '@coffic/buddy-it';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PackageEntity } from '../model/PackageEntity.js';
 
-const verbose = false;
-
 export abstract class BasePluginRepo implements IPluginRepo {
   protected rootDir: string;
 

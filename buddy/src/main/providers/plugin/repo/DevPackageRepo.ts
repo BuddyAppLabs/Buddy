@@ -26,14 +26,7 @@ export class DevPackageRepo {
       this.getPluginType()
     );
 
-    const packageJson = packageEntity.packageJson;
-    if (!packageJson) {
-      return null;
-    }
-
-    const plugin = PluginEntity.fromPackage(packageJson, this.getPluginType());
-
-    return plugin;
+    return packageEntity.toPlugin();
   }
 
   /**
