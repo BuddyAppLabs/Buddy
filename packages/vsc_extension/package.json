@@ -71,8 +71,8 @@
   "devDependencies": {
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^22.16.2",
-    "@types/vscode": "^1.101.0",
+    "@types/node": "^22.16.3",
+    "@types/vscode": "^1.102.0",
     "@typescript-eslint/eslint-plugin": "^8.36.0",
     "@typescript-eslint/parser": "^8.36.0",
     "@vitejs/plugin-vue": "^5.2.4",
