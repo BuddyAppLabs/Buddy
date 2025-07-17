@@ -62,7 +62,8 @@ export class WindowServiceProvider extends ServiceProvider {
     // 设置全局快捷键
     windowManager.setupGlobalShortcut();
 
-    windowManager.createWindow();
+    // 窗口创建由AppManager统一管理，这里不再创建
+    // windowManager.createWindow();
 
     this.app.on('hotkey:triggered', () => {
       windowManager.toggleMainWindow();

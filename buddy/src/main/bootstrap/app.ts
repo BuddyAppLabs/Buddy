@@ -23,6 +23,7 @@ import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import { WindowServiceProvider } from '../providers/window/WindowServiceProvider.js';
 import { StateServiceProvider } from '../providers/state/StateServiceProvider.js';
 import { StateManager } from '../providers/state/StateManager.js';
+import { appManager } from '../managers/AppManager.js';
 
 // 应用配置
 const config: ApplicationConfig = {
@@ -77,6 +78,9 @@ export async function bootApplication(): Promise<void> {
     registerRoutes();
 
     setupIPCHandlers(application);
+
+    // 启动应用管理器（包括托盘）
+    await appManager.start();
 
     logger.channel('app').info('✅ [Bootstrap] 应用核心服务已启动');
   } catch (error) {
