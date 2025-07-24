@@ -1,3 +1,5 @@
+require_relative 'patches.rb'
+
 # This file contains the fastlane.tools configuration
 #
 # For more information about the available actions, check out the documentation
