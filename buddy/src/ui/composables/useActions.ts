@@ -4,6 +4,8 @@ import { SendableAction } from '@/types/sendable-action';
 import { useErrorStore } from '../stores/error-store';
 import { ActionResult } from '@coffic/buddy-it';
 import { useKeywordStore } from '../stores/keyword-store';
+import { onKeyStroke } from '@vueuse/core';
+import { useActionActiveStore } from '../stores/action-active-store';
 
 export function useActions() {
   const actions = ref<SendableAction[]>([]);
@@ -13,6 +15,7 @@ export function useActions() {
   const willRun = ref<string | null>(null);
   const keywordStore = useKeywordStore();
   const keyword = computed(() => keywordStore.keyword);
+  const actionActiveStore = useActionActiveStore();
 
   /**
    * 加载动作列表
@@ -71,27 +74,50 @@ export function useActions() {
     keywordStore.keyword = '';
   };
 
-  /**
-   * 处理键盘事件
-   */
-  const onKeyDown = (event: KeyboardEvent) => {
-    // 当按下ESC键，清除搜索
-    if (event.key === 'Escape') {
-      keywordStore.keyword = '';
-      return;
-    }
+  // 设置焦点到指定索引的元素
+  const focusItemAtIndex = (index: number) => {
+    actionActiveStore.setActiveIndex(index);
+  };
 
-    // 当按下向下箭头，聚焦到第一个结果
-    if (event.key === 'ArrowDown') {
-      const firstResult = document.querySelector(
-        '.plugin-action-item'
-      ) as HTMLElement;
-      firstResult?.focus();
+  // 处理向上导航
+  const handleNavigateUp = (index: number) => {
+    if (index > 0) {
+      focusItemAtIndex(index - 1);
     }
   };
 
+  // 处理向下导航
+  const handleNavigateDown = (index: number) => {
+    const totalItems = actions.value.length;
+    if (index < totalItems - 1) {
+      focusItemAtIndex(index + 1);
+    }
+  };
+
+  // 监听键盘事件，实现全局导航和触发
+  onKeyStroke(['ArrowUp'], (e) => {
+    e.preventDefault();
+    handleNavigateUp(actionActiveStore.activeIndex);
+  });
+  onKeyStroke(['ArrowDown'], (e) => {
+    e.preventDefault();
+    handleNavigateDown(actionActiveStore.activeIndex);
+  });
+  onKeyStroke(['Escape'], (e) => {
+    e.preventDefault();
+    keywordStore.keyword = '';
+  });
+  onKeyStroke(['Enter', ' '], async (e) => {
+    e.preventDefault();
+    // 获取当前激活项并触发点击
+    const idx = actionActiveStore.activeIndex;
+    const elements = document.querySelectorAll('.plugin-action-item');
+    if (elements[idx]) {
+      (elements[idx] as HTMLElement).click();
+    }
+  });
+
   return {
-    onKeyDown,
     execute,
     getSelectedAction,
     hasWillRun,
