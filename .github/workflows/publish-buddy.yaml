@@ -70,7 +70,7 @@ jobs:
 
           echo "electron-builder.yml 配置完成:"
           cat electron-builder.yml
-          pnpm build:buddy:mac
+          pnpm build:mac
           DMG_NAME=$(find buddy/dist -name "*.dmg" -print -quit)
           echo "dmg_path=$DMG_NAME" >> $GITHUB_OUTPUT
         env:
