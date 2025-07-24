@@ -10,6 +10,7 @@ module Spaceship
   class ConnectAPI
     class Certificate
       class << self
+        # Monkey-patch for listing certificates
         def all(client: nil, filter: {}, includes: nil, limit: nil, sort: nil)
           client ||= Spaceship::ConnectAPI
 
@@ -26,6 +27,16 @@ module Spaceship
           end
 
           resps.map { |resp| self.new(resp.id, resp) }
+        end
+
+        # Monkey-patch for creating certificates
+        alias_method :original_create, :create
+        def create(client: nil, certificate_type:, csr_content:)
+          if certificate_type == 'DEVELOPER_ID_APPLICATION_G2'
+            UI.message("Monkey-patching certificateType from DEVELOPER_ID_APPLICATION_G2 to DEVELOPER_ID_APPLICATION")
+            certificate_type = 'DEVELOPER_ID_APPLICATION'
+          end
+          original_create(client: client, certificate_type: certificate_type, csr_content: csr_content)
         end
       end
     end
