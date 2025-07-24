@@ -5,19 +5,12 @@
   import { useNavigation } from '@/ui/composables/useNavigation';
   import { eventBus } from '@/ui/event-bus';
   import { AppEvents } from '@coffic/buddy-it';
-  import { useActions } from '@/ui/composables/useActions';
   import { useKeywordStore } from '@/ui/stores/keyword-store';
 
-  const { onKeyDown } = useActions();
   const keywordStore = useKeywordStore();
   const searchInput = ref<HTMLInputElement | null>(null);
   const { goToPluginStore, goToHome } = useNavigation();
   const isFocused = ref(false);
-
-  // 处理键盘事件
-  const handleKeyDown = (event: KeyboardEvent) => {
-    onKeyDown(event);
-  };
 
   function onFocus() {
     isFocused.value = true;
@@ -72,7 +65,6 @@
         type="search"
         placeholder="Search"
         v-model="keywordStore.keyword"
-        @keydown="handleKeyDown"
         @focus="onFocus"
         @blur="onBlur"
         class="no-drag-region input-info input input-ghost w-full focus:outline-none"

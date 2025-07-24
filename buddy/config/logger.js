@@ -15,7 +15,7 @@ export default {
     },
 
     action: {
-      driver: 'console',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 
@@ -55,7 +55,7 @@ export default {
     },
 
     plugin: {
-      driver: 'console',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 

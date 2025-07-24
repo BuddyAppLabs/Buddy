@@ -7,6 +7,7 @@ import { electronApp, optimizer } from '@electron-toolkit/utils';
 // import { pluginManager } from './PluginManager.js';
 import { pluginViewManager } from '../providers/plugin/manager/PluginViewManager.js';
 import { WindowFacade } from '../providers/window/WindowFacade.js';
+import { trayManager } from './TrayManager.js';
 // import { updateManager } from './UpdateManager.js';
 
 export class AppManager {
@@ -67,6 +68,9 @@ export class AppManager {
     // 创建主窗口
     this.mainWindow = WindowFacade.createWindow();
 
+    // 创建系统托盘
+    trayManager.createTray();
+
     // updateManager.initialize(this.mainWindow);
 
     WindowFacade.setupGlobalShortcut();
@@ -83,6 +87,9 @@ export class AppManager {
 
     console.debug('关闭所有插件视图窗口');
     pluginViewManager.closeAllViews();
+
+    console.debug('销毁系统托盘');
+    trayManager.destroy();
 
     console.info('应用清理完成，准备退出');
   }
