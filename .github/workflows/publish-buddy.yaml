@@ -21,12 +21,11 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      # 步骤 1: 检出代码
-      # 这是所有工作流的第一步，获取最新的代码副本。
+      # 检出代码
       - name: Check out Git repository
         uses: actions/checkout@v3
 
-      # 步骤 2: 导入代码签名证书
+      # 导入代码签名证书
       # 它从 GitHub Secrets 中读取加密的 .p12 证书文件和密码，
       # 然后将其安全地安装到 CI 环境的临时钥匙串中，供后续步骤使用。
       - name: Import Code Signing Certificates
@@ -35,7 +34,7 @@ jobs:
           p12-file-base64: ${{ secrets.MACOS_CERTIFICATES_P12 }}
           p12-password: ${{ secrets.MACOS_CERTIFICATES_P12_PASSWORD }}
 
-      # 步骤 3: 设置运行环境。
+      # 设置运行环境
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
@@ -51,12 +50,11 @@ jobs:
           brew install yq
           yq --version
 
-      # 步骤 4: 安装项目依赖
-      # 使用 pnpm 安装 package.json 中定义的所有依赖项。
+      # 安装项目依赖
       - name: Install Dependencies
         run: pnpm install
 
-      # 步骤 5: 准备公证所需的环境变量
+      # 准备公证所需的环境变量
       - name: Prepare Notarization Environment
         id: prepare_env
         run: |
@@ -65,10 +63,8 @@ jobs:
           echo "${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}" | base64 --decode > $KEY_PATH
           echo "key_path=$KEY_PATH" >> $GITHUB_OUTPUT
 
-      # 步骤 6: 构建和打包 macOS 应用
-      # 运行构建命令 (pnpm build:buddy:mac)。
-      # electron-builder 会自动在钥匙串中查找由上一步导入的证书进行签名。
-      # 同时，找到构建出的 .dmg 文件路径，并将其设置为一个输出变量，供后续步骤使用。
+      # 构建和打包 macOS 应用
+      # electron-builder 会自动在钥匙串中查找由上一步导入的证书进行签名
       - name: Build and Package macOS App
         id: build
         run: |
@@ -79,15 +75,13 @@ jobs:
           yq -i '.mac.notarize = true' buddy/electron-builder.yml
 
           pnpm build:buddy:mac
-          DMG_NAME=$(find buddy/dist -name "*.dmg" -print -quit)
-          echo "dmg_path=$DMG_NAME" >> $GITHUB_OUTPUT
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: true
           APPLE_API_KEY: ${{ steps.prepare_env.outputs.key_path }}
           APPLE_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APPLE_API_ISSUER: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
 
-      # 步骤 7: 获取版本号信息
+      # 获取版本号信息
       # 从 package.json 中读取版本号，并判断是否为预发布版本 (beta)，
       # 以便决定 GitHub Release 的类型。
       - name: Get Version and Release Info
@@ -102,7 +96,7 @@ jobs:
             echo "prerelease=false" >> $GITHUB_OUTPUT
           fi
 
-      # 步骤 7: 创建 GitHub Release 并上传产物
+      # 创建 GitHub Release 并上传产物
       # 使用上一步获取的版本号创建 Release，并将构建好的 .dmg, .zip 等文件上传。
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
