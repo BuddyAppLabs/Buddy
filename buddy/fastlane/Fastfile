@@ -60,7 +60,7 @@ platform :mac do
     # It will create them if they don't exist in the git repo.
     match(
       type: "developer_id", # For Developer ID Application signing (outside Mac App Store)
-      app_identifier: ["com.yueyi.GitOK"],
+      app_identifier: ["com.coffic.buddy"],
       git_url: ENV['MATCH_GIT_URL'], # URL to your private certificates repo
       git_branch: "main",
       storage_mode: "git",
