@@ -68,7 +68,7 @@ platform :mac do
       keychain_password: "fastlane_tmp_password",
       # Set readonly to true in CI to prevent creating new profiles unnecessarily.
       # On the first run or after expiration, this should be false.
-      readonly: is_ci,
+      readonly: is_ci || true,
       api_key: app_store_connect_api_key(
         key_id: ENV["APP_STORE_CONNECT_KEY_ID"],
         issuer_id: ENV["APP_STORE_CONNECT_KEY_ISSER_ID"],
