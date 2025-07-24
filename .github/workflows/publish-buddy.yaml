@@ -40,8 +40,9 @@ jobs:
       - name: Import Code Signing Certificates
         uses: apple-actions/import-codesign-certs@v3
         with:
-          p12-file-base64: ${{ secrets.MACOS_CERTIFICATES_P12 }}
-          p12-password: ${{ secrets.MACOS_CERTIFICATES_P12_PASSWORD }}
+          p12-file-base64: ${{ secrets.APPSTORE_CERTIFICATES_FILE_BASE64 }}
+          p12-password: ${{ secrets.APPSTORE_CERTIFICATES_PASSWORD }}
+          keychain-name: build.keychain
 
       - name: Build and Package macOS App
         id: build
@@ -52,13 +53,6 @@ jobs:
           echo "dmg_path=$DMG_NAME" >> $GITHUB_OUTPUT
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: true
-
-      - name: Notarize macOS Application
-        uses: apple-actions/notarize@v3
-        with:
-          app-path: ${{ steps.build.outputs.dmg_path }}
-          team-id: ${{ secrets.APPLE_TEAM_ID }}
-          api-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_JSON }}
 
       - name: Get Version and Release Info
         id: get_version
