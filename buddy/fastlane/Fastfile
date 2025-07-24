@@ -51,4 +51,16 @@ platform :mac do
       )
     )
   end
+
+  desc "One-time lane to upload a locally found certificate to the match repo"
+  lane :upload_certificate do
+    match(
+      type: "developer_id",
+      platform: "macos",
+      app_identifier: ["com.coffic.buddy"],
+      git_url: "git@github.com:BuddyAppLabs/buddy-certificates.git",
+      readonly: false,
+      git_branch: "main"
+    )
+  end
 end

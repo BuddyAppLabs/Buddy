@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Setup macOS signing certificates and provisioning profiles
 
+### mac upload_certificate
+
+```sh
+[bundle exec] fastlane mac upload_certificate
+```
+
+One-time lane to upload a locally found certificate to the match repo
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
