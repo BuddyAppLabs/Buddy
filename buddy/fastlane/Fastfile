@@ -12,12 +12,12 @@ module Spaceship
       class << self
         def all(client: nil, filter: {}, includes: nil, limit: nil, sort: nil)
           client ||= Spaceship::ConnectAPI
-          
+
           # Remove certificateType from filter to avoid server-side error
           certificate_types = filter.delete(:certificateType)
 
           resps = client.get_certificates(filter: filter, includes: includes, limit: limit, sort: sort).all_pages
-          
+
           # Manually filter by certificateType on the client-side
           unless certificate_types.nil?
             resps.select! do |resp|
@@ -60,7 +60,7 @@ platform :mac do
     # It will create them if they don't exist in the git repo.
     match(
       type: "developer_id", # For Developer ID Application signing (outside Mac App Store)
-      app_identifier: ["com.coffic.buddy"],
+      app_identifier: ["com.yueyi.GitOK"],
       git_url: ENV['MATCH_GIT_URL'], # URL to your private certificates repo
       git_branch: "main",
       storage_mode: "git",
