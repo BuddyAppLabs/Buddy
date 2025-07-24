@@ -122,6 +122,34 @@ jobs:
         with:
           ref: ${{ github.ref }} # 确保checkout最新的提交，包括bump-version中推送的
 
+      - name: Setup Ruby and Fastlane
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install rbenv ruby-build
+          rbenv install 3.3.0
+          rbenv global 3.3.0
+          gem install bundler
+          cd buddy
+          bundle install
+
+      - name: Setup SSH Agent for Fastlane Match
+        if: matrix.os == 'macos-latest'
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MATCH_SSH_PRIVATE_KEY }}
+
+      - name: Setup macOS signing with Fastlane
+        if: matrix.os == 'macos-latest'
+        env:
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
+          APP_STORE_CONNECT_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}
+        run: |
+          cd buddy
+          bundle exec fastlane mac setup_signing
+
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
@@ -142,38 +170,6 @@ jobs:
 
       - name: Install Dependencies
         run: pnpm install
-
-      - name: Setup Ruby and Fastlane
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew install rbenv ruby-build
-          rbenv install 3.3.0
-          rbenv global 3.3.0
-          gem install bundler
-          cd buddy
-          bundle install
-
-      - name: Setup SSH Agent for Fastlane Match
-        if: matrix.os == 'macos-latest'
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.MATCH_SSH_PRIVATE_KEY }}
-
-      # - name: build-linux
-      #   if: matrix.os == 'ubuntu-latest'
-      #   run: cd buddy && pnpm run build:linux
-
-      - name: Setup macOS signing with Fastlane
-        if: matrix.os == 'macos-latest'
-        env:
-          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
-          APP_STORE_CONNECT_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}
-        run: |
-          cd buddy
-          bundle exec fastlane mac setup_signing
 
       - name: build-mac
         if: matrix.os == 'macos-latest'
