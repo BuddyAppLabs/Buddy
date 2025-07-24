@@ -35,7 +35,7 @@ end
 
 module CertificateCreatePatch
   def create(client: nil, certificate_type:, csr_content:)
-    if certificate_type == 'DEVELOPER_ID_APPLICATION_G2'
+    if certificate_type.to_s == 'DEVELOPER_ID_APPLICATION_G2'
       UI.message("Monkey-patching certificateType from DEVELOPER_ID_APPLICATION_G2 to DEVELOPER_ID_APPLICATION")
       certificate_type = 'DEVELOPER_ID_APPLICATION'
     end
