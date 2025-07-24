@@ -4,9 +4,11 @@
   import { useActions } from '@/ui/composables/useActions';
   import { AppEvents } from '@coffic/buddy-it';
   import { useKeywordStore } from '@/ui/stores/keyword-store';
+  import { useActionActiveStore } from '@/ui/stores/action-active-store';
+  import { onKeyStroke } from '@vueuse/core';
 
   const { actions, isLoading, clearSearch, loadActionList } = useActions();
-  const activeItemIndex = ref(-1);
+  const actionActiveStore = useActionActiveStore();
   const actionListRef = ref<HTMLElement | null>(null);
   const keywordStore = useKeywordStore();
 
@@ -17,15 +19,7 @@
 
   // 设置焦点到指定索引的元素
   const focusItemAtIndex = async (index: number) => {
-    activeItemIndex.value = index;
-    await nextTick();
-
-    // 使用传统DOM方法获取元素（已经有类名了）
-    const elements = document.querySelectorAll('.plugin-action-item');
-    if (elements[index]) {
-      const element = elements[index] as HTMLElement;
-      element.focus();
-    }
+    actionActiveStore.setActiveIndex(index);
   };
 
   // 处理向上导航
@@ -62,8 +56,32 @@
     (newKeyword) => {
       loadActionList('Keyword changed: ' + newKeyword);
       console.log('Keyword changed: ' + newKeyword);
+      focusItemAtIndex(0);
     }
   );
+
+  // 监听键盘事件，实现全局导航和触发
+  onKeyStroke(['ArrowUp'], (e) => {
+    e.preventDefault();
+    handleNavigateUp(actionActiveStore.activeIndex);
+  });
+  onKeyStroke(['ArrowDown'], (e) => {
+    e.preventDefault();
+    handleNavigateDown(actionActiveStore.activeIndex);
+  });
+  onKeyStroke(['Escape'], (e) => {
+    e.preventDefault();
+    handleCancel();
+  });
+  onKeyStroke(['Enter', ' '], async (e) => {
+    e.preventDefault();
+    // 获取当前激活项并触发点击
+    const idx = actionActiveStore.activeIndex;
+    const elements = document.querySelectorAll('.plugin-action-item');
+    if (elements[idx]) {
+      (elements[idx] as HTMLElement).click();
+    }
+  });
 </script>
 
 <template>
@@ -87,9 +105,6 @@
           :key="action.id"
           :action="action"
           :index="index"
-          @cancel="handleCancel"
-          @navigate-up="handleNavigateUp(index)"
-          @navigate-down="handleNavigateDown(index)"
           class="plugin-action-item" />
       </ul>
     </div>

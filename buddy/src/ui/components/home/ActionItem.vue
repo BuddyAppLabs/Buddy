@@ -1,65 +1,22 @@
 <script setup lang="ts">
   import { SendableAction } from '@/types/sendable-action.js';
   import { ref } from 'vue';
-  import { onKeyStroke, useFocus } from '@vueuse/core';
   import { useAlert } from '@renderer/composables/useAlert';
   import { ListItem } from '@coffic/cosy-ui/vue';
   import { Badge } from '@coffic/cosy-ui/vue';
   import { useActions } from '@/ui/composables/useActions';
+  import { useActionActiveStore } from '@/ui/stores/action-active-store';
 
-  // 创建引用来使用useFocus
   const itemRef = ref<HTMLElement | null>(null);
-  const { focused } = useFocus(itemRef, { initialValue: false });
   const globalAlert = useAlert();
   const isLoading = ref(false);
   const { execute } = useActions();
+  const actionActiveStore = useActionActiveStore();
 
   const props = defineProps<{
     action: SendableAction;
     index: number;
   }>();
-
-  const emit = defineEmits<{
-    (e: 'select', action: SendableAction): void;
-    (e: 'cancel'): void;
-    (e: 'navigateUp'): void;
-    (e: 'navigateDown'): void;
-  }>();
-
-  // 处理取消操作
-  const handleCancel = () => {
-    emit('cancel');
-  };
-
-  // 使用VueUse的onKeyStroke处理键盘事件
-  onKeyStroke(
-    ['Enter', ' '],
-    (e) => {
-      if (focused.value && !isLoading.value) {
-        e.preventDefault();
-        handleClick();
-      }
-    },
-    { target: itemRef }
-  );
-
-  onKeyStroke('Escape', () => {
-    if (focused.value) {
-      handleCancel();
-    }
-  });
-
-  onKeyStroke('ArrowUp', () => {
-    if (focused.value) {
-      emit('navigateUp');
-    }
-  });
-
-  onKeyStroke('ArrowDown', () => {
-    if (focused.value) {
-      emit('navigateDown');
-    }
-  });
 
   // 处理动作选择
   const handleClick = async () => {
@@ -96,7 +53,8 @@
     :duration="15000"
     ref="itemRef"
     :tabindex="index + 1"
-    @click="handleClick">
+    @click="handleClick"
+    :class="{ 'active-action-item': actionActiveStore.activeIndex === index }">
     <div class="flex-1 flex flex-col gap-1">
       <p class="text-sm">
         {{ action.description }}
@@ -112,3 +70,11 @@
     </Badge>
   </ListItem>
 </template>
+
+<style scoped>
+  .active-action-item {
+    background: var(--cosy-primary-100, #e0e7ff);
+    border-radius: 6px;
+    box-shadow: 0 0 0 2px var(--cosy-primary-400, #6366f1);
+  }
+</style>

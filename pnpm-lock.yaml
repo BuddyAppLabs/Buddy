@@ -309,6 +309,18 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
 
+  plugins/plugin-superman:
+    devDependencies:
+      '@coffic/buddy-it':
+        specifier: workspace:*
+        version: link:../../packages/buddy-it
+      '@types/node':
+        specifier: ^24.0.12
+        version: 24.0.13
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+
   plugins/plugin-time-view:
     devDependencies:
       '@coffic/buddy-it':
