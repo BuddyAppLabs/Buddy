@@ -60,17 +60,16 @@ jobs:
         id: build
         run: |
           brew install yq
-          cd buddy
 
           # 删除identity: null配置
-          yq -i 'del(.mac.identity)' electron-builder.yml
+          yq -i 'del(.mac.identity)' buddy/electron-builder.yml
 
           # 只保留 notarize: true
-          yq -i '.mac.notarize = true' electron-builder.yml
+          yq -i '.mac.notarize = true' buddy/electron-builder.yml
 
           echo "electron-builder.yml 配置完成:"
-          cat electron-builder.yml
-          pnpm build:mac
+          cat buddy/electron-builder.yml
+          pnpm build:buddy:mac
           DMG_NAME=$(find buddy/dist -name "*.dmg" -print -quit)
           echo "dmg_path=$DMG_NAME" >> $GITHUB_OUTPUT
         env:
