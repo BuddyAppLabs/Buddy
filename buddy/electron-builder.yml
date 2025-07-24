@@ -1,6 +1,6 @@
 # https://www.electron.build/configuration
 
-appId: com.yueyi.gitok
+appId: com.coffic.buddy
 productName: buddy
 directories:
   buildResources: build
