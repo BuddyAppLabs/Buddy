@@ -6,17 +6,19 @@
   import { Badge } from '@coffic/cosy-ui/vue';
   import { useActions } from '@/ui/composables/useActions';
   import { useActionActiveStore } from '@/ui/stores/action-active-store';
-
-  const itemRef = ref<HTMLElement | null>(null);
-  const globalAlert = useAlert();
-  const isLoading = ref(false);
-  const { execute } = useActions();
-  const actionActiveStore = useActionActiveStore();
+  import { useKeywordStore } from '@/ui/stores/keyword-store';
 
   const props = defineProps<{
     action: SendableAction;
     index: number;
   }>();
+
+  const { clearKeyword } = useKeywordStore();
+  const itemRef = ref<HTMLElement | null>(null);
+  const globalAlert = useAlert();
+  const isLoading = ref(false);
+  const { execute } = useActions();
+  const actionActiveStore = useActionActiveStore();
 
   // 处理动作选择
   const handleClick = async () => {
@@ -33,6 +35,9 @@
         } else {
           globalAlert.success(result.message, { duration: 5000 });
         }
+
+        // 清空搜索框
+        clearKeyword();
       } else {
         globalAlert.error(result.message);
       }
