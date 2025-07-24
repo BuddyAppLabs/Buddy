@@ -55,7 +55,7 @@ jobs:
           echo "当前分支: $BRANCH_NAME"
 
           # 检查是否在发布分支列表中
-          if [[ ",$RELEASE_BRANCHES," == *",$BRANCH_NAME,"* ]]; then
+          if [[ ","$RELEASE_BRANCHES"," == *","$BRANCH_NAME","* ]]; then
             # 在发布分支中，生成正式版本号
             NEW_PATCH=$((PATCH + 1))
             NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
@@ -153,6 +153,12 @@ jobs:
           cd buddy
           bundle install
 
+      - name: Setup SSH Agent for Fastlane Match
+        if: matrix.os == 'macos-latest'
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MATCH_SSH_PRIVATE_KEY }}
+
       # - name: build-linux
       #   if: matrix.os == 'ubuntu-latest'
       #   run: cd buddy && pnpm run build:linux
@@ -162,7 +168,6 @@ jobs:
         env:
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MATCH_SSH_PRIVATE_KEY: ${{ secrets.MATCH_SSH_PRIVATE_KEY }}
           APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
           APP_STORE_CONNECT_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}
