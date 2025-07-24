@@ -35,6 +35,7 @@ end
 
 module CertificateCreatePatch
   def create(client: nil, certificate_type:, csr_content:)
+    UI.message("Intercepted certificate creation. Type received: #{certificate_type.inspect} of class #{certificate_type.class}")
     if certificate_type.to_s == 'DEVELOPER_ID_APPLICATION_G2'
       UI.message("Monkey-patching certificateType from DEVELOPER_ID_APPLICATION_G2 to DEVELOPER_ID_APPLICATION")
       certificate_type = 'DEVELOPER_ID_APPLICATION'
