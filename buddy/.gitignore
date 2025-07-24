@@ -32,5 +32,41 @@ Thumbs.db
 
 # Environment variables
 .env
-.env.*
+.env*.local
+.env
+.env*.local
+node_modules
+out
+dist
+
+# Dotfiles
+.DS_Store
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Electron-builder cache
+.electron-builder/cache
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Native modules
+build/Release
+
+# Debug files
+*.tlog
+*.pdb
+*.opendb
+*.VC.db
+
+# Misc
+.idea
+.vscode
+*.iml
 !.env.example 

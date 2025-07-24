@@ -1,0 +1,80 @@
+# This file contains the fastlane.tools configuration
+#
+# For more information about the available actions, check out the documentation
+#
+# https://docs.fastlane.tools/actions
+
+# Monkey-patch to fix the DEVELOPER_ID_APPLICATION_G2 issue
+# See: https://github.com/fastlane/fastlane/pull/20588
+module Spaceship
+  class ConnectAPI
+    class Certificate
+      class << self
+        def all(client: nil, filter: {}, includes: nil, limit: nil, sort: nil)
+          client ||= Spaceship::ConnectAPI
+          
+          # Remove certificateType from filter to avoid server-side error
+          certificate_types = filter.delete(:certificateType)
+
+          resps = client.get_certificates(filter: filter, includes: includes, limit: limit, sort: sort).all_pages
+          
+          # Manually filter by certificateType on the client-side
+          unless certificate_types.nil?
+            resps.select! do |resp|
+              certificate_types.split(',').include?(resp.certificateType)
+            end
+          end
+
+          resps.map { |resp| self.new(resp.id, resp) }
+        end
+      end
+    end
+  end
+end
+
+# Load environment variables from .env file
+dotenv_path = File.expand_path('../.env', __dir__)
+if File.exist?(dotenv_path)
+  Dotenv.load(dotenv_path)
+else
+  UI.message("Skipping .env file loading, file not found at #{dotenv_path}")
+end
+
+default_platform(:mac)
+
+platform :mac do
+  desc "Setup macOS signing certificates and provisioning profiles"
+  lane :setup_signing do
+    # Ensure the keychain exists and is unlocked.
+    # This is crucial for CI environments.
+    create_keychain(
+      name: "fastlane_tmp_keychain",
+      password: "fastlane_tmp_password",
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: false
+    )
+
+    # Use `match` to sync certificates and profiles.
+    # It will create them if they don't exist in the git repo.
+    match(
+      type: "developer_id", # For Developer ID Application signing (outside Mac App Store)
+      app_identifier: ["com.coffic.buddy"],
+      git_url: ENV['MATCH_GIT_URL'], # URL to your private certificates repo
+      git_branch: "main",
+      storage_mode: "git",
+      keychain_name: "fastlane_tmp_keychain",
+      keychain_password: "fastlane_tmp_password",
+      # Set readonly to true in CI to prevent creating new profiles unnecessarily.
+      # On the first run or after expiration, this should be false.
+      readonly: is_ci,
+      api_key: app_store_connect_api_key(
+        key_id: ENV["APP_STORE_CONNECT_KEY_ID"],
+        issuer_id: ENV["APP_STORE_CONNECT_KEY_ISSER_ID"],
+        key_content: ENV["APP_STORE_CONNECT_KEY_BASE64"],
+        is_key_content_base64: true
+      )
+    )
+  end
+end

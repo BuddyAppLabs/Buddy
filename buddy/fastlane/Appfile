@@ -1,0 +1,19 @@
+# Appfile defines information that is used across all fastlane lanes
+
+# To get more information about the Appfile, see:
+# https://docs.fastlane.tools/advanced/Appfile/
+
+# The bundle identifier of your app
+app_identifier("com.coffic.buddy")
+
+# Your Apple email address
+# apple_id("you@yourdomain.com") # We will use API Key instead of Apple ID login
+
+# You can uncomment the lines below and add your team id if you're on multiple teams
+# team_id("XXXXXXXXXX")
+# To select a team for App Store Connect, use itc_team_id
+# itc_team_id("12345678")
+
+# Connect to App Store Connect API
+# This will be used for all App Store Connect operations.
+# It is configured in the Fastfile for the relevant lanes.

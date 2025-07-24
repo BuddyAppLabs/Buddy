@@ -5,6 +5,7 @@ on:
     branches:
       - pre
       - main
+      - fastlane
     paths:
       - 'buddy/**'
       - '.github/workflows/publish-buddy.yaml'
@@ -19,7 +20,7 @@ env:
   # ============================
   # 可以发布正式版本的分支列表，用逗号分隔
   # 示例: main,release,stable
-  RELEASE_BRANCHES: main,release
+  RELEASE_BRANCHES: main,release,fastlane
 
 jobs:
   bump-version:
@@ -142,60 +143,49 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
+      - name: Setup Ruby and Fastlane
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install rbenv ruby-build
+          rbenv install 3.3.0
+          rbenv global 3.3.0
+          gem install bundler
+          cd buddy
+          bundle install
+
+      - name: Setup Ruby and Fastlane
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install rbenv ruby-build
+          rbenv install 3.3.0
+          rbenv global 3.3.0
+          gem install bundler
+          cd buddy
+          bundle install
+
       # - name: build-linux
       #   if: matrix.os == 'ubuntu-latest'
       #   run: cd buddy && pnpm run build:linux
 
-      # macOS 构建和签名
-      - name: Setup macOS signing
-        id: signing
+      - name: Setup macOS signing with Fastlane
         if: matrix.os == 'macos-latest'
         env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-          BUILD_CERTIFICATE_P12_PASSWORD: ${{ secrets.BUILD_CERTIFICATE_P12_PASSWORD }}
-          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64_GITOK_MACOS }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_SSH_PRIVATE_KEY: ${{ secrets.MATCH_SSH_PRIVATE_KEY }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
           APP_STORE_CONNECT_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}
-          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
         run: |
-          chmod +x ./scripts/setup-macos-signing.sh
-          source ./scripts/setup-macos-signing.sh
-          echo "signing_identity=$SIGNING_IDENTITY" >> $GITHUB_OUTPUT
-          echo "team_id=$TEAM_ID" >> $GITHUB_OUTPUT
-          echo "pp_path=$PP_PATH" >> $GITHUB_OUTPUT
-          echo "api_key_path=$API_KEY_PATH" >> $GITHUB_OUTPUT
-
-      - name: Update electron-builder config for CI
-        if: matrix.os == 'macos-latest'
-        env:
-          PP_PATH: ${{ steps.signing.outputs.pp_path }}
-          TEAM_ID: ${{ steps.signing.outputs.team_id }}
-          SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
-          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
-        run: |
-          brew install yq
           cd buddy
-
-          # 删除identity: null配置
-          yq -i 'del(.mac.identity)' electron-builder.yml
-
-          # 只保留 notarize: true
-          yq -i '.mac.notarize = true' electron-builder.yml
-
-          echo "electron-builder.yml 配置完成:"
-          cat electron-builder.yml
+          bundle exec fastlane mac setup_signing
 
       - name: build-mac
         if: matrix.os == 'macos-latest'
         env:
+          # Fastlane match 会自动设置好签名环境
+          # electron-builder 会自动发现证书和配置
           CSC_IDENTITY_AUTO_DISCOVERY: true
-          CSC_NAME: ${{ steps.signing.outputs.signing_identity }}
-          APPLE_TEAM_ID: ${{ steps.signing.outputs.team_id }}
-          APPLE_API_KEY: ${{ steps.signing.outputs.api_key_path }}
-          APPLE_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          APPLE_API_ISSUER: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
-          PYTHON: python3.11
         run: pnpm build:buddy:mac
 
       # - name: build-win
