@@ -40,6 +40,16 @@ jobs:
           cd buddy
           bundle install
 
+      - name: Install Apple G2 Certificate
+        run: |
+          curl -o AppleWWDRCAG2.cer https://www.apple.com/certificateauthority/AppleWWDRCAG2.cer
+          security create-keychain -p "" build.keychain
+          security import AppleWWDRCAG2.cer -k build.keychain -T /usr/bin/codesign
+          security list-keychains -s build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security set-keychain-settings -t 3600 -l ~/Library/Keychains/build.keychain
+
       - name: Setup SSH Agent for Fastlane Match
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -165,6 +175,17 @@ jobs:
           gem install bundler
           cd buddy
           bundle install
+
+      - name: Install Apple G2 Certificate
+        if: matrix.os == 'macos-latest'
+        run: |
+          curl -o AppleWWDRCAG2.cer https://www.apple.com/certificateauthority/AppleWWDRCAG2.cer
+          security create-keychain -p "" build.keychain
+          security import AppleWWDRCAG2.cer -k build.keychain -T /usr/bin/codesign
+          security list-keychains -s build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security set-keychain-settings -t 3600 -l ~/Library/Keychains/build.keychain
 
       - name: Setup SSH Agent for Fastlane Match
         if: matrix.os == 'macos-latest'
