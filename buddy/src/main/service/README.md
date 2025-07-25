@@ -4,7 +4,7 @@
 
 ## 📁 目录结构
 
-```
+```tree
 services/
 ├── PluginService.ts        # 插件业务服务 (待实现)
 ├── WindowService.ts        # 窗口管理服务 (待实现)
@@ -27,7 +27,7 @@ services/
 
 ### 服务 vs 仓储 vs 控制器
 
-```
+```tree
 Controller (HTTP层) → Service (业务层) → Repository (数据层)
 ```
 

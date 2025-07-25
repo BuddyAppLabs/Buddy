@@ -19,7 +19,7 @@ async function main(): Promise<void> {
     const configManager = new ConfigManager(rl)
 
     try {
-        let config = await configManager.promptConfig()
+        const config = await configManager.promptConfig()
 
         console.log(chalk.cyan("\n[Test] 🚀 选择的配置的 command 是", config.command))
         console.log(chalk.cyan("[Test] 📂 选择的配置的 args 是", config.args))

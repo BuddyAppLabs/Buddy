@@ -3,4 +3,4 @@
  */
 export * from './McpManager.js';
 export * from './McpServiceProvider.js';
-export * from './facades/Mcp.js'; 
+export * from './facades/McpFacade.js';

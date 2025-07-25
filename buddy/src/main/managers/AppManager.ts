@@ -2,11 +2,12 @@
  * 应用管理器
  * 负责应用的生命周期管理、初始化和清理工作
  */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
 // import { pluginManager } from './PluginManager.js';
 import { pluginViewManager } from '../providers/plugin/manager/PluginViewManager.js';
 import { WindowFacade } from '../providers/window/WindowFacade.js';
+import { trayManager } from './TrayManager.js';
 // import { updateManager } from './UpdateManager.js';
 
 export class AppManager {
@@ -67,6 +68,9 @@ export class AppManager {
     // 创建主窗口
     this.mainWindow = WindowFacade.createWindow();
 
+    // 创建系统托盘
+    trayManager.createTray();
+
     // updateManager.initialize(this.mainWindow);
 
     WindowFacade.setupGlobalShortcut();
@@ -84,6 +88,9 @@ export class AppManager {
     console.debug('关闭所有插件视图窗口');
     pluginViewManager.closeAllViews();
 
+    console.debug('销毁系统托盘');
+    trayManager.destroy();
+
     console.info('应用清理完成，准备退出');
   }
 
@@ -100,8 +107,6 @@ export class AppManager {
    * 设置应用的右键菜单
    */
   private setupContextMenu(): void {
-    const { Menu, ipcMain } = require('electron');
-
     // 通用上下文菜单
     const textContextMenu = Menu.buildFromTemplate([
       { label: '复制', role: 'copy' },
@@ -114,14 +119,6 @@ export class AppManager {
     // 聊天消息的上下文菜单
     const chatContextMenu = Menu.buildFromTemplate([
       { label: '复制消息', role: 'copy' },
-      {
-        label: '复制代码块',
-        click: (_menuItem, browserWindow) => {
-          if (browserWindow) {
-            browserWindow.webContents.send('context-menu-copy-code');
-          }
-        },
-      },
       { type: 'separator' },
       { label: '全选', role: 'selectAll' },
     ]);

@@ -6,30 +6,31 @@
 
 import { app } from 'electron';
 import { registerRoutes } from '../routes/index.js';
-import { LoggingMiddleware, LogServiceProvider } from '@coffic/cosy-logger';
 import {
   ApplicationConfig,
   createElectronApp,
   ILogManager,
   setupIPCHandlers,
   SettingServiceProvider,
+  LoggingMiddleware,
 } from '@coffic/cosy-framework';
-import { UpdateServiceProvider } from '@coffic/cosy-framework/update';
+import { UpdateServiceProvider } from '@coffic/cosy-framework';
 import { KeyboardServiceProvider } from '@coffic/cosy-keyboard';
 import { AIServiceProvider } from '../providers/ai/AIServiceProvider.js';
 import { McpServiceProvider } from '../providers/mcp/McpServiceProvider.js';
 import { PluginServiceProvider } from '../providers/plugin/PluginServiceProvider.js';
 import { PluginFacade } from '../providers/plugin/PluginFacade.js';
 import { WindowServiceProvider } from '../providers/window/WindowServiceProvider.js';
+import { StateServiceProvider } from '../providers/state/StateServiceProvider.js';
+import { StateManager } from '../providers/state/StateManager.js';
+import { appManager } from '../managers/AppManager.js';
 
 // 应用配置
 const config: ApplicationConfig = {
   name: 'Buddy',
-  version: '1.3.18',
-  env: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  debug: process.env.NODE_ENV !== 'production',
+  env: app.isPackaged ? 'production' : 'development',
+  debug: true,
   providers: [
-    LogServiceProvider,
     SettingServiceProvider,
     KeyboardServiceProvider,
     UpdateServiceProvider,
@@ -37,6 +38,7 @@ const config: ApplicationConfig = {
     PluginServiceProvider,
     WindowServiceProvider,
     McpServiceProvider,
+    StateServiceProvider,
   ],
   paths: {
     userData: app.getPath('userData'),
@@ -64,6 +66,11 @@ export async function bootApplication(): Promise<void> {
       logger?.channel()[level](message, context);
     });
 
+    application.on('window:show', () => {
+      const stateManager = application.make<StateManager>('state');
+      stateManager.updateActiveApp('window:show');
+    });
+
     // 等待插件系统初始化完成
     await PluginFacade.initialize();
 
@@ -72,7 +79,10 @@ export async function bootApplication(): Promise<void> {
 
     setupIPCHandlers(application);
 
-    logger.channel('app').info('✅ 应用核心服务已启动');
+    // 启动应用管理器（包括托盘）
+    await appManager.start();
+
+    logger.channel('app').info('✅ [Bootstrap] 应用核心服务已启动');
   } catch (error) {
     const errorMessage = '❌ Application failed to start';
     if (logger) {

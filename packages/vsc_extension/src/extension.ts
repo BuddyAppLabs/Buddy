@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
     console.log('Extension "vue-3-vscode-webview" is now active!');
 
     // 注册命令
-    let disposable = vscode.commands.registerCommand(
+    const disposable = vscode.commands.registerCommand(
         `buddycoder.open`,
         () => {
             // 显示通知

@@ -80,14 +80,21 @@
     let count = 0;
     const countElement = document.getElementById('count');
 
+    // 页面加载时记录一条日志
+    window.buddy.logger.info('计数器插件视图已加载', { initialCount: count });
+
     document.getElementById('increment').addEventListener('click', () => {
       count++;
       countElement.textContent = count;
+      // 记录增加操作日志
+      window.buddy.logger.info('计数器增加', { newCount: count });
     });
 
     document.getElementById('decrement').addEventListener('click', () => {
       count--;
       countElement.textContent = count;
+      // 记录减少操作日志
+      window.buddy.logger.warn('计数器减少', { newCount: count });
     });
   </script>
 </body>

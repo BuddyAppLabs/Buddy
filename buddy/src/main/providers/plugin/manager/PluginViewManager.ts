@@ -14,7 +14,7 @@ import {
   ViewBounds,
   ViewMode,
   WebContentOptions,
-} from '@coffic/buddy-types';
+} from '@coffic/buddy-it';
 
 const logger = console;
 

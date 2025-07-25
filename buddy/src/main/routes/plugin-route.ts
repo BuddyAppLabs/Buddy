@@ -3,10 +3,14 @@ import { remotePluginDB } from '../providers/plugin/repo/PluginRepoRemote.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { RouteFacade, SettingFacade } from '@coffic/cosy-framework';
-
-import { LogFacade } from '@coffic/cosy-logger';
+import { LogFacade } from '@coffic/cosy-framework';
 import { userPluginDB } from '../providers/plugin/repo/UserPluginRepo.js';
 import { PluginFacade } from '../providers/plugin/PluginFacade.js';
+import {
+  SETTING_KEY_PLUGIN_DEV_PACKAGE_PATH,
+  SETTING_KEY_PLUGIN_DEV_PATH,
+} from '../constants.js';
+import { SendablePackage } from '@/types/sendable-package.js';
 
 /**
  * 插件市场路由
@@ -49,15 +53,23 @@ export function registerPluginRoutes(): void {
 
   // 获取开发插件目录
   RouteFacade.handle(
-    IPC_METHODS.GET_PLUGIN_DIRECTORIES_DEV,
+    IPC_METHODS.GET_PLUGIN_DIRECTORIES_REPO,
     (_event): string => {
       return PluginFacade.getDevPluginRootDir();
     }
   ).description('获取开发插件的根目录');
 
-  // 设置开发插件目录
+  // 获取开发包目录
   RouteFacade.handle(
-    IPC_METHODS.SET_PLUGIN_DIRECTORIES_DEV,
+    IPC_METHODS.GET_PLUGIN_DIRECTORIES_DEV_PACKAGE,
+    (_event): string => {
+      return PluginFacade.getDevPackageRootDir();
+    }
+  ).description('获取开发包的根目录');
+
+  // 设置开发仓库目录
+  RouteFacade.handle(
+    IPC_METHODS.SET_PLUGIN_DIRECTORIES_REPO,
     async (_event): Promise<string | null> => {
       const { canceled, filePaths } = await dialog.showOpenDialog({
         properties: ['openDirectory'],
@@ -68,19 +80,102 @@ export function registerPluginRoutes(): void {
       }
 
       const newPath = filePaths[0];
-      SettingFacade.set('plugins.dev.path', newPath);
+      SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PATH, newPath);
       PluginFacade.updateDevPluginRootDir(newPath);
 
       return newPath;
     }
-  ).description('设置开发插件的根目录');
+  ).description('设置开发仓库的根目录');
 
-  // 获取远程插件列表
+  // 禁用开发仓库
   RouteFacade.handle(
-    IPC_METHODS.GET_REMOTE_PLUGINS,
-    async (_event): Promise<SendablePlugin[]> => {
-      LogFacade.channel('market').info('[MarketRoute] 获取远程插件列表');
-      return await remotePluginDB.getSendablePlugins();
+    IPC_METHODS.DISABLE_PLUGIN_DIRECTORIES_REPO,
+    (_event): void => {
+      PluginFacade.disableDevRepo();
+    }
+  ).description('禁用开发仓库');
+
+  // 启用开发仓库
+
+  RouteFacade.handle(
+    IPC_METHODS.ENABLE_PLUGIN_DIRECTORIES_REPO,
+    (_event): void => {
+      PluginFacade.enableDevRepo();
+    }
+  ).description('启用开发仓库');
+
+  // 禁用开发包
+  RouteFacade.handle(
+    IPC_METHODS.DISABLE_PLUGIN_DIRECTORIES_DEV_PACKAGE,
+    (_event): void => {
+      PluginFacade.disableDevPackage();
+    }
+  ).description('禁用开发包');
+
+  // 启用开发包
+  RouteFacade.handle(
+    IPC_METHODS.ENABLE_PLUGIN_DIRECTORIES_DEV_PACKAGE,
+    (_event): void => {
+      PluginFacade.enableDevPackage();
+    }
+  ).description('启用开发包');
+
+  // 重置开发仓库目录
+  RouteFacade.handle(
+    IPC_METHODS.RESET_PLUGIN_DIRECTORIES_REPO,
+    (_event): void => {
+      SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PATH, '');
+      PluginFacade.updateDevPluginRootDir('');
+    }
+  ).description('重置开发仓库的根目录');
+
+  // 重置开发包目录
+  RouteFacade.handle(
+    IPC_METHODS.RESET_PLUGIN_DIRECTORIES_DEV_PACKAGE,
+    (_event): void => {
+      SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PACKAGE_PATH, '');
+      PluginFacade.updateDevPackageRootDir('');
+    }
+  ).description('重置开发包的根目录');
+
+  // 获取开发包
+  RouteFacade.handle(
+    IPC_METHODS.GET_DEV_PACKAGE,
+    async (_event): Promise<SendablePlugin | null | undefined> => {
+      const plugin = await PluginFacade.getDevPackage();
+      const sendablePlugin = await plugin?.getSendablePlugin();
+      return sendablePlugin;
+    }
+  ).description('获取开发包');
+
+  // 设置开发包目录
+  RouteFacade.handle(
+    IPC_METHODS.SET_PLUGIN_DIRECTORIES_DEV_PACKAGE,
+    async (_event): Promise<string | null> => {
+      const { canceled, filePaths } = await dialog.showOpenDialog({
+        properties: ['openDirectory'],
+      });
+
+      if (canceled || filePaths.length === 0) {
+        return null;
+      }
+
+      const newPath = filePaths[0];
+      SettingFacade.set(SETTING_KEY_PLUGIN_DEV_PACKAGE_PATH, newPath);
+      PluginFacade.updateDevPackageRootDir(newPath);
+
+      return newPath;
+    }
+  )
+    .description('设置开发包的根目录')
+    .validation({});
+
+  // 获取远程插件包列表
+  RouteFacade.handle(
+    IPC_METHODS.GET_REMOTE_PACKAGES,
+    async (_event): Promise<SendablePackage[]> => {
+      LogFacade.channel('plugin').info('[PluginRoute] 获取远程插件包列表');
+      return await remotePluginDB.getSendablePackages();
     }
   ).description('获取远程可下载的插件列表');
 

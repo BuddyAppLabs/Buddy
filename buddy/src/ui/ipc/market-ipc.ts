@@ -1,13 +1,14 @@
 import { SendablePlugin } from '@/types/sendable-plugin';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { logger } from '../utils/logger.js';
+import { SendablePackage } from '@/types/sendable-package.js';
 
 const ipc = window.ipc;
 
 export const marketIpc = {
   // 获取用户插件列表
   async getUserPlugins(): Promise<SendablePlugin[]> {
-    let response = await ipc.invoke(IPC_METHODS.GET_USER_PLUGINS);
+    const response = await ipc.invoke(IPC_METHODS.GET_USER_PLUGINS);
 
     if (response.success) {
       return response.data;
@@ -18,7 +19,18 @@ export const marketIpc = {
 
   // 获取开发插件列表
   async getDevPlugins(): Promise<SendablePlugin[]> {
-    let response = await ipc.invoke(IPC_METHODS.GET_DEV_PLUGINS);
+    const response = await ipc.invoke(IPC_METHODS.GET_DEV_PLUGINS);
+
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 获取开发包
+  async getDevPackage(): Promise<SendablePlugin> {
+    const response = await ipc.invoke(IPC_METHODS.GET_DEV_PACKAGE);
 
     if (response.success) {
       return response.data;
@@ -29,19 +41,7 @@ export const marketIpc = {
 
   // 获取用户插件目录
   async getUserPluginDirectory(): Promise<string> {
-    let response = await ipc.invoke(IPC_METHODS.GET_PLUGIN_DIRECTORIES_USER);
-
-    if (response.success) {
-      return response.data;
-    } else {
-      throw new Error(response.error);
-    }
-  },
-
-  // 下载插件
-  async downloadPlugin(pluginId: string): Promise<void> {
-    console.log('downloadPlugin', pluginId);
-    let response = await ipc.invoke(IPC_METHODS.DOWNLOAD_PLUGIN, pluginId);
+    const response = await ipc.invoke(IPC_METHODS.GET_PLUGIN_DIRECTORIES_USER);
 
     if (response.success) {
       return response.data;
@@ -52,7 +52,7 @@ export const marketIpc = {
 
   // 卸载插件
   async uninstallPlugin(pluginId: string): Promise<void> {
-    let response = await ipc.invoke(IPC_METHODS.UNINSTALL_PLUGIN, pluginId);
+    const response = await ipc.invoke(IPC_METHODS.UNINSTALL_PLUGIN, pluginId);
 
     if (response.success) {
       return response.data;
@@ -61,9 +61,9 @@ export const marketIpc = {
     }
   },
 
-  // 获取远程插件列表
-  async getRemotePlugins(): Promise<SendablePlugin[]> {
-    let response = await ipc.invoke(IPC_METHODS.GET_REMOTE_PLUGINS);
+  // 获取远程插件包列表
+  async getRemotePackages(): Promise<SendablePackage[]> {
+    const response = await ipc.invoke(IPC_METHODS.GET_REMOTE_PACKAGES);
 
     if (response.success) {
       return response.data;
@@ -74,7 +74,7 @@ export const marketIpc = {
 
   // 创建插件视图
   async createPluginView(pluginId: string): Promise<void> {
-    let response = await ipc.invoke(IPC_METHODS.CREATE_PLUGIN_VIEW, pluginId);
+    const response = await ipc.invoke(IPC_METHODS.CREATE_PLUGIN_VIEW, pluginId);
 
     if (response.success) {
       return response.data;
@@ -85,7 +85,7 @@ export const marketIpc = {
 
   // 获取开发插件目录
   async getDevPluginDirectory(): Promise<string> {
-    let response = await ipc.invoke(IPC_METHODS.GET_PLUGIN_DIRECTORIES_DEV);
+    const response = await ipc.invoke(IPC_METHODS.GET_PLUGIN_DIRECTORIES_REPO);
     if (response.success) {
       return response.data;
     } else {
@@ -93,9 +93,105 @@ export const marketIpc = {
     }
   },
 
-  // 设置开发插件目录
-  async setDevPluginDirectory(): Promise<string | null> {
-    let response = await ipc.invoke(IPC_METHODS.SET_PLUGIN_DIRECTORIES_DEV);
+  // 获取开发包目录
+  async getDevPackageDirectory(): Promise<string> {
+    const response = await ipc.invoke(
+      IPC_METHODS.GET_PLUGIN_DIRECTORIES_DEV_PACKAGE
+    );
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 设置开发插件目录，返回设置后的目录
+  async setDevPluginDirectory(): Promise<string> {
+    const response = await ipc.invoke(IPC_METHODS.SET_PLUGIN_DIRECTORIES_REPO);
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 设置开发包目录，返回设置后的目录
+  async setDevPackageDirectory(): Promise<string> {
+    const response = await ipc.invoke(
+      IPC_METHODS.SET_PLUGIN_DIRECTORIES_DEV_PACKAGE
+    );
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 禁用开发仓库
+  async disableDevRepo(): Promise<void> {
+    const response = await ipc.invoke(
+      IPC_METHODS.DISABLE_PLUGIN_DIRECTORIES_REPO
+    );
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 启用开发仓库
+  async enableDevRepo(): Promise<void> {
+    const response = await ipc.invoke(
+      IPC_METHODS.ENABLE_PLUGIN_DIRECTORIES_REPO
+    );
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 禁用开发包
+  async disableDevPackage(): Promise<void> {
+    const response = await ipc.invoke(
+      IPC_METHODS.DISABLE_PLUGIN_DIRECTORIES_DEV_PACKAGE
+    );
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 启用开发包
+  async enableDevPackage(): Promise<void> {
+    const response = await ipc.invoke(
+      IPC_METHODS.ENABLE_PLUGIN_DIRECTORIES_DEV_PACKAGE
+    );
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 重置开发包目录
+  async resetDevPackageDirectory(): Promise<void> {
+    const response = await ipc.invoke(
+      IPC_METHODS.RESET_PLUGIN_DIRECTORIES_DEV_PACKAGE
+    );
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
+  // 重置开发插件目录
+  async resetDevPluginDirectory(): Promise<void> {
+    const response = await ipc.invoke(
+      IPC_METHODS.RESET_PLUGIN_DIRECTORIES_REPO
+    );
     if (response.success) {
       return response.data;
     } else {
@@ -107,7 +203,10 @@ export const marketIpc = {
   async isInstalled(pluginId: string): Promise<boolean> {
     logger.debug('判断插件是否已经安装', pluginId);
 
-    let response = await ipc.invoke(IPC_METHODS.Plugin_Is_Installed, pluginId);
+    const response = await ipc.invoke(
+      IPC_METHODS.Plugin_Is_Installed,
+      pluginId
+    );
 
     if (response.success) {
       return response.data;

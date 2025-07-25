@@ -1,33 +1,22 @@
-import { computed, ref } from 'vue';
-import { useMarketStore } from '../stores/market-store';
+import { ref } from 'vue';
 import { useStorage } from '@vueuse/core';
 import { useAlert } from './useAlert';
-import { globalToast } from './useToast';
-import { marketIpc } from '../ipc/market-ipc';
 import { fileIpc } from '../ipc/file-ipc';
+import { MarketTab } from '@/types/market-type';
+import { useRemote } from './useRemote';
+import { useLocal } from './useLocal';
+import { useDevRepo } from './useDevRepo';
+import { useDevPackage } from './useDevPackage';
 
 export function useMarket() {
+  const { loadRemotePackages } = useRemote();
+  const { loadLocalPlugins } = useLocal();
+  const { loadDevPlugins } = useDevRepo();
   const { error } = useAlert();
-  const isDev = import.meta.env.DEV;
-
-  const marketStore = useMarketStore();
-  const userPlugins = computed(() => marketStore.userPlugins);
-  const devPlugins = computed(() => marketStore.devPlugins);
-  const remotePlugins = computed(() => marketStore.remotePlugins);
+  const { devPackageDirectory, loadDevPackage } = useDevPackage();
 
   const isLoading = ref(false);
-
-  const setDevPluginDir = async () => {
-    try {
-      const newPath = await marketIpc.setDevPluginDirectory();
-      if (newPath) {
-        marketStore.devPluginDirectory = newPath;
-        await loadPlugins(); // 重新加载插件
-      }
-    } catch (e) {
-      error('设置开发插件目录失败: ' + e);
-    }
-  };
+  const activeTab = ref<MarketTab>('user');
 
   const loadPlugins = async () => {
     if (isLoading.value) {
@@ -37,43 +26,29 @@ export function useMarket() {
 
     isLoading.value = true;
     try {
-      if (marketStore.activeTab === 'dev') {
-        await marketStore.updateDevPluginDirectory();
-      }
-      switch (marketStore.activeTab) {
+      switch (activeTab.value) {
         case 'remote':
-          await marketStore.loadRemotePlugins();
+          await loadRemotePackages();
           break;
         case 'user':
-          await marketStore.loadUserPlugins();
+          await loadLocalPlugins();
           break;
-        case 'dev':
-          await marketStore.loadDevPlugins();
+        case 'devRepo':
+          await loadDevPlugins();
+          break;
+        case 'devPackage':
+          console.log('loadDevPackage');
+          await loadDevPackage();
           break;
         default:
           error('未知标签');
       }
-
-      globalToast.success(`刷新成功`, {
-        duration: 2000,
-        position: 'bottom-center',
-      });
     } catch (err) {
       error('刷新失败' + err);
     } finally {
       isLoading.value = false;
     }
   };
-
-  // 简单使用Vue自带的computed
-  const shouldShowEmpty = computed(() => {
-    return (
-      (marketStore.activeTab === 'remote' &&
-        remotePlugins.value.length === 0) ||
-      (marketStore.activeTab === 'user' && userPlugins.value.length === 0) ||
-      (marketStore.activeTab === 'dev' && devPlugins.value.length === 0)
-    );
-  });
 
   // 卸载状态 (使用Map合并处理)
   const uninstallStates = useStorage('uninstall-states', {
@@ -82,15 +57,9 @@ export function useMarket() {
     uninstallError: new Map<string, string>(),
   });
 
-  // 刷新按钮点击事件
-  const handleRefresh = () => {
-    console.log('handleRefresh');
-    loadPlugins();
-  };
-
   // 切换标签并加载对应插件
-  const switchTab = (tab: 'user' | 'remote' | 'dev') => {
-    marketStore.activeTab = tab;
+  const switchTab = (tab: MarketTab) => {
+    activeTab.value = tab;
     loadPlugins();
   };
 
@@ -101,7 +70,7 @@ export function useMarket() {
 
   // 打开当前的插件目录
   const openCurrentPluginDirectory = () => {
-    let currentDirectory = marketStore.getCurrentPluginDirectory();
+    const currentDirectory = devPackageDirectory.value;
     if (currentDirectory) {
       fileIpc.openFolder(currentDirectory);
     } else {
@@ -110,18 +79,12 @@ export function useMarket() {
   };
 
   return {
-    isDev,
-    userPlugins,
-    devPlugins,
-    remotePlugins,
     isLoading,
-    shouldShowEmpty,
+    loadPlugins,
     uninstallStates,
-    setDevPluginDir,
-    handleRefresh,
     switchTab,
+    activeTab,
     clearUninstallError,
-    uninstallPlugin: marketStore.uninstallPlugin,
     openCurrentPluginDirectory,
   };
 }

@@ -1,3 +1,4 @@
+import { BrowserWindow } from 'electron';
 import { IWindowConfig } from './IWindowConfig';
 
 /**
@@ -7,12 +8,12 @@ export interface IWindowManager {
   /**
    * 创建主窗口
    */
-  createWindow(): Electron.BrowserWindow;
+  createWindow(): BrowserWindow;
 
   /**
    * 获取主窗口实例
    */
-  getMainWindow(): Electron.BrowserWindow | null;
+  getMainWindow(): BrowserWindow | null;
 
   /**
    * 切换主窗口显示状态
@@ -32,7 +33,7 @@ export interface IWindowManager {
   /**
    * 获取所有窗口
    */
-  getAllWindows(): Electron.BrowserWindow[];
+  getAllWindows(): BrowserWindow[];
 
   /**
    * 清理资源

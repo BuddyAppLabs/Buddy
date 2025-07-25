@@ -9,13 +9,18 @@ export default {
       channels: ['console', 'file'],
     },
 
+    ai: {
+      driver: 'null',
+      level: ILogLevel.DEBUG,
+    },
+
     action: {
-      driver: 'console',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 
     app: {
-      driver: 'console',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 
@@ -30,7 +35,7 @@ export default {
     },
 
     market: {
-      driver: 'console',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 
@@ -40,17 +45,32 @@ export default {
     },
 
     updater: {
-      driver: 'console',
+      driver: 'null',
+      level: ILogLevel.DEBUG,
+    },
+
+    package: {
+      driver: 'file',
       level: ILogLevel.DEBUG,
     },
 
     plugin: {
-      driver: 'console',
+      driver: 'null',
+      level: ILogLevel.DEBUG,
+    },
+
+    pluginView: {
+      driver: 'null',
+      level: ILogLevel.DEBUG,
+    },
+
+    state: {
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
 
     view: {
-      driver: 'console',
+      driver: 'null',
       level: ILogLevel.DEBUG,
     },
   },

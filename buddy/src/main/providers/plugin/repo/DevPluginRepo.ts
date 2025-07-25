@@ -3,7 +3,7 @@
  * 负责从开发目录读取插件信息
  */
 import { BasePluginRepo } from './BasePluginRepo.js';
-import { PluginType } from '@coffic/buddy-types';
+import { PluginType } from '@coffic/buddy-it';
 
 export class DevPluginRepo extends BasePluginRepo {
   private enabled: boolean = true;
@@ -21,6 +21,20 @@ export class DevPluginRepo extends BasePluginRepo {
       return [];
     }
     return await super.getAllPlugins();
+  }
+
+  /**
+   * 禁用仓库
+   */
+  public disable(): void {
+    this.enabled = false;
+  }
+
+  /**
+   * 启用仓库
+   */
+  public enable(): void {
+    this.enabled = true;
   }
 
   /**

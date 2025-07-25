@@ -1,24 +1,31 @@
+import { IPluginManager } from '@/main/providers/plugin/contract/IPluginManager.js';
+import { PluginEntity } from '@/main/providers/plugin/model/PluginEntity.js';
+import { userPluginDB } from '@/main/providers/plugin/repo/UserPluginRepo.js';
+import { ActionEntity } from '@/main/providers/plugin/model/ActionEntity.js';
+import { DevPackageRepo } from '@/main/providers/plugin/repo/DevPackageRepo.js';
+import { ContextManager } from '@/main/providers/plugin/manager/ContextManager.js';
+import { DevPluginRepo } from '@/main/providers/plugin/repo/DevPluginRepo.js';
+import { Downloader } from '@/main/service/Downloader.js';
+import { LogFacade } from '@coffic/cosy-framework';
+import fs from 'fs';
+import path from 'path';
+import { IAIManager } from '../../ai/IAIManager';
+import { ActionResult, SuperContext } from '@coffic/buddy-it';
+
 /**
  * 插件管理器
  * 负责插件的加载、管理和通信
  */
-import { IPluginManager } from '../contract/IPluginManager.js';
-import { PluginEntity } from '../model/PluginEntity.js';
-import { LogFacade } from '@coffic/cosy-logger';
-import { DevPluginRepo } from '../repo/DevPluginRepo.js';
-import { userPluginDB } from '../repo/UserPluginRepo.js';
-import { ActionEntity } from '../model/ActionEntity.js';
-import fs from 'fs';
-import path from 'path';
-import { Downloader } from '@/main/service/Downloader.js';
-import { ExecuteResult } from '@coffic/buddy-types';
-
 export class PluginManager implements IPluginManager {
   /**
    * 构造函数
    * @param repository 插件仓储
    */
-  constructor(private readonly devPluginDB: DevPluginRepo) {}
+  constructor(
+    private readonly devPluginDB: DevPluginRepo,
+    private readonly devPackageDB: DevPackageRepo,
+    private readonly aiManager: IAIManager
+  ) {}
 
   /**
    * 初始化插件系统
@@ -36,9 +43,11 @@ export class PluginManager implements IPluginManager {
    * 获取所有插件
    */
   public async all(): Promise<PluginEntity[]> {
+    const devPackage = await this.getDevPackage();
     return [
       ...(await userPluginDB.getAllPlugins()),
       ...(await this.devPluginDB.getAllPlugins()),
+      ...(devPackage ? [devPackage] : []),
     ];
   }
 
@@ -50,11 +59,22 @@ export class PluginManager implements IPluginManager {
   }
 
   /**
+   * 获取开发包
+   */
+  public async getDevPackage(): Promise<PluginEntity | null> {
+    return await this.devPackageDB.get();
+  }
+
+  /**
    * 获取指定插件
    * @param id 插件ID
    */
   public async find(id: string): Promise<PluginEntity | null> {
-    return (await userPluginDB.find(id)) || (await this.devPluginDB.find(id));
+    return (
+      (await userPluginDB.find(id)) ||
+      (await this.devPluginDB.find(id)) ||
+      (await this.devPackageDB.get())
+    );
   }
 
   /**
@@ -62,22 +82,38 @@ export class PluginManager implements IPluginManager {
    * @param actionId 动作ID
    * @param keyword 关键词
    */
-  public async executeAction(
-    actionId: string,
-    keyword: string
-  ): Promise<ExecuteResult> {
-    const [pluginId, actionLocalId] = actionId.split(':');
+  public async executeAction(context: SuperContext): Promise<ActionResult> {
+    const [pluginId, actionLocalId] = context.actionId.split(':');
     const plugin = await this.find(pluginId);
     if (!plugin) {
-      LogFacade.channel('plugin').error(`[PluginManager] 插件不存在`, {
-        pluginId,
-        actionId,
-        keyword,
-      });
-      throw new Error(`插件不存在: ${pluginId}`);
+      LogFacade.channel('plugin').error(
+        `[PluginManager] 执行插件动作失败，插件不存在`,
+        {
+          pluginId,
+          actionId: context.actionId,
+          keyword: context.keyword,
+        }
+      );
+      throw new Error(`[PluginManager] 插件不存在: ${pluginId}`);
     }
 
-    return plugin.executeAction(actionLocalId, keyword);
+    const result = await plugin.executeAction(
+      ContextManager.createContext(
+        plugin,
+        this.aiManager,
+        actionLocalId,
+        context.keyword,
+        context.overlaidApp
+      )
+    );
+
+    LogFacade.channel('plugin').info(`[PluginManager] 执行插件动作`, {
+      actionId: context.actionId,
+      keyword: context.keyword,
+      result,
+    });
+
+    return result;
   }
 
   /**
@@ -85,65 +121,60 @@ export class PluginManager implements IPluginManager {
    * @param keyword 搜索关键词
    * @returns 匹配的插件动作列表
    */
-  async actions(keyword: string = ''): Promise<ActionEntity[]> {
+  async getActions(context: SuperContext): Promise<ActionEntity[]> {
     let allActions: ActionEntity[] = [];
 
-    try {
-      // 从所有加载的插件中获取动作
-      const plugins = await this.all();
-      for (const plugin of plugins) {
-        LogFacade.channel('plugin').debug(`[PluginManager] 获取插件动作`, {
-          keyword,
-          pluginId: plugin.id,
+    // 从所有加载的插件中获取动作
+    const plugins = await this.all();
+    for (const plugin of plugins) {
+      try {
+        const pluginActions: ActionEntity[] = await plugin.getActions(context);
+
+        // 为每个动作设置插件 ID 和全局 ID
+        const processedActions = pluginActions.map((action) => {
+          action.pluginId = plugin.id; // 注入插件 ID
+          action.globalId = `${plugin.id}:${action.id}`; // 创建全局唯一 ID
+          return action;
         });
 
-        try {
-          const pluginActions: ActionEntity[] =
-            await plugin.getActions(keyword);
+        allActions = [...allActions, ...processedActions];
 
-          // 为每个动作设置插件 ID 和全局 ID
-          const processedActions = pluginActions.map((action) => {
-            action.pluginId = plugin.id; // 注入插件 ID
-            action.globalId = `${plugin.id}:${action.id}`; // 创建全局唯一 ID
-            return action;
-          });
+        // 按照globalID去重
+        allActions = allActions.filter(
+          (action, index, self) =>
+            index === self.findIndex((t) => t.globalId === action.globalId)
+        );
+      } catch (error) {
+        // 获取详细的错误信息
+        const errorDetail =
+          error instanceof Error
+            ? {
+                message: error.message,
+                stack: error.stack,
+                name: error.name,
+              }
+            : String(error);
 
-          allActions = [...allActions, ...processedActions];
-        } catch (error) {
-          // 获取详细的错误信息
-          const errorDetail =
-            error instanceof Error
-              ? {
-                  message: error.message,
-                  stack: error.stack,
-                  name: error.name,
-                }
-              : String(error);
-
-          LogFacade.channel('action').error(
-            `[ActionManager] 插件 ${plugin.id} 获取动作失败`,
-            {
-              error: errorDetail,
-              pluginInfo: {
-                id: plugin.id,
-                name: plugin.name,
-                version: plugin.version,
-                path: plugin.path,
-              },
-            }
-          );
-
-          throw new Error(`获取插件 ${plugin.id} 的动作失败，但不影响其他插件`);
-        }
+        LogFacade.channel('action').error(
+          `[ActionManager] 插件 ${plugin.id} 获取动作失败`,
+          {
+            error: errorDetail,
+            pluginInfo: {
+              id: plugin.id,
+              name: plugin.name,
+              version: plugin.version,
+              path: plugin.path,
+            },
+          }
+        );
       }
-
-      LogFacade.channel('plugin').info(
-        `[PluginManager] 找到 ${allActions.length} 个动作`
-      );
-      return allActions;
-    } catch (error) {
-      throw new Error(`获取插件动作失败: ${error}`);
     }
+
+    LogFacade.channel('plugin').info(
+      `[PluginManager] 找到 ${allActions.length} 个动作`
+    );
+
+    return allActions;
   }
 
   /**
@@ -184,6 +215,13 @@ export class PluginManager implements IPluginManager {
   }
 
   /**
+   * 获取开发包的根目录
+   */
+  public getDevPackageRootDir(): string {
+    return this.devPackageDB.rootDir;
+  }
+
+  /**
    * 更新开发插件的根目录
    * @param path 新路径
    */
@@ -192,11 +230,23 @@ export class PluginManager implements IPluginManager {
   }
 
   /**
+   * 更新开发包的根目录
+   * @param path 新路径
+   */
+  public updateDevPackageRootDir(path: string): void {
+    this.devPackageDB.updatePackagePath(path);
+  }
+
+  /**
    * 下载并安装插件
    * @param pluginId 插件ID
    * @returns 安装是否成功
    */
   public async install(pluginId: string): Promise<void> {
+    if (!pluginId) {
+      throw new Error('要下载的插件ID不能为空');
+    }
+
     try {
       const userPluginDir = userPluginDB.getRootDir();
       if (!fs.existsSync(userPluginDir)) {
@@ -229,5 +279,33 @@ export class PluginManager implements IPluginManager {
       });
       throw error;
     }
+  }
+
+  /**
+   * 禁用开发仓库
+   */
+  public disableDevRepo(): void {
+    this.devPluginDB.disable();
+  }
+
+  /**
+   * 启用开发仓库
+   */
+  public enableDevRepo(): void {
+    this.devPluginDB.enable();
+  }
+
+  /**
+   * 禁用开发包
+   */
+  public disableDevPackage(): void {
+    this.devPackageDB.disable();
+  }
+
+  /**
+   * 启用开发包
+   */
+  public enableDevPackage(): void {
+    this.devPackageDB.enable();
   }
 }

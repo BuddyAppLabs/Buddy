@@ -1,119 +1,178 @@
+import { AIModelType, IAIModelConfig } from '@coffic/buddy-it';
+import { IAIManager } from './IAIManager.js';
+import { ILogManager, SettingFacade } from '@coffic/cosy-framework';
+import { StreamTextResult, UIMessage } from 'ai';
+import { ChatService } from '@/main/service/chat/ChatService.js';
+import { IModel } from '@/main/service/chat/contract/IModel.js';
+import { IProvider } from '@/main/service/chat/contract/IProvider.js';
+
+const DEFAULT_OPENAI_MODEL = 'gpt-4o';
+
 /**
  * AI管理器
- * 对buddy主应用中的AIManager进行封装，提供统一的AI服务接口
+ * 对主应用中的AIManager进行封装，提供统一的AI服务接口
  * 实现Foundation的服务模式
  */
+export class AIManager implements IAIManager {
+  private activeRequests = new Map<string, AbortController>();
+  private chatService: ChatService;
+  private logger: ILogManager;
+  private modelConfig: IAIModelConfig;
 
-import { ChatMessage } from '@coffic/buddy-types';
-import { AIContract, AIModelConfig, AIModelType } from './contracts/AIContract.js';
+  constructor(logger: ILogManager) {
+    this.logger = logger;
+    this.chatService = new ChatService(
+      undefined,
+      '你是AI助手，请根据用户的问题给出回答',
+      logger
+    );
 
-export class AIManager implements AIContract {
-    private static instance: AIManager;
-    private originalAIManager: any = null;
+    this.modelConfig = this.getDefaultModelConfig();
+    this.loadDefaultModelConfig();
+  }
 
-    private constructor() {
-        // 私有构造函数，确保单例模式
+  private async loadDefaultModelConfig() {
+    const savedConfig = SettingFacade.get<IAIModelConfig>('ai.defaultModel');
+    if (savedConfig) {
+      this.modelConfig = savedConfig;
+      this.logger.info('已加载保存的默认模型配置', {
+        defaultModelConfig: this.modelConfig,
+      });
+    }
+  }
+
+  /**
+   * 发送聊天消息
+   * 返回流式响应
+   */
+  public async createStream(
+    modelId: string,
+    messages: UIMessage[]
+  ): Promise<StreamTextResult<any, any>> {
+    const modelApiKey = await this.getModelApiKey(modelId);
+    if (!modelApiKey) {
+      throw new Error('Model key not found');
     }
 
-    /**
-     * 获取单例实例
-     */
-    public static getInstance(): AIManager {
-        if (!AIManager.instance) {
-            AIManager.instance = new AIManager();
-        }
-        return AIManager.instance;
+    return this.chatService.createStream(modelId, modelApiKey, messages);
+  }
+
+  /**
+   * 生成文本
+   * @param prompt 提示词
+   * @returns 文本
+   */
+  public async generateText(prompt: string): Promise<string> {
+    const model = this.chatService.getDefaultModel();
+    if (!model) {
+      return '没有默认模型';
     }
 
-    /**
-     * 初始化AI管理器
-     * 从主进程获取原始的AIManager实例
-     */
-    public initialize(aiManager: any): void {
-        this.originalAIManager = aiManager;
+    const modelApiKey = await this.getModelApiKey(model.id);
+    if (!modelApiKey) {
+      throw new Error('Model key not found');
     }
 
-    /**
-     * 检查是否已初始化
-     */
-    private ensureInitialized(): void {
-        if (!this.originalAIManager) {
-            throw new Error('AI管理器未初始化，请先调用 initialize() 方法');
-        }
+    const result = await this.chatService.generateText(
+      model.id,
+      modelApiKey,
+      prompt
+    );
+
+    return result;
+  }
+
+  /**
+   * 取消指定ID的请求
+   */
+  public cancelRequest(requestId: string): boolean {
+    const controller = this.activeRequests.get(requestId);
+    if (controller) {
+      controller.abort();
+      this.activeRequests.delete(requestId);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 设置默认模型配置
+   */
+  public async setDefaultModel(config: Partial<IAIModelConfig>): Promise<void> {
+    const newConfig = { ...this.modelConfig, ...config };
+    this.modelConfig = newConfig;
+    await SettingFacade.set('ai.defaultModel', newConfig);
+  }
+
+  /**
+   * 获取默认模型配置
+   */
+  public getDefaultModelConfig(): IAIModelConfig {
+    const model = this.chatService.getDefaultModel();
+    if (!model) {
+      return {
+        type: 'openai',
+        modelName: DEFAULT_OPENAI_MODEL,
+        apiKey: '',
+      };
     }
 
-    /**
-     * 发送聊天消息
-     * 返回流式响应
-     */
-    public async sendChatMessage(
-        messages: ChatMessage[],
-        onChunk: (chunk: string) => void,
-        onFinish: () => void,
-        modelConfig?: Partial<AIModelConfig>,
-        requestId?: string
-    ): Promise<void> {
-        this.ensureInitialized();
-        return this.originalAIManager.sendChatMessage(
-            messages,
-            onChunk,
-            onFinish,
-            modelConfig,
-            requestId
-        );
+    return {
+      type: model.provider as AIModelType,
+      modelName: model.id,
+      apiKey: '',
+    };
+  }
+
+  /**
+   * 获取支持的供应商列表
+   */
+  public getAvailableProviders(): IProvider[] {
+    return this.chatService.providers;
+  }
+
+  /**
+   * 获取支持的模型列表
+   */
+  public getAvailableModels(): IModel[] {
+    return this.chatService.getModelList();
+  }
+
+  /**
+   * 重置配置
+   */
+  public async resetConfig(): Promise<void> {
+    this.modelConfig = this.getDefaultModelConfig();
+    await SettingFacade.remove('ai.defaultModel');
+    await SettingFacade.remove('ai.keys.openai');
+    await SettingFacade.remove('ai.keys.anthropic');
+    await SettingFacade.remove('ai.keys.deepseek');
+  }
+
+  /**
+   * 设置指定AI提供商的API密钥
+   */
+  public async setApiKey(provider: AIModelType, key: string): Promise<void> {
+    await SettingFacade.set(`ai.keys.${provider}`, key);
+  }
+
+  /**
+   * 获取指定AI提供商的API密钥
+   */
+  public async getApiKey(provider: AIModelType): Promise<string | undefined> {
+    return SettingFacade.get<string>(`ai.keys.${provider}`);
+  }
+
+  /**
+   * 获取指定大模型的API密钥
+   */
+  public async getModelApiKey(modelId: string): Promise<string | undefined> {
+    const provider = this.chatService.getProvider(modelId)?.type;
+
+    if (!provider) {
+      return undefined;
     }
 
-    /**
-     * 取消指定ID的请求
-     */
-    public cancelRequest(requestId: string): boolean {
-        this.ensureInitialized();
-        return this.originalAIManager.cancelRequest(requestId);
-    }
-
-    /**
-     * 设置默认模型配置
-     */
-    public setDefaultModel(config: Partial<AIModelConfig>): void {
-        this.ensureInitialized();
-        this.originalAIManager.setDefaultModel(config);
-    }
-
-    /**
-     * 获取默认模型配置
-     */
-    public getDefaultModelConfig(): AIModelConfig {
-        this.ensureInitialized();
-        return this.originalAIManager.getDefaultModelConfig();
-    }
-
-    /**
-     * 获取支持的模型列表
-     */
-    public getAvailableModels(): { [key in AIModelType]: string[] } {
-        this.ensureInitialized();
-        return this.originalAIManager.getAvailableModels();
-    }
-
-    /**
-     * 重置配置
-     */
-    public resetConfig(): void {
-        this.ensureInitialized();
-        this.originalAIManager.resetConfig();
-    }
-
-    /**
-     * 启动AI服务
-     */
-    public async start(): Promise<void> {
-    }
-
-    /**
-     * 清理资源
-     */
-    public cleanup(): void {
-        // 清理AI服务相关资源
-        console.log('AI服务资源已清理');
-    }
-} 
+    return this.getApiKey(provider); // 获取模型对应的提供商的API密钥
+  }
+}

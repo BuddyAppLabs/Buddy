@@ -26,7 +26,8 @@ export class WindowServiceProvider extends ServiceProvider {
           alwaysOnTop: true,
           opacity: 0.99,
         } as IWindowConfig,
-        logger
+        logger,
+        this.app
       );
     });
 
@@ -39,7 +40,7 @@ export class WindowServiceProvider extends ServiceProvider {
   public async boot(): Promise<void> {
     // 在启动阶段设置配置
     const windowConfig = {
-      showTrafficLights: true,
+      showTrafficLights: false,
       showDebugToolbar: process.env.NODE_ENV === 'development',
       debugToolbarPosition: 'right',
       hotkey: 'Option+Space',
@@ -61,7 +62,8 @@ export class WindowServiceProvider extends ServiceProvider {
     // 设置全局快捷键
     windowManager.setupGlobalShortcut();
 
-    windowManager.createWindow();
+    // 窗口创建由AppManager统一管理，这里不再创建
+    // windowManager.createWindow();
 
     this.app.on('hotkey:triggered', () => {
       windowManager.toggleMainWindow();

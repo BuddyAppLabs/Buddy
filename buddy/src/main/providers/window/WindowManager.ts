@@ -1,26 +1,25 @@
-/**
- * 窗口管理器
- * 负责创建、管理主窗口以及处理窗口相关配置和事件
- */
 import { shell, BrowserWindow, screen, globalShortcut, app } from 'electron';
 import { EMOJI } from '../../constants.js';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
-import { ILogManager } from '@coffic/cosy-framework';
+import { Application, ILogManager } from '@coffic/cosy-framework';
 import { IWindowConfig } from './IWindowConfig.js';
 import { IWindowManager } from './IWindowManager.js';
 
-const verbose = false;
-
+/**
+ * 窗口管理器
+ * 负责创建、管理主窗口以及处理窗口相关配置和事件
+ */
 export class WindowManager implements IWindowManager {
   private mainWindow: BrowserWindow | null = null;
   private config: IWindowConfig;
   private logger: ILogManager;
+  private app: Application;
 
-  constructor(config: IWindowConfig, logger: ILogManager) {
+  constructor(config: IWindowConfig, logger: ILogManager, app: Application) {
     this.config = config;
     this.logger = logger;
-
+    this.app = app;
     // 监听 macOS 的 activate 事件
     if (process.platform === 'darwin') {
       app.on('activate', () => {
@@ -141,40 +140,37 @@ export class WindowManager implements IWindowManager {
    * 加载窗口内容
    */
   private loadWindowContent(): void {
-    if (verbose) {
-      this.logger.channel().info(`${EMOJI} [WindowManager] 加载窗口内容`);
-    }
+    this.logger.channel().info(`${EMOJI} [WindowManager] 加载窗口内容`);
+
     if (!this.mainWindow) return;
 
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      if (verbose) {
-        this.logger
-          .channel()
-          .info(
-            `${EMOJI} [WindowManager] 开发模式：加载开发服务器URL -> ${process.env['ELECTRON_RENDERER_URL']}`
-          );
-      }
+      this.logger
+        .channel()
+        .info(
+          `${EMOJI} [WindowManager] 开发模式，加载 -> ${process.env['ELECTRON_RENDERER_URL']}`
+        );
+
       this.mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
     } else {
       // 在生产环境中，使用 app.getAppPath() 获取应用根目录
       const rendererPath = join(app.getAppPath(), 'out/renderer/index.html');
-      if (verbose) {
-        this.logger
-          .channel()
-          .info(
-            `${EMOJI} [WindowManager] 生产模式：加载本地HTML文件 -> ${rendererPath}`
-          );
-      }
+
+      this.logger
+        .channel()
+        .info(
+          `${EMOJI} [WindowManager] 生产模式：加载本地HTML文件 -> ${rendererPath}`
+        );
+
       this.mainWindow.loadFile(rendererPath);
     }
 
     // 当内容加载完成后显示窗口
     this.mainWindow.once('ready-to-show', () => {
-      if (verbose) {
-        this.logger
-          .channel()
-          .info(`${EMOJI} [WindowManager] 窗口内容加载完成，显示窗口`);
-      }
+      this.logger
+        .channel()
+        .info(`${EMOJI} [WindowManager] 窗口内容加载完成，显示窗口`);
+
       if (this.mainWindow && !this.mainWindow.isDestroyed()) {
         this.mainWindow.show();
       }
@@ -202,11 +198,11 @@ export class WindowManager implements IWindowManager {
     if (!this.mainWindow || this.mainWindow.isDestroyed()) return;
 
     // 使用标志记录最后一次显示的时间
-    // @ts-ignore 忽略类型检查错误
+    // @ts-expect-error-error
     const lastShowTime = this.mainWindow.lastShowTime || 0;
     const now = Date.now();
 
-    // @ts-ignore 忽略类型检查错误
+    // @ts-expect-error-error
     const justTriggered = this.mainWindow.justTriggered === true;
 
     // 如果是失焦触发的隐藏，且窗口刚刚显示，则忽略
@@ -221,12 +217,11 @@ export class WindowManager implements IWindowManager {
    * 处理窗口显示
    */
   private async handleWindowShow(): Promise<void> {
-    console.log(`${EMOJI} [WindowManager] 处理窗口显示`);
     if (!this.mainWindow || this.mainWindow.isDestroyed()) return;
 
-    if (verbose) {
-      console.info('窗口当前不可见，执行显示操作');
-    }
+    this.logger.info('[WindowManager] 显示窗口');
+
+    this.app.emit('window:show');
 
     // 获取当前鼠标所在屏幕的信息
     const cursorPoint = screen.getCursorScreenPoint();
@@ -250,10 +245,10 @@ export class WindowManager implements IWindowManager {
     );
 
     // 记录显示时间戳
-    // @ts-ignore 忽略类型检查错误
+    // @ts-expect-error-error
     this.mainWindow.lastShowTime = Date.now();
     // 设置额外的标志，表示窗口刚刚被通过快捷键打开
-    // @ts-ignore 忽略类型检查错误
+    // @ts-expect-error-error
     this.mainWindow.justTriggered = true;
 
     // 窗口跟随桌面
@@ -319,7 +314,7 @@ export class WindowManager implements IWindowManager {
           // 延迟500毫秒后重置justTriggered标志
           setTimeout(() => {
             if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-              // @ts-ignore 忽略类型检查错误
+              // @ts-expect-error-error
               this.mainWindow.justTriggered = false;
             }
           }, 500);
@@ -361,7 +356,7 @@ export class WindowManager implements IWindowManager {
     await new Promise<void>((resolve) => {
       setTimeout(() => {
         if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-          // @ts-ignore 忽略类型检查错误
+          // @ts-expect-error-error
           this.mainWindow.justTriggered = false;
         }
         resolve();
@@ -436,7 +431,8 @@ export class WindowManager implements IWindowManager {
  */
 export function createWindowManager(
   config: IWindowConfig,
-  logger: ILogManager
+  logger: ILogManager,
+  app: Application
 ): IWindowManager {
-  return new WindowManager(config, logger);
+  return new WindowManager(config, logger, app);
 }

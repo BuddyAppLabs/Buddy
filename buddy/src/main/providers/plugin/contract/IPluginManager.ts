@@ -2,9 +2,9 @@
  * 插件系统相关契约
  */
 
-import { ExecuteResult } from '@coffic/buddy-types';
 import { PluginEntity } from '../model/PluginEntity.js';
 import { ActionEntity } from '../model/ActionEntity.js';
+import { ActionResult, SuperContext } from '@coffic/buddy-it';
 
 /**
  * 插件管理器契约
@@ -30,14 +30,14 @@ export interface IPluginManager {
    * 获取插件动作
    * @param keyword 关键词
    */
-  actions(keyword: string): Promise<ActionEntity[]>;
+  getActions(context: SuperContext): Promise<ActionEntity[]>;
 
   /**
    * 执行插件动作
    * @param actionId 动作ID
    * @param keyword 关键词
    */
-  executeAction(actionId: string, keyword: string): Promise<ExecuteResult>;
+  executeAction(context: SuperContext): Promise<ActionResult>;
 
   /**
    * 初始化插件系统
@@ -68,7 +68,42 @@ export interface IPluginManager {
   getDevPluginRootDir(): string;
 
   /**
+   * 获取开发包的根目录
+   */
+  getDevPackageRootDir(): string;
+
+  /**
+   * 获取开发包
+   */
+  getDevPackage(): Promise<PluginEntity | null>;
+
+  /**
    * 更新开发插件的根目录
    */
   updateDevPluginRootDir(path: string): void;
+
+  /**
+   * 更新开发包的根目录
+   */
+  updateDevPackageRootDir(path: string): void;
+
+  /**
+   * 禁用开发仓库
+   */
+  disableDevRepo(): void;
+
+  /**
+   * 启用开发仓库
+   */
+  enableDevRepo(): void;
+
+  /**
+   * 禁用开发包
+   */
+  disableDevPackage(): void;
+
+  /**
+   * 启用开发包
+   */
+  enableDevPackage(): void;
 }

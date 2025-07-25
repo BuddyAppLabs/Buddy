@@ -5,12 +5,14 @@
  * @param width 视图的宽度
  * @param height 视图的高度
  * @param pagePath 视图的内容，HTML文件路径
+ * @param devTools 是否打开开发者工具
  * @returns createViewArgs
  */
 export interface createViewArgs {
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    pagePath: string,
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  pagePath: string;
+  devTools?: boolean;
 }

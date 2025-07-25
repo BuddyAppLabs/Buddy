@@ -1,7 +1,7 @@
 import { app } from 'electron';
 import { join } from 'path';
 import { BasePluginRepo } from './BasePluginRepo.js';
-import { PluginType } from '@coffic/buddy-types';
+import { PluginType } from '@coffic/buddy-it';
 
 /**
  * 用户插件仓库

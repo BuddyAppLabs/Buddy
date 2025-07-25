@@ -15,7 +15,7 @@
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "@coffic/buddy-types": "workspace:*"
+    "@coffic/buddy-it": "^1.1.3"
   },
   "author": "Coffic",
   "license": "MIT"

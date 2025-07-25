@@ -4,13 +4,11 @@
 import { WebContentsView } from 'electron';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
-import { ViewBounds } from '@coffic/buddy-types';
+import { ViewBounds } from '@coffic/buddy-it';
 import { createViewArgs } from '@/types/args.js';
 import { readFileSync } from 'fs';
 import { WindowFacade } from '../providers/window/WindowFacade.js';
-import { LogFacade } from '@coffic/cosy-logger';
-
-const logger = console;
+import { LogFacade } from '@coffic/cosy-framework';
 
 const verbose = false;
 
@@ -25,7 +23,7 @@ export class ViewManager {
       throw new Error('创建视图的参数不能为空');
     }
 
-    LogFacade.channel('view').info('创建视图:', args);
+    LogFacade.channel('pluginView').info('[ViewManager] 创建视图:', args);
 
     const mainWindow = WindowFacade.getMainWindow();
     if (!mainWindow) {
@@ -38,8 +36,10 @@ export class ViewManager {
     }
 
     // 创建视图
-    const preloadPath = join(__dirname, '../preload/plugin-preload.js');
-    console.log('preloadPath', preloadPath);
+    const preloadPath = join(__dirname, '../preload/plugin-preload.mjs');
+    LogFacade.channel('pluginView').info('[ViewManager] preloadPath', {
+      preloadPath,
+    });
     const view = new WebContentsView({
       webPreferences: {
         preload: preloadPath,
@@ -51,39 +51,23 @@ export class ViewManager {
       },
     });
 
-    // 设置视图边界
-    const viewBounds = {
-      x: args.x,
-      y: args.y,
-      width: args.width,
-      height: args.height,
-    };
+    // 如果需要，打开开发者工具
+    if (args.devTools) {
+      view.webContents.openDevTools({ mode: 'detach' });
+      LogFacade.channel('pluginView').info(
+        '[ViewManager] 为视图打开开发者工具:',
+        {
+          pagePath: args.pagePath,
+        }
+      );
+    }
 
-    view.setBounds(viewBounds);
-
-    // 设置视图自动调整大小
-    mainWindow.on('resize', () => {
-      logger.info('主窗口调整大小，调整视图大小');
-    });
-
-    mainWindow.on('maximize', () => {
-      logger.info('主窗口最大化，调整视图大小');
-    });
-
-    mainWindow.on('unmaximize', () => {
-      logger.info('主窗口取消最大化，调整视图大小');
-    });
-
-    mainWindow.on('minimize', () => {
-      logger.info('主窗口最小化，调整视图大小');
-    });
-
-    mainWindow.on('restore', () => {
-      logger.info('主窗口还原，调整视图大小');
-    });
+    view.setBounds(args);
 
     mainWindow.on('close', () => {
-      logger.info('主窗口关闭，销毁所有视图');
+      LogFacade.channel('pluginView').info(
+        '[ViewManager] 主窗口关闭，销毁所有视图'
+      );
       this.destroyAllViews();
     });
 
@@ -92,7 +76,9 @@ export class ViewManager {
     try {
       htmlContent = readFileSync(args.pagePath, 'utf-8');
     } catch (error) {
-      logger.warn('加载HTML内容失败:', error);
+      LogFacade.channel('pluginView').warn('[ViewManager] 加载HTML内容失败:', {
+        error,
+      });
       htmlContent = '加载HTML内容失败: ' + error;
     }
 
@@ -104,7 +90,12 @@ export class ViewManager {
     WindowFacade.getMainWindow()!.contentView.addChildView(view);
     this.views.set(args.pagePath ?? 'wild', view);
 
-    logger.info('视图创建成功，当前视图个数', this.views.size);
+    LogFacade.channel('pluginView').info(
+      '[ViewManager] 视图创建成功，当前视图个数',
+      {
+        viewsCount: this.views.size,
+      }
+    );
 
     return view;
   }
@@ -114,19 +105,26 @@ export class ViewManager {
    */
   public destroyView(pagePath: string): void {
     if (verbose) {
-      logger.info('destroy view:', pagePath);
+      LogFacade.channel('pluginView').info('[ViewManager] destroy view:', {
+        pagePath,
+      });
     }
 
     const view = this.views.get(pagePath);
     if (!view) {
-      logger.warn('试图销毁不存在的视图:', pagePath);
+      LogFacade.channel('pluginView').warn(
+        '[ViewManager] 试图销毁不存在的视图:',
+        {
+          pagePath,
+        }
+      );
       return;
     }
 
     const mainWindow = WindowFacade.getMainWindow();
     if (!mainWindow) return;
 
-    // mainWindow.contentView.removeChildView(view);
+    mainWindow.contentView.removeChildView(view);
     this.views.delete(pagePath);
     view.webContents.close();
   }
@@ -137,13 +135,19 @@ export class ViewManager {
    * @param bounds 新的视图边界
    */
   public updateViewPosition(pagePath: string, bounds: ViewBounds): void {
-    if (verbose) {
-      logger.info('update view position:', pagePath, bounds);
-    }
+    LogFacade.channel('pluginView').info(
+      '[ViewManager] update view position:',
+      {
+        pagePath,
+        bounds,
+      }
+    );
 
     const view = this.views.get(pagePath);
     if (!view) {
-      logger.warn('试图更新不存在的视图:', pagePath);
+      LogFacade.channel('pluginView').warn('试图更新不存在的视图:', {
+        pagePath,
+      });
       return;
     }
 
@@ -151,16 +155,55 @@ export class ViewManager {
   }
 
   public async upsertView(args: createViewArgs): Promise<void> {
-    LogFacade.channel('view').info('upsert view:', args);
+    LogFacade.channel('pluginView').info('[ViewManager] upsert view:', args);
 
     const view = this.views.get(args.pagePath) ?? (await this.createView(args));
 
-    view.setBounds({
+    const validatedBounds = {
       x: args.x,
       y: args.y,
       width: args.width,
       height: args.height,
-    });
+    };
+
+    view.setBounds(validatedBounds);
+  }
+
+  /**
+   * 批量更新或创建视图
+   * @param viewsArgs 多个视图的创建/更新参数
+   */
+  public async batchUpsertViews(viewsArgs: createViewArgs[]): Promise<void> {
+    LogFacade.channel('pluginView').info(
+      `[ViewManager] 批量更新视图，数量: ${viewsArgs.length}`
+    );
+
+    // 并行处理所有视图更新
+    const results = await Promise.allSettled(
+      viewsArgs.map(async (args) => {
+        try {
+          await this.upsertView(args);
+          return { success: true, pagePath: args.pagePath };
+        } catch (error) {
+          LogFacade.channel('pluginView').error(
+            `[ViewManager] 批量更新视图失败 ${args.pagePath}:`,
+            {
+              error,
+            }
+          );
+          return { success: false, pagePath: args.pagePath, error };
+        }
+      })
+    );
+
+    // 统计结果
+    const successCount = results.filter(
+      (result) => result.status === 'fulfilled' && result.value.success
+    ).length;
+
+    LogFacade.channel('pluginView').info(
+      `[ViewManager] 批量更新完成，成功: ${successCount}/${viewsArgs.length}`
+    );
   }
 
   /**

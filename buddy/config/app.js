@@ -5,7 +5,6 @@
 export default {
   // 应用基础信息
   name: env('APP_NAME', 'Buddy'),
-  version: '1.3.18',
   description: 'A spotlight-like productivity application',
 
   // 环境配置

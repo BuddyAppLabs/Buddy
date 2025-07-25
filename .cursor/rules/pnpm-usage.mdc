@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# PNPM Usage
+
+When installing packages, use `pnpm`.
+
+- To add a dependency: `pnpm add <package-name>`
+- To add a dev dependency: `pnpm add -D <package-name>`

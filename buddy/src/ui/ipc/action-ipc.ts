@@ -1,4 +1,4 @@
-import { IpcResponse } from '@coffic/buddy-types';
+import { ActionResult, IpcResponse } from '@coffic/buddy-it';
 import { SendableAction } from '@/types/sendable-action.js';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
 const ipc = window.ipc;
@@ -16,7 +16,10 @@ export const actionIpc = {
     }
   },
 
-  async executeAction(actionId: string, keyword: string): Promise<any> {
+  async executeAction(
+    actionId: string,
+    keyword: string
+  ): Promise<ActionResult> {
     const response = await ipc.invoke(
       IPC_METHODS.EXECUTE_PLUGIN_ACTION,
       actionId,
@@ -27,7 +30,7 @@ export const actionIpc = {
       throw new Error(response.error);
     }
 
-    return response.data;
+    return response.data as ActionResult;
   },
 
   async getActionView(actionId: string): Promise<string> {
