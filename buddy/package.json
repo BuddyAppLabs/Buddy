@@ -1,6 +1,6 @@
 {
   "name": "buddy",
-  "version": "1.5.30-beta.0",
+  "version": "1.5.30-beta.1",
   "description": "An Electron application with Vue and TypeScript",
   "type": "module",
   "main": "./out/main/index.js",
