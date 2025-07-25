@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'buddy/**'
+      - 'packages/buddy/**'
       - '.github/workflows/release.yaml'
 
 permissions:
@@ -36,7 +36,7 @@ jobs:
       - name: Calculate and Update Final Version
         id: version
         run: |
-          cd buddy
+          cd packages/buddy
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           # 从 beta 版本中提取基础版本号
           NEW_VERSION=$(echo $CURRENT_VERSION | cut -d'-' -f1)
@@ -62,8 +62,8 @@ jobs:
 
       - name: Build, Sign, and Notarize macOS App
         run: |
-          yq -i 'del(.mac.identity)' buddy/electron-builder.yml
-          yq -i '.mac.notarize = true' buddy/electron-builder.yml
+          yq -i 'del(.mac.identity)' packages/buddy/electron-builder.yml
+          yq -i '.mac.notarize = true' packages/buddy/electron-builder.yml
           pnpm build:buddy:mac
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: true
@@ -75,7 +75,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add buddy/package.json
+          git add packages/buddy/package.json
           git commit -m "🔖 CI: Release version ${{ steps.version.outputs.version }}"
           git tag -a "v${{ steps.version.outputs.version }}" -m "Release v${{ steps.version.outputs.version }}"
           git push --follow-tags
@@ -87,10 +87,10 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            buddy/dist/*.dmg
-            buddy/dist/*.zip
-            buddy/dist/*.yml
-            buddy/dist/*.blockmap
+            packages/buddy/dist/*.dmg
+            packages/buddy/dist/*.zip
+            packages/buddy/dist/*.yml
+            packages/buddy/dist/*.blockmap
 
       - name: Sync back to dev branch
         run: |
