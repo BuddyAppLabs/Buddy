@@ -9,7 +9,6 @@
   import { useAppStore } from '@/ui/stores/app-store';
   import ErrorNotification from '@/ui/layout/ErrorNotification.vue';
   import { useErrorStore } from '@/ui/stores/error-store';
-  import VersionDialog from '@/ui/components/bottom/VersionDialog.vue';
   import { computed } from 'vue';
   import { globalProgress } from '@renderer/composables/useProgress';
   import { Progress } from '@coffic/cosy-ui/vue';
@@ -124,9 +123,6 @@
 
     <!-- 错误通知 -->
     <ErrorNotification />
-
-    <!-- 版本信息对话框 -->
-    <VersionDialog v-model="appStore.showVersionDialog" />
 
     <!-- 全局警告提示 -->
     <Transition name="alert-fade">
