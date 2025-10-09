@@ -19,10 +19,30 @@
     isFocused.value = false;
   }
 
+  function deleteLastChar() {
+    if (searchInput.value) {
+      const input = searchInput.value;
+      const value = input.value;
+      if (value.length > 0) {
+        input.value = value.slice(0, -1);
+        keywordStore.keyword = input.value;
+        // 触发输入事件以确保UI更新
+        const event = new Event('input', { bubbles: true });
+        input.dispatchEvent(event);
+      }
+    }
+  }
+
   function insertCharFromGlobalKey(char: string) {
     if (isFocused.value) return; // 已聚焦时不插入，避免重复
     if (searchInput.value) {
       const input = searchInput.value;
+      // 处理 Backspace
+      if (char === 'Backspace') {
+        deleteLastChar();
+        return;
+      }
+
       // 插入字符到当前光标处
       const start = input.selectionStart ?? input.value.length;
       const end = input.selectionEnd ?? input.value.length;
