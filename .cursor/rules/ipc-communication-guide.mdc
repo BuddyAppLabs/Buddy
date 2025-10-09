@@ -1,8 +1,7 @@
 ---
-description: 
-globs: 
-alwaysApply: false
+alwaysApply: true
 ---
+
 # IPC 通信设计指南
 
 本指南概述了项目中进程间通信（IPC）的设计理念和实现细节，旨在确保前后端通信的一致性、健壮性和可维护性。
@@ -37,8 +36,8 @@ export interface IpcResponse<T> {
 }
 ```
 
--   如果操作成功，响应为 `{ success: true, data: <结果> }`。
--   如果操作失败，响应为 `{ success: false, error: <错误信息> }`。
+- 如果操作成功，响应为 `{ success: true, data: <结果> }`。
+- 如果操作失败，响应为 `{ success: false, error: <错误信息> }`。
 
 ### 3. 后端：业务逻辑路由
 
@@ -75,7 +74,7 @@ if (response && response.success && Array.isArray(response.data)) {
 
 ## 结论
 
--   **后端开发者**: 在编写路由处理器时，只需返回业务数据本身。
--   **前端开发者**: 在消费 IPC 数据时，必须预料到数据会被 `{ success, data }` 结构包装，并进行相应的处理。
+- **后端开发者**: 在编写路由处理器时，只需返回业务数据本身。
+- **前端开发者**: 在消费 IPC 数据时，必须预料到数据会被 `{ success, data }` 结构包装，并进行相应的处理。
 
 遵循此规则可以有效避免因前后端数据结构不匹配而导致的各种错误。

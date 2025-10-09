@@ -65,14 +65,20 @@
         {{ action.description }}
       </p>
 
-      <p class="text-xs text-secondary/70">
-        {{ action.pluginId }}
-      </p>
+      <div class="flex flex-row gap-2">
+        <Badge
+          size="xs"
+          :variant="action.pluginType === 'user' ? 'primary' : 'secondary'">
+          {{ action.pluginType }}
+        </Badge>
+        <p class="text-xs text-secondary/70">
+          {{ action.pluginId }}
+        </p>
+        <p v-if="action.pluginVersion" class="text-xs text-secondary/70">
+          v{{ action.pluginVersion }}
+        </p>
+      </div>
     </div>
-
-    <Badge :variant="action.pluginType === 'user' ? 'primary' : 'secondary'">
-      {{ action.pluginType }}
-    </Badge>
   </ListItem>
 </template>
 
