@@ -8,10 +8,13 @@
  */
 
 import { createRouter, createWebHashHistory } from 'vue-router';
-import PluginStoreView from '@/ui/views/MarketView.vue';
 import { useAppStore } from '@/ui/stores/app-store';
 import HomeView from '@/ui/views/HomeView.vue';
 import HeroView from '@/ui/views/HeroView.vue';
+import LocalRepo from '@/ui/views/LocalRepo.vue';
+import RemoteRepo from '@/ui/views/RemoteRepo.vue';
+import DevRepo from '@/ui/views/DevRepo.vue';
+import DevPackage from '@/ui/views/DevPackage.vue';
 
 export type ViewType =
   | 'home'
@@ -38,7 +41,6 @@ const routes = [
   {
     path: '/plugins',
     name: 'plugins',
-    component: PluginStoreView,
     meta: {
       title: '插件商店',
       viewType: 'plugins',
@@ -51,7 +53,7 @@ const routes = [
       {
         path: 'user',
         name: 'market-user',
-        component: () => import('@/ui/components/market/LocalRepo.vue'),
+        component: LocalRepo,
         meta: {
           title: '本地仓库',
           viewType: 'market-user',
@@ -60,7 +62,7 @@ const routes = [
       {
         path: 'remote',
         name: 'market-remote',
-        component: () => import('@/ui/components/market/RemoteRepo.vue'),
+        component: RemoteRepo,
         meta: {
           title: '远程仓库',
           viewType: 'market-remote',
@@ -69,7 +71,7 @@ const routes = [
       {
         path: 'dev-repo',
         name: 'market-dev-repo',
-        component: () => import('@/ui/components/market/DevRepo.vue'),
+        component: DevRepo,
         meta: {
           title: '开发仓库',
           viewType: 'market-dev-repo',
@@ -78,7 +80,7 @@ const routes = [
       {
         path: 'dev-package',
         name: 'market-dev-package',
-        component: () => import('@/ui/components/market/DevPackage.vue'),
+        component: DevPackage,
         meta: {
           title: '开发包',
           viewType: 'market-dev-package',

@@ -1,24 +1,27 @@
 <script setup lang="ts">
   import { Container } from '@coffic/cosy-ui/vue';
-  import { useMarket } from '../composables/useMarket';
   import { RouterLink, useRoute } from 'vue-router';
 
-  const { loadPlugins } = useMarket();
+  interface Props {
+    hideTabs?: boolean;
+  }
+
+  withDefaults(defineProps<Props>(), {
+    hideTabs: false,
+  });
+
   const route = useRoute();
 
   // 根据当前路由确定活动的tab
   const getActiveTab = () => {
     return route.name || 'market-user';
   };
-
-  // 当路由改变时重新加载数据
-  loadPlugins();
 </script>
 
 <template>
   <Container width="full" flex="col" gap="lg">
     <!-- 操作栏 -->
-    <Container width="full" background="primary/10">
+    <Container v-if="!hideTabs" width="full" background="primary/10">
       <RouterLink
         to="/plugins/user"
         role="tab"
@@ -51,6 +54,6 @@
       </RouterLink>
     </Container>
 
-    <router-view />
+    <slot />
   </Container>
 </template>
