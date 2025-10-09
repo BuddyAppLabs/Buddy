@@ -1,16 +1,50 @@
 <script setup lang="ts">
   import { ref, onMounted, nextTick, onUnmounted } from 'vue';
-  import { RiSearchLine, RiStore2Line } from '@remixicon/vue';
+  import {
+    RiSearchLine,
+    RiComputerLine,
+    RiCloudLine,
+    RiCodeBoxLine,
+    RiFolderZipLine,
+  } from '@remixicon/vue';
   import { Button } from '@coffic/cosy-ui/vue';
   import { useNavigation } from '@/ui/composables/useNavigation';
   import { eventBus } from '@/ui/event-bus';
   import { AppEvents } from '@coffic/buddy-it';
   import { useKeywordStore } from '@/ui/stores/keyword-store';
+  import { useRouter } from 'vue-router';
+  import { useAppStore } from '@/ui/stores/app-store';
 
   const keywordStore = useKeywordStore();
   const searchInput = ref<HTMLInputElement | null>(null);
-  const { goToPluginStore, goToHome } = useNavigation();
+  const { goToHome } = useNavigation();
+  const router = useRouter();
+  const appStore = useAppStore();
   const isFocused = ref(false);
+
+  // 跳转到本地仓库
+  const goToMarketUser = () => {
+    router.push('/plugins/user');
+    appStore.setView('plugins');
+  };
+
+  // 跳转到远程仓库
+  const goToMarketRemote = () => {
+    router.push('/plugins/remote');
+    appStore.setView('plugins');
+  };
+
+  // 跳转到开发仓库
+  const goToMarketDevRepo = () => {
+    router.push('/plugins/dev-repo');
+    appStore.setView('plugins');
+  };
+
+  // 跳转到开发包
+  const goToMarketDevPackage = () => {
+    router.push('/plugins/dev-package');
+    appStore.setView('plugins');
+  };
 
   function onFocus() {
     isFocused.value = true;
@@ -92,10 +126,44 @@
     </div>
 
     <div class="flex flex-row gap-2">
-      <Button size="sm" variant="ghost" @click="goToPluginStore">
-        <RiStore2Line class="w-4 h-4 no-drag-region" />
+      <!-- 本地仓库 -->
+      <Button
+        size="sm"
+        variant="ghost"
+        @click="goToMarketUser"
+        tooltip="本地仓库">
+        <RiComputerLine class="w-4 h-4 no-drag-region" />
       </Button>
-      <Button size="sm" variant="ghost" @click="goToHome">
+
+      <!-- 远程仓库 -->
+      <Button
+        size="sm"
+        variant="ghost"
+        @click="goToMarketRemote"
+        tooltip="远程仓库">
+        <RiCloudLine class="w-4 h-4 no-drag-region" />
+      </Button>
+
+      <!-- 开发仓库 -->
+      <Button
+        size="sm"
+        variant="ghost"
+        @click="goToMarketDevRepo"
+        tooltip="开发仓库">
+        <RiCodeBoxLine class="w-4 h-4 no-drag-region" />
+      </Button>
+
+      <!-- 开发包 -->
+      <Button
+        size="sm"
+        variant="ghost"
+        @click="goToMarketDevPackage"
+        tooltip="开发包">
+        <RiFolderZipLine class="w-4 h-4 no-drag-region" />
+      </Button>
+
+      <!-- 首页 -->
+      <Button size="sm" variant="ghost" @click="goToHome" tooltip="首页">
         <RiSearchLine class="w-4 h-4 no-drag-region" />
       </Button>
     </div>
