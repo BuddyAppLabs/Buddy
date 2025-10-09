@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { onMounted, onUnmounted } from 'vue';
   import SearchBar from '@/ui/layout/SearchBar.vue';
+  import BottomNavbar from '@/ui/layout/BottomNavbar.vue';
   import { ConfirmDialog } from '@coffic/cosy-ui/vue';
   import { Alert } from '@coffic/cosy-ui/vue';
   import { globalConfirm } from '@renderer/composables/useConfirm';
@@ -155,6 +156,9 @@
         </transition>
       </router-view>
     </div>
+
+    <!-- 底部导航栏 -->
+    <BottomNavbar />
   </div>
 </template>
 
