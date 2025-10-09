@@ -7,7 +7,7 @@ export function useNavigation() {
 
   // 跳转到插件商店
   const goToPluginStore = () => {
-    router.push('/plugins');
+    router.push('/plugins/user');
     appStore.setView('plugins');
   };
 

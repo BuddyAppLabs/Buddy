@@ -13,7 +13,16 @@ import { useAppStore } from '@/ui/stores/app-store';
 import HomeView from '@/ui/views/HomeView.vue';
 import HeroView from '@/ui/views/HeroView.vue';
 
-export type ViewType = 'home' | 'plugins' | 'chat' | 'plugin-grid' | 'hero';
+export type ViewType =
+  | 'home'
+  | 'plugins'
+  | 'chat'
+  | 'plugin-grid'
+  | 'hero'
+  | 'market-user'
+  | 'market-remote'
+  | 'market-dev-repo'
+  | 'market-dev-package';
 
 // 路由配置
 const routes = [
@@ -34,6 +43,48 @@ const routes = [
       title: '插件商店',
       viewType: 'plugins',
     },
+    children: [
+      {
+        path: '',
+        redirect: 'user',
+      },
+      {
+        path: 'user',
+        name: 'market-user',
+        component: () => import('@/ui/components/market/LocalRepo.vue'),
+        meta: {
+          title: '本地仓库',
+          viewType: 'market-user',
+        },
+      },
+      {
+        path: 'remote',
+        name: 'market-remote',
+        component: () => import('@/ui/components/market/RemoteRepo.vue'),
+        meta: {
+          title: '远程仓库',
+          viewType: 'market-remote',
+        },
+      },
+      {
+        path: 'dev-repo',
+        name: 'market-dev-repo',
+        component: () => import('@/ui/components/market/DevRepo.vue'),
+        meta: {
+          title: '开发仓库',
+          viewType: 'market-dev-repo',
+        },
+      },
+      {
+        path: 'dev-package',
+        name: 'market-dev-package',
+        component: () => import('@/ui/components/market/DevPackage.vue'),
+        meta: {
+          title: '开发包',
+          viewType: 'market-dev-package',
+        },
+      },
+    ],
   },
   {
     path: '/hero',
