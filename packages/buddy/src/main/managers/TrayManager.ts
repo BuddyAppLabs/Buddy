@@ -70,7 +70,21 @@ export class TrayManager {
       console.log('📁 图标文件存在:', fs.existsSync(iconPath));
     } else {
       // 生产环境：从应用资源目录获取
-      iconPath = path.join(process.resourcesPath, 'icon.png');
+      // 首先尝试从 resources 目录获取
+      iconPath = path.join(process.resourcesPath, 'resources', 'tray.png');
+
+      // 如果找不到，尝试直接从 resourcesPath 获取
+      if (!fs.existsSync(iconPath)) {
+        iconPath = path.join(process.resourcesPath, 'tray.png');
+      }
+
+      // 如果还是找不到，尝试从 app.getAppPath 获取
+      if (!fs.existsSync(iconPath)) {
+        iconPath = path.join(app.getAppPath(), 'resources', 'tray.png');
+      }
+
+      console.log('📁 生产环境图标路径:', iconPath);
+      console.log('📁 图标文件存在:', fs.existsSync(iconPath));
     }
 
     // 创建适合托盘的图标
