@@ -41,6 +41,13 @@ jobs:
           # 从 beta 版本中提取基础版本号
           NEW_VERSION=$(echo $CURRENT_VERSION | cut -d'-' -f1)
 
+          # 检查标签是否存在，如果存在则递增版本号
+          while git rev-parse "v$NEW_VERSION" >/dev/null 2>&1; do
+            echo "Tag v$NEW_VERSION already exists, incrementing patch version..."
+            # 递增版本号的最后一位
+            NEW_VERSION=$(echo $NEW_VERSION | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+          done
+
           echo "New version: $NEW_VERSION"
           perl -pi -e "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" package.json
 
