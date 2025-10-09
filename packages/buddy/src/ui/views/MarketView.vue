@@ -16,9 +16,9 @@
 </script>
 
 <template>
-  <Container border flex="col">
+  <Container width="full" flex="col" gap="lg">
     <!-- 操作栏 -->
-    <Container size="full" border>
+    <Container width="full" background="primary/10">
       <RouterLink
         to="/plugins/user"
         role="tab"
