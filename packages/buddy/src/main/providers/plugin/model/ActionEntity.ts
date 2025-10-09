@@ -21,6 +21,7 @@ export class ActionEntity implements SuperAction {
   icon: string;
   pluginId: string;
   pluginType: PluginType;
+  pluginVersion: string;
   keywords: string[];
   category?: string;
 
@@ -48,6 +49,7 @@ export class ActionEntity implements SuperAction {
       icon?: string;
       pluginId: string;
       pluginType: PluginType;
+      pluginVersion: string;
       keywords?: string[];
       category?: string;
       viewPath?: string;
@@ -62,6 +64,7 @@ export class ActionEntity implements SuperAction {
     this.icon = action.icon || '';
     this.pluginId = action.pluginId;
     this.pluginType = action.pluginType;
+    this.pluginVersion = action.pluginVersion;
     this.keywords = action.keywords || [];
     this.category = action.category;
     this.viewPath = action.viewPath;
@@ -115,6 +118,7 @@ export class ActionEntity implements SuperAction {
         ...action,
         pluginId: plugin.id,
         pluginType: plugin.type,
+        pluginVersion: plugin.version,
         keywords: [],
       },
       plugin
@@ -129,6 +133,7 @@ export class ActionEntity implements SuperAction {
       {
         ...action,
         pluginId: plugin.id,
+        pluginVersion: plugin.version,
         keywords: [],
       },
       plugin
@@ -240,6 +245,7 @@ export class ActionEntity implements SuperAction {
       viewMode: this.viewMode,
       devTools: this.devTools,
       description: this.description,
+      pluginVersion: this.pluginVersion,
     };
   }
 }

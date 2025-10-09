@@ -74,6 +74,9 @@
         <p class="text-xs text-secondary/70">
           {{ action.pluginId }}
         </p>
+        <p v-if="action.pluginVersion" class="text-xs text-secondary/70">
+          v{{ action.pluginVersion }}
+        </p>
       </div>
     </div>
   </ListItem>

@@ -68,4 +68,9 @@ export interface SendableAction {
    * 是否启用开发者工具
    */
   devTools?: boolean;
+
+  /**
+   * 插件版本
+   */
+  pluginVersion?: string;
 }
