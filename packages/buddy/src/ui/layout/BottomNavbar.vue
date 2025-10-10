@@ -69,14 +69,14 @@
     </Button>
 
     <!-- 开发仓库 -->
-    <Button
+    <!-- <Button
       size="sm"
       variant="ghost"
       @click="goToMarketDevRepo"
       :class="{ 'bg-primary/10': isRouteActive('market-dev-repo') }"
       tooltip="开发仓库">
       <RiCodeBoxLine class="w-4 h-4" />
-    </Button>
+    </Button> -->
 
     <!-- 开发包 -->
     <Button

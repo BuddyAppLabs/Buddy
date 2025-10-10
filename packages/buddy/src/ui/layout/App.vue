@@ -2,7 +2,7 @@
   import { onMounted, onUnmounted } from 'vue';
   import SearchBar from '@/ui/layout/SearchBar.vue';
   import StatusBar from '@/ui/layout/StatusBar.vue';
-  import { ConfirmDialog } from '@coffic/cosy-ui/vue';
+  import { ConfirmDialog, Container } from '@coffic/cosy-ui/vue';
   import { Alert } from '@coffic/cosy-ui/vue';
   import { globalConfirm } from '@renderer/composables/useConfirm';
   import { globalAlert } from '@renderer/composables/useAlert';
@@ -98,7 +98,12 @@
 </script>
 
 <template>
-  <div class="flex flex-col h-screen">
+  <Container
+    class="flex flex-col h-screen"
+    width="full"
+    margin="none"
+    padding="none"
+    background="stripes">
     <!-- 全局进度条 -->
     <div class="absolute top-14 left-1/2 transform -translate-x-1/2">
       <Progress
@@ -140,9 +145,9 @@
     <KeyCatcher :showKey="true" @globalKey="handleCharFromGlobalKey" />
 
     <!-- 搜索区域 - 这里是可拖动区域 -->
-    <div class="w-full shadow-lg">
+    <Container width="full" padding="xs">
       <SearchBar />
-    </div>
+    </Container>
 
     <!-- 内容区域 -->
     <div class="overflow-auto px-4 pt-6 pb-24 no-drag-region h-full">
@@ -155,7 +160,7 @@
 
     <!-- 状态栏 -->
     <StatusBar />
-  </div>
+  </Container>
 </template>
 
 <style>
