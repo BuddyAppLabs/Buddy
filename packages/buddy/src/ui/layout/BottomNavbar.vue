@@ -19,25 +19,21 @@
   // 跳转到本地仓库
   const goToMarketUser = () => {
     router.push('/plugins/user');
-    appStore.setView('plugins');
   };
 
   // 跳转到远程仓库
   const goToMarketRemote = () => {
     router.push('/plugins/remote');
-    appStore.setView('plugins');
   };
 
   // 跳转到开发仓库
   const goToMarketDevRepo = () => {
     router.push('/plugins/dev-repo');
-    appStore.setView('plugins');
   };
 
   // 跳转到开发包
   const goToMarketDevPackage = () => {
     router.push('/plugins/dev-package');
-    appStore.setView('plugins');
   };
 
   // 判断当前路由是否匹配

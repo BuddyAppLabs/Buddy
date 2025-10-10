@@ -8,24 +8,12 @@
  */
 
 import { createRouter, createWebHashHistory } from 'vue-router';
-import { useAppStore } from '@/ui/stores/app-store';
 import HomeView from '@/ui/views/HomeView.vue';
 import HeroView from '@/ui/views/HeroView.vue';
 import LocalRepo from '@/ui/views/LocalRepo.vue';
 import RemoteRepo from '@/ui/views/RemoteRepo.vue';
 import DevRepo from '@/ui/views/DevRepo.vue';
 import DevPackage from '@/ui/views/DevPackage.vue';
-
-export type ViewType =
-  | 'home'
-  | 'plugins'
-  | 'chat'
-  | 'plugin-grid'
-  | 'hero'
-  | 'market-user'
-  | 'market-remote'
-  | 'market-dev-repo'
-  | 'market-dev-package';
 
 // 路由配置
 const routes = [
@@ -106,17 +94,6 @@ router.beforeEach((to, _from, next) => {
   // 设置窗口标题
   if (to.meta.title) {
     document.title = `GitOK - ${to.meta.title}`;
-  }
-
-  // 同步更新appStore的currentView状态
-  if (to.meta.viewType) {
-    // 注意：这里需要延迟调用，因为在路由钩子中不能立即使用pinia store
-    setTimeout(() => {
-      const appStore = useAppStore();
-      appStore.setView(
-        to.meta.viewType as 'home' | 'plugins' | 'chat' | 'plugin-grid'
-      );
-    }, 0);
   }
 
   next();

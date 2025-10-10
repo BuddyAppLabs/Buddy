@@ -1,12 +1,10 @@
 import { defineStore } from 'pinia';
 import { AppEvents, SuperAction, SuperApp } from '@coffic/buddy-it';
 import { stateApi } from '../ipc/state-api';
-import { ViewType } from '../router';
 
 const ipc = window.ipc;
 
 interface AppState {
-  currentView: ViewType;
   showPluginStore: boolean;
   selectedAction: SuperAction | null;
   isActive: boolean; // 添加窗口激活状态
@@ -17,7 +15,6 @@ interface AppState {
 
 export const useAppStore = defineStore('app', {
   state: (): AppState => ({
-    currentView: 'home',
     showPluginStore: false,
     selectedAction: null,
     isActive: true, // 默认为激活状态
@@ -35,10 +32,6 @@ export const useAppStore = defineStore('app', {
 
     onUnmounted() {
       this.cleanupWindowActiveListeners();
-    },
-
-    setView(view: ViewType) {
-      this.currentView = view;
     },
 
     togglePluginStore() {

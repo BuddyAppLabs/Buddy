@@ -1,20 +1,13 @@
 <script setup lang="ts">
-  import { ref, onMounted, nextTick, onUnmounted } from 'vue';
-  import { RiSearchLine } from '@remixicon/vue';
-  import { Button } from '@coffic/cosy-ui/vue';
+  import { ref, onMounted, nextTick, onUnmounted, watch } from 'vue';
   import { useNavigation } from '@/ui/composables/useNavigation';
   import { eventBus } from '@/ui/event-bus';
   import { AppEvents } from '@coffic/buddy-it';
   import { useKeywordStore } from '@/ui/stores/keyword-store';
-  import { useRouter, useRoute } from 'vue-router';
-  import { useAppStore } from '@/ui/stores/app-store';
 
   const keywordStore = useKeywordStore();
   const searchInput = ref<HTMLInputElement | null>(null);
   const { goToHome } = useNavigation();
-  const router = useRouter();
-  const route = useRoute();
-  const appStore = useAppStore();
   const isFocused = ref(false);
 
   function onFocus() {
@@ -79,6 +72,13 @@
   onUnmounted(() => {
     eventBus.off('key', insertCharFromGlobalKey);
   });
+
+  watch(
+    () => keywordStore.keyword,
+    () => {
+      goToHome();
+    }
+  );
 </script>
 
 <template>

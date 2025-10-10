@@ -42,7 +42,7 @@
     leave-from-class="opacity-100 translate-y-0"
     leave-to-class="opacity-0 translate-y-2">
     <div
-      class="p-4 rounded-lg bg-info/50 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col">
+      class="p-4 rounded-lg bg-info/90 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col">
       <!-- 插件包标题 -->
       <div class="flex justify-between items-center text-sm mb-2">
         <h3 class="mb-2">{{ package.name }}</h3>
