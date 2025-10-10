@@ -3,7 +3,6 @@
   import { ref } from 'vue';
   import { useAlert } from '@renderer/composables/useAlert';
   import { ListItem } from '@coffic/cosy-ui/vue';
-  import { Badge } from '@coffic/cosy-ui/vue';
   import { useActions } from '@/ui/composables/useActions';
   import { useActionActiveStore } from '@/ui/stores/action-active-store';
   import { useKeywordStore } from '@/ui/stores/keyword-store';
@@ -50,6 +49,20 @@
       }, 300);
     }
   };
+
+  // 根据插件类型返回相应的颜色类
+  const getPluginInfoClass = (type: string) => {
+    switch (type) {
+      case 'user':
+        return 'text-blue-500';
+      case 'system':
+        return 'text-green-500';
+      case 'remote':
+        return 'text-purple-500';
+      default:
+        return 'text-gray-500';
+    }
+  };
 </script>
 
 <template>
@@ -66,15 +79,13 @@
       </p>
 
       <div class="flex flex-row gap-2">
-        <Badge
-          size="xs"
-          :variant="action.pluginType === 'user' ? 'primary' : 'secondary'">
-          {{ action.pluginType }}
-        </Badge>
-        <p class="text-xs text-secondary/70">
+        <p class="text-xs" :class="getPluginInfoClass(action.pluginType)">
           {{ action.pluginId }}
         </p>
-        <p v-if="action.pluginVersion" class="text-xs text-secondary/70">
+        <p
+          v-if="action.pluginVersion"
+          class="text-xs"
+          :class="getPluginInfoClass(action.pluginType)">
           v{{ action.pluginVersion }}
         </p>
       </div>
