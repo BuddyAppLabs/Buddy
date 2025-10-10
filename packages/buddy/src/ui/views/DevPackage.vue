@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import PluginCard from '@/ui/components/home/PackageCard.vue';
   import { useDevPackage } from '@/ui/composables/useDevPackage';
-  import { Alert, ToolBar } from '@coffic/cosy-ui/vue';
+  import { Alert, Button, Container, ToolBar } from '@coffic/cosy-ui/vue';
   import ButtonFolder from '@/ui/components/cosy/ButtonFolder.vue';
   import ButtonRefresh from '@/ui/components/cosy/ButtonRefresh.vue';
 
@@ -26,7 +26,7 @@
           <ButtonFolder
             @click="openDevPackageDirectory"
             shape="circle"
-            size="sm"
+            size="xs"
             tooltip="打开插件目录" />
           <ButtonRefresh
             @click="loadDevPackage"
@@ -34,34 +34,24 @@
             :loading="isLoading"
             :disabled="isLoading"
             tooltip="刷新插件列表"
-            size="sm" />
+            size="xs" />
         </div>
       </template>
     </ToolBar>
-    <!-- 开发仓库目录信息 -->
-    <div class="mb-4 w-full">
-      <div
-        class="flex items-center justify-between p-2 rounded-md bg-base-200 text-sm w-full">
-        <span
-          >当前开发包目录: <code>{{ devPackageDirectory }}</code></span
-        >
 
-        <div class="flex flex-row gap-2">
-          <button class="btn btn-xs btn-outline" @click="setDevPackageDir">
-            更改
-          </button>
-          <button class="btn btn-xs btn-outline" @click="resetDevPackageDir">
-            重置
-          </button>
-          <button class="btn btn-xs btn-outline" @click="disableDevPackage">
-            禁用
-          </button>
-          <button class="btn btn-xs btn-outline" @click="enableDevPackage">
-            启用
-          </button>
-        </div>
+    <!-- 开发仓库目录信息 -->
+    <Container width="full" background="accent" flex="row" justify="between">
+      <span
+        >当前开发包目录: <code>{{ devPackageDirectory }}</code></span
+      >
+
+      <div class="flex flex-row gap-2">
+        <Button size="xs" @click="setDevPackageDir"> 更改 </Button>
+        <Button size="xs" @click="resetDevPackageDir"> 重置 </Button>
+        <Button size="xs" @click="disableDevPackage"> 禁用 </Button>
+        <Button size="xs" @click="enableDevPackage"> 启用 </Button>
       </div>
-    </div>
+    </Container>
 
     <!-- 插件 -->
     <template v-if="devPackageDirectory">
