@@ -49,39 +49,41 @@
       </div>
 
       <!-- 插件包基本信息 -->
-      <div class="flex justify-start items-center text-sm">
+      <div class="flex justify-between items-center text-sm">
         <span>v{{ package.version }} ｜ {{ package.author }}</span>
-      </div>
 
-      <!-- 操作区域 -->
-      <div
-        class="mt-4 flex flex-wrap gap-2 items-center"
-        v-if="package.type != 'dev'">
-        <!-- 本地插件操作 -->
-        <template v-if="package.type === 'user'">
-          <div v-if="isUserPlugin">
-            <!-- 卸载按钮 -->
+        <!-- 操作区域 -->
+        <div class="flex gap-1" v-if="package.type != 'dev'">
+          <!-- 本地插件操作 -->
+          <template v-if="package.type === 'user'">
+            <div v-if="isUserPlugin">
+              <!-- 卸载按钮 -->
+              <Button
+                size="xs"
+                variant="primary"
+                @click="confirmUninstall(package.id)"
+                :loading="uninstallingPlugins.has(package.id)"
+                class="p-1">
+                <RiDeleteBinLine class="h-4 w-4" />
+              </Button>
+            </div>
+          </template>
+
+          <!-- 远程插件操作 -->
+          <template v-if="package.type == 'remote'">
             <Button
-              size="sm"
+              @click="handleDownload(package.id)"
               variant="primary"
-              @click="confirmUninstall(package.id)"
-              :loading="uninstallingPlugins.has(package.id)">
-              <RiDeleteBinLine class="h-4 w-4" />
+              size="xs"
+              :loading="isDownloading"
+              :disabled="isDownloading || isInstalled"
+              class="p-1">
+              {{
+                isInstalled ? '已安装' : isDownloading ? '下载中...' : '下载'
+              }}
             </Button>
-          </div>
-        </template>
-
-        <!-- 远程插件操作 -->
-        <template v-if="package.type == 'remote'">
-          <Button
-            @click="handleDownload(package.id)"
-            variant="primary"
-            size="sm"
-            :loading="isDownloading"
-            :disabled="isDownloading || isInstalled">
-            {{ isInstalled ? '已安装' : isDownloading ? '下载中...' : '下载' }}
-          </Button>
-        </template>
+          </template>
+        </div>
       </div>
 
       <!-- 插件详细信息 -->
