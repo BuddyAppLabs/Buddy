@@ -1,7 +1,8 @@
 {
   "scripts": {
     "build": "pnpm build:buddy",
-    "build:buddy": "pnpm --filter buddy build",
+    "build:it": "pnpm --filter @coffic/buddy-it build",
+    "build:buddy": "pnpm build:it && pnpm --filter buddy build",
     "build:buddy:mac": "pnpm run build:buddy && pnpm --filter buddy build:mac",
     "dev": "clear && pnpm --filter buddy dev"
   },
