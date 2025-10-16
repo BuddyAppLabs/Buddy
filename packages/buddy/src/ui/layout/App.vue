@@ -4,17 +4,17 @@
   import StatusBar from '@/ui/layout/StatusBar.vue';
   import { ConfirmDialog, Container } from '@coffic/cosy-ui/vue';
   import { Alert } from '@coffic/cosy-ui/vue';
-  import { globalConfirm } from '@renderer/composables/useConfirm';
-  import { globalAlert } from '@renderer/composables/useAlert';
+  import { globalConfirm } from '../composables/useConfirm';
+  import { globalAlert } from '../composables/useAlert';
   import { useAppStore } from '@/ui/stores/app-store';
   import ErrorNotification from '@/ui/layout/ErrorNotification.vue';
   import { useErrorStore } from '@/ui/stores/error-store';
   import { computed } from 'vue';
-  import { globalProgress } from '@renderer/composables/useProgress';
+  import { globalProgress } from '../composables/useProgress';
   import { Progress } from '@coffic/cosy-ui/vue';
   import { KeyCatcher } from '@coffic/cosy-ui/vue';
   import { eventBus } from '../event-bus';
-  import { useNavigation } from '@/ui/composables/useNavigation';
+  import { useNavigation } from '../composables/useNavigation';
 
   const appStore = useAppStore();
   const errorStore = useErrorStore();

@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { ref, watch, onUnmounted, onMounted, nextTick } from 'vue';
-  import { logger } from '@renderer/utils/logger';
+  import { logger } from '../utils/logger';
   import { ViewBounds } from '@coffic/buddy-it';
   import { SendableAction } from '@/types/sendable-action';
-  import { viewIpc } from '@renderer/ipc/view-ipc';
+  import { viewIpc } from '../ipc/view-ipc';
   import {
     useElementBounding,
     useAsyncState,

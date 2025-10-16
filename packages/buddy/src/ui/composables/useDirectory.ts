@@ -1,4 +1,4 @@
-import { fileIpc } from '@ipc/file-ipc';
+import { fileIpc } from '../ipc/file-ipc';
 
 export function useDirectory() {
   const openDirectory = async (dir: string) => {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { SendableAction } from '@/types/sendable-action.js';
   import { ref } from 'vue';
-  import { useAlert } from '@renderer/composables/useAlert';
+  import { useAlert } from '../../composables/useAlert';
   import { ListItem } from '@coffic/cosy-ui/vue';
-  import { useActions } from '@/ui/composables/useActions';
+  import { useActions } from '../../composables/useActions';
   import { useActionActiveStore } from '@/ui/stores/action-active-store';
   import { useKeywordStore } from '@/ui/stores/keyword-store';
 

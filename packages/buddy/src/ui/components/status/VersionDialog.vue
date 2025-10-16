@@ -1,6 +1,6 @@
 <!--
  * VersionDialog.vue - 版本信息对话框组件
- * 
+ *
  * 这个组件负责显示应用的版本信息：
  * - 显示应用版本
  * - 显示各组件版本
@@ -11,7 +11,7 @@
   import { computed } from 'vue';
   import { useAppStore } from '@/ui/stores/app-store';
   import { IPC_METHODS } from '@/types/ipc-methods';
-  import { globalAlert } from '@renderer/composables/useAlert';
+  import { globalAlert } from '../../composables/useAlert';
 
   defineProps<{
     modelValue: boolean;
