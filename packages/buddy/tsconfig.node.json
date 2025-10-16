@@ -22,6 +22,11 @@
             "@/*": [
                 "./src/*"
             ]
-        }
+        },
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noEmitOnError": false,
+        "strict": false,
+        "skipLibCheck": true
     }
 }

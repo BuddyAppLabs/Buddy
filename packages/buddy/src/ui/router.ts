@@ -7,7 +7,11 @@
  * 3. 设置路由元信息，如标题等
  */
 
-import { createRouter, createWebHashHistory } from 'vue-router';
+import {
+  createRouter,
+  createWebHashHistory,
+  type RouteRecordRaw,
+} from 'vue-router';
 import HomeView from '@/ui/views/HomeView.vue';
 import HeroView from '@/ui/views/HeroView.vue';
 import LocalRepo from '@/ui/views/LocalRepo.vue';
@@ -16,7 +20,7 @@ import DevRepo from '@/ui/views/DevRepo.vue';
 import DevPackage from '@/ui/views/DevPackage.vue';
 
 // 路由配置
-const routes = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',

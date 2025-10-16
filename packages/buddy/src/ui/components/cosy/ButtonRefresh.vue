@@ -62,16 +62,16 @@ ButtonRefresh 组件
   });
 
   const emit = defineEmits<{
-    (e: 'click', event: MouseEvent): void;
+    (e: 'click'): void;
   }>();
 
   // 处理点击事件
-  const handleClick = async (event: MouseEvent) => {
+  const handleClick = async () => {
     // 如果按钮已经处于加载或禁用状态，不触发事件
     if (props.disabled || internalLoading.value) return;
 
     // 触发点击事件
-    emit('click', event);
+    emit('click');
   };
 
   // 内部加载状态

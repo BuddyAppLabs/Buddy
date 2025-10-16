@@ -379,7 +379,8 @@
       v-if="
         !viewState.embedded.isAttached &&
         !viewState.window.isOpen &&
-        actionResult
+        actionResult !== null &&
+        actionResult !== undefined
       "
       class="flex-1 p-4 border rounded-lg bg-gray-50 overflow-auto">
       <pre class="whitespace-pre-wrap">{{
@@ -392,7 +393,7 @@
       v-if="
         !viewState.embedded.isAttached &&
         !viewState.window.isOpen &&
-        !actionResult &&
+        (actionResult === null || actionResult === undefined) &&
         !isLoading &&
         !actionError
       "

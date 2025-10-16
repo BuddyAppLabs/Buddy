@@ -55,16 +55,16 @@ ButtonFolder 组件
   });
 
   const emit = defineEmits<{
-    (e: 'click', event: MouseEvent): void;
+    (e: 'click'): void;
   }>();
 
   // 处理点击事件
-  const handleClick = (event: MouseEvent) => {
+  const handleClick = () => {
     // 如果按钮已经处于禁用状态，不触发事件
     if (props.disabled) return;
 
     // 触发点击事件
-    emit('click', event);
+    emit('click');
   };
 
   // 计算图标大小类名

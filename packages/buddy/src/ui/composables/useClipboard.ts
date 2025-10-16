@@ -5,7 +5,9 @@ export function useClipboard() {
   const error = ref<string | null>(null);
 
   const copyToClipboard = async (text: string) => {
-    if (!text) return;
+    if (!text) {
+      return false;
+    }
 
     try {
       await navigator.clipboard.writeText(text);

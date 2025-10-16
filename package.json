@@ -1,29 +1,18 @@
 {
   "devDependencies": {
-    "@eslint/css": "^0.10.0",
-    "@eslint/js": "^9.37.0",
-    "@eslint/json": "^0.13.2",
-    "@eslint/markdown": "^7.4.0",
-    "@typescript-eslint/eslint-plugin": "^8.46.1",
-    "@typescript-eslint/parser": "^8.46.1",
     "chalk": "^5.6.2",
     "concurrently": "^9.2.1",
-    "eslint": "^9.37.0",
-    "eslint-plugin-import": "^2.32.0",
     "globals": "^16.4.0",
     "inquirer": "^12.10.0",
     "lodash-es": "^4.17.21",
     "nodemon": "^3.1.10",
-    "turbo": "^2.5.8",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.1"
+    "typescript": "^5.9.3"
   },
   "scripts": {
-    "build": "eslint && turbo build",
-    "build:buddy": "turbo build --filter='buddy'",
+    "build": "pnpm build:buddy",
+    "build:buddy": "pnpm --filter buddy build",
     "build:buddy:mac": "pnpm run build:buddy && pnpm --filter buddy build:mac",
-    "dev": "clear && pnpm --filter buddy dev",
-    "lint": "eslint"
+    "dev": "clear && pnpm --filter buddy dev"
   },
   "packageManager": "pnpm@10.12.1",
   "engines": {

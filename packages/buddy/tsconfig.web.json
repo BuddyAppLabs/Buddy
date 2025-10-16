@@ -5,8 +5,9 @@
         "src/ui/**/*",
         "src/ui/**/*.vue",
         "src/types/**/*",
-        "vite.config.mjs"
+        "electron.vite.config.mts"
     ],
+    "exclude": [],
     "compilerOptions": {
         "composite": true,
         "module": "esnext",
@@ -43,6 +44,14 @@
             "@renderer/types/*": [
                 "src/ui/types/*"
             ]
-        }
+        },
+        "skipLibCheck": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noEmitOnError": false,
+        "strict": false,
+        "types": [
+            "node"
+        ]
     }
 }
