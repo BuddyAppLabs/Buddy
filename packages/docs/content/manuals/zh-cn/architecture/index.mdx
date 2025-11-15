@@ -3,27 +3,52 @@ title: 架构概览
 order: 4
 ---
 
+import ArchitectureOverview from '../../components/ArchitectureOverview.vue';
+import CommunicationFlow from '../../components/CommunicationFlow.vue';
+import HttpApiComparison from '../../components/HttpApiComparison.vue';
+
 # 架构与启动流程
 
-## 启动
-- 应用启动：`packages/buddy/src/main/bootstrap/app.ts:52` 中 `bootApplication()`
-  - 注册服务提供者（Setting、Keyboard、Update、AI、Plugin、Window、Mcp、State）
-  - 注册路由与 IPC，启动托盘与窗口
+Buddy 是一个基于 Electron 的桌面应用，采用主进程-渲染进程分离架构，支持动态插件系统。
 
-## 服务提供者
-- AI：`packages/buddy/src/main/providers/ai/AIServiceProvider.ts`
-- 插件：`packages/buddy/src/main/providers/plugin/*`
-- 窗口：`packages/buddy/src/main/providers/window/*`
-- 状态：`packages/buddy/src/main/providers/state/*`
+## 交互式架构图
 
-## 渲染层
-- 主入口：`packages/buddy/src/ui/main.ts`
-- 路由：`packages/buddy/src/ui/router.ts`
-- 布局：`packages/buddy/src/ui/layout/App.vue`
-- 状态栏：`packages/buddy/src/ui/layout/StatusBar.vue`
-- 底部导航：`packages/buddy/src/ui/layout/BottomNavbar.vue`
+点击不同的层级，查看详细信息：
+
+<ArchitectureOverview client:load />
+
+## IPC 通信流程
+
+了解渲染进程、主进程和插件之间如何通信：
+
+<CommunicationFlow client:load />
+
+## 核心概念
+
+### 主进程 (Main Process)
+- **职责**：应用核心逻辑、系统服务、插件管理
+- **入口**：`packages/buddy/src/main/bootstrap/app.ts`
+- **技术栈**：Node.js + Electron + TypeScript
+
+### 渲染进程 (Renderer Process)
+- **职责**：用户界面、交互逻辑
+- **入口**：`packages/buddy/src/ui/main.ts`
+- **技术栈**：Vue 3 + Tailwind CSS + DaisyUI
+
+### 插件系统 (Plugin System)
+- **职责**：动态扩展应用功能
+- **加载方式**：进程内直接调用（通过 `import()` 动态加载）
+- **通信方式**：通过 `SuperContext` 注入内核能力
+
+## 通信方案对比
+
+如果使用 HTTP API 替代当前的进程内调用方案会怎样？
+
+<HttpApiComparison client:load />
 
 ## 关键约定
+
 - 路径导入统一使用 `@` 别名
 - 注释与文档使用中文
 - Vue3 + DaisyUI + Tailwind 搭建 UI
+- 插件通过 `@coffic/buddy-it` 包定义接口

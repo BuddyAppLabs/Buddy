@@ -8,25 +8,25 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@astrojs/cloudflare": "^12.6.9",
-		"@astrojs/vue": "^5.1.1",
-		"@coffic/cosy-content": "^0.2.21",
-		"@coffic/cosy-ui": "^0.9.0",
+		"@astrojs/cloudflare": "^12.6.10",
+		"@astrojs/vue": "^5.1.3",
+		"@coffic/cosy-content": "^0.2.28",
+		"@coffic/cosy-ui": "^0.9.98",
 		"@playform/compress": "^0.2.0",
 		"@remixicon/vue": "^4.7.0",
-		"astro-pagefind": "^1.8.3",
-		"vue": "^3.5.18"
+		"astro-pagefind": "^1.8.5",
+		"vue": "^3.5.24"
 	},
 	"devDependencies": {
-		"@astrojs/mdx": "^4.3.6",
-		"@astrojs/ts-plugin": "^1.10.4",
-		"@tailwindcss/vite": "^4.1.11",
-		"@tsconfig/node22": "^22.0.2",
-		"@types/node": "^24.8.1",
-		"astro": "^5.14.1",
+		"@astrojs/mdx": "^4.3.10",
+		"@astrojs/ts-plugin": "^1.10.5",
+		"@tailwindcss/vite": "^4.1.17",
+		"@tsconfig/node22": "^22.0.3",
+		"@types/node": "^24.10.1",
+		"astro": "^5.15.7",
 		"sharp": "^0.33.5",
-		"tailwindcss": "^4.1.11",
-		"typescript": "^5.9.2",
-		"vite": "^7.1.10"
+		"tailwindcss": "^4.1.17",
+		"typescript": "^5.9.3",
+		"vite": "^7.2.2"
 	}
 }
