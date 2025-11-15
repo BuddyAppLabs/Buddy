@@ -32,7 +32,6 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/plugins',
-    name: 'plugins',
     meta: {
       title: '插件商店',
       viewType: 'plugins',
