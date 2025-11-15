@@ -1,5 +1,5 @@
 {
-	"name": "cosy-ui",
+	"name": "buddy",
 	"compatibility_date": "2025-04-01",
 	"compatibility_flags": ["nodejs_compat"],
 	"main": "./dist/_worker.js/index.js",
@@ -13,7 +13,7 @@
 	"upload_source_maps": true,
 	"routes": [
 		{
-			"pattern": "ui.coffic.cn",
+			"pattern": "buddy.coffic.cn",
 			"custom_domain": true
 		}
 	]
