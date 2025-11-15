@@ -1,0 +1,63 @@
+---
+/**
+ * @page HomePage
+ * @description Cosy UI 首页 - Apple 风格的现代化设计
+ */
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import AnimationDemo from '@/widgets/home/AnimationDemo.astro';
+import CodeShowcase from '@/widgets/home/CodeShowcase.astro';
+import ComponentShowcase from '@/widgets/home/ComponentShowcase.astro';
+import DesignPhilosophy from '@/widgets/home/DesignPhilosophy.astro';
+import DeveloperExperience from '@/widgets/home/DeveloperExperience.astro';
+import FeatureHighlights from '@/widgets/home/FeatureHighlights.astro';
+import FinalCTA from '@/widgets/home/FinalCTA.astro';
+import HeroSection from '@/widgets/home/HeroSection.astro';
+import StatsSection from '@/widgets/home/StatsSection.astro';
+import UseCases from '@/widgets/home/UseCases.astro';
+
+export const prerender = true;
+
+const { lang = 'zh-cn' } = Astro.params;
+
+export const getStaticPaths = async () => {
+    return [
+        {
+            params: { lang: 'zh-cn' },
+        },
+        {
+            params: { lang: 'en' },
+        },
+    ];
+};
+
+const title =
+    lang === 'zh-cn'
+        ? 'Buddy — 聚焦式桌面助手'
+        : 'Buddy — Focused Desktop Assistant';
+---
+
+<BaseLayout
+    title={title}
+    showSidebar={false}
+    showTOC={false}
+    isArticle={false}
+    verticalPadding="none"
+    mainLayout="column"
+    background="gradient-glow">
+    <HeroSection lang={lang} />
+
+    <FeatureHighlights lang={lang} />
+
+    <DesignPhilosophy lang={lang} />
+    <UseCases lang={lang} />
+
+    <FinalCTA lang={lang} />
+</BaseLayout>
+
+<script is:inline>
+    if (window.location.hostname.includes('github.io')) {
+        const newUrl = `https://ui.coffic.cn/en`;
+        window.location.replace(newUrl);
+    }
+</script>

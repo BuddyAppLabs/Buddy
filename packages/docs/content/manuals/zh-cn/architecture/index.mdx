@@ -1,0 +1,29 @@
+---
+title: 架构概览
+order: 4
+---
+
+# 架构与启动流程
+
+## 启动
+- 应用启动：`packages/buddy/src/main/bootstrap/app.ts:52` 中 `bootApplication()`
+  - 注册服务提供者（Setting、Keyboard、Update、AI、Plugin、Window、Mcp、State）
+  - 注册路由与 IPC，启动托盘与窗口
+
+## 服务提供者
+- AI：`packages/buddy/src/main/providers/ai/AIServiceProvider.ts`
+- 插件：`packages/buddy/src/main/providers/plugin/*`
+- 窗口：`packages/buddy/src/main/providers/window/*`
+- 状态：`packages/buddy/src/main/providers/state/*`
+
+## 渲染层
+- 主入口：`packages/buddy/src/ui/main.ts`
+- 路由：`packages/buddy/src/ui/router.ts`
+- 布局：`packages/buddy/src/ui/layout/App.vue`
+- 状态栏：`packages/buddy/src/ui/layout/StatusBar.vue`
+- 底部导航：`packages/buddy/src/ui/layout/BottomNavbar.vue`
+
+## 关键约定
+- 路径导入统一使用 `@` 别名
+- 注释与文档使用中文
+- Vue3 + DaisyUI + Tailwind 搭建 UI

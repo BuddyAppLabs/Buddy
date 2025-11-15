@@ -1,0 +1,33 @@
+---
+title: Getting Started
+folder: false
+order: 0
+---
+
+# Installation & Run
+
+## Environment
+- Package manager: `pnpm`
+- Framework: Electron + `electron-vite`
+- Renderer: Vue3 + DaisyUI + TailwindCSS
+
+## Start Dev
+Run from repo root:
+
+```
+pnpm -w --filter buddy dev
+```
+
+AI service starts at `7878` (`AIServiceProvider.ts:23`). Health check: `http://localhost:7878/health`.
+
+## Build
+```
+pnpm -w --filter buddy build
+```
+
+## Structure
+- Main bootstrap: `packages/buddy/src/main/bootstrap/app.ts:52`
+- AI: `packages/buddy/src/main/providers/ai/*`
+- Chat: `packages/buddy/src/main/service/chat/*`
+- UI entry: `packages/buddy/src/ui/main.ts`
+- Router: `packages/buddy/src/ui/router.ts`

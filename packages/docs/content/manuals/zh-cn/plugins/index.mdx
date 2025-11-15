@@ -1,0 +1,24 @@
+---
+title: 插件体系
+order: 5
+---
+
+# 插件与仓库
+
+## 仓库类型
+- 本地仓库：`/plugins/user` 路由，组件见 `packages/buddy/src/ui/views/LocalRepo.vue`
+- 远程仓库：`/plugins/remote` 路由，组件见 `packages/buddy/src/ui/views/RemoteRepo.vue`
+- 开发包：`/plugins/dev-package` 路由，组件见 `packages/buddy/src/ui/views/DevPackage.vue`
+
+## 插件管理
+- 管理器与视图：`packages/buddy/src/main/providers/plugin/*`
+- 插件模型：`packages/buddy/src/main/providers/plugin/model/*`
+- 仓库实现：`packages/buddy/src/main/providers/plugin/repo/*`
+
+## 视图与导航
+- 状态栏右侧的底部导航：`packages/buddy/src/ui/layout/BottomNavbar.vue`
+- 路由定义：`packages/buddy/src/ui/router.ts`
+
+## 约定
+- 插件图标统一放在 `icons` 目录，导入使用 `@` 别名
+- 样式遵循 DaisyUI 主题，不硬编码颜色

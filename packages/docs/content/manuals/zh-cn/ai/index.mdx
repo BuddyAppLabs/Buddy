@@ -1,0 +1,40 @@
+---
+title: AI 能力
+order: 2
+---
+
+# AI SDK 集成
+
+Buddy 前后端统一使用 AI SDK 实现聊天与工具调用，后端提供 HTTP 流式接口，前端解析并展示。
+
+## 后端结构
+- 服务启动：`packages/buddy/src/main/providers/ai/AIServiceProvider.ts:23` 在端口 `7878` 启动 `AIServer`
+- 路由：`packages/buddy/src/main/providers/ai/AIRouter.ts:29`（供应商与模型）、`packages/buddy/src/main/providers/ai/AIRouter.ts:55`（聊天流）
+- 管理器：`packages/buddy/src/main/providers/ai/AIManager.ts:48` 创建流并读取模型密钥
+- 业务：`packages/buddy/src/main/service/chat/ChatService.ts:65` 使用 `streamText` 开启流、`toolCallStreaming: true`
+- 工具：`packages/buddy/src/main/service/chat/tools/*.ts`（天气、时间、用户状态）
+
+## 接口说明
+- 健康检查：`GET /health`
+- 供应商列表：`GET /api/providers`
+- 模型列表：`GET /api/models`
+- 设置 Key：`POST /api/providers/:provider/keys { key }`
+- 聊天：`POST /api/chat/completions { model, messages }`
+
+### 示例
+```
+curl -X POST http://localhost:7878/api/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "gpt-4o",
+    "messages": [{"role":"user","content":"你好"}]
+  }'
+```
+
+## 工具调用
+- 服务端工具自动执行，结果在消息中展示
+- 客户端工具需交互（例：确认、定位）；在前端提供可视化与权限处理
+
+## 协议与版本
+- 当前以“文本流”方式返回，前端按增量文本渲染
+- 如需 UIMessage 数据流与更强的工具显示，建议升级 AI SDK v5 并改造前后端按 v5 的 UIMessage 协议

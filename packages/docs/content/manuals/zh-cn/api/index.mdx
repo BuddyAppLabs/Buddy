@@ -1,0 +1,32 @@
+---
+title: 后端 API
+order: 3
+---
+
+# HTTP 接口
+
+## 健康检查
+- `GET /health`
+
+## 供应商与模型
+- `GET /api/providers`
+- `GET /api/models`
+
+## 设置供应商 Key
+- `POST /api/providers/:provider/keys`
+  - Body: `{ "key": "..." }`
+  - 存储：`SettingFacade`（`packages/buddy/src/main/providers/ai/AIManager.ts:155`）
+
+## 聊天（流式）
+- `POST /api/chat/completions`
+  - Body: `{ model: string, messages: UIMessage[] }`
+  - 处理：`packages/buddy/src/main/providers/ai/AIRouter.ts:55`
+  - 流创建：`packages/buddy/src/main/providers/ai/AIManager.ts:48`
+  - 业务：`packages/buddy/src/main/service/chat/ChatService.ts:65`
+
+### 示例
+```
+curl http://localhost:7878/api/models
+curl -X POST http://localhost:7878/api/providers/openai/keys -H 'Content-Type: application/json' -d '{"key":"sk-..."}'
+curl -X POST http://localhost:7878/api/chat/completions -H 'Content-Type: application/json' -d '{"model":"gpt-4o","messages":[{"role":"user","content":"你好"}]}'
+```

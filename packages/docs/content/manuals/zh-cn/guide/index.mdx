@@ -1,0 +1,44 @@
+---
+title: 入门指南
+folder: false
+order: 0
+---
+
+# 安装与运行
+
+## 环境与依赖
+- 包管理器：`pnpm`
+- 开发框架：Electron + `electron-vite`
+- 渲染层：Vue3 + DaisyUI + TailwindCSS
+
+## 启动开发环境
+在仓库根目录运行：
+
+```
+pnpm -w --filter buddy dev
+```
+
+AI 服务启动：`packages/buddy/src/main/providers/ai/AIServiceProvider.ts:23`，端口 `7878`；健康检查 `http://localhost:7878/health`
+
+## 界面体验
+- 右下角状态栏包含“AI 聊天”图标，点击打开面板
+- 支持流式输出与工具调用展示
+
+## 构建与打包
+- 构建：
+```
+pnpm -w --filter buddy build
+```
+- 打包：参考 `packages/buddy/package.json` 的 `build:*` 脚本
+
+## 目录结构
+- 主进程入口：`packages/buddy/src/main/bootstrap/app.ts`
+- AI 服务：`packages/buddy/src/main/providers/ai/*`
+- 聊天业务：`packages/buddy/src/main/service/chat/*`
+- 渲染层入口：`packages/buddy/src/ui/main.ts`
+- 路由：`packages/buddy/src/ui/router.ts`
+
+## 开发约定
+- 导入必须使用 `@` 别名，避免相对路径
+- 注释与文档使用中文
+- Vue 组件使用 Vue3 语法，`<script>` 在 `<template>` 之上

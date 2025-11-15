@@ -1,0 +1,161 @@
+---
+/**
+ * @component FeatureHighlights
+ * @description 核心特性展示 - 三栏布局突出核心优势
+ */
+
+import { Card, Container, Heading, Text } from '@coffic/cosy-ui';
+
+export interface Props {
+    lang: string;
+}
+
+const { lang } = Astro.props;
+
+const title = lang === 'zh-cn' ? '为什么选择 Buddy' : 'Why Choose Buddy';
+
+const features =
+    lang === 'zh-cn'
+        ? [
+              { icon: '🔎', title: '聚焦搜索', description: '类似 Spotlight 的体验，快速触达功能与内容', gradient: 'card-gradient-5' },
+              { icon: '🔌', title: '插件生态', description: '本地/远程/开发包仓库，灵活扩展能力', gradient: 'card-gradient-6' },
+              { icon: '🤖', title: 'AI 一体化', description: '统一使用 AI SDK，流式聊天与工具调用', gradient: 'card-gradient-7' },
+              { icon: '🧩', title: '现代技术栈', description: 'Vue3 + DaisyUI + Tailwind，Electron 开发', gradient: 'card-gradient-1' },
+              { icon: '🪟', title: '窗口与托盘', description: '快捷窗口管理与系统托盘集成', gradient: 'card-gradient-2' },
+              { icon: '🔐', title: '安全与配置', description: 'Setting 管理密钥与配置，不暴露敏感信息', gradient: 'card-gradient-3' },
+          ]
+        : [
+              { icon: '🔎', title: 'Focused Search', description: 'Spotlight-like experience to access actions rapidly', gradient: 'card-gradient-5' },
+              { icon: '🔌', title: 'Plugin Ecosystem', description: 'Local/remote/dev packages to extend capabilities', gradient: 'card-gradient-6' },
+              { icon: '🤖', title: 'Integrated AI', description: 'Unified AI SDK with streaming chat and tool calls', gradient: 'card-gradient-7' },
+              { icon: '🧩', title: 'Modern Stack', description: 'Vue3 + DaisyUI + Tailwind, Electron development', gradient: 'card-gradient-1' },
+              { icon: '🪟', title: 'Windows & Tray', description: 'Quick window management and system tray integration', gradient: 'card-gradient-2' },
+              { icon: '🔐', title: 'Security & Config', description: 'Settings manage keys and configs without exposing secrets', gradient: 'card-gradient-3' },
+          ];
+---
+
+<Container width="full" padding="2xl" background="base-200/30" margin="none">
+    <Heading level={2} align="center" size="3xl" weight="bold" margin="xl">
+        {title}
+    </Heading>
+
+    <Container width="2xl" margin="xl">
+        <div class="features-grid">
+            {
+                features.map((feature) => (
+                    <div class={`feature-card ${feature.gradient}`}>
+                        <Card
+                            width="full"
+                            padding="xl"
+                            shadow="lg"
+                            rounded="xl"
+                            background="transparent"
+                            class="feature-card-inner">
+                            <div class="feature-icon">{feature.icon}</div>
+                            <Heading
+                                level={3}
+                                align="center"
+                                size="xl"
+                                weight="bold"
+                                margin="sm"
+                                class="text-white">
+                                {feature.title}
+                            </Heading>
+                            <Text
+                                align="center"
+                                size="md"
+                                class="text-white-muted">
+                                {feature.description}
+                            </Text>
+                        </Card>
+                    </div>
+                ))
+            }
+        </div>
+    </Container>
+</Container>
+
+<style>
+    .features-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .features-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .features-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    .feature-card {
+        border-radius: 1rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-6px) scale(1.02);
+    }
+
+    .feature-card-inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        min-height: 200px;
+        justify-content: center;
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    }
+
+    /* Props Builder 渐变卡片 */
+    .card-gradient-1 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .card-gradient-2 {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .card-gradient-3 {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .card-gradient-4 {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    /* 核心特性渐变卡片 */
+    .card-gradient-5 {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    .card-gradient-6 {
+        background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+    }
+
+    .card-gradient-7 {
+        background: linear-gradient(135deg, #0d9488 0%, #7c3aed 100%);
+    }
+
+    .text-white {
+        color: white !important;
+    }
+
+    .text-white-muted {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+</style>

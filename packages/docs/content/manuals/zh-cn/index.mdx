@@ -1,0 +1,33 @@
+---
+title: Buddy 文档首页
+order: 1
+description: Buddy 是一个聚焦式桌面助手，集成插件生态与 AI 能力。
+---
+
+# Buddy 文档
+
+Buddy 是一个类似 Spotlight 的桌面应用，聚焦快速操作、插件生态与 AI 一体化能力。本文档介绍 Buddy 的架构、开发约定、AI 集成与插件体系，并提供安装、运行与问题排查指南。
+
+## 快速入口
+- 入门指南：见 `guide/index.mdx`
+- 架构概览：见 `architecture/index.mdx`
+- AI 能力：见 `ai/index.mdx`
+- 插件体系：见 `plugins/index.mdx`
+- 后端 API：见 `api/index.mdx`
+- 常见问题：见 `troubleshooting/index.mdx`
+
+## 主要特性
+- 聚焦式桌面助手，快速搜索与操作
+- 插件商店与多仓库支持（本地、远程、开发包）
+- 前后端统一使用 AI SDK，实现流式聊天与工具调用
+- 使用 Vue3、DaisyUI 与 TailwindCSS 构建渲染界面
+- Electron + `electron-vite` 开发体验，`pnpm` 管理依赖
+
+## 代码引用示例
+- 应用启动与服务注册：`packages/buddy/src/main/bootstrap/app.ts:52`
+- AI 服务启动：`packages/buddy/src/main/providers/ai/AIServiceProvider.ts:23`
+- AI 路由与聊天接口：`packages/buddy/src/main/providers/ai/AIRouter.ts:55`
+- AI 管理器与模型配置：`packages/buddy/src/main/providers/ai/AIManager.ts:48`
+- 聊天流与工具调用：`packages/buddy/src/main/service/chat/ChatService.ts:65`
+
+> 所有代码路径均使用 `@` 别名导入规则；具体规范见 `common/index.mdx`。

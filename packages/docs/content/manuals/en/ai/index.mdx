@@ -1,0 +1,22 @@
+---
+title: AI Capabilities
+order: 2
+---
+
+# AI SDK Integration
+
+Buddy uses AI SDK in both backend and frontend.
+
+## Backend
+- Service bootstrap: `packages/buddy/src/main/providers/ai/AIServiceProvider.ts:23`
+- Router: `packages/buddy/src/main/providers/ai/AIRouter.ts:29` (providers/models), `packages/buddy/src/main/providers/ai/AIRouter.ts:55` (chat)
+- Manager: `packages/buddy/src/main/providers/ai/AIManager.ts:48`
+- Chat service: `packages/buddy/src/main/service/chat/ChatService.ts:65`
+- Tools: `packages/buddy/src/main/service/chat/tools/*.ts`
+
+## API
+- `GET /health`
+- `GET /api/providers`
+- `GET /api/models`
+- `POST /api/providers/:provider/keys` `{ key }`
+- `POST /api/chat/completions` `{ model, messages }`

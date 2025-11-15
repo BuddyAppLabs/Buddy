@@ -1,0 +1,23 @@
+---
+title: 常见问题
+order: 6
+---
+
+# 常见问题与排查
+
+## `pnpm dev` 启动失败
+- 端口占用：渲染进程端口占用会自动切换；如 Electron 进程异常，清理后重试
+- 导入失败：确保所有导入路径使用 `@` 别名（见 `electron.vite.config.mts`）
+- 依赖不匹配：确认 `ai` 与工具包版本，前后端协议一致
+
+## AI 流解析失败
+- 文本流：前端按增量文本直接拼接渲染
+- UIMessage 数据流：需升级至 AI SDK v5 并改造后端（见 `ai/index.mdx`）
+
+## 工具调用无结果
+- 检查 `packages/buddy/src/main/service/chat/tools/*.ts` 是否注册
+- 服务端日志：查看 `ChatService` 的 `onError` 输出
+
+## 供应商 Key 无效
+- 接口：`POST /api/providers/:provider/keys`
+- 存储位置：`SettingFacade`，参见 `packages/buddy/src/main/providers/ai/AIManager.ts:155`

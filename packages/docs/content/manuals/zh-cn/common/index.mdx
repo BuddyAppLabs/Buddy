@@ -1,0 +1,24 @@
+---
+title: 项目规则
+order: 10
+---
+
+# 项目规则
+
+## 沟通与注释
+- 注释、文档使用中文
+
+## 包管理器
+- 使用 `pnpm`
+
+## 导入规则
+- 所有导入必须使用 `@` 别名
+- 例：`import SearchBar from '@/ui/layout/SearchBar.vue'`
+
+## 前端规范
+- 使用 Vue3 语法，`<script>` 在 `<template>` 之上
+- 使用 DaisyUI 与 TailwindCSS；不硬编码颜色，遵循主题
+- 图标统一放在 `icons` 目录
+
+## Electron 项目
+- 参见 `packages/buddy/package.json` 与 `electron.vite.config.mts`
