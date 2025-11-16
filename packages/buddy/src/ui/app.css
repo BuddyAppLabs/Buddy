@@ -11,3 +11,33 @@
 .drag-region {
   -webkit-app-region: drag;
 }
+
+/* 窗口模式样式 */
+
+/* 精简模式 - 快捷键呼出（悬浮窗口） */
+body.compact-mode {
+  /* 悬浮窗口样式 */
+  /* 可以添加圆角、阴影等效果 */
+}
+
+body.compact-mode #app {
+  /* 精简模式下的应用容器 */
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* 完整模式 - Dock 点击（传统窗口） */
+body.full-mode {
+  /* 传统窗口样式 */
+  background-color: #ffffff;
+}
+
+body.full-mode #app {
+  /* 完整模式下的应用容器 */
+  border-radius: 0;
+}
+
+/* 可选：为精简模式添加特殊的视觉效果 */
+body.compact-mode {
+  /* 可以添加背景模糊、渐变等效果 */
+}

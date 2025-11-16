@@ -33,12 +33,16 @@ export class AppManager {
       optimizer.watchWindowShortcuts(window);
     });
 
-    // macOS 激活事件
+    // macOS 激活事件（Dock 点击）
     app.on('activate', () => {
-      console.info('应用被激活');
+      console.info('应用被激活（Dock 点击）');
       if (BrowserWindow.getAllWindows().length === 0) {
         console.info('没有活动窗口，创建新窗口');
         this.mainWindow = WindowFacade.createWindow();
+      } else {
+        // Dock 点击时显示完整窗口
+        console.info('显示完整窗口模式');
+        WindowFacade.showFullWindow();
       }
     });
 

@@ -1,0 +1,298 @@
+---
+title: 双窗口模式
+order: 1
+---
+
+# 双窗口模式开发指南
+
+Buddy 支持两种窗口模式，提供不同的用户体验：精简模式和完整模式。
+
+## 概述
+
+### 精简模式（Compact Mode）
+通过快捷键呼出的悬浮窗口，类似 Spotlight 或 Raycast。
+
+**特点：**
+- 无边框（无红绿灯按钮）
+- 透明背景
+- 悬浮在所有应用之上
+- 失焦自动隐藏
+- 默认尺寸：800x500
+
+**触发方式：** 按下 `Option+Space`（可配置）
+
+### 完整模式（Full Mode）
+传统的 macOS 应用窗口。
+
+**特点：**
+- 有边框（显示红绿灯按钮）
+- 不透明背景
+- 不置顶
+- 不会自动隐藏
+- 默认尺寸：1200x800
+
+**触发方式：** 点击 Dock 图标
+
+## 配置
+
+在 `WindowServiceProvider.ts` 中配置两种模式的参数：
+
+```typescript
+const windowConfig = {
+  hotkey: 'Option+Space', // 快捷键
+  
+  // 精简模式配置（悬浮窗口）
+  compactMode: {
+    width: 800,
+    height: 500,
+    hideOnBlur: true,      // 失焦隐藏
+    frame: false,          // 无边框
+    transparent: true,     // 透明背景
+    alwaysOnTop: true,     // 置顶
+    opacity: 0.99,
+  },
+  
+  // 完整模式配置（传统窗口）
+  fullMode: {
+    width: 1200,
+    height: 800,
+    hideOnBlur: false,     // 不自动隐藏
+    frame: true,           // 显示边框
+    transparent: false,    // 不透明
+    alwaysOnTop: false,    // 不置顶
+    opacity: 1.0,
+  },
+  
+  currentMode: 'compact', // 默认模式
+};
+```
+
+## 主进程 API
+
+### WindowManager 方法
+
+```typescript
+// 切换窗口模式
+windowManager.switchMode('compact' | 'full');
+
+// 获取当前模式
+const mode = windowManager.getCurrentMode();
+
+// 快捷键触发（精简模式）
+windowManager.toggleMainWindow();
+
+// Dock 触发（完整模式）
+windowManager.showFullWindow();
+```
+
+### 工作流程
+
+#### 快捷键触发流程
+1. 用户按下 `Option+Space`
+2. `toggleMainWindow()` 被调用
+3. 如果窗口隐藏，调用 `switchMode('compact')`
+4. 创建无边框、透明的悬浮窗口
+5. 显示窗口并居中在鼠标所在屏幕
+6. 失焦时自动隐藏
+
+#### Dock 点击流程
+1. 用户点击 Dock 图标
+2. `activate` 事件触发
+3. `showFullWindow()` 被调用
+4. 如果当前是精简模式，调用 `switchMode('full')`
+5. 创建有边框、不透明的传统窗口
+6. 显示窗口并居中
+7. 不会自动隐藏
+
+## 前端适配
+
+### 使用 Composable
+
+在 Vue 组件中使用 `useWindowMode`：
+
+```vue
+<script setup lang="ts">
+import { useWindowMode } from '@/ui/composables/useWindowMode';
+
+const { mode, isCompact, isFull } = useWindowMode();
+</script>
+
+<template>
+  <div>
+    <div v-if="isCompact()">
+      <!-- 精简模式界面 -->
+      <CompactView />
+    </div>
+    <div v-else>
+      <!-- 完整模式界面 -->
+      <FullView />
+    </div>
+  </div>
+</template>
+```
+
+### 使用 CSS 类名
+
+通过 CSS 类名适配不同模式：
+
+```css
+/* 精简模式样式 */
+body.compact-mode .sidebar {
+  display: none;
+}
+
+body.compact-mode .header {
+  height: 40px;
+}
+
+body.compact-mode #app {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* 完整模式样式 */
+body.full-mode .sidebar {
+  display: block;
+}
+
+body.full-mode .header {
+  height: 60px;
+}
+
+body.full-mode #app {
+  border-radius: 0;
+}
+```
+
+### 监听模式变化
+
+```typescript
+// 在组件中监听
+window.addEventListener('window-mode-changed', (event: CustomEvent) => {
+  const mode = event.detail; // 'compact' | 'full'
+  console.log('窗口模式变化:', mode);
+});
+
+// 或使用 IPC
+ipc.receive('window-mode-changed', (mode: 'compact' | 'full') => {
+  // 处理模式变化
+});
+```
+
+## 技术实现
+
+### 为什么要重建窗口？
+
+Electron 的 `BrowserWindow` 有些属性在创建后无法修改：
+- `frame`: 窗口边框
+- `transparent`: 透明背景
+
+因此切换模式时必须重新创建窗口。
+
+### 平滑过渡实现
+
+```typescript
+public switchMode(mode: WindowMode): void {
+  // 1. 保存当前 URL
+  const currentURL = this.mainWindow.webContents.getURL();
+  
+  // 2. 创建新窗口（隐藏状态）
+  this.mainWindow = new BrowserWindow({
+    // ... 新模式的配置
+    show: false,
+  });
+  
+  // 3. 加载内容
+  this.mainWindow.loadURL(currentURL);
+  
+  // 4. 等待加载完成
+  this.mainWindow.once('ready-to-show', () => {
+    // 5. 显示新窗口
+    this.mainWindow.show();
+    
+    // 6. 通知渲染进程
+    this.mainWindow.webContents.send('window-mode-changed', mode);
+    
+    // 7. 关闭旧窗口
+    oldWindow.close();
+  });
+}
+```
+
+### 模式识别
+
+通过触发方式区分模式：
+
+| 触发方式 | 调用方法 | 使用模式 |
+|---------|---------|---------|
+| 快捷键 | `toggleMainWindow()` | 精简模式 |
+| Dock 点击 | `showFullWindow()` | 完整模式 |
+
+## 示例组件
+
+### 窗口模式指示器
+
+```vue
+<script setup lang="ts">
+import { useWindowMode } from '@/ui/composables/useWindowMode';
+
+const { mode, isCompact, isFull } = useWindowMode();
+</script>
+
+<template>
+  <div class="mode-badge" :class="{ 'compact': isCompact(), 'full': isFull() }">
+    <span class="mode-icon">{{ isCompact() ? '⚡' : '🖥️' }}</span>
+    <span class="mode-text">{{ isCompact() ? '精简模式' : '完整模式' }}</span>
+  </div>
+</template>
+
+<style scoped>
+.mode-badge.compact {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: rgb(59, 130, 246);
+}
+
+.mode-badge.full {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: rgb(16, 185, 129);
+}
+</style>
+```
+
+## 测试建议
+
+### 精简模式测试
+- [ ] 按 `Option+Space` 打开
+- [ ] 检查是否无边框
+- [ ] 检查是否透明背景
+- [ ] 检查失焦是否隐藏
+- [ ] 检查是否置顶
+
+### 完整模式测试
+- [ ] 点击 Dock 图标
+- [ ] 检查是否有红绿灯按钮
+- [ ] 检查是否不透明
+- [ ] 检查失焦是否不隐藏
+- [ ] 检查是否不置顶
+
+### 切换测试
+- [ ] 从精简模式切换到完整模式
+- [ ] 从完整模式切换到精简模式
+- [ ] 检查内容是否保留
+- [ ] 检查切换是否流畅
+
+## 参考案例
+
+类似的应用实现：
+- **Raycast** - 快捷键呼出精简搜索框，菜单栏图标显示完整界面
+- **Alfred** - 双模式设计
+- **Spotlight** - macOS 原生精简搜索
+
+## 相关文件
+
+- `packages/buddy/src/main/providers/window/WindowManager.ts` - 窗口管理器
+- `packages/buddy/src/main/providers/window/IWindowConfig.ts` - 配置接口
+- `packages/buddy/src/main/providers/window/WindowServiceProvider.ts` - 服务提供者
+- `packages/buddy/src/main/managers/AppManager.ts` - 应用管理器
+- `packages/buddy/src/ui/composables/useWindowMode.ts` - Vue Composable
+- `packages/buddy/src/ui/components/WindowModeIndicator.vue` - 示例组件
