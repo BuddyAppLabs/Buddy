@@ -20,6 +20,8 @@ const {
   selectedModel,
   sendMessage,
   clearMessages,
+  changeProvider,
+  getProviderModels,
 } = useAIChat();
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
@@ -50,6 +52,11 @@ const autoResize = () => {
 
 watch(input, () => {
   nextTick(autoResize);
+});
+
+// 监听供应商变化，自动切换模型
+watch(selectedProvider, (newProvider) => {
+  changeProvider(newProvider);
 });
 
 const goBack = () => {
@@ -129,7 +136,7 @@ const goBack = () => {
             class="select select-bordered select-sm w-full"
             :disabled="isLoading"
           >
-            <option v-for="model in models" :key="model.id" :value="model.id">
+            <option v-for="model in getProviderModels()" :key="model.id" :value="model.id">
               {{ model.name }}
             </option>
           </select>
