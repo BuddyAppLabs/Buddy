@@ -3,10 +3,15 @@ import { IPC_METHODS } from '@/types/ipc-methods';
 
 const ipc = window.ipc;
 
+export interface MessagePart {
+  type: 'text';
+  text: string;
+}
+
 export interface Message {
   id: string;
   role: 'user' | 'assistant' | 'system';
-  content: string;
+  parts: MessagePart[];
   createdAt?: Date;
 }
 
@@ -46,8 +51,8 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   const handleStreamData = (textPart: string) => {
     console.log('[useAIChat] 收到流式数据:', textPart.substring(0, 50));
     const lastMessage = messages.value[messages.value.length - 1];
-    if (lastMessage && lastMessage.role === 'assistant') {
-      lastMessage.content += textPart;
+    if (lastMessage && lastMessage.role === 'assistant' && lastMessage.parts.length > 0) {
+      lastMessage.parts[0].text += textPart;
     }
   };
 
@@ -74,7 +79,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: input.value,
+      parts: [{ type: 'text', text: input.value }],
       createdAt: new Date(),
     };
 
@@ -88,7 +93,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     const assistantMessage: Message = {
       id: (Date.now() + 1).toString(),
       role: 'assistant',
-      content: '',
+      parts: [{ type: 'text', text: '' }],
       createdAt: new Date(),
     };
     messages.value.push(assistantMessage);
@@ -104,10 +109,10 @@ export function useAIChat(options: UseAIChatOptions = {}) {
         IPC_METHODS.AI_CHAT_SEND,
         selectedModel.value,
         messages.value
-          .filter((m) => m.role !== 'assistant' || m.content)
+          .filter((m) => m.role !== 'assistant' || (m.parts.length > 0 && m.parts[0].text))
           .map((m) => ({
             role: m.role,
-            content: m.content,
+            content: m.parts.map(p => p.text).join(''),
           }))
       );
 
@@ -127,7 +132,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
       console.log('[useAIChat] 消息发送成功');
       
       // 显示成功提示（如果助手有回复）
-      if (assistantMessage.content) {
+      if (assistantMessage.parts.length > 0 && assistantMessage.parts[0].text) {
         successMessage.value = '✅ 回复完成';
         setTimeout(() => {
           successMessage.value = null;
@@ -157,8 +162,8 @@ export function useAIChat(options: UseAIChatOptions = {}) {
       const lastUserMessage = [...messages.value]
         .reverse()
         .find((m) => m.role === 'user');
-      if (lastUserMessage) {
-        input.value = lastUserMessage.content;
+      if (lastUserMessage && lastUserMessage.parts.length > 0) {
+        input.value = lastUserMessage.parts.map(p => p.text).join('');
         // 移除最后的用户消息和可能的失败助手消息
         const lastUserIndex = messages.value.findIndex(
           (m) => m.id === lastUserMessage.id
