@@ -24,7 +24,7 @@
       <ButtonFolder
         @click="openLocalDirectory"
         shape="circle"
-        size="xs"
+        width="xs"
         tooltip="打开插件目录" />
       <ButtonRefresh
         @click="loadLocalPlugins"
@@ -32,7 +32,7 @@
         :loading="loadingPlugins"
         :disabled="loadingPlugins"
         tooltip="刷新插件列表"
-        size="xs" />
+        width="xs" />
     </Container>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <template v-if="localPackages.length > 0">

@@ -26,7 +26,7 @@
           <ButtonFolder
             @click="openDevPackageDirectory"
             shape="circle"
-            size="xs"
+            width="xs"
             tooltip="打开插件目录" />
           <ButtonRefresh
             @click="loadDevPackage"
@@ -34,7 +34,7 @@
             :loading="isLoading"
             :disabled="isLoading"
             tooltip="刷新插件列表"
-            size="xs" />
+            width="xs" />
         </div>
       </template>
     </ToolBar>
@@ -46,10 +46,10 @@
       >
 
       <div class="flex flex-row gap-2">
-        <Button size="xs" @click="setDevPackageDir"> 更改 </Button>
-        <Button size="xs" @click="resetDevPackageDir"> 重置 </Button>
-        <Button size="xs" @click="disableDevPackage"> 禁用 </Button>
-        <Button size="xs" @click="enableDevPackage"> 启用 </Button>
+        <Button width="xs" @click="setDevPackageDir"> 更改 </Button>
+        <Button width="xs" @click="resetDevPackageDir"> 重置 </Button>
+        <Button width="xs" @click="disableDevPackage"> 禁用 </Button>
+        <Button width="xs" @click="enableDevPackage"> 启用 </Button>
       </div>
     </Container>
 

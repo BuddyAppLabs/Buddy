@@ -59,7 +59,7 @@
             <div v-if="isUserPlugin">
               <!-- 卸载按钮 -->
               <Button
-                size="xs"
+                width="xs"
                 variant="primary"
                 @click="confirmUninstall(package.id)"
                 :loading="uninstallingPlugins.has(package.id)"
@@ -74,7 +74,7 @@
             <Button
               @click="handleDownload(package.id)"
               variant="primary"
-              size="xs"
+              width="xs"
               :loading="isDownloading"
               :disabled="isDownloading || isInstalled"
               class="p-1">
