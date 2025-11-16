@@ -8,7 +8,7 @@ import { IChatLogger } from '../contract/IChatLogger';
 export function createTimeTool(logger: IChatLogger | null) {
   return tool({
     description: 'Get the current time',
-    parameters: z.object({}),
+    inputSchema: z.object({}),
     execute: async () => {
       logger?.info('Get the current time');
       return {

@@ -75,6 +75,13 @@ export const IPC_METHODS = {
   GET_VERSIONS: 'versions/get',
   CHECK_UPDATE: 'versions/update/check',
 
+  // AI 相关的路由
+  AI_CHAT_SEND: 'ai/chat/send',
+  AI_GET_PROVIDERS: 'ai/providers',
+  AI_GET_MODELS: 'ai/models',
+  AI_SET_API_KEY: 'ai/keys/set',
+  AI_GET_API_KEY: 'ai/keys/get',
+
   // 其他
   OPEN_CONFIG_FOLDER: 'config/open-folder',
 } as const;

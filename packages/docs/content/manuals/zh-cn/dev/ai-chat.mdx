@@ -1,0 +1,324 @@
+---
+title: AI 聊天功能
+order: 2
+---
+
+# AI 聊天功能
+
+Buddy 内置了 AI 聊天助手，通过本地 HTTP API 与 AI 服务通信，支持流式响应。
+
+## 功能特点
+
+- 🚀 流式响应，实时显示 AI 回复
+- 💬 支持多轮对话
+- ⌨️ 快捷键支持 (Cmd+K / Ctrl+K)
+- 🎨 美观的聊天界面
+- 🔄 支持重试失败的消息
+- 🗑️ 清空对话历史
+- 🔀 支持切换 AI 供应商（OpenAI、DeepSeek、Anthropic）
+- 🤖 支持选择不同的 AI 模型
+- ✅ 友好的成功/失败提示
+- ❓ 内置帮助指南
+
+## 使用方式
+
+### 打开 AI 聊天
+
+有两种方式打开 AI 聊天面板：
+
+1. **点击按钮**: 点击状态栏右侧的 "AI" 按钮
+2. **快捷键**: 按下 `Cmd+K` (macOS) 或 `Ctrl+K` (Windows/Linux)
+
+### 发送消息
+
+- 输入消息后按 `Enter` 发送
+- 按 `Shift+Enter` 换行
+- 点击发送按钮发送消息
+
+### 其他操作
+
+- **清空对话**: 点击顶部的垃圾桶图标
+- **重试**: 如果消息发送失败，点击"重试"按钮
+- **关闭面板**: 点击右上角的关闭按钮或按 `Esc` 键
+
+## 技术架构
+
+### 后端 API
+
+AI 服务通过 IPC 通信，而不是 HTTP API。这样更安全，也符合 Electron 的最佳实践。
+
+**主要 IPC 方法：**
+
+```typescript
+// 发送聊天消息（流式响应）
+IPC_METHODS.AI_CHAT_SEND
+参数: (model: string, messages: UIMessage[])
+返回: { success: boolean, data?: string, error?: string }
+
+// 获取可用的 AI 提供商
+IPC_METHODS.AI_GET_PROVIDERS
+返回: { success: boolean, data?: IProvider[] }
+
+// 获取可用的模型列表
+IPC_METHODS.AI_GET_MODELS
+返回: { success: boolean, data?: IModel[] }
+
+// 设置 API 密钥
+IPC_METHODS.AI_SET_API_KEY
+参数: (provider: string, key: string)
+返回: { success: boolean }
+```
+
+**流式响应事件：**
+
+```typescript
+// 监听流式响应
+ipc.receive('ai-chat-stream', (textPart: string) => {
+  // 处理流式文本片段
+});
+```
+
+### 前端实现
+
+#### useAIChat Composable
+
+核心的聊天逻辑封装在 `useAIChat` composable 中：
+
+```typescript
+import { useAIChat } from '@/ui/composables/useAIChat';
+
+const {
+  messages,      // 消息列表
+  input,         // 输入框内容
+  isLoading,     // 加载状态
+  error,         // 错误信息
+  sendMessage,   // 发送消息
+  clearMessages, // 清空消息
+  retry,         // 重试
+} = useAIChat({
+  model: 'gpt-4o',
+});
+```
+
+#### 组件结构
+
+```
+StatusBar.vue
+├── AIChatButton.vue    // AI 聊天按钮
+└── AIChatPanel.vue     // AI 聊天面板
+    └── useAIChat.ts    // 聊天逻辑
+```
+
+### 流式响应处理
+
+使用 IPC 事件监听流式响应：
+
+```typescript
+// 注册流式响应监听器
+const handleStreamData = (textPart: string) => {
+  const lastMessage = messages.value[messages.value.length - 1];
+  if (lastMessage && lastMessage.role === 'assistant') {
+    lastMessage.content += textPart;
+  }
+};
+
+ipc.receive('ai-chat-stream', handleStreamData);
+
+// 发送消息
+const response = await ipc.invoke(
+  IPC_METHODS.AI_CHAT_SEND,
+  model,
+  messages
+);
+
+// 清理监听器
+onUnmounted(() => {
+  ipc.removeListener('ai-chat-stream', handleStreamData);
+});
+```
+
+## 配置 AI 模型
+
+### 设置 API 密钥
+
+在使用 AI 功能前，需要配置 API 密钥：
+
+```typescript
+// 通过 IPC 设置
+const response = await ipc.invoke(
+  IPC_METHODS.AI_SET_API_KEY,
+  'openai',
+  'your-openai-api-key'
+);
+
+if (response.success) {
+  console.log('API 密钥设置成功');
+}
+```
+
+### 支持的 AI 提供商和模型
+
+#### OpenAI
+- GPT-4O
+- GPT-4O Mini
+- GPT-4 Turbo
+- GPT-3.5 Turbo
+
+#### DeepSeek
+- DeepSeek Chat
+- DeepSeek Coder
+
+#### Anthropic (Claude)
+- Claude 3.5 Sonnet
+- Claude 3 Opus
+- Claude 3 Sonnet
+
+### 切换供应商和模型
+
+在聊天界面底部，可以通过下拉菜单选择：
+
+1. **供应商选择器** - 选择 OpenAI、DeepSeek 或 Anthropic
+2. **模型选择器** - 选择该供应商下的具体模型
+
+切换供应商时，会自动选择该供应商的第一个模型。
+
+**编程方式：**
+
+```typescript
+const {
+  selectedProvider,
+  selectedModel,
+  changeProvider,
+  ...
+} = useAIChat({
+  initialModel: 'gpt-4o',
+});
+
+// 切换供应商
+changeProvider('deepseek');
+
+// 直接设置模型
+selectedModel.value = 'claude-3-5-sonnet-20241022';
+```
+
+## 自定义聊天界面
+
+### 修改样式
+
+聊天面板使用 DaisyUI 组件，可以通过修改类名自定义样式：
+
+```vue
+<!-- 用户消息 -->
+<div class="bg-primary text-primary-content">
+  {{ message.content }}
+</div>
+
+<!-- AI 消息 -->
+<div class="bg-base-200 text-base-content">
+  {{ message.content }}
+</div>
+```
+
+### 添加自定义功能
+
+可以扩展 `useAIChat` composable 添加更多功能：
+
+```typescript
+// 添加消息编辑功能
+const editMessage = (messageId: string, newContent: string) => {
+  const message = messages.value.find(m => m.id === messageId);
+  if (message) {
+    message.content = newContent;
+  }
+};
+
+// 添加消息删除功能
+const deleteMessage = (messageId: string) => {
+  messages.value = messages.value.filter(m => m.id !== messageId);
+};
+```
+
+## 最佳实践
+
+### 错误处理
+
+始终处理可能的错误情况：
+
+```typescript
+try {
+  await sendMessage();
+} catch (error) {
+  console.error('发送消息失败:', error);
+  // 显示错误提示
+}
+```
+
+### 性能优化
+
+1. **虚拟滚动**: 对于长对话，考虑使用虚拟滚动
+2. **消息缓存**: 将对话历史保存到本地存储
+3. **请求取消**: 支持取消正在进行的请求
+
+```typescript
+const abortController = new AbortController();
+
+fetch(api, {
+  signal: abortController.signal,
+  // ...
+});
+
+// 取消请求
+abortController.abort();
+```
+
+### 用户体验
+
+1. **加载状态**: 显示"正在思考..."提示
+2. **自动滚动**: 新消息自动滚动到底部
+3. **输入提示**: 显示快捷键提示
+4. **错误重试**: 提供重试按钮
+
+## 故障排查
+
+### IPC 通信失败
+
+**问题**: 无法发送消息或接收响应
+
+**解决方案**:
+1. 检查 `AIServiceProvider` 是否正确启动
+2. 确认 IPC 路由已注册（`registerAIRoutes()`）
+3. 查看主进程和渲染进程的控制台日志
+4. 确认 preload 脚本正确加载
+
+### API 密钥未配置
+
+**问题**: 返回 401 或 403 错误
+
+**解决方案**:
+1. 通过 API 设置正确的 API 密钥
+2. 检查密钥是否有效
+3. 确认使用的模型与密钥匹配
+
+### 流式响应中断
+
+**问题**: 消息显示不完整
+
+**解决方案**:
+1. 检查网络连接
+2. 增加超时时间
+3. 查看服务端日志
+
+## 相关文件
+
+- `packages/buddy/src/main/providers/ai/AIServiceProvider.ts` - AI 服务提供者
+- `packages/buddy/src/main/providers/ai/AIManager.ts` - AI 管理器
+- `packages/buddy/src/main/providers/ai/AIRouter.ts` - API 路由
+- `packages/buddy/src/ui/components/ai/AIChatPanel.vue` - 聊天面板
+- `packages/buddy/src/ui/components/ai/AIChatButton.vue` - 聊天按钮
+- `packages/buddy/src/ui/composables/useAIChat.ts` - 聊天逻辑
+
+## 参考资源
+
+- [Vercel AI SDK 文档](https://sdk.vercel.ai/docs)
+- [OpenAI API 文档](https://platform.openai.com/docs)
+- [Anthropic API 文档](https://docs.anthropic.com/)

@@ -5,6 +5,7 @@ import { registerPluginRoutes } from './plugin-route.js';
 import { registerStateRoutes } from './state-route.js';
 import { registerIpcRoutes } from './ipc.js';
 import { registerViewRoutes } from './view-route.js';
+import { registerAIRoutes } from './ai-route.js';
 
 export function registerRoutes(): void {
   registerActionsRoutes();
@@ -14,4 +15,5 @@ export function registerRoutes(): void {
   registerStateRoutes();
   registerIpcRoutes();
   registerViewRoutes();
+  registerAIRoutes();
 }

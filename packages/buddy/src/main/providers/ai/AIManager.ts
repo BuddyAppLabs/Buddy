@@ -49,11 +49,19 @@ export class AIManager implements IAIManager {
     modelId: string,
     messages: UIMessage[]
   ): Promise<StreamTextResult<any, any>> {
+    this.logger.info('[AIManager] 开始创建流', { modelId, messageCount: messages.length });
+    
     const modelApiKey = await this.getModelApiKey(modelId);
     if (!modelApiKey) {
-      throw new Error('Model key not found');
+      const provider = this.chatService.getProvider(modelId);
+      const errorMsg = provider 
+        ? `请先在设置中配置 ${provider.name} 的 API 密钥`
+        : `未找到模型 ${modelId} 的配置`;
+      this.logger.error('[AIManager] API密钥未配置', { modelId, provider: provider?.type });
+      throw new Error(errorMsg);
     }
 
+    this.logger.info('[AIManager] 调用 ChatService.createStream');
     return this.chatService.createStream(modelId, modelApiKey, messages);
   }
 
@@ -170,9 +178,25 @@ export class AIManager implements IAIManager {
     const provider = this.chatService.getProvider(modelId)?.type;
 
     if (!provider) {
+      this.logger.warn('[AIManager] 未找到模型对应的供应商', { modelId });
       return undefined;
     }
 
-    return this.getApiKey(provider); // 获取模型对应的提供商的API密钥
+    const apiKey = await this.getApiKey(provider);
+    
+    if (!apiKey) {
+      this.logger.warn('[AIManager] 未找到API密钥', { provider, modelId });
+      return undefined;
+    }
+
+    // 确保返回字符串类型
+    const keyStr = typeof apiKey === 'string' ? apiKey : String(apiKey);
+    this.logger.info('[AIManager] 成功获取API密钥', { 
+      provider, 
+      modelId,
+      keyLength: keyStr.length 
+    });
+    
+    return keyStr;
   }
 }

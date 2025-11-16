@@ -5,7 +5,7 @@ export const createUserStatusTool = (user?: any) =>
   tool({
     description:
       '获取当前用户的登录状态和基本信息。可以用来检查用户是否已登录，以及获取用户的邮箱等信息。当用户询问登录状态、个人信息或需要根据登录状态提供不同建议时使用此工具。',
-    parameters: z.object({}),
+    inputSchema: z.object({}),
     execute: async () => {
       if (!user) {
         return {

@@ -5,7 +5,7 @@ import { IChatLogger } from '../contract/IChatLogger';
 export function createWeatherTool(logger: IChatLogger | null) {
   return tool({
     description: 'Get the weather in a location',
-    parameters: z.object({
+    inputSchema: z.object({
       location: z.string().describe('The location to get the weather for'),
     }),
     execute: async ({ location }) => {

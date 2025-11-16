@@ -18,6 +18,8 @@ import LocalRepo from '@/ui/views/LocalRepo.vue';
 import RemoteRepo from '@/ui/views/RemoteRepo.vue';
 import DevRepo from '@/ui/views/DevRepo.vue';
 import DevPackage from '@/ui/views/DevPackage.vue';
+import SettingsView from '@/ui/views/SettingsView.vue';
+import AISettingsView from '@/ui/views/AISettingsView.vue';
 
 // 路由配置
 const routes: RouteRecordRaw[] = [
@@ -83,6 +85,24 @@ const routes: RouteRecordRaw[] = [
     path: '/hero',
     name: 'hero',
     component: HeroView,
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: SettingsView,
+    meta: {
+      title: '设置',
+      viewType: 'settings',
+    },
+  },
+  {
+    path: '/settings/ai',
+    name: 'ai-settings',
+    component: AISettingsView,
+    meta: {
+      title: 'AI 设置',
+      viewType: 'ai-settings',
+    },
   },
 ];
 
