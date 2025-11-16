@@ -21,12 +21,13 @@ import DevPackage from '@/ui/views/DevPackage.vue';
 import SettingsView from '@/ui/views/SettingsView.vue';
 import AISettingsView from '@/ui/views/AISettingsView.vue';
 import AIChatView from '@/ui/views/AIChatView.vue';
+import { ROUTE_NAMES } from './router/routes';
 
 // 路由配置
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'home',
+    name: ROUTE_NAMES.HOME,
     component: HomeView,
     meta: {
       title: '首页',
@@ -46,7 +47,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'user',
-        name: 'market-user',
+        name: ROUTE_NAMES.MARKET_USER,
         component: LocalRepo,
         meta: {
           title: '本地仓库',
@@ -55,7 +56,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'remote',
-        name: 'market-remote',
+        name: ROUTE_NAMES.MARKET_REMOTE,
         component: RemoteRepo,
         meta: {
           title: '远程仓库',
@@ -64,7 +65,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'dev-repo',
-        name: 'market-dev-repo',
+        name: ROUTE_NAMES.MARKET_DEV_REPO,
         component: DevRepo,
         meta: {
           title: '开发仓库',
@@ -73,7 +74,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'dev-package',
-        name: 'market-dev-package',
+        name: ROUTE_NAMES.MARKET_DEV_PACKAGE,
         component: DevPackage,
         meta: {
           title: '开发包',
@@ -84,12 +85,12 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/hero',
-    name: 'hero',
+    name: ROUTE_NAMES.HERO,
     component: HeroView,
   },
   {
     path: '/settings',
-    name: 'settings',
+    name: ROUTE_NAMES.SETTINGS,
     component: SettingsView,
     meta: {
       title: '设置',
@@ -98,7 +99,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/settings/ai',
-    name: 'ai-settings',
+    name: ROUTE_NAMES.AI_SETTINGS,
     component: AISettingsView,
     meta: {
       title: 'AI 设置',
@@ -107,7 +108,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/ai-chat',
-    name: 'ai-chat',
+    name: ROUTE_NAMES.AI_CHAT,
     component: AIChatView,
     meta: {
       title: 'AI 聊天',

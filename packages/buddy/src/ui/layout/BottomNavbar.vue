@@ -11,6 +11,7 @@
   } from '@remixicon/vue';
   import { useNavigation } from '@/ui/composables/useNavigation';
   import { useRoute } from 'vue-router';
+  import { ROUTE_NAMES } from '@/ui/router/routes';
 
   const {
     goToHome,
@@ -37,7 +38,7 @@
       size="sm"
       variant="ghost"
       @click="goToMarketUser"
-      :class="{ 'bg-primary/10': isRouteActive('market-user') }"
+      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.MARKET_USER) }"
       tooltip="本地仓库">
       <RiComputerLine class="w-4 h-4" />
     </Button>
@@ -47,7 +48,7 @@
       size="sm"
       variant="ghost"
       @click="goToMarketRemote"
-      :class="{ 'bg-primary/10': isRouteActive('market-remote') }"
+      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.MARKET_REMOTE) }"
       tooltip="远程仓库">
       <RiCloudLine class="w-4 h-4" />
     </Button>
@@ -67,7 +68,7 @@
       size="sm"
       variant="ghost"
       @click="goToMarketDevPackage"
-      :class="{ 'bg-primary/10': isRouteActive('market-dev-package') }"
+      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.MARKET_DEV_PACKAGE) }"
       tooltip="开发包">
       <RiFolderZipLine class="w-4 h-4" />
     </Button>
@@ -77,7 +78,7 @@
       size="sm"
       variant="ghost"
       @click="goToHome"
-      :class="{ 'bg-primary/10': route.name === 'home' }"
+      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.HOME) }"
       tooltip="首页">
       <RiSearchLine class="w-4 h-4" />
     </Button>
@@ -87,7 +88,7 @@
       size="sm"
       variant="ghost"
       @click="goToAIChat"
-      :class="{ 'bg-primary/10': isRouteActive('ai-chat') }"
+      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.AI_CHAT) }"
       tooltip="AI 聊天">
       <RiSparklingLine class="w-4 h-4" />
     </Button>
@@ -97,7 +98,7 @@
       size="sm"
       variant="ghost"
       @click="goToSettings"
-      :class="{ 'bg-primary/10': isRouteActive('settings') || isRouteActive('ai-settings') }"
+      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.SETTINGS) || isRouteActive(ROUTE_NAMES.AI_SETTINGS) }"
       tooltip="设置">
       <RiSettings3Line class="w-4 h-4" />
     </Button>
