@@ -33,7 +33,7 @@ export interface UseAIChatOptions {
 }
 
 export function useAIChat(options: UseAIChatOptions = {}) {
-  const { initialModel = 'gpt-4o', initialMessages = [] } = options;
+  const { initialModel, initialMessages = [] } = options;
 
   const messages: Ref<Message[]> = ref([...initialMessages]);
   const input = ref('');
@@ -44,8 +44,8 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   // 供应商和模型
   const providers = ref<Provider[]>([]);
   const models = ref<Model[]>([]);
-  const selectedModel = ref(initialModel);
-  const selectedProvider = ref('openai');
+  const selectedModel = ref(initialModel || '');
+  const selectedProvider = ref('');
 
   // 监听流式响应
   const handleStreamData = (textPart: string) => {
@@ -193,6 +193,13 @@ export function useAIChat(options: UseAIChatOptions = {}) {
         if (Array.isArray(data)) {
           providers.value = data;
           console.log('[useAIChat] 加载供应商列表，数量:', providers.value.length);
+          
+          // 如果没有指定初始模型，使用第一个供应商的第一个模型作为默认值
+          if (!initialModel && data.length > 0 && data[0].models && data[0].models.length > 0) {
+            selectedProvider.value = data[0].type;
+            selectedModel.value = data[0].models[0].id;
+            console.log('[useAIChat] 使用第一个供应商作为默认:', selectedProvider.value, '模型:', selectedModel.value);
+          }
         } else {
           console.error('[useAIChat] 供应商数据不是数组:', data);
           providers.value = [];
@@ -222,15 +229,6 @@ export function useAIChat(options: UseAIChatOptions = {}) {
         if (Array.isArray(data)) {
           models.value = data;
           console.log('[useAIChat] 成功加载模型列表，数量:', models.value.length);
-          
-          // 根据当前选择的模型，设置供应商
-          if (selectedModel.value && models.value.length > 0) {
-            const model = models.value.find((m) => m.id === selectedModel.value);
-            if (model) {
-              selectedProvider.value = model.provider;
-              console.log('[useAIChat] 设置供应商为:', selectedProvider.value);
-            }
-          }
         } else {
           console.error('[useAIChat] 模型数据不是数组:', data);
           models.value = [];
@@ -268,9 +266,9 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   };
 
   // 初始化
-  onMounted(() => {
-    loadProviders();
-    loadModels();
+  onMounted(async () => {
+    await loadProviders();
+    await loadModels();
   });
 
   return {

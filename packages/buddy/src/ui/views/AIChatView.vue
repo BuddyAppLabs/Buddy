@@ -25,6 +25,7 @@ const {
 } = useAIChat();
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
+const messagesContainerRef = ref<HTMLDivElement | null>(null);
 
 const handleSend = () => {
   if (!input.value.trim() || isLoading.value) return;
@@ -59,29 +60,20 @@ watch(selectedProvider, (newProvider) => {
   changeProvider(newProvider);
 });
 
-const goBack = () => {
-  router.push('/');
-};
+// 监听消息变化，自动滚动到底部
+watch(messages, () => {
+  nextTick(() => {
+    if (messagesContainerRef.value) {
+      messagesContainerRef.value.scrollTop = messagesContainerRef.value.scrollHeight;
+    }
+  });
+}, { deep: true });
 </script>
 
 <template>
-  <div class="h-full flex flex-col bg-base-100">
+  <div class="fixed inset-0 top-20 bottom-10 flex flex-col bg-base-100">
     <!-- 顶部标题栏 -->
     <div class="flex items-center gap-3 p-4 border-b border-base-300">
-      <button
-        @click="goBack"
-        class="btn btn-ghost btn-sm btn-circle"
-        title="返回"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-5 h-5"
-        >
-          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
-        </svg>
-      </button>
       <h1 class="text-xl font-bold flex items-center gap-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -145,7 +137,7 @@ const goBack = () => {
     </div>
 
     <!-- 消息列表 -->
-    <div class="flex-1 overflow-y-auto p-4 space-y-4">
+    <div ref="messagesContainerRef" class="flex-1 overflow-y-auto p-4 space-y-4">
       <!-- 欢迎消息 -->
       <div v-if="messages.length === 0" class="text-center py-12">
         <div class="text-6xl mb-4">💬</div>
@@ -262,9 +254,6 @@ const goBack = () => {
           </svg>
           <span v-else class="loading loading-spinner loading-sm"></span>
         </button>
-      </div>
-      <div class="text-xs text-base-content/60 mt-2">
-        提示：使用 Enter 发送消息，Shift+Enter 换行
       </div>
     </div>
   </div>
