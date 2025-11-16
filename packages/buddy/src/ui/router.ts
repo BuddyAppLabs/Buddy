@@ -21,6 +21,7 @@ import DevPackage from '@/ui/views/DevPackage.vue';
 import SettingsView from '@/ui/views/SettingsView.vue';
 import AISettingsView from '@/ui/views/AISettingsView.vue';
 import AIChatView from '@/ui/views/AIChatView.vue';
+import PluginsLayout from '@/ui/views/PluginsLayout.vue';
 import { ROUTE_NAMES } from './router/routes';
 
 // 路由配置
@@ -36,6 +37,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/plugins',
+    component: PluginsLayout,
     meta: {
       title: '插件商店',
       viewType: 'plugins',
@@ -131,6 +133,11 @@ router.beforeEach((to, _from, next) => {
   }
 
   next();
+});
+
+// 路由错误处理
+router.onError((error) => {
+  console.error('[Router] 路由错误:', error);
 });
 
 export default router;

@@ -151,10 +151,10 @@
 
     <!-- 内容区域 -->
     <div class="overflow-auto px-4 pt-6 pb-24 no-drag-region h-full">
-      <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" />
-        </transition>
+      <router-view v-slot="{ Component, route }">
+        <div class="route-view-wrapper">
+          <component :is="Component" :key="route.path" v-if="Component" />
+        </div>
       </router-view>
     </div>
 
@@ -164,14 +164,18 @@
 </template>
 
 <style>
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.15s ease;
+  /* 路由视图包装器 - 使用简单的 CSS 过渡 */
+  .route-view-wrapper {
+    animation: fadeIn 0.15s ease-in;
   }
 
-  .fade-enter-from,
-  .fade-leave-to {
-    opacity: 0;
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   .alert-fade-enter-active,
