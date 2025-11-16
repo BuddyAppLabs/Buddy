@@ -16,7 +16,7 @@
       @click="openVersionDialog"
       class="btn btn-xs btn-ghost tooltip tooltip-top"
       data-tip="版本信息">
-      <InfoIcon width="xs" />
+      <InfoIcon size="24px" />
     </button>
 
     <!-- 版本信息对话框 -->
