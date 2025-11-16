@@ -103,7 +103,7 @@
     width="full"
     margin="none"
     padding="none"
-    background="stripes">
+    background="mesh-gradient">
     <!-- 全局进度条 -->
     <div class="absolute top-14 left-1/2 transform -translate-x-1/2">
       <Progress
