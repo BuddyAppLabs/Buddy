@@ -10,43 +10,19 @@
     RiSparklingLine,
   } from '@remixicon/vue';
   import { useNavigation } from '@/ui/composables/useNavigation';
-  import { useRouter, useRoute } from 'vue-router';
-  import { useAppStore } from '@/ui/stores/app-store';
+  import { useRoute } from 'vue-router';
 
-  const { goToHome } = useNavigation();
-  const router = useRouter();
+  const {
+    goToHome,
+    goToMarketUser,
+    goToMarketRemote,
+    goToMarketDevRepo,
+    goToMarketDevPackage,
+    goToSettings,
+    goToAIChat,
+  } = useNavigation();
+
   const route = useRoute();
-  const appStore = useAppStore();
-
-  // 跳转到本地仓库
-  const goToMarketUser = () => {
-    router.push('/plugins/user');
-  };
-
-  // 跳转到远程仓库
-  const goToMarketRemote = () => {
-    router.push('/plugins/remote');
-  };
-
-  // 跳转到开发仓库
-  const goToMarketDevRepo = () => {
-    router.push('/plugins/dev-repo');
-  };
-
-  // 跳转到开发包
-  const goToMarketDevPackage = () => {
-    router.push('/plugins/dev-package');
-  };
-
-  // 跳转到设置
-  const goToSettings = () => {
-    router.push('/settings');
-  };
-
-  // 跳转到 AI 聊天
-  const goToAIChat = () => {
-    router.push('/ai-chat');
-  };
 
   // 判断当前路由是否匹配
   const isRouteActive = (routeName: string) => {
