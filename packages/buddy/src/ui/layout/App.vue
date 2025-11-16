@@ -55,8 +55,8 @@
   };
 
   const handleCharFromGlobalKey = (char: string) => {
-    eventBus.emit('key', char);
-    goToHome();
+    // eventBus.emit('key', char);
+    // goToHome();
   };
 
   // 在组件加载时注册消息监听和初始化

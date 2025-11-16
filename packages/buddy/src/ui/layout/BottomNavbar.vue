@@ -6,6 +6,8 @@
     RiCloudLine,
     RiCodeBoxLine,
     RiFolderZipLine,
+    RiSettings3Line,
+    RiSparklingLine,
   } from '@remixicon/vue';
   import { useNavigation } from '@/ui/composables/useNavigation';
   import { useRouter, useRoute } from 'vue-router';
@@ -34,6 +36,16 @@
   // 跳转到开发包
   const goToMarketDevPackage = () => {
     router.push('/plugins/dev-package');
+  };
+
+  // 跳转到设置
+  const goToSettings = () => {
+    router.push('/settings');
+  };
+
+  // 跳转到 AI 聊天
+  const goToAIChat = () => {
+    router.push('/ai-chat');
   };
 
   // 判断当前路由是否匹配
@@ -92,6 +104,26 @@
       :class="{ 'bg-primary/10': route.name === 'home' }"
       tooltip="首页">
       <RiSearchLine class="w-4 h-4" />
+    </Button>
+
+    <!-- AI 聊天 -->
+    <Button
+      size="sm"
+      variant="ghost"
+      @click="goToAIChat"
+      :class="{ 'bg-primary/10': isRouteActive('ai-chat') }"
+      tooltip="AI 聊天">
+      <RiSparklingLine class="w-4 h-4" />
+    </Button>
+
+    <!-- 设置 -->
+    <Button
+      size="sm"
+      variant="ghost"
+      @click="goToSettings"
+      :class="{ 'bg-primary/10': isRouteActive('settings') || isRouteActive('ai-settings') }"
+      tooltip="设置">
+      <RiSettings3Line class="w-4 h-4" />
     </Button>
   </div>
 </template>
