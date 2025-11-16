@@ -1,42 +1,18 @@
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
   import BottomNavbar from '@/ui/layout/BottomNavbar.vue';
   import WindowActiveStatus from '@/ui/components/status/WindowActiveStatus.vue';
   import VersionCheckButton from '@/ui/components/status/VersionCheckButton.vue';
-  import AIChatButton from '@/ui/components/ai/AIChatButton.vue';
-  import AIChatPanel from '@/ui/components/ai/AIChatPanel.vue';
 
   const router = useRouter();
-  const showAIChat = ref(false);
 
   const handleOpenAIChat = () => {
-    showAIChat.value = true;
-  };
-
-  const handleCloseAIChat = () => {
-    showAIChat.value = false;
+    router.push('/ai-chat');
   };
 
   const handleOpenSettings = () => {
     router.push('/settings');
   };
-
-  // 快捷键支持 (Cmd+K / Ctrl+K)
-  const handleKeydown = (e: KeyboardEvent) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-      e.preventDefault();
-      showAIChat.value = !showAIChat.value;
-    }
-  };
-
-  onMounted(() => {
-    window.addEventListener('keydown', handleKeydown);
-  });
-
-  onUnmounted(() => {
-    window.removeEventListener('keydown', handleKeydown);
-  });
 </script>
 
 <template>
@@ -66,13 +42,25 @@
       </button>
 
       <!-- AI 聊天按钮 -->
-      <AIChatButton @click="handleOpenAIChat" />
+      <button
+        @click="handleOpenAIChat"
+        class="btn btn-ghost btn-sm gap-1 text-base-content/70 hover:text-base-content transition-colors"
+        title="AI 聊天"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          class="w-4 h-4"
+        >
+          <path
+            d="M12 2L9.19 8.63L2 11.38L9.19 14.13L12 21L14.81 14.13L22 11.38L14.81 8.63L12 2Z"
+          />
+        </svg>
+      </button>
       
       <!-- 右侧导航部分 -->
       <BottomNavbar />
     </div>
   </div>
-
-  <!-- AI 聊天面板 -->
-  <AIChatPanel :visible="showAIChat" @close="handleCloseAIChat" />
 </template>

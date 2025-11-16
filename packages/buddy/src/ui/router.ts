@@ -20,6 +20,7 @@ import DevRepo from '@/ui/views/DevRepo.vue';
 import DevPackage from '@/ui/views/DevPackage.vue';
 import SettingsView from '@/ui/views/SettingsView.vue';
 import AISettingsView from '@/ui/views/AISettingsView.vue';
+import AIChatView from '@/ui/views/AIChatView.vue';
 
 // 路由配置
 const routes: RouteRecordRaw[] = [
@@ -102,6 +103,15 @@ const routes: RouteRecordRaw[] = [
     meta: {
       title: 'AI 设置',
       viewType: 'ai-settings',
+    },
+  },
+  {
+    path: '/ai-chat',
+    name: 'ai-chat',
+    component: AIChatView,
+    meta: {
+      title: 'AI 聊天',
+      viewType: 'ai-chat',
     },
   },
 ];
