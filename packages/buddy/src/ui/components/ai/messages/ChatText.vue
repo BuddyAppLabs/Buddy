@@ -29,7 +29,7 @@
 </script>
 
 <template>
-  <div class="chat" :class="role === 'user' ? 'chat-end' : 'chat-start'">
+  <div class="chat group" :class="role === 'user' ? 'chat-end' : 'chat-start'">
     <div
       class="flex flex-col gap-1"
       :class="role === 'user' ? 'items-end' : 'items-start'">
@@ -49,8 +49,10 @@
           v-html="renderedHtml"></div>
       </div>
 
-      <!-- 操作栏 -->
-      <MessageActions :text="text" :role="role" @resend="emit('resend')" />
+      <!-- 操作栏 - hover 时显示 -->
+      <div class="opacity-0 group-hover:opacity-100 transition-opacity">
+        <MessageActions :text="text" :role="role" @resend="emit('resend')" />
+      </div>
     </div>
   </div>
 </template>

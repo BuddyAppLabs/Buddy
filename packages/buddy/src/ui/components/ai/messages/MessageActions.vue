@@ -35,16 +35,17 @@
 </script>
 
 <template>
-  <div class="flex items-center gap-1 px-2">
+  <div class="flex items-center gap-1">
     <!-- 复制按钮 -->
     <button
       @click="copyText"
-      class="btn btn-ghost btn-xs gap-1 text-base-content/50 hover:text-base-content transition-colors"
-      :class="{ 'text-success': copied }">
+      class="btn btn-ghost btn-xs text-base-content/50 hover:text-base-content transition-colors tooltip"
+      :class="{ 'text-success': copied }"
+      :data-tip="copied ? '已复制' : '复制'">
       <!-- 复制图标 -->
       <svg
         v-if="!copied"
-        class="w-3.5 h-3.5"
+        class="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24">
@@ -57,7 +58,7 @@
       <!-- 成功图标 -->
       <svg
         v-else
-        class="w-3.5 h-3.5"
+        class="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24">
@@ -67,17 +68,17 @@
           stroke-width="2"
           d="M5 13l4 4L19 7" />
       </svg>
-      <span class="text-xs">{{ copied ? '已复制' : '复制' }}</span>
     </button>
 
     <!-- 重新发送按钮 - 仅用户消息显示 -->
     <button
       v-if="role === 'user'"
       @click="handleResend"
-      class="btn btn-ghost btn-xs gap-1 text-base-content/50 hover:text-base-content transition-colors">
+      class="btn btn-ghost btn-xs text-base-content/50 hover:text-base-content transition-colors tooltip"
+      data-tip="重新发送">
       <!-- 重新发送图标 -->
       <svg
-        class="w-3.5 h-3.5"
+        class="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24">
@@ -87,7 +88,6 @@
           stroke-width="2"
           d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
       </svg>
-      <span class="text-xs">重新发送</span>
     </button>
   </div>
 </template>
