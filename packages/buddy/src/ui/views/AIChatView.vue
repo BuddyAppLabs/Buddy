@@ -6,8 +6,9 @@
   import { useRouter } from 'vue-router';
   import { useAIChat } from '@/ui/composables/useAIChat';
   import { ref, nextTick, watch } from 'vue';
-  import { AIIcon, ErrorIcon, SuccessIcon, SendIcon } from '@/ui/icons';
+  import { AIIcon, ErrorIcon, SuccessIcon } from '@/ui/icons';
   import ChatMessage from '@/ui/components/ai/messages/ChatMessage.vue';
+  import ChatInput from '@/ui/components/ai/ChatInput.vue';
 
   const router = useRouter();
   const {
@@ -26,41 +27,11 @@
     getProviderModels,
   } = useAIChat();
 
-  const textareaRef = ref<HTMLTextAreaElement | null>(null);
   const messagesContainerRef = ref<HTMLDivElement | null>(null);
 
   const handleSend = () => {
-    if (!input.value.trim() || isLoading.value) return;
     sendMessage();
-    nextTick(() => {
-      if (textareaRef.value) {
-        textareaRef.value.style.height = 'auto';
-      }
-    });
   };
-
-  const handleKeydown = (e: KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const autoResize = () => {
-    if (textareaRef.value) {
-      textareaRef.value.style.height = 'auto';
-      textareaRef.value.style.height = textareaRef.value.scrollHeight + 'px';
-    }
-  };
-
-  watch(input, () => {
-    nextTick(autoResize);
-  });
-
-  // 监听供应商变化，自动切换模型
-  watch(selectedProvider, (newProvider) => {
-    changeProvider(newProvider);
-  });
 
   // 监听消息变化，自动滚动到底部
   watch(
@@ -136,68 +107,14 @@
     </div>
 
     <!-- 输入区域 -->
-    <div class="p-4 border-t border-base-300">
-      <div class="bg-base-200 rounded-2xl p-4 flex flex-col gap-3">
-        <!-- 输入框 -->
-        <textarea
-          ref="textareaRef"
-          v-model="input"
-          @keydown="handleKeydown"
-          @keydown.stop
-          @keyup.stop
-          @keypress.stop
-          placeholder="说点什么..."
-          class="bg-transparent border-none focus:outline-none resize-none text-base min-h-[44px] max-h-[200px] p-0"
-          rows="1"
-          :disabled="isLoading"></textarea>
-
-        <!-- 底部工具栏 -->
-        <div class="flex items-center justify-between">
-          <!-- 模型选择器 -->
-          <div class="flex items-center gap-3 text-sm text-base-content/70">
-            <div class="flex items-center gap-2 whitespace-nowrap">
-              <span>供应商:</span>
-              <select
-                v-model="selectedProvider"
-                class="select select-ghost select-xs bg-transparent border-none focus:outline-none p-0 font-medium text-base-content"
-                :disabled="isLoading">
-                <option
-                  v-for="provider in providers"
-                  :key="provider.type"
-                  :value="provider.type">
-                  {{ provider.name }}
-                </option>
-              </select>
-            </div>
-
-            <span class="text-base-content/30">•</span>
-
-            <div class="flex items-center gap-2 whitespace-nowrap">
-              <span>模型:</span>
-              <select
-                v-model="selectedModel"
-                class="select select-ghost select-xs bg-transparent border-none focus:outline-none p-0 font-medium text-base-content"
-                :disabled="isLoading">
-                <option
-                  v-for="model in getProviderModels()"
-                  :key="model.id"
-                  :value="model.id">
-                  {{ model.name }}
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <!-- 发送按钮 -->
-          <button
-            @click="handleSend"
-            class="btn btn-primary btn-circle btn-sm"
-            :disabled="!input.trim() || isLoading">
-            <SendIcon v-if="!isLoading" class="w-4 h-4" />
-            <span v-else class="loading loading-spinner loading-xs"></span>
-          </button>
-        </div>
-      </div>
-    </div>
+    <ChatInput
+      v-model:input="input"
+      v-model:selected-provider="selectedProvider"
+      v-model:selected-model="selectedModel"
+      :is-loading="isLoading"
+      :providers="providers"
+      :models="models"
+      @send="handleSend"
+      @change-provider="changeProvider" />
   </div>
 </template>
