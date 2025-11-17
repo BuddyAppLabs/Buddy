@@ -179,4 +179,32 @@ export class AIManager implements IAIManager {
       }))
     );
   }
+
+  /**
+   * 设置用户选择的模型
+   */
+  public async setSelectedModel(
+    provider: string,
+    model: string
+  ): Promise<void> {
+    await SettingFacade.set('ai.selectedModel', {
+      provider,
+      model,
+    });
+    this.logger.info('已保存用户选择的模型', { provider, model });
+  }
+
+  /**
+   * 获取用户选择的模型
+   */
+  public async getSelectedModel(): Promise<{
+    provider: string;
+    model: string;
+  } | null> {
+    const selection = SettingFacade.get<{
+      provider: string;
+      model: string;
+    }>('ai.selectedModel');
+    return selection || null;
+  }
 }

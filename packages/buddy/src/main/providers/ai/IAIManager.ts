@@ -72,4 +72,17 @@ export interface IAIManager {
    * @param modelId 大模型ID
    */
   getModelApiKey(modelId: string): Promise<string | undefined>;
+
+  /**
+   * 设置用户选择的模型
+   * @param provider 供应商
+   * @param model 模型ID
+   */
+  setSelectedModel(provider: string, model: string): Promise<void>;
+
+  /**
+   * 获取用户选择的模型
+   * @returns { provider: string, model: string } 或 null
+   */
+  getSelectedModel(): Promise<{ provider: string; model: string } | null>;
 }

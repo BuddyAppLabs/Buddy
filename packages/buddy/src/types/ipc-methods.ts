@@ -81,6 +81,8 @@ export const IPC_METHODS = {
   AI_GET_MODELS: 'ai/models',
   AI_SET_API_KEY: 'ai/keys/set',
   AI_GET_API_KEY: 'ai/keys/get',
+  AI_SET_SELECTED_MODEL: 'ai/selected-model/set',
+  AI_GET_SELECTED_MODEL: 'ai/selected-model/get',
 
   // 其他
   OPEN_CONFIG_FOLDER: 'config/open-folder',

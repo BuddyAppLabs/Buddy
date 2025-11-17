@@ -215,4 +215,45 @@ export function registerAIRoutes(): void {
       }
     }
   );
+
+  /**
+   * 设置用户选择的模型
+   */
+  RouteFacade.handle(
+    IPC_METHODS.AI_SET_SELECTED_MODEL,
+    async (_event, provider: string, model: string) => {
+      try {
+        await AIFacade.setSelectedModel(provider, model);
+        return {
+          success: true,
+          data: null,
+        };
+      } catch (error) {
+        console.error('[AI Route] Error setting selected model:', error);
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        };
+      }
+    }
+  );
+
+  /**
+   * 获取用户选择的模型
+   */
+  RouteFacade.handle(IPC_METHODS.AI_GET_SELECTED_MODEL, async () => {
+    try {
+      const selection = await AIFacade.getSelectedModel();
+      return {
+        success: true,
+        data: selection,
+      };
+    } catch (error) {
+      console.error('[AI Route] Error getting selected model:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  });
 }

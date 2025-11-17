@@ -1,4 +1,4 @@
-import { ref, Ref, onUnmounted, onMounted, watch } from 'vue';
+import { ref, Ref, onUnmounted, onMounted, watch, nextTick } from 'vue';
 import { IPC_METHODS } from '@/types/ipc-methods';
 
 const ipc = window.ipc;
@@ -56,19 +56,14 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   const error = ref<string | null>(null);
   const successMessage = ref<string | null>(null);
 
-  // localStorage 键名
-  const STORAGE_KEY_PROVIDER = 'ai-chat-selected-provider';
-  const STORAGE_KEY_MODEL = 'ai-chat-selected-model';
-
-  // 从 localStorage 恢复上次选择
-  const savedProvider = localStorage.getItem(STORAGE_KEY_PROVIDER);
-  const savedModel = localStorage.getItem(STORAGE_KEY_MODEL);
-
   // 供应商和模型
   const providers = ref<Provider[]>([]);
   const models = ref<Model[]>([]);
-  const selectedModel = ref(initialModel || savedModel || '');
-  const selectedProvider = ref(savedProvider || '');
+  const selectedModel = ref('');
+  const selectedProvider = ref('');
+
+  // 用户保存的配置
+  let userSavedConfig: { provider: string; model: string } | null = null;
 
   // 监听流式响应
   const handleStreamData = (textPart: string) => {
@@ -352,17 +347,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
               providers.value.length
             );
           }
-
-          // 如果没有指定初始模型，使用第一个供应商作为默认值
-          if (!initialModel && data.length > 0) {
-            selectedProvider.value = data[0].type;
-            if (verbose) {
-              console.log(
-                '[useAIChat] 使用第一个供应商作为默认:',
-                selectedProvider.value
-              );
-            }
-          }
+          // 不在这里设置默认供应商，等待 onMounted 中从配置加载
         } else {
           if (verbose) {
             console.error('[useAIChat] 供应商数据不是数组:', data);
@@ -422,8 +407,6 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   // 切换供应商时，选择该供应商的第一个模型
   const changeProvider = (providerType: string) => {
     selectedProvider.value = providerType;
-    // 保存到 localStorage
-    localStorage.setItem(STORAGE_KEY_PROVIDER, providerType);
 
     if (!Array.isArray(models.value)) {
       if (verbose) {
@@ -437,8 +420,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     );
     if (providerModels.length > 0) {
       selectedModel.value = providerModels[0].id;
-      // 保存到 localStorage
-      localStorage.setItem(STORAGE_KEY_MODEL, providerModels[0].id);
+      // watch 监听器会自动保存
     }
   };
 
@@ -453,81 +435,106 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     return models.value.filter((m) => m.provider === selectedProvider.value);
   };
 
-  // 监听模型选择变化，保存到 localStorage
-  watch(selectedModel, (newModel) => {
-    if (newModel) {
-      localStorage.setItem(STORAGE_KEY_MODEL, newModel);
+  // 保存选择到主进程
+  const saveSelection = async (provider: string, model: string) => {
+    try {
+      await ipc.invoke(IPC_METHODS.AI_SET_SELECTED_MODEL, provider, model);
       if (verbose) {
-        console.log('[useAIChat] 保存模型选择到 localStorage:', newModel);
+        console.log('[useAIChat] 💾 保存选择到主进程:', { provider, model });
       }
+    } catch (e) {
+      console.error('[useAIChat] ❌ 保存选择失败:', e);
+    }
+  };
+
+  // 监听供应商和模型选择变化，保存到主进程配置
+  watch([selectedProvider, selectedModel], ([newProvider, newModel]) => {
+    if (newProvider && newModel) {
+      saveSelection(newProvider, newModel);
     }
   });
 
-  // 监听供应商选择变化，保存到 localStorage
-  watch(selectedProvider, (newProvider) => {
-    if (newProvider) {
-      localStorage.setItem(STORAGE_KEY_PROVIDER, newProvider);
-      if (verbose) {
-        console.log('[useAIChat] 保存供应商选择到 localStorage:', newProvider);
+  // 选择第一个供应商的第一个模型
+  const selectFirstModel = () => {
+    if (providers.value.length > 0 && models.value.length > 0) {
+      const firstProvider = providers.value[0].type;
+      const providerModels = models.value.filter(
+        (m) => m.provider === firstProvider
+      );
+      if (providerModels.length > 0) {
+        selectedProvider.value = firstProvider;
+        selectedModel.value = providerModels[0].id;
+        console.log('[useAIChat] ✅ 选择第一个模型:', {
+          provider: firstProvider,
+          model: providerModels[0].id,
+        });
       }
     }
-  });
+  };
 
   // 初始化
   onMounted(async () => {
+    // 第一步：获取用户保存的配置
+    console.log('[useAIChat] 🔍 步骤1: 获取用户配置...');
+    try {
+      const response = await ipc.invoke(IPC_METHODS.AI_GET_SELECTED_MODEL);
+      let data = response.success ? response.data : null;
+
+      // 处理双重包装
+      if (
+        data &&
+        typeof data === 'object' &&
+        'success' in data &&
+        'data' in data
+      ) {
+        data = data.data;
+      }
+
+      userSavedConfig = data;
+      console.log('[useAIChat] 📋 用户配置:', userSavedConfig);
+    } catch (e) {
+      console.error('[useAIChat] ❌ 获取用户配置失败:', e);
+    }
+
+    // 第二步：加载供应商和模型列表
+    console.log('[useAIChat] 🔍 步骤2: 加载供应商和模型...');
     await loadProviders();
     await loadModels();
 
-    // 如果没有指定初始模型，且已经选择了供应商，自动选择该供应商的第一个模型
-    if (verbose) {
-      console.log('[useAIChat] 初始化完成，检查模型选择', {
-        initialModel,
-        savedProvider,
-        savedModel,
-        selectedProvider: selectedProvider.value,
-        selectedModel: selectedModel.value,
-        modelsCount: models.value.length,
-      });
+    // 第三步：设置初始选择
+    console.log('[useAIChat] 🔍 步骤3: 设置初始选择...');
+    if (initialModel) {
+      // 使用 initialModel 参数
+      const [provider] = initialModel.split('/');
+      selectedProvider.value = provider;
+      selectedModel.value = initialModel;
+      console.log('[useAIChat] ✅ 使用 initialModel:', initialModel);
+    } else if (
+      userSavedConfig &&
+      userSavedConfig.provider &&
+      userSavedConfig.model
+    ) {
+      // 验证保存的配置
+      const savedModelExists = models.value.find(
+        (m) => m.id === userSavedConfig!.model
+      );
+      if (savedModelExists) {
+        selectedProvider.value = userSavedConfig.provider;
+        selectedModel.value = userSavedConfig.model;
+        console.log('[useAIChat] ✅ 恢复用户配置:', userSavedConfig);
+      } else {
+        console.warn('[useAIChat] ⚠️  保存的模型不存在，使用第一个');
+        selectFirstModel();
+      }
+    } else {
+      console.log('[useAIChat] 📝 没有用户配置，选择第一个');
+      selectFirstModel();
     }
 
-    // 优先级：initialModel > savedModel > 第一个模型
-    if (!initialModel && models.value.length > 0) {
-      // 如果有保存的供应商和模型，验证它们是否仍然有效
-      if (savedProvider && savedModel) {
-        const savedModelExists = models.value.find((m) => m.id === savedModel);
-        if (savedModelExists) {
-          selectedProvider.value = savedProvider;
-          selectedModel.value = savedModel;
-          if (verbose) {
-            console.log('[useAIChat] 恢复上次选择:', {
-              provider: savedProvider,
-              model: savedModel,
-            });
-          }
-          return;
-        }
-      }
-
-      // 如果没有有效的保存记录，选择第一个供应商的第一个模型
-      if (selectedProvider.value && models.value.length > 0) {
-        const providerModels = models.value.filter(
-          (m) => m.provider === selectedProvider.value
-        );
-        if (verbose) {
-          console.log('[useAIChat] 当前供应商的模型:', providerModels);
-        }
-
-        if (providerModels.length > 0) {
-          selectedModel.value = providerModels[0].id;
-          // 保存到 localStorage
-          localStorage.setItem(STORAGE_KEY_PROVIDER, selectedProvider.value);
-          localStorage.setItem(STORAGE_KEY_MODEL, providerModels[0].id);
-          if (verbose) {
-            console.log('[useAIChat] 自动选择第一个模型:', selectedModel.value);
-          }
-        }
-      }
-    }
+    console.log('[useAIChat] 🎉 初始化完成:', {
+      provider: selectedProvider.value,
+      model: selectedModel.value,
+    });
   });
 
   return {
