@@ -234,67 +234,73 @@
 
       <!-- 输入框 -->
       <div class="border-t border-base-300 p-4">
-        <!-- 模型选择器 -->
+        <!-- 紧凑的输入区域 -->
         <div
-          v-if="providers.length > 0 && models.length > 0"
-          class="flex items-center gap-3 mb-3 text-sm bg-base-200 rounded-lg p-2">
-          <div class="flex items-center gap-2">
-            <span class="text-base-content/70 font-medium">供应商:</span>
-            <select
-              v-model="selectedProvider"
-              @change="changeProvider(selectedProvider)"
-              class="select select-bordered select-sm bg-base-100"
-              :disabled="isLoading">
-              <option
-                v-for="provider in providers"
-                :key="provider.type"
-                :value="provider.type">
-                {{ provider.name || provider.type }}
-              </option>
-            </select>
-          </div>
+          class="bg-base-200 rounded-2xl p-3 flex flex-col gap-3"
+          v-if="providers.length > 0 && models.length > 0">
+          <!-- 输入框 -->
+          <textarea
+            v-model="input"
+            @keydown="handleKeydown"
+            placeholder="说点什么..."
+            class="textarea bg-transparent border-none focus:outline-none resize-none text-base p-0"
+            rows="2"
+            :disabled="isLoading"></textarea>
 
-          <div class="w-px h-6 bg-base-300"></div>
+          <!-- 底部工具栏 -->
+          <div class="flex items-center justify-between">
+            <!-- 模型选择器 -->
+            <div class="flex items-center gap-3 text-sm text-base-content/70">
+              <div class="flex items-center gap-2">
+                <span>供应商:</span>
+                <select
+                  v-model="selectedProvider"
+                  @change="changeProvider(selectedProvider)"
+                  class="select select-ghost select-xs bg-transparent border-none focus:outline-none p-0 font-medium text-base-content"
+                  :disabled="isLoading">
+                  <option
+                    v-for="provider in providers"
+                    :key="provider.type"
+                    :value="provider.type">
+                    {{ provider.name || provider.type }}
+                  </option>
+                </select>
+              </div>
 
-          <div class="flex items-center gap-2 flex-1">
-            <span class="text-base-content/70 font-medium">模型:</span>
-            <select
-              v-model="selectedModel"
-              class="select select-bordered select-sm bg-base-100 flex-1"
-              :disabled="isLoading">
-              <option
-                v-for="model in getProviderModels()"
-                :key="model.id"
-                :value="model.id">
-                {{ model.name }}
-              </option>
-            </select>
+              <span class="text-base-content/30">•</span>
+
+              <div class="flex items-center gap-2">
+                <span>模型:</span>
+                <select
+                  v-model="selectedModel"
+                  class="select select-ghost select-xs bg-transparent border-none focus:outline-none p-0 font-medium text-base-content"
+                  :disabled="isLoading">
+                  <option
+                    v-for="model in getProviderModels()"
+                    :key="model.id"
+                    :value="model.id">
+                    {{ model.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 发送按钮 -->
+            <button
+              @click="handleSend"
+              class="btn btn-primary btn-circle btn-sm"
+              :disabled="!input.trim() || isLoading">
+              <SendIcon class="w-4 h-4" />
+            </button>
           </div>
         </div>
 
         <!-- 加载提示 -->
         <div
           v-else
-          class="flex items-center gap-2 mb-3 text-sm text-base-content/60">
+          class="flex items-center justify-center gap-2 py-4 text-sm text-base-content/60">
           <span class="loading loading-spinner loading-xs"></span>
           <span>正在加载模型列表...</span>
-        </div>
-
-        <!-- 输入区域 -->
-        <div class="flex gap-2">
-          <textarea
-            v-model="input"
-            @keydown="handleKeydown"
-            placeholder="输入消息... (Enter 发送, Shift+Enter 换行)"
-            class="textarea textarea-bordered flex-1 resize-none"
-            rows="2"
-            :disabled="isLoading"></textarea>
-          <button
-            @click="handleSend"
-            class="btn btn-primary"
-            :disabled="!input.trim() || isLoading">
-            <SendIcon class="w-5 h-5" />
-          </button>
         </div>
       </div>
     </div>

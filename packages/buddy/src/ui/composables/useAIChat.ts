@@ -236,20 +236,12 @@ export function useAIChat(options: UseAIChatOptions = {}) {
             providers.value.length
           );
 
-          // 如果没有指定初始模型，使用第一个供应商的第一个模型作为默认值
-          if (
-            !initialModel &&
-            data.length > 0 &&
-            data[0].models &&
-            data[0].models.length > 0
-          ) {
+          // 如果没有指定初始模型，使用第一个供应商作为默认值
+          if (!initialModel && data.length > 0) {
             selectedProvider.value = data[0].type;
-            selectedModel.value = data[0].models[0].id;
             console.log(
               '[useAIChat] 使用第一个供应商作为默认:',
-              selectedProvider.value,
-              '模型:',
-              selectedModel.value
+              selectedProvider.value
             );
           }
         } else {
@@ -324,6 +316,26 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   onMounted(async () => {
     await loadProviders();
     await loadModels();
+
+    // 如果没有指定初始模型，且已经选择了供应商，自动选择该供应商的第一个模型
+    console.log('[useAIChat] 初始化完成，检查模型选择', {
+      initialModel,
+      selectedProvider: selectedProvider.value,
+      selectedModel: selectedModel.value,
+      modelsCount: models.value.length,
+    });
+
+    if (!initialModel && selectedProvider.value && models.value.length > 0) {
+      const providerModels = models.value.filter(
+        (m) => m.provider === selectedProvider.value
+      );
+      console.log('[useAIChat] 当前供应商的模型:', providerModels);
+
+      if (providerModels.length > 0) {
+        selectedModel.value = providerModels[0].id;
+        console.log('[useAIChat] 自动选择第一个模型:', selectedModel.value);
+      }
+    }
   });
 
   return {

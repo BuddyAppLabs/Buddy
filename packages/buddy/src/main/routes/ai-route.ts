@@ -6,6 +6,8 @@ import { RouteFacade, LogFacade } from '@coffic/cosy-framework';
 import { AIFacade } from '../providers/ai/AIFacade.js';
 import type { UIMessage } from 'ai';
 
+const verbose = false;
+
 export function registerAIRoutes(): void {
   /**
    * 发送聊天消息（流式响应）
@@ -13,43 +15,56 @@ export function registerAIRoutes(): void {
   RouteFacade.handle(
     IPC_METHODS.AI_CHAT_SEND,
     async (event, model: string, messages: UIMessage[]) => {
-      LogFacade.info('[AI Route] 收到聊天请求', {
-        model,
-        messageCount: messages.length,
-        messages: JSON.stringify(messages),
-      });
+      if (verbose) {
+        LogFacade.info('[AI Route] 收到聊天请求', {
+          model,
+          messageCount: messages.length,
+          messages: JSON.stringify(messages),
+        });
+      }
 
       try {
-        LogFacade.info('[AI Route] 调用 AIFacade.createStream');
+        if (verbose) {
+          LogFacade.info('[AI Route] 调用 AIFacade.createStream');
+        }
         const stream = await AIFacade.createStream(model, messages);
-        LogFacade.info('[AI Route] Stream 创建成功');
+        if (verbose) {
+          LogFacade.info('[AI Route] Stream 创建成功');
+        }
 
         // 将流式响应转换为文本
         let fullText = '';
         let chunkCount = 0;
 
         // 使用 textStream 获取文本流
-        LogFacade.info('[AI Route] 开始读取流式响应');
+        if (verbose) {
+          LogFacade.info('[AI Route] 开始读取流式响应');
+        }
         for await (const textPart of stream.textStream) {
           chunkCount++;
           fullText += textPart;
-          console.log(
-            `[AI Route] 收到文本块 #${chunkCount}:`,
-            textPart.substring(0, 50)
-          );
+          LogFacade.info(`[AI Route] 收到文本块 #${chunkCount}:`, {
+            text: textPart.substring(0, 50),
+          });
           // 发送增量更新到渲染进程
           event.sender.send('ai-chat-stream', textPart);
-          console.log(`[AI Route] 已发送文本块 #${chunkCount} 到渲染进程`);
+          if (verbose) {
+            LogFacade.info(`[AI Route] 已发送文本块 #${chunkCount} 到渲染进程`);
+          }
 
           if (chunkCount % 10 === 0) {
-            LogFacade.info(`[AI Route] 已发送 ${chunkCount} 个文本块`);
+            if (verbose) {
+              LogFacade.info(`[AI Route] 已发送 ${chunkCount} 个文本块`);
+            }
           }
         }
 
-        LogFacade.info('[AI Route] 流式响应完成', {
-          totalChunks: chunkCount,
-          totalLength: fullText.length,
-        });
+        if (verbose) {
+          LogFacade.info('[AI Route] 流式响应完成', {
+            totalChunks: chunkCount,
+            totalLength: fullText.length,
+          });
+        }
 
         return {
           success: true,
@@ -79,7 +94,7 @@ export function registerAIRoutes(): void {
         data: providers,
       };
     } catch (error) {
-      console.error('[AI Route] Error getting providers:', error);
+      LogFacade.error('[AI Route] Error getting providers:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -113,7 +128,7 @@ export function registerAIRoutes(): void {
     IPC_METHODS.AI_SET_API_KEY,
     async (_event, provider: string, key: string) => {
       try {
-        await AIFacade.setApiKey(provider, key);
+        await AIFacade.setApiKey(provider as any, key);
         return {
           success: true,
           data: null,
@@ -135,7 +150,7 @@ export function registerAIRoutes(): void {
     IPC_METHODS.AI_GET_API_KEY,
     async (_event, provider: string) => {
       try {
-        const key = await AIFacade.getApiKey(provider);
+        const key = await AIFacade.getApiKey(provider as any);
         // 确保返回的是字符串，处理可能的对象包装
         const keyString =
           typeof key === 'string' ? key : key ? String(key) : '';
