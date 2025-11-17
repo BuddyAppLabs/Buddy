@@ -43,9 +43,11 @@ export function registerAIRoutes(): void {
         for await (const textPart of stream.textStream) {
           chunkCount++;
           fullText += textPart;
-          LogFacade.info(`[AI Route] 收到文本块 #${chunkCount}:`, {
-            text: textPart.substring(0, 50),
-          });
+          if (verbose) {
+            LogFacade.info(`[AI Route] 收到文本块 #${chunkCount}:`, {
+              text: textPart.substring(0, 50),
+            });
+          }
           // 发送增量更新到渲染进程
           event.sender.send('ai-chat-stream', textPart);
           if (verbose) {
