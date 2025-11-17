@@ -40,7 +40,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   const isLoading = ref(false);
   const error = ref<string | null>(null);
   const successMessage = ref<string | null>(null);
-  
+
   // 供应商和模型
   const providers = ref<Provider[]>([]);
   const models = ref<Model[]>([]);
@@ -51,8 +51,27 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   const handleStreamData = (textPart: string) => {
     console.log('[useAIChat] 收到流式数据:', textPart.substring(0, 50));
     const lastMessage = messages.value[messages.value.length - 1];
-    if (lastMessage && lastMessage.role === 'assistant' && lastMessage.parts.length > 0) {
+    console.log(
+      '[useAIChat] 最后一条消息:',
+      lastMessage?.role,
+      lastMessage?.id
+    );
+    if (
+      lastMessage &&
+      lastMessage.role === 'assistant' &&
+      lastMessage.parts.length > 0
+    ) {
+      console.log(
+        '[useAIChat] 更新助手消息，当前长度:',
+        lastMessage.parts[0].text.length
+      );
+      // 直接修改对象属性来触发Vue的响应式更新
       lastMessage.parts[0].text += textPart;
+      // 强制触发响应式更新
+      messages.value = [...messages.value];
+      console.log('[useAIChat] 更新后长度:', lastMessage.parts[0].text.length);
+    } else {
+      console.warn('[useAIChat] 无法更新消息，lastMessage:', lastMessage);
     }
   };
 
@@ -105,22 +124,40 @@ export function useAIChat(options: UseAIChatOptions = {}) {
       });
 
       // 使用 IPC 发送消息
+      // 转换为 UIMessage 格式（AI SDK 需要的格式）
+      // UIMessage 格式需要 parts 数组，而不是简单的 content 字符串
+      const uiMessages = messages.value
+        .filter(
+          (m) =>
+            m.role !== 'assistant' || (m.parts.length > 0 && m.parts[0].text)
+        )
+        .map((m) => ({
+          id: m.id,
+          role: m.role,
+          parts: m.parts.map((p) => ({
+            type: 'text' as const,
+            text: p.text,
+          })),
+        }));
+
+      console.log('[useAIChat] 发送的消息:', JSON.stringify(uiMessages));
+
       const response = await ipc.invoke(
         IPC_METHODS.AI_CHAT_SEND,
         selectedModel.value,
-        messages.value
-          .filter((m) => m.role !== 'assistant' || (m.parts.length > 0 && m.parts[0].text))
-          .map((m) => ({
-            role: m.role,
-            content: m.parts.map(p => p.text).join(''),
-          }))
+        uiMessages
       );
 
       console.log('[useAIChat] IPC 响应', response);
 
       // 检查是否有双重包装
       let actualResponse = response;
-      if (response.success && response.data && typeof response.data === 'object' && 'success' in response.data) {
+      if (
+        response.success &&
+        response.data &&
+        typeof response.data === 'object' &&
+        'success' in response.data
+      ) {
         console.log('[useAIChat] 检测到双重包装的响应');
         actualResponse = response.data;
       }
@@ -130,7 +167,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
       }
 
       console.log('[useAIChat] 消息发送成功');
-      
+
       // 显示成功提示（如果助手有回复）
       if (assistantMessage.parts.length > 0 && assistantMessage.parts[0].text) {
         successMessage.value = '✅ 回复完成';
@@ -142,9 +179,11 @@ export function useAIChat(options: UseAIChatOptions = {}) {
       console.error('[useAIChat] 发送失败:', e);
       const errorMsg = e instanceof Error ? e.message : 'Unknown error';
       error.value = errorMsg;
-      
+
       // 移除失败的助手消息
-      messages.value = messages.value.filter((m) => m.id !== assistantMessage.id);
+      messages.value = messages.value.filter(
+        (m) => m.id !== assistantMessage.id
+      );
       // 恢复用户输入
       input.value = userInput;
     } finally {
@@ -163,7 +202,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
         .reverse()
         .find((m) => m.role === 'user');
       if (lastUserMessage && lastUserMessage.parts.length > 0) {
-        input.value = lastUserMessage.parts.map(p => p.text).join('');
+        input.value = lastUserMessage.parts.map((p) => p.text).join('');
         // 移除最后的用户消息和可能的失败助手消息
         const lastUserIndex = messages.value.findIndex(
           (m) => m.id === lastUserMessage.id
@@ -179,26 +218,39 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     try {
       const response = await ipc.invoke(IPC_METHODS.AI_GET_PROVIDERS);
       console.log('[useAIChat] 供应商响应:', response);
-      
+
       if (response.success) {
         // response.data 可能是数组，也可能是 { success, data } 对象
         let data = response.data;
-        
+
         // 如果 data 是对象且有 data 属性，说明是双重包装
         if (data && typeof data === 'object' && 'data' in data) {
           data = data.data;
         }
-        
+
         // 确保 data 是数组
         if (Array.isArray(data)) {
           providers.value = data;
-          console.log('[useAIChat] 加载供应商列表，数量:', providers.value.length);
-          
+          console.log(
+            '[useAIChat] 加载供应商列表，数量:',
+            providers.value.length
+          );
+
           // 如果没有指定初始模型，使用第一个供应商的第一个模型作为默认值
-          if (!initialModel && data.length > 0 && data[0].models && data[0].models.length > 0) {
+          if (
+            !initialModel &&
+            data.length > 0 &&
+            data[0].models &&
+            data[0].models.length > 0
+          ) {
             selectedProvider.value = data[0].type;
             selectedModel.value = data[0].models[0].id;
-            console.log('[useAIChat] 使用第一个供应商作为默认:', selectedProvider.value, '模型:', selectedModel.value);
+            console.log(
+              '[useAIChat] 使用第一个供应商作为默认:',
+              selectedProvider.value,
+              '模型:',
+              selectedModel.value
+            );
           }
         } else {
           console.error('[useAIChat] 供应商数据不是数组:', data);
@@ -214,21 +266,24 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     try {
       const response = await ipc.invoke(IPC_METHODS.AI_GET_MODELS);
       console.log('[useAIChat] 模型响应:', response);
-      
+
       if (response.success) {
         // response.data 可能是数组，也可能是 { success, data } 对象
         let data = response.data;
-        
+
         // 如果 data 是对象且有 data 属性，说明是双重包装
         if (data && typeof data === 'object' && 'data' in data) {
           console.log('[useAIChat] 检测到双重包装，提取内层 data');
           data = data.data;
         }
-        
+
         // 确保 data 是数组
         if (Array.isArray(data)) {
           models.value = data;
-          console.log('[useAIChat] 成功加载模型列表，数量:', models.value.length);
+          console.log(
+            '[useAIChat] 成功加载模型列表，数量:',
+            models.value.length
+          );
         } else {
           console.error('[useAIChat] 模型数据不是数组:', data);
           models.value = [];
@@ -242,12 +297,12 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   // 切换供应商时，选择该供应商的第一个模型
   const changeProvider = (providerType: string) => {
     selectedProvider.value = providerType;
-    
+
     if (!Array.isArray(models.value)) {
       console.error('[useAIChat] models.value 不是数组:', models.value);
       return;
     }
-    
+
     const providerModels = models.value.filter(
       (m) => m.provider === providerType
     );

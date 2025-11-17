@@ -27,7 +27,12 @@ export function createAIRouter(server: AIServer) {
 
   // 获取支持的供应商列表
   server.app.get('/api/providers', (_req, res) => {
-    res.json({ data: server.aiManager.getAvailableProviders() });
+    const providers = server.aiManager.getAvailableProviders();
+    console.log(
+      '[AIRouter] /api/providers - returning providers:',
+      providers.map((p) => p.type)
+    );
+    res.json({ data: providers });
   });
 
   // 获取支持的模型列表
@@ -65,7 +70,7 @@ export function createAIRouter(server: AIServer) {
 
     try {
       const response = await server.aiManager.createStream(model, messages);
-      response.pipeDataStreamToResponse(res);
+      response.pipeTextStreamToResponse(res);
     } catch (error) {
       server.logger.error('[AIRouter] Error creating stream', {
         error: error instanceof Error ? error.message : String(error),

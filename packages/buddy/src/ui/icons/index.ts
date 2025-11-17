@@ -15,3 +15,7 @@ export { default as CheckIcon } from './CheckIcon.vue';
 export { default as FolderOpenIcon } from './FolderOpenIcon.vue';
 export { default as SuccessIcon } from './SuccessIcon.vue';
 export { default as ErrorIcon } from './ErrorIcon.vue';
+export { default as HelpIcon } from './HelpIcon.vue';
+export { default as DeleteIcon } from './DeleteIcon.vue';
+export { default as CloseIcon } from './CloseIcon.vue';
+export { default as SendIcon } from './SendIcon.vue';

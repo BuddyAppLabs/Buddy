@@ -16,6 +16,7 @@ export function registerAIRoutes(): void {
       LogFacade.info('[AI Route] 收到聊天请求', {
         model,
         messageCount: messages.length,
+        messages: JSON.stringify(messages),
       });
 
       try {
