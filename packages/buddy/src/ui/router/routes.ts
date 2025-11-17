@@ -3,7 +3,7 @@
  * 集中管理所有路由名称，避免硬编码
  */
 export const ROUTE_NAMES = {
-  HOME: 'home',
+  SEARCH: 'search',
   HERO: 'hero',
   MARKET_USER: 'market-user',
   MARKET_REMOTE: 'market-remote',

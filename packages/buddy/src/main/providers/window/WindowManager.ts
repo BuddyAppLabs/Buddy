@@ -142,9 +142,25 @@ export class WindowManager implements IWindowManager {
   public switchMode(mode: WindowMode): void {
     if (!this.mainWindow || this.mainWindow.isDestroyed()) return;
 
-    // 如果模式相同，只需要显示窗口
+    // 如果模式相同，检查是否需要跳转路由
     if (this.currentMode === mode) {
       this.logger.info(`[WindowManager] 已经是 ${mode} 模式，无需切换`);
+
+      // 如果是精简模式，确保跳转到搜索页面
+      if (mode === 'compact') {
+        const currentURL = this.mainWindow.webContents.getURL();
+        const baseURL = currentURL.split('#')[0];
+        const targetURL = `${baseURL}#/`;
+
+        // 只有当前不在 hero 页面时才跳转
+        if (!currentURL.includes('#/')) {
+          this.logger.info(
+            `[WindowManager] 精简模式，跳转到搜索页面: ${targetURL}`
+          );
+          this.mainWindow.loadURL(targetURL);
+        }
+      }
+
       return;
     }
 
@@ -159,6 +175,17 @@ export class WindowManager implements IWindowManager {
 
     // 保存当前 URL
     const currentURL = this.mainWindow.webContents.getURL();
+
+    // 根据模式决定要加载的 URL
+    let targetURL = currentURL;
+    if (mode === 'compact') {
+      // 精简模式：强制跳转到搜索页面（hero）
+      const baseURL = currentURL.split('#')[0];
+      targetURL = `${baseURL}#`;
+      this.logger.info(
+        `[WindowManager] 精简模式，跳转到搜索页面: ${targetURL}`
+      );
+    }
 
     // 关闭旧窗口
     const oldWindow = this.mainWindow;
@@ -189,8 +216,8 @@ export class WindowManager implements IWindowManager {
     // 设置窗口事件
     this.setupWindowEvents();
 
-    // 加载之前的 URL
-    this.mainWindow.loadURL(currentURL);
+    // 加载目标 URL
+    this.mainWindow.loadURL(targetURL);
 
     // 等待新窗口加载完成
     this.mainWindow.once('ready-to-show', () => {
@@ -597,6 +624,18 @@ export class WindowManager implements IWindowManager {
       } else {
         // 快捷键触发时，切换到精简模式
         this.switchMode('compact');
+
+        // 等待窗口准备好后通知渲染进程跳转到搜索页面
+        setTimeout(() => {
+          if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+            this.logger.info(
+              `[WindowManager] 快捷键触发，通知渲染进程跳转到搜索页面`
+            );
+            // 发送事件到渲染进程，让它处理路由跳转
+            this.mainWindow.webContents.send('navigate-to-hero');
+          }
+        }, 100);
+
         this.handleWindowShow();
       }
     } catch (error) {

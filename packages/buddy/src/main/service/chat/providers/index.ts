@@ -14,28 +14,14 @@ export function getModel(
 }
 
 export function getAllProvidersWithModels(): ProviderResult[] {
-  console.log(
-    '[getAllProvidersWithModels] PROVIDER_CONFIG keys:',
-    Object.keys(PROVIDER_CONFIG)
-  );
   const result = Object.entries(PROVIDER_CONFIG).map(
     ([provider, ProviderClass]) => {
-      console.log(
-        `[getAllProvidersWithModels] Processing provider: ${provider}`
-      );
       const models = new ProviderClass().getModels();
-      console.log(
-        `[getAllProvidersWithModels] ${provider} has ${models.length} models`
-      );
       return {
         provider_name: provider as ProviderName,
         models,
       };
     }
-  );
-  console.log(
-    '[getAllProvidersWithModels] Final result providers:',
-    result.map((p) => p.provider_name)
   );
   return result;
 }

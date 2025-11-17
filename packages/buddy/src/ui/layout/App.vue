@@ -17,7 +17,7 @@
 
   const appStore = useAppStore();
   const errorStore = useErrorStore();
-  const { goToHome } = useNavigation();
+  const { goToSearch, goToHero } = useNavigation();
 
   // 计算 Alert 容器的样式类
   const alertContainerClass = computed(() => {
@@ -71,6 +71,12 @@
       window.addEventListener('error', handleGlobalError);
       window.addEventListener('unhandledrejection', handleUnhandledRejection);
 
+      // 监听主进程的路由跳转事件
+      window.ipc.receive('navigate-to-hero', () => {
+        console.log('[App] 收到跳转到搜索页面的事件');
+        goToSearch();
+      });
+
       // 初始化 stores
       try {
         appStore.onMounted();
@@ -91,6 +97,9 @@
   onUnmounted(() => {
     window.removeEventListener('error', handleGlobalError);
     window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+
+    // 移除路由跳转事件监听
+    window.ipc.removeListener('navigate-to-hero', goToSearch);
 
     appStore.onUnmounted();
   });

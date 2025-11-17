@@ -14,7 +14,7 @@
   import { ROUTE_NAMES } from '@/ui/router/routes';
 
   const {
-    goToHome,
+    goToSearch,
     goToMarketUser,
     goToMarketRemote,
     goToMarketDevRepo,
@@ -33,15 +33,26 @@
 
 <template>
   <div class="flex flex-row gap-2">
-    <!-- 首页 -->
+    <!-- AI 聊天 -->
     <Button
       size="sm"
       variant="ghost"
-      @click="goToHome"
-      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.HOME) }"
-      tooltip="首页">
+      @click="goToAIChat"
+      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.AI_CHAT) }"
+      tooltip="AI 聊天">
+      <RiSparklingLine class="w-4 h-4" />
+    </Button>
+
+    <!-- 搜索 -->
+    <Button
+      size="sm"
+      variant="ghost"
+      @click="goToSearch"
+      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.SEARCH) }"
+      tooltip="搜索">
       <RiSearchLine class="w-4 h-4" />
     </Button>
+
     <!-- 本地仓库 -->
     <Button
       size="sm"
@@ -62,16 +73,6 @@
       <RiCloudLine class="w-4 h-4" />
     </Button>
 
-    <!-- 开发仓库 -->
-    <!-- <Button
-      size="sm"
-      variant="ghost"
-      @click="goToMarketDevRepo"
-      :class="{ 'bg-primary/10': isRouteActive('market-dev-repo') }"
-      tooltip="开发仓库">
-      <RiCodeBoxLine class="w-4 h-4" />
-    </Button> -->
-
     <!-- 开发包 -->
     <Button
       size="sm"
@@ -82,16 +83,6 @@
       }"
       tooltip="开发包">
       <RiFolderZipLine class="w-4 h-4" />
-    </Button>
-
-    <!-- AI 聊天 -->
-    <Button
-      size="sm"
-      variant="ghost"
-      @click="goToAIChat"
-      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.AI_CHAT) }"
-      tooltip="AI 聊天">
-      <RiSparklingLine class="w-4 h-4" />
     </Button>
 
     <!-- 设置 -->

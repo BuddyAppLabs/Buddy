@@ -28,11 +28,15 @@ import { ROUTE_NAMES } from './router/routes';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: ROUTE_NAMES.HOME,
+    redirect: '/ai-chat',
+  },
+  {
+    path: '/search',
+    name: ROUTE_NAMES.SEARCH,
     component: HomeView,
     meta: {
-      title: '首页',
-      viewType: 'home',
+      title: '搜索',
+      viewType: 'search',
     },
   },
   {

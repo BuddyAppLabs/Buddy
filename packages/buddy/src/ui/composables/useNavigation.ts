@@ -1,7 +1,7 @@
 import { useRouter } from 'vue-router';
 import { ROUTE_NAMES } from '@/ui/router/routes';
 
-const title = "[useNavigation]"
+const title = '[useNavigation]';
 
 /**
  * 导航 Composable
@@ -11,10 +11,10 @@ const title = "[useNavigation]"
 export function useNavigation() {
   const router = useRouter();
 
-  // 跳转到首页
-  const goToHome = () => {
-    console.log(title, 'goToHome');
-    router.push({ name: ROUTE_NAMES.HOME });
+  // 跳转到搜索页面
+  const goToSearch = () => {
+    console.log(title, 'goToSearch');
+    router.push({ name: ROUTE_NAMES.SEARCH });
     console.log(window.location.href);
   };
 
@@ -77,12 +77,12 @@ export function useNavigation() {
   // 跳转到 AI 聊天
   const goToAIChat = () => {
     console.log(title, 'goToAIChat');
-      router.push({ name: ROUTE_NAMES.AI_CHAT });
-      console.log(window.location.href);
+    router.push({ name: ROUTE_NAMES.AI_CHAT });
+    console.log(window.location.href);
   };
 
   return {
-    goToHome,
+    goToSearch,
     goToHero,
     goToPluginStore,
     goToMarketUser,

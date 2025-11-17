@@ -50,10 +50,6 @@ export class AIManager implements IAIManager {
    */
   public getAvailableProviders(): ProviderInfo[] {
     const providers = ChatService.getAllProvidersWithMetadata();
-    console.log(
-      '[AIManager] getAvailableProviders:',
-      providers.map((p) => p.type)
-    );
     return providers;
   }
 
