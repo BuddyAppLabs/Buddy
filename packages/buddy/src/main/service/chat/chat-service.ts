@@ -142,12 +142,17 @@ export class ChatService {
       // maxSteps/maxToolRoundtrips 在当前版本不可用
       // 工具会自动执行并返回结果
       onError: (error) => {
+        console.error(`${title} ❌ onError:`, error);
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         const errorStack = error instanceof Error ? error.stack : undefined;
-        console.error(`${title} ❌ onError:`, errorMessage);
+        console.error(`${title} 错误消息:`, errorMessage);
         if (errorStack) {
           console.error(`${title} 错误堆栈:`, errorStack);
+        }
+        // 如果错误对象有其他属性，也打印出来
+        if (error && typeof error === 'object') {
+          console.error(`${title} 错误详情:`, JSON.stringify(error, null, 2));
         }
       },
       onFinish: async ({ text, finishReason, usage, steps }) => {

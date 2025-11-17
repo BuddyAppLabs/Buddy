@@ -1,4 +1,4 @@
-import { ref, Ref, onUnmounted, onMounted } from 'vue';
+import { ref, Ref, onUnmounted, onMounted, watch } from 'vue';
 import { IPC_METHODS } from '@/types/ipc-methods';
 
 const ipc = window.ipc;
@@ -42,11 +42,19 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   const error = ref<string | null>(null);
   const successMessage = ref<string | null>(null);
 
+  // localStorage 键名
+  const STORAGE_KEY_PROVIDER = 'ai-chat-selected-provider';
+  const STORAGE_KEY_MODEL = 'ai-chat-selected-model';
+
+  // 从 localStorage 恢复上次选择
+  const savedProvider = localStorage.getItem(STORAGE_KEY_PROVIDER);
+  const savedModel = localStorage.getItem(STORAGE_KEY_MODEL);
+
   // 供应商和模型
   const providers = ref<Provider[]>([]);
   const models = ref<Model[]>([]);
-  const selectedModel = ref(initialModel || '');
-  const selectedProvider = ref('');
+  const selectedModel = ref(initialModel || savedModel || '');
+  const selectedProvider = ref(savedProvider || '');
 
   // 监听流式响应
   const handleStreamData = (textPart: string) => {
@@ -120,6 +128,23 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     }
   };
 
+  // 处理流错误
+  const handleStreamError = (data: any) => {
+    console.error('[useAIChat] 收到流错误:', data);
+    isLoading.value = false;
+    error.value = data.error || 'AI 响应出错';
+
+    // 移除空的助手消息
+    const lastMessage = messages.value[messages.value.length - 1];
+    if (
+      lastMessage &&
+      lastMessage.role === 'assistant' &&
+      (!lastMessage.parts[0] || !lastMessage.parts[0].text)
+    ) {
+      messages.value = messages.value.slice(0, -1);
+    }
+  };
+
   // 注册流式响应监听器
   if (ipc) {
     if (verbose) {
@@ -128,6 +153,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     ipc.receive('ai-chat-stream', handleStreamData);
     ipc.receive('ai-chat-tool-call', handleToolCall);
     ipc.receive('ai-chat-tool-result', handleToolResult);
+    ipc.receive('ai-chat-error', handleStreamError);
   } else {
     console.error('[useAIChat] IPC 不可用');
   }
@@ -138,6 +164,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
       ipc.removeListener('ai-chat-stream', handleStreamData);
       ipc.removeListener('ai-chat-tool-call', handleToolCall);
       ipc.removeListener('ai-chat-tool-result', handleToolResult);
+      ipc.removeListener('ai-chat-error', handleStreamError);
     }
   });
 
@@ -372,6 +399,8 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   // 切换供应商时，选择该供应商的第一个模型
   const changeProvider = (providerType: string) => {
     selectedProvider.value = providerType;
+    // 保存到 localStorage
+    localStorage.setItem(STORAGE_KEY_PROVIDER, providerType);
 
     if (!Array.isArray(models.value)) {
       if (verbose) {
@@ -385,6 +414,8 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     );
     if (providerModels.length > 0) {
       selectedModel.value = providerModels[0].id;
+      // 保存到 localStorage
+      localStorage.setItem(STORAGE_KEY_MODEL, providerModels[0].id);
     }
   };
 
@@ -399,6 +430,26 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     return models.value.filter((m) => m.provider === selectedProvider.value);
   };
 
+  // 监听模型选择变化，保存到 localStorage
+  watch(selectedModel, (newModel) => {
+    if (newModel) {
+      localStorage.setItem(STORAGE_KEY_MODEL, newModel);
+      if (verbose) {
+        console.log('[useAIChat] 保存模型选择到 localStorage:', newModel);
+      }
+    }
+  });
+
+  // 监听供应商选择变化，保存到 localStorage
+  watch(selectedProvider, (newProvider) => {
+    if (newProvider) {
+      localStorage.setItem(STORAGE_KEY_PROVIDER, newProvider);
+      if (verbose) {
+        console.log('[useAIChat] 保存供应商选择到 localStorage:', newProvider);
+      }
+    }
+  });
+
   // 初始化
   onMounted(async () => {
     await loadProviders();
@@ -408,24 +459,49 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     if (verbose) {
       console.log('[useAIChat] 初始化完成，检查模型选择', {
         initialModel,
+        savedProvider,
+        savedModel,
         selectedProvider: selectedProvider.value,
         selectedModel: selectedModel.value,
         modelsCount: models.value.length,
       });
     }
 
-    if (!initialModel && selectedProvider.value && models.value.length > 0) {
-      const providerModels = models.value.filter(
-        (m) => m.provider === selectedProvider.value
-      );
-      if (verbose) {
-        console.log('[useAIChat] 当前供应商的模型:', providerModels);
+    // 优先级：initialModel > savedModel > 第一个模型
+    if (!initialModel && models.value.length > 0) {
+      // 如果有保存的供应商和模型，验证它们是否仍然有效
+      if (savedProvider && savedModel) {
+        const savedModelExists = models.value.find((m) => m.id === savedModel);
+        if (savedModelExists) {
+          selectedProvider.value = savedProvider;
+          selectedModel.value = savedModel;
+          if (verbose) {
+            console.log('[useAIChat] 恢复上次选择:', {
+              provider: savedProvider,
+              model: savedModel,
+            });
+          }
+          return;
+        }
       }
 
-      if (providerModels.length > 0) {
-        selectedModel.value = providerModels[0].id;
+      // 如果没有有效的保存记录，选择第一个供应商的第一个模型
+      if (selectedProvider.value && models.value.length > 0) {
+        const providerModels = models.value.filter(
+          (m) => m.provider === selectedProvider.value
+        );
         if (verbose) {
-          console.log('[useAIChat] 自动选择第一个模型:', selectedModel.value);
+          console.log('[useAIChat] 当前供应商的模型:', providerModels);
+        }
+
+        if (providerModels.length > 0) {
+          selectedModel.value = providerModels[0].id;
+          // 保存到 localStorage
+          localStorage.setItem(STORAGE_KEY_PROVIDER, selectedProvider.value);
+          localStorage.setItem(STORAGE_KEY_MODEL, providerModels[0].id);
+          if (verbose) {
+            console.log('[useAIChat] 自动选择第一个模型:', selectedModel.value);
+          }
         }
       }
     }

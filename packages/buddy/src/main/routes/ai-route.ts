@@ -83,6 +83,19 @@ export function registerAIRoutes(): void {
               // 流结束
               console.log('[AI Route] 流结束:', part.finishReason);
               break;
+
+            case 'error':
+              // 错误
+              const errorPart = part as any;
+              const errorMessage = errorPart.error?.message || 'Unknown error';
+              console.error('[AI Route] 流错误:', errorMessage);
+              console.error('[AI Route] 错误详情:', errorPart.error);
+              // 发送错误到前端
+              event.sender.send('ai-chat-error', {
+                error: errorMessage,
+                details: errorPart.error,
+              });
+              break;
           }
         }
 
