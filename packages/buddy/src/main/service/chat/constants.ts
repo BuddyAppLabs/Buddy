@@ -5,6 +5,8 @@ export const PROVIDERS: IProvider[] = [
     type: ProviderType.DEEPSEEK,
     name: 'DeepSeek',
     apiKey: '',
+    url: 'https://platform.deepseek.com/api_keys',
+    description: 'DeepSeek 提供高性价比的中文优化模型',
     models: [
       {
         id: 'deepseek-chat',
@@ -22,6 +24,8 @@ export const PROVIDERS: IProvider[] = [
     type: ProviderType.OPENAI,
     name: 'OpenAI',
     apiKey: '',
+    url: 'https://platform.openai.com/api-keys',
+    description: 'OpenAI 提供 GPT-4、GPT-3.5 等先进的语言模型',
     models: [
       {
         id: 'gpt-4o',
@@ -49,6 +53,8 @@ export const PROVIDERS: IProvider[] = [
     type: ProviderType.ANTHROPIC,
     name: 'Anthropic',
     apiKey: '',
+    url: 'https://console.anthropic.com/settings/keys',
+    description: 'Anthropic 提供 Claude 系列模型，擅长长文本处理',
     models: [
       {
         id: 'claude-3-5-sonnet-20241022',
