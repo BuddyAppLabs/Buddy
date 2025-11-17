@@ -23,7 +23,6 @@ export class TrayManager {
 
       // 获取图标
       const icon = this.getIconPath();
-      console.log('🖼️ 托盘图标已准备，尺寸:', icon.getSize());
 
       // 创建托盘图标
       this.tray = new Tray(icon);
@@ -36,15 +35,6 @@ export class TrayManager {
 
       // 设置点击事件
       this.setupTrayEvents();
-
-      console.log('✅ 系统托盘已创建');
-
-      // 验证托盘是否真的创建成功
-      if (this.tray.isDestroyed()) {
-        console.error('❌ 托盘创建后立即被销毁');
-      } else {
-        console.log('✅ 托盘状态正常');
-      }
     } catch (error) {
       console.error('❌ 创建系统托盘失败:', error);
     }
@@ -66,8 +56,6 @@ export class TrayManager {
         'buddy/resources/icon.png'
       );
       iconPath = fs.existsSync(trayIconPath) ? trayIconPath : defaultIconPath;
-      console.log('📁 使用图标路径:', iconPath);
-      console.log('📁 图标文件存在:', fs.existsSync(iconPath));
     } else {
       // 生产环境：从应用资源目录获取
       // 首先尝试从 resources 目录获取
@@ -82,9 +70,6 @@ export class TrayManager {
       if (!fs.existsSync(iconPath)) {
         iconPath = path.join(app.getAppPath(), 'resources', 'tray.png');
       }
-
-      console.log('📁 生产环境图标路径:', iconPath);
-      console.log('📁 图标文件存在:', fs.existsSync(iconPath));
     }
 
     // 创建适合托盘的图标
@@ -95,8 +80,6 @@ export class TrayManager {
       // 创建一个简单的默认图标
       return this.createDefaultIcon();
     }
-
-    console.log('📐 原始图标尺寸:', image.getSize());
 
     return image;
   }
@@ -123,7 +106,6 @@ export class TrayManager {
     });
     image.setTemplateImage(true);
 
-    console.log('🎨 使用默认生成的图标');
     return image;
   }
 
@@ -228,7 +210,6 @@ export class TrayManager {
     if (this.tray) {
       this.tray.destroy();
       this.tray = null;
-      console.log('🗑️ 系统托盘已销毁');
     }
   }
 
