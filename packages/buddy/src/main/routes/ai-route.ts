@@ -32,32 +32,45 @@ export function registerAIRoutes(): void {
           LogFacade.info('[AI Route] Stream 创建成功');
         }
 
-        // 将流式响应转换为文本
+        // 使用 fullStream 获取完整的流（包括工具调用）
         let fullText = '';
         let chunkCount = 0;
 
-        // 使用 textStream 获取文本流
         if (verbose) {
-          LogFacade.info('[AI Route] 开始读取流式响应');
+          LogFacade.info('[AI Route] 开始读取完整流式响应');
         }
-        for await (const textPart of stream.textStream) {
+
+        for await (const part of stream.fullStream) {
           chunkCount++;
-          fullText += textPart;
+
           if (verbose) {
-            LogFacade.info(`[AI Route] 收到文本块 #${chunkCount}:`, {
-              text: textPart.substring(0, 50),
+            LogFacade.info(`[AI Route] 收到数据块 #${chunkCount}:`, {
+              type: part.type,
             });
           }
-          // 发送增量更新到渲染进程
-          event.sender.send('ai-chat-stream', textPart);
-          if (verbose) {
-            LogFacade.info(`[AI Route] 已发送文本块 #${chunkCount} 到渲染进程`);
-          }
 
-          if (chunkCount % 10 === 0) {
-            if (verbose) {
-              LogFacade.info(`[AI Route] 已发送 ${chunkCount} 个文本块`);
-            }
+          // 处理不同类型的数据块
+          switch (part.type) {
+            case 'text-delta':
+              // 文本增量
+              fullText += part.text;
+              event.sender.send('ai-chat-stream', part.text);
+              break;
+
+            case 'tool-call':
+              // 工具调用
+              console.log('[AI Route] 工具调用:', part.toolName, part.input);
+              break;
+
+            case 'tool-result':
+              // 工具结果
+              console.log('[AI Route] 工具结果:', part.toolName, part.output);
+              break;
+
+            case 'finish':
+              // 流结束
+              console.log('[AI Route] 流结束:', part.finishReason);
+              break;
           }
         }
 

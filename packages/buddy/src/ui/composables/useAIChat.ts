@@ -2,7 +2,7 @@ import { ref, Ref, onUnmounted, onMounted } from 'vue';
 import { IPC_METHODS } from '@/types/ipc-methods';
 
 const ipc = window.ipc;
-const verbose = false;
+const verbose = true;
 
 export interface MessagePart {
   type: 'text';

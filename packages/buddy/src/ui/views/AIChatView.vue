@@ -7,6 +7,7 @@
   import { useAIChat } from '@/ui/composables/useAIChat';
   import { ref, nextTick, watch } from 'vue';
   import { AIIcon, ErrorIcon, SuccessIcon, SendIcon } from '@/ui/icons';
+  import ChatMessage from '@/ui/components/ai/messages/ChatMessage.vue';
 
   const router = useRouter();
   const {
@@ -105,27 +106,10 @@
       </div>
 
       <!-- 消息列表 -->
-      <div
+      <ChatMessage
         v-for="message in messages"
         :key="message.id"
-        class="chat"
-        :class="message.role === 'user' ? 'chat-end' : 'chat-start'">
-        <div class="chat-header mb-1">
-          {{ message.role === 'user' ? '你' : 'AI' }}
-        </div>
-        <div
-          class="chat-bubble"
-          :class="
-            message.role === 'user' ? 'chat-bubble-primary' : 'chat-bubble-info'
-          ">
-          <div
-            v-for="(part, index) in message.parts"
-            :key="index"
-            class="whitespace-pre-wrap">
-            <span v-if="part.type === 'text'">{{ part.text }}</span>
-          </div>
-        </div>
-      </div>
+        :message="message" />
 
       <!-- 加载指示器 -->
       <div v-if="isLoading" class="chat chat-start">

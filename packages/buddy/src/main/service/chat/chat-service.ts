@@ -122,13 +122,19 @@ export class ChatService {
       system: systemPrompt,
       messages: modelMessages, // ✅ 使用转换后的 ModelMessage[]
       tools,
+      // maxSteps/maxToolRoundtrips 在当前版本不可用
+      // 工具会自动执行并返回结果
       onError: (error) => {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         console.error(`${title} onError:`, errorMessage);
       },
-      onFinish: async ({ text, finishReason, usage }) => {
-        console.log(`${title} ✅ onFinish`, { finishReason, usage });
+      onFinish: async ({ text, finishReason, usage, steps }) => {
+        console.log(`${title} ✅ onFinish`, {
+          finishReason,
+          usage,
+          steps: steps?.length,
+        });
 
         if (conversationId) {
           try {
