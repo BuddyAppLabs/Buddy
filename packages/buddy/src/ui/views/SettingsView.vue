@@ -228,7 +228,16 @@
       try {
         const response = await aiIpc.getApiKey(provider.type);
         if (response.success && response.data) {
-          provider.apiKey = String(response.data);
+          // 处理可能的嵌套数据结构
+          let apiKey = response.data;
+
+          // 如果data是对象且包含data字段，提取内层data
+          if (apiKey && typeof apiKey === 'object' && 'data' in apiKey) {
+            apiKey = apiKey.data;
+          }
+
+          // 转换为字符串，如果是null或undefined则设为空字符串
+          provider.apiKey = apiKey ? String(apiKey) : '';
         }
       } catch (e) {
         console.error(`加载 ${provider.type} API 密钥失败:`, e);

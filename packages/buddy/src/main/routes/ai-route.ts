@@ -34,7 +34,7 @@ export function registerAIRoutes(): void {
           fullText += textPart;
           // 发送增量更新到渲染进程
           event.sender.send('ai-chat-stream', textPart);
-          
+
           if (chunkCount % 10 === 0) {
             LogFacade.info(`[AI Route] 已发送 ${chunkCount} 个文本块`);
           }
@@ -130,9 +130,12 @@ export function registerAIRoutes(): void {
     async (_event, provider: string) => {
       try {
         const key = await AIFacade.getApiKey(provider);
+        // 确保返回的是字符串，处理可能的对象包装
+        const keyString =
+          typeof key === 'string' ? key : key ? String(key) : '';
         return {
           success: true,
-          data: key || '',
+          data: keyString,
         };
       } catch (error) {
         console.error('[AI Route] Error getting API key:', error);
