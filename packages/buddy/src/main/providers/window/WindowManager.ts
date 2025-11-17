@@ -43,7 +43,7 @@ export class WindowManager implements IWindowManager {
         opacity: 0.99,
       };
     }
-    
+
     if (!config.fullMode && config.size) {
       config.fullMode = {
         width: Math.max(config.size.width, 1200),
@@ -141,27 +141,28 @@ export class WindowManager implements IWindowManager {
    */
   public switchMode(mode: WindowMode): void {
     if (!this.mainWindow || this.mainWindow.isDestroyed()) return;
-    
+
     // 如果模式相同，只需要显示窗口
     if (this.currentMode === mode) {
       this.logger.info(`[WindowManager] 已经是 ${mode} 模式，无需切换`);
       return;
     }
-    
-    this.logger.info(`[WindowManager] 切换窗口模式: ${this.currentMode} -> ${mode}`);
-    
+
+    this.logger.info(
+      `[WindowManager] 切换窗口模式: ${this.currentMode} -> ${mode}`
+    );
+
     const oldMode = this.currentMode;
     this.currentMode = mode;
-    const modeConfig = mode === 'compact' 
-      ? this.config.compactMode 
-      : this.config.fullMode;
-    
+    const modeConfig =
+      mode === 'compact' ? this.config.compactMode : this.config.fullMode;
+
     // 保存当前 URL
     const currentURL = this.mainWindow.webContents.getURL();
-    
+
     // 关闭旧窗口
     const oldWindow = this.mainWindow;
-    
+
     // 创建新窗口
     this.mainWindow = new BrowserWindow({
       width: modeConfig.width,
@@ -181,39 +182,39 @@ export class WindowManager implements IWindowManager {
         preload: join(app.getAppPath(), 'out/preload/framework-preload.mjs'),
       },
     });
-    
+
     // 设置置顶状态
     this.mainWindow.setAlwaysOnTop(modeConfig.alwaysOnTop);
-    
+
     // 设置窗口事件
     this.setupWindowEvents();
-    
+
     // 加载之前的 URL
     this.mainWindow.loadURL(currentURL);
-    
+
     // 等待新窗口加载完成
     this.mainWindow.once('ready-to-show', () => {
       if (!this.mainWindow) return;
-      
+
       // 如果是完整模式，居中显示
       if (mode === 'full') {
         this.mainWindow.center();
       }
-      
+
       // 显示新窗口
       this.mainWindow.show();
-      
+
       // 通知渲染进程模式变化
       this.mainWindow.webContents.send('window-mode-changed', mode);
-      
+
       // 关闭旧窗口
       if (oldWindow && !oldWindow.isDestroyed()) {
         oldWindow.close();
       }
-      
+
       this.logger.info(`[WindowManager] 窗口模式切换完成: ${mode}`);
     });
-    
+
     // 重新设置失焦处理
     this.setupBlurHandler();
   }
@@ -228,7 +229,7 @@ export class WindowManager implements IWindowManager {
     }
 
     this.logger.info('[WindowManager] 显示完整窗口');
-    
+
     // 如果当前是精简模式，需要切换到完整模式
     if (this.currentMode === 'compact') {
       this.switchMode('full');
@@ -238,11 +239,11 @@ export class WindowManager implements IWindowManager {
       if (!this.mainWindow.isVisible()) {
         this.mainWindow.show();
       }
-      
+
       if (this.mainWindow.isMinimized()) {
         this.mainWindow.restore();
       }
-      
+
       this.mainWindow.focus();
     }
   }
@@ -253,9 +254,10 @@ export class WindowManager implements IWindowManager {
   createWindow(): BrowserWindow {
     try {
       // 根据当前模式获取窗口尺寸
-      const modeConfig = this.currentMode === 'compact' 
-        ? this.config.compactMode 
-        : this.config.fullMode;
+      const modeConfig =
+        this.currentMode === 'compact'
+          ? this.config.compactMode
+          : this.config.fullMode;
 
       // 创建浏览器窗口
       this.mainWindow = new BrowserWindow({
@@ -305,11 +307,32 @@ export class WindowManager implements IWindowManager {
       }
     });
 
-    // 处理外部链接
+    // 处理外部链接 - window.open()
     this.mainWindow.webContents.setWindowOpenHandler((details) => {
-      console.debug('拦截外部链接打开请求', { url: details.url });
+      console.debug('拦截外部链接打开请求 (window.open)', { url: details.url });
       shell.openExternal(details.url);
       return { action: 'deny' };
+    });
+
+    // 处理导航事件 - <a> 标签点击
+    this.mainWindow.webContents.on('will-navigate', (event, url) => {
+      // 如果是外部链接（不是应用内部路由），在外部浏览器打开
+      if (!url.startsWith('file://') && !url.startsWith('devtools://')) {
+        console.debug('拦截导航请求 (a标签)', { url });
+        event.preventDefault();
+        shell.openExternal(url);
+      }
+    });
+
+    // 处理新窗口导航事件
+    this.mainWindow.webContents.on('did-create-window', (newWindow) => {
+      newWindow.webContents.on('will-navigate', (event, url) => {
+        if (!url.startsWith('file://') && !url.startsWith('devtools://')) {
+          console.debug('拦截新窗口导航请求', { url });
+          event.preventDefault();
+          shell.openExternal(url);
+        }
+      });
     });
   }
 
@@ -363,9 +386,10 @@ export class WindowManager implements IWindowManager {
     // 移除旧的监听器
     this.mainWindow.removeAllListeners('blur');
 
-    const modeConfig = this.currentMode === 'compact' 
-      ? this.config.compactMode 
-      : this.config.fullMode;
+    const modeConfig =
+      this.currentMode === 'compact'
+        ? this.config.compactMode
+        : this.config.fullMode;
 
     // 只有在配置了 hideOnBlur 时才添加失焦隐藏
     if (modeConfig.hideOnBlur) {
@@ -374,9 +398,13 @@ export class WindowManager implements IWindowManager {
           this.handleWindowHide(true);
         }
       });
-      this.logger.info(`[WindowManager] 已启用失焦隐藏 (${this.currentMode} 模式)`);
+      this.logger.info(
+        `[WindowManager] 已启用失焦隐藏 (${this.currentMode} 模式)`
+      );
     } else {
-      this.logger.info(`[WindowManager] 已禁用失焦隐藏 (${this.currentMode} 模式)`);
+      this.logger.info(
+        `[WindowManager] 已禁用失焦隐藏 (${this.currentMode} 模式)`
+      );
     }
   }
 
