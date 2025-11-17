@@ -3,6 +3,7 @@ import { OpenRouterProvider } from './providers/openrouter';
 import { OpenAiProvider } from './providers/openai';
 import { AnthropicProvider } from './providers/anthropic';
 import { DeepSeekProvider } from './providers/deepseek';
+import { MegaLLMProvider } from './providers/megallm';
 
 // 供应商配置
 export const PROVIDER_CONFIG = {
@@ -10,6 +11,7 @@ export const PROVIDER_CONFIG = {
   openai: OpenAiProvider,
   anthropic: AnthropicProvider,
   openrouter: OpenRouterProvider,
+  megallm: MegaLLMProvider,
 };
 
 export type ProviderName = keyof typeof PROVIDER_CONFIG;

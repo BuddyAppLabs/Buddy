@@ -67,6 +67,7 @@ export class AIManager implements IAIManager {
     await SettingFacade.remove('ai.keys.anthropic');
     await SettingFacade.remove('ai.keys.deepseek');
     await SettingFacade.remove('ai.keys.openrouter');
+    await SettingFacade.remove('ai.keys.megallm');
   }
 
   /**

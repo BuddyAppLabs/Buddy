@@ -1,5 +1,10 @@
 // AI模型类型
-export type AIModelType = 'openai' | 'anthropic' | 'deepseek';
+export type AIModelType =
+  | 'openai'
+  | 'anthropic'
+  | 'deepseek'
+  | 'openrouter'
+  | 'megallm';
 
 // AI模型配置
 export interface IAIModelConfig {

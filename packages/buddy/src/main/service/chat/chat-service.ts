@@ -37,6 +37,11 @@ export const PROVIDER_METADATA: Record<
     url: 'https://openrouter.ai/keys',
     description: 'OpenRouter 提供多个AI模型的统一接口，包括免费模型',
   },
+  megallm: {
+    url: 'https://ai.megallm.io',
+    description:
+      'MegaLLM 提供多个顶级 AI 模型的统一接口，包括 Claude、GPT-4、Gemini',
+  },
 };
 
 /**
@@ -110,6 +115,18 @@ export class ChatService {
     // 获取所有工具
     const { tools } = await getTools(user, dashScopeApiKey);
 
+    // 🔍 临时禁用工具进行调试
+    const useTools = false;
+
+    console.log(`${title} 开始调用 streamText`, {
+      provider,
+      modelName,
+      systemPrompt,
+      messageCount: modelMessages.length,
+      toolCount: useTools ? Object.keys(tools).length : 0,
+      toolsEnabled: useTools,
+    });
+
     const result = streamText({
       model: wrapLanguageModel({
         model: model,
@@ -121,20 +138,32 @@ export class ChatService {
       }),
       system: systemPrompt,
       messages: modelMessages, // ✅ 使用转换后的 ModelMessage[]
-      tools,
+      ...(useTools ? { tools } : {}), // 条件性添加工具
       // maxSteps/maxToolRoundtrips 在当前版本不可用
       // 工具会自动执行并返回结果
       onError: (error) => {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        console.error(`${title} onError:`, errorMessage);
+        const errorStack = error instanceof Error ? error.stack : undefined;
+        console.error(`${title} ❌ onError:`, errorMessage);
+        if (errorStack) {
+          console.error(`${title} 错误堆栈:`, errorStack);
+        }
       },
       onFinish: async ({ text, finishReason, usage, steps }) => {
         console.log(`${title} ✅ onFinish`, {
           finishReason,
           usage,
           steps: steps?.length,
+          textLength: text?.length || 0,
         });
+
+        // 如果 finishReason 是 unknown 且没有文本，说明可能有问题
+        if (finishReason === 'unknown' && (!text || text.length === 0)) {
+          console.warn(
+            `${title} ⚠️  警告: AI 没有生成任何响应，可能是 API 密钥无效或网络问题`
+          );
+        }
 
         if (conversationId) {
           try {
@@ -166,6 +195,7 @@ export class ChatService {
    * 规则：
    * 1. 如果 assistant 消息包含 tool_calls，但后续没有对应的 tool 消息，移除该 tool_calls
    * 2. 移除孤立的 tool 消息（没有对应的 tool_calls）
+   * 3. 合并连续的相同角色消息（避免 user-user 或 assistant-assistant 的情况）
    */
   private cleanToolMessages(messages: UIMessage[]): UIMessage[] {
     const cleaned: UIMessage[] = [];
@@ -196,7 +226,15 @@ export class ChatService {
         }
       }
 
-      cleaned.push(msg);
+      // 检查是否与上一条消息角色相同
+      const lastMsg = cleaned[cleaned.length - 1];
+      if (lastMsg && lastMsg.role === msg.role) {
+        // 合并消息内容
+        console.log(`${title} 合并连续的 ${msg.role} 消息`);
+        lastMsg.parts = [...(lastMsg.parts || []), ...(msg.parts || [])];
+      } else {
+        cleaned.push(msg);
+      }
     }
 
     console.log(
