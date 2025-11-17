@@ -150,7 +150,7 @@
     </Container>
 
     <!-- 内容区域 -->
-    <div class="overflow-auto px-4 pt-6 pb-24 no-drag-region h-full">
+    <div class="relative overflow-auto px-4 pt-6 pb-24 no-drag-region h-full">
       <router-view v-slot="{ Component, route }">
         <div class="route-view-wrapper">
           <component :is="Component" :key="route.path" v-if="Component" />
