@@ -1,7 +1,6 @@
-import { IModel } from '@/main/service/chat/contract/IModel';
-import { IProvider } from '@/main/service/chat/contract/IProvider';
 import { AIModelType, IAIModelConfig } from '@coffic/buddy-it';
 import { StreamTextResult, UIMessage } from 'ai';
+import type { ProviderInfo } from '@/main/service/chat/index.js';
 
 /**
  * AI服务契约
@@ -42,12 +41,12 @@ export interface IAIManager {
   /**
    * 获取支持的供应商列表
    */
-  getAvailableProviders(): IProvider[];
+  getAvailableProviders(): ProviderInfo[];
 
   /**
    * 获取支持的模型列表
    */
-  getAvailableModels(): IModel[];
+  getAvailableModels(): Array<{ id: string; name: string; provider: string }>;
 
   /**
    * 重置配置
