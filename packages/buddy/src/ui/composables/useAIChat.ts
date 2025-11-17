@@ -89,12 +89,45 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     }
   };
 
+  // 处理工具调用
+  const handleToolCall = (data: any) => {
+    console.log('[useAIChat] 收到工具调用:', data);
+    const lastMessage = messages.value[messages.value.length - 1];
+    if (lastMessage && lastMessage.role === 'assistant') {
+      // 添加工具调用信息到消息的 parts 中
+      const toolPart = {
+        type: 'tool-call' as const,
+        toolCallId: data.toolCallId,
+        toolName: data.toolName,
+        args: data.args,
+      };
+      lastMessage.parts.push(toolPart);
+    }
+  };
+
+  // 处理工具结果
+  const handleToolResult = (data: any) => {
+    console.log('[useAIChat] 收到工具结果:', data);
+    const lastMessage = messages.value[messages.value.length - 1];
+    if (lastMessage && lastMessage.role === 'assistant') {
+      // 查找对应的工具调用，更新结果
+      const toolCallPart = lastMessage.parts.find(
+        (p: any) => p.type === 'tool-call' && p.toolCallId === data.toolCallId
+      );
+      if (toolCallPart) {
+        (toolCallPart as any).result = data.result;
+      }
+    }
+  };
+
   // 注册流式响应监听器
   if (ipc) {
     if (verbose) {
       console.log('[useAIChat] 注册流式响应监听器');
     }
     ipc.receive('ai-chat-stream', handleStreamData);
+    ipc.receive('ai-chat-tool-call', handleToolCall);
+    ipc.receive('ai-chat-tool-result', handleToolResult);
   } else {
     console.error('[useAIChat] IPC 不可用');
   }
@@ -103,6 +136,8 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   onUnmounted(() => {
     if (ipc) {
       ipc.removeListener('ai-chat-stream', handleStreamData);
+      ipc.removeListener('ai-chat-tool-call', handleToolCall);
+      ipc.removeListener('ai-chat-tool-result', handleToolResult);
     }
   });
 

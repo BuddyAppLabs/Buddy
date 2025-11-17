@@ -6,7 +6,7 @@ import { RouteFacade, LogFacade } from '@coffic/cosy-framework';
 import { AIFacade } from '../providers/ai/AIFacade.js';
 import type { UIMessage } from 'ai';
 
-const verbose = false;
+const verbose = true;
 
 export function registerAIRoutes(): void {
   /**
@@ -60,11 +60,23 @@ export function registerAIRoutes(): void {
             case 'tool-call':
               // 工具调用
               console.log('[AI Route] 工具调用:', part.toolName, part.input);
+              // 发送工具调用信息到前端
+              event.sender.send('ai-chat-tool-call', {
+                toolName: part.toolName,
+                toolCallId: part.toolCallId,
+                args: part.args,
+              });
               break;
 
             case 'tool-result':
               // 工具结果
-              console.log('[AI Route] 工具结果:', part.toolName, part.output);
+              console.log('[AI Route] 工具结果:', part.toolName, part.result);
+              // 发送工具结果到前端
+              event.sender.send('ai-chat-tool-result', {
+                toolName: part.toolName,
+                toolCallId: part.toolCallId,
+                result: part.result,
+              });
               break;
 
             case 'finish':
