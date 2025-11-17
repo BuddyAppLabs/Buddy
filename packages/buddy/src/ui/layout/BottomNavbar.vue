@@ -33,6 +33,15 @@
 
 <template>
   <div class="flex flex-row gap-2">
+    <!-- 首页 -->
+    <Button
+      size="sm"
+      variant="ghost"
+      @click="goToHome"
+      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.HOME) }"
+      tooltip="首页">
+      <RiSearchLine class="w-4 h-4" />
+    </Button>
     <!-- 本地仓库 -->
     <Button
       size="sm"
@@ -68,19 +77,11 @@
       size="sm"
       variant="ghost"
       @click="goToMarketDevPackage"
-      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.MARKET_DEV_PACKAGE) }"
+      :class="{
+        'bg-primary/10': isRouteActive(ROUTE_NAMES.MARKET_DEV_PACKAGE),
+      }"
       tooltip="开发包">
       <RiFolderZipLine class="w-4 h-4" />
-    </Button>
-
-    <!-- 首页 -->
-    <Button
-      size="sm"
-      variant="ghost"
-      @click="goToHome"
-      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.HOME) }"
-      tooltip="首页">
-      <RiSearchLine class="w-4 h-4" />
     </Button>
 
     <!-- AI 聊天 -->
@@ -98,7 +99,11 @@
       size="sm"
       variant="ghost"
       @click="goToSettings"
-      :class="{ 'bg-primary/10': isRouteActive(ROUTE_NAMES.SETTINGS) || isRouteActive(ROUTE_NAMES.AI_SETTINGS) }"
+      :class="{
+        'bg-primary/10':
+          isRouteActive(ROUTE_NAMES.SETTINGS) ||
+          isRouteActive(ROUTE_NAMES.AI_SETTINGS),
+      }"
       tooltip="设置">
       <RiSettings3Line class="w-4 h-4" />
     </Button>

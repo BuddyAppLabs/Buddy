@@ -4,7 +4,7 @@
     "build:it": "pnpm --filter @coffic/buddy-it build",
     "build:buddy": "pnpm build:it && pnpm --filter buddy build",
     "build:buddy:mac": "pnpm run build:buddy && pnpm --filter buddy build:mac",
-    "dev": "clear && pnpm --filter buddy dev",
+    "dev": "clear && pnpm build:it && pnpm --filter buddy dev",
     "dev:docs": "clear && pnpm --filter docs dev"
   },
   "packageManager": "pnpm@10.12.1",
