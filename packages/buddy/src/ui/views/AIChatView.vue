@@ -60,7 +60,7 @@
 </script>
 
 <template>
-  <div class="fixed inset-0 top-20 bottom-10 flex flex-col bg-base-100">
+  <div class="fixed inset-0 top-0 bottom-10 flex flex-col bg-base-100">
     <!-- 顶部标题栏 -->
     <div class="flex items-center gap-3 p-4 border-b border-base-300">
       <h1 class="text-xl font-bold flex items-center gap-2">

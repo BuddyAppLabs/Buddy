@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { onMounted, onUnmounted } from 'vue';
-  import SearchBar from '@/ui/layout/SearchBar.vue';
   import StatusBar from '@/ui/layout/StatusBar.vue';
   import { ConfirmDialog, Container } from '@coffic/cosy-ui/vue';
   import { Alert } from '@coffic/cosy-ui/vue';
@@ -143,11 +142,6 @@
 
     <!-- 键盘事件监听 -->
     <KeyCatcher :showKey="true" @globalKey="handleCharFromGlobalKey" />
-
-    <!-- 搜索区域 - 这里是可拖动区域 -->
-    <Container width="full" padding="xs">
-      <SearchBar />
-    </Container>
 
     <!-- 内容区域 -->
     <div class="relative overflow-auto px-4 pt-6 pb-24 no-drag-region h-full">
