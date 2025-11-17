@@ -33,6 +33,17 @@
     sendMessage();
   };
 
+  // 处理重新发送
+  const handleResend = (message: any) => {
+    // 将消息内容填入输入框
+    const textParts = message.parts.filter((p: any) => p.type === 'text');
+    if (textParts.length > 0) {
+      input.value = textParts[0].text;
+      // 自动发送
+      sendMessage();
+    }
+  };
+
   // 监听消息变化，自动滚动到底部
   watch(
     messages,
@@ -80,7 +91,8 @@
       <ChatMessage
         v-for="message in messages"
         :key="message.id"
-        :message="message" />
+        :message="message"
+        @resend="handleResend" />
 
       <!-- 加载指示器 -->
       <div v-if="isLoading" class="chat chat-start">

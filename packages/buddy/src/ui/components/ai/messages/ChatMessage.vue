@@ -25,6 +25,10 @@
     message: Message;
   }>();
 
+  const emit = defineEmits<{
+    resend: [message: Message];
+  }>();
+
   const justify = computed(() =>
     props.message.role === 'user' ? 'justify-end' : 'justify-start'
   );
@@ -61,7 +65,8 @@
           v-if="part.type === 'text'"
           :message-id="message.id"
           :text="part.text || ''"
-          :role="message.role" />
+          :role="message.role"
+          @resend="emit('resend', message)" />
 
         <!-- Reasoning 类型 -->
         <ChatReasoning
