@@ -249,6 +249,44 @@ export class ChatService {
   }
 
   /**
+   * 生成文本（非流式）
+   * 用于简单的文本生成场景
+   */
+  async generateText(options: CreateStreamParams): Promise<string> {
+    const { provider, modelName, key, messages, systemPrompt } = options;
+    const { model } = getModel(provider, modelName, key);
+
+    // 确保 messages 是 UIMessage[] 数组格式
+    const uiMessages: UIMessage[] = Array.isArray(messages) ? messages : [];
+
+    // 清理消息
+    const cleanedMessages = this.cleanToolMessages(uiMessages);
+
+    // 转换为 ModelMessage[] 格式
+    const modelMessages = convertToModelMessages(cleanedMessages);
+
+    console.log(`${title} generateText 调用`, {
+      provider,
+      modelName,
+      messageCount: modelMessages.length,
+    });
+
+    const result = await streamText({
+      model,
+      system: systemPrompt,
+      messages: modelMessages,
+    });
+
+    // 收集所有文本块
+    let fullText = '';
+    for await (const chunk of result.textStream) {
+      fullText += chunk;
+    }
+
+    return fullText;
+  }
+
+  /**
    * 获取所有支持的供应商及其模型列表
    */
   static getSupportedProvidersAndModels(): ProviderResult[] {

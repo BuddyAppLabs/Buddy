@@ -145,7 +145,33 @@ export class AIManager implements IAIManager {
    * 生成文本
    */
   public async generateText(prompt: string): Promise<string> {
-    throw new Error('generateText 方法需要重新实现以适应新的 ChatService');
+    // 使用当前选择的模型或默认模型
+    const selection = await this.getSelectedModel();
+    const provider = selection?.provider || 'openai';
+    const modelName = selection?.model || DEFAULT_OPENAI_MODEL;
+    const modelId = `${provider}/${modelName}`;
+
+    const apiKey = await this.getModelApiKey(modelId);
+    if (!apiKey) {
+      throw new Error(`未找到模型 ${modelId} 的 API 密钥`);
+    }
+
+    // 构建消息
+    const messages: UIMessage[] = [
+      {
+        id: Date.now().toString(),
+        role: 'user',
+        parts: [{ type: 'text', text: prompt }],
+      },
+    ];
+
+    return this.chatService.generateText({
+      provider: provider as any,
+      modelName,
+      key: apiKey,
+      messages,
+      systemPrompt: '你是AI助手，请根据用户的问题给出回答',
+    });
   }
 
   /**
