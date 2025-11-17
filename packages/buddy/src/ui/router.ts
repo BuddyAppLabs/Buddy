@@ -129,7 +129,7 @@ const router = createRouter({
 router.beforeEach((to, _from, next) => {
   // 设置窗口标题
   if (to.meta.title) {
-    document.title = `GitOK - ${to.meta.title}`;
+    document.title = `Buddy - ${to.meta.title}`;
   }
 
   next();

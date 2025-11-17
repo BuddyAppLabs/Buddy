@@ -185,7 +185,7 @@ class PluginViewManager {
     // 创建窗口
     const viewWindow = new BrowserWindow({
       ...bounds,
-      title: `GitOK 插件 - ${viewId}`,
+      title: `Buddy 插件 - ${viewId}`,
       show: false,
       frame: true,
       center: false,
@@ -397,7 +397,9 @@ class PluginViewManager {
         // 确保边界值存在且合理
         if (!bounds || !this.isValidBounds(bounds)) {
           logger.warn(
-            `嵌入式视图边界值不合理，使用默认值: ${JSON.stringify(bounds || {})}`
+            `嵌入式视图边界值不合理，使用默认值: ${JSON.stringify(
+              bounds || {}
+            )}`
           );
           // 默认设置为主窗口的中央区域
           const mainBounds = mainWindow.getBounds();
