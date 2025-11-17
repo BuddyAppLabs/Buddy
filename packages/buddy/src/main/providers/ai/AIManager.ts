@@ -105,6 +105,10 @@ export class AIManager implements IAIManager {
     modelId: string,
     messages: UIMessage[]
   ): Promise<any> {
+    console.log('[AIManager] createStream 开始', {
+      modelId,
+      messageCount: messages?.length,
+    });
     console.log(
       '[AIManager] createStream 接收到的消息:',
       JSON.stringify(messages)
@@ -126,7 +130,8 @@ export class AIManager implements IAIManager {
     const provider = parts[0];
     const actualModelName = parts.slice(1).join('/'); // 支持模型名称中包含 /
 
-    console.log('[AIManager] 调用 chatService.createStream', {
+    console.log('[AIManager] 解析后的参数:', {
+      原始modelId: modelId,
       provider,
       actualModelName,
       messageCount: messages?.length,
@@ -147,14 +152,29 @@ export class AIManager implements IAIManager {
   public async generateText(prompt: string): Promise<string> {
     // 使用当前选择的模型或默认模型
     const selection = await this.getSelectedModel();
-    const provider = selection?.provider || 'openai';
-    const modelName = selection?.model || DEFAULT_OPENAI_MODEL;
-    const modelId = `${provider}/${modelName}`;
+    const modelId = selection?.model || `openai/${DEFAULT_OPENAI_MODEL}`;
+
+    console.log('[AIManager] generateText 开始', {
+      modelId,
+      prompt: prompt.substring(0, 100),
+    });
 
     const apiKey = await this.getModelApiKey(modelId);
     if (!apiKey) {
       throw new Error(`未找到模型 ${modelId} 的 API 密钥`);
     }
+
+    // 从 modelId 中提取 provider 和实际的模型名称
+    // modelId 格式: provider/model-name (例如: openrouter/openai/gpt-oss-20b:free)
+    const parts = modelId.split('/');
+    const provider = parts[0];
+    const actualModelName = parts.slice(1).join('/'); // 支持模型名称中包含 /
+
+    console.log('[AIManager] generateText 解析后的参数:', {
+      原始modelId: modelId,
+      provider,
+      actualModelName,
+    });
 
     // 构建消息
     const messages: UIMessage[] = [
@@ -167,7 +187,7 @@ export class AIManager implements IAIManager {
 
     return this.chatService.generateText({
       provider: provider as any,
-      modelName,
+      modelName: actualModelName,
       key: apiKey,
       messages,
       systemPrompt: '你是AI助手，请根据用户的问题给出回答',
