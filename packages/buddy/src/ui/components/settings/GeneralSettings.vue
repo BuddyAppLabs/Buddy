@@ -30,43 +30,6 @@
 
   const settings = ref<SettingItem[]>([
     {
-      id: 'theme',
-      title: '主题',
-      description: '选择应用主题',
-      type: 'select',
-      value: 'auto',
-      options: [
-        { label: '自动', value: 'auto' },
-        { label: '浅色', value: 'light' },
-        { label: '深色', value: 'dark' },
-      ],
-    },
-    {
-      id: 'language',
-      title: '语言',
-      description: '选择界面语言',
-      type: 'select',
-      value: 'zh-CN',
-      options: [
-        { label: '简体中文', value: 'zh-CN' },
-        { label: 'English', value: 'en-US' },
-      ],
-    },
-    {
-      id: 'auto-update',
-      title: '自动更新',
-      description: '自动检查并下载更新',
-      type: 'toggle',
-      value: true,
-    },
-    {
-      id: 'startup',
-      title: '开机启动',
-      description: '系统启动时自动运行 Buddy',
-      type: 'toggle',
-      value: false,
-    },
-    {
       id: 'open-config',
       title: '打开配置文件夹',
       description: '在文件管理器中打开配置文件夹',

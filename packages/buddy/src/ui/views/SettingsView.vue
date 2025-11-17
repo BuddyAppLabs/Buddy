@@ -8,7 +8,6 @@
     SettingsSidebar,
     GeneralSettings,
     AISettings,
-    ShortcutsSettings,
     AboutSettings,
   } from '@/ui/components/settings';
 
@@ -21,7 +20,6 @@
   const categories: SettingCategory[] = [
     { id: 'general', title: '通用' },
     { id: 'ai', title: 'AI' },
-    { id: 'shortcuts', title: '快捷键' },
     { id: 'about', title: '关于' },
   ];
 
@@ -55,7 +53,6 @@
         <!-- 根据分类显示不同的设置组件 -->
         <GeneralSettings v-if="activeCategory === 'general'" />
         <AISettings v-else-if="activeCategory === 'ai'" />
-        <ShortcutsSettings v-else-if="activeCategory === 'shortcuts'" />
         <AboutSettings v-else-if="activeCategory === 'about'" />
       </div>
     </div>

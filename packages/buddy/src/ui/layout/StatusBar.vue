@@ -1,7 +1,5 @@
 <script setup lang="ts">
   import BottomNavbar from '@/ui/layout/BottomNavbar.vue';
-  import WindowActiveStatus from '@/ui/components/status/WindowActiveStatus.vue';
-  import VersionCheckButton from '@/ui/components/status/VersionCheckButton.vue';
 </script>
 
 <template>

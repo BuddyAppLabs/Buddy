@@ -7,7 +7,6 @@
   import {
     EyeIcon,
     EyeOffIcon,
-    CheckIcon,
     SuccessIcon,
     ErrorIcon,
     InfoIcon,
@@ -100,39 +99,6 @@
     }
   };
 
-  // 测试API密钥
-  const testApiKey = async (provider: AIProvider) => {
-    if (!provider.apiKey || !String(provider.apiKey).trim()) {
-      errorMessage.value = '请先输入 API 密钥';
-      return;
-    }
-
-    isLoadingAI.value = true;
-    errorMessage.value = null;
-
-    try {
-      await saveApiKey(provider);
-
-      const response = await aiIpc.sendMessage(
-        provider.models[0]?.id || 'gpt-4o',
-        [{ role: 'user', content: '你好' }]
-      );
-
-      if (response.success) {
-        successMessage.value = `${provider.name} API 密钥测试成功！`;
-        setTimeout(() => {
-          successMessage.value = null;
-        }, 3000);
-      } else {
-        errorMessage.value = `测试失败: ${response.error}`;
-      }
-    } catch (e) {
-      errorMessage.value = e instanceof Error ? e.message : '测试失败';
-    } finally {
-      isLoadingAI.value = false;
-    }
-  };
-
   // 打开获取密钥的网页
   const openProviderUrl = (url: string) => {
     window.open(url, '_blank');
@@ -157,7 +123,6 @@
         <h3 class="font-bold">💡 提示</h3>
         <div class="text-sm mt-1">
           <p>• API 密钥将安全地保存在本地</p>
-          <p>• 点击"测试连接"可以验证密钥是否有效</p>
           <p>• 至少配置一个供应商的密钥才能使用 AI 聊天功能</p>
         </div>
       </div>
@@ -243,18 +208,6 @@
 
           <!-- 操作按钮 -->
           <div class="card-actions justify-end mt-4">
-            <button
-              @click="testApiKey(provider)"
-              class="btn btn-outline btn-sm"
-              :disabled="
-                !provider.apiKey ||
-                !String(provider.apiKey).trim() ||
-                isSavingAI ||
-                isLoadingAI
-              ">
-              <CheckIcon class="w-4 h-4" />
-              测试连接
-            </button>
             <button
               @click="saveApiKey(provider)"
               class="btn btn-primary btn-sm"
