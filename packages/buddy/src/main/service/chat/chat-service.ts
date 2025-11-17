@@ -115,7 +115,7 @@ export class ChatService {
         model: model,
         middleware: [
           extractReasoningMiddleware({ tagName }),
-          simulateStreamingMiddleware(),
+          // simulateStreamingMiddleware(), // 移除模拟流式，使用真实流式
           logMiddleware,
         ],
       }),

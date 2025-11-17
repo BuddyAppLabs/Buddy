@@ -33,8 +33,13 @@ export function registerAIRoutes(): void {
         for await (const textPart of stream.textStream) {
           chunkCount++;
           fullText += textPart;
+          console.log(
+            `[AI Route] 收到文本块 #${chunkCount}:`,
+            textPart.substring(0, 50)
+          );
           // 发送增量更新到渲染进程
           event.sender.send('ai-chat-stream', textPart);
+          console.log(`[AI Route] 已发送文本块 #${chunkCount} 到渲染进程`);
 
           if (chunkCount % 10 === 0) {
             LogFacade.info(`[AI Route] 已发送 ${chunkCount} 个文本块`);
