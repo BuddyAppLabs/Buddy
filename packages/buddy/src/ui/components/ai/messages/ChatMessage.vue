@@ -29,10 +29,21 @@
     props.message.role === 'user' ? 'justify-end' : 'justify-start'
   );
 
-  // 如果 parts 不存在或为空，不渲染
-  const hasParts = computed(
-    () => props.message.parts && props.message.parts.length > 0
-  );
+  // 过滤掉空的 text parts
+  const validParts = computed(() => {
+    if (!props.message.parts) return [];
+    return props.message.parts.filter((part) => {
+      // 如果是 text 类型，检查是否有内容
+      if (part.type === 'text') {
+        return part.text && part.text.trim().length > 0;
+      }
+      // 其他类型都保留
+      return true;
+    });
+  });
+
+  // 如果没有有效的 parts，不渲染
+  const hasParts = computed(() => validParts.value.length > 0);
 
   // 调试日志
   console.log('[ChatMessage] message:', props.message);
@@ -43,7 +54,7 @@
   <div v-if="hasParts" :class="`flex ${justify}`">
     <div class="max-w-[80%] rounded-lg flex flex-col gap-2">
       <template
-        v-for="(part, index) in message.parts"
+        v-for="(part, index) in validParts"
         :key="`${message.id}-${index}`">
         <!-- 文本类型 -->
         <ChatText

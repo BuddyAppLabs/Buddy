@@ -2,7 +2,7 @@ import { ref, Ref, onUnmounted, onMounted, watch, nextTick } from 'vue';
 import { IPC_METHODS } from '@/types/ipc-methods';
 
 const ipc = window.ipc;
-const verbose = true;
+const verbose = false;
 
 export type MessagePart =
   | {
@@ -267,15 +267,6 @@ export function useAIChat(options: UseAIChatOptions = {}) {
 
       if (verbose) {
         console.log('[useAIChat] 消息发送成功');
-      }
-
-      // 显示成功提示（如果助手有回复）
-      const textParts = assistantMessage.parts.filter((p) => p.type === 'text');
-      if (textParts.length > 0 && (textParts[0] as any).text) {
-        successMessage.value = '✅ 回复完成';
-        setTimeout(() => {
-          successMessage.value = null;
-        }, 3000);
       }
     } catch (e) {
       if (verbose) {
