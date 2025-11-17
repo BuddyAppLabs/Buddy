@@ -18,7 +18,7 @@ importers:
         version: 1.0.28(zod@4.1.12)
       '@ai-sdk/openai':
         specifier: ^2.0.0
-        version: 2.0.67(zod@4.1.12)
+        version: 2.0.68(zod@4.1.12)
       '@coffic/active-app-monitor':
         specifier: ^1.0.2
         version: 1.0.2
@@ -58,15 +58,9 @@ importers:
       chalk:
         specifier: ^5.6.2
         version: 5.6.2
-      cors:
-        specifier: ^2.8.5
-        version: 2.8.5
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
-      express:
-        specifier: ^5.1.0
-        version: 5.1.0
       marked:
         specifier: ^17.0.0
         version: 17.0.0
@@ -95,9 +89,6 @@ importers:
       '@electron-toolkit/tsconfig':
         specifier: ^1.0.1
         version: 1.0.1(@types/node@24.10.1)
-      '@types/cors':
-        specifier: ^2.8.19
-        version: 2.8.19
       '@types/node':
         specifier: ^24.10.1
         version: 24.10.1
@@ -252,8 +243,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/openai@2.0.67':
-    resolution: {integrity: sha512-JhB3fUpY+IxAocyJt2PHuhfNwH+e+rDbZ8Q+d0hgSyNycuPRrV0xutLaf7mgDTvjr5FCrVEkXmM73tJprzZMiA==}
+  '@ai-sdk/openai@2.0.68':
+    resolution: {integrity: sha512-qUSLFkqgUoFArzBwttu0KWVAZYjbsdZGOklSJXpfZ2nDC61yseHxtcnuG8u6tqKnGXDh4eakEgREDWU2sRht7A==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -508,8 +499,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@cloudflare/workers-types@4.20251115.0':
-    resolution: {integrity: sha512-aM7jp7IfKhqKvfSaK1IhVTbSzxB6KQ4gX8e/W29tOuZk+YHlYXuRd/bMm4hWkfd7B1HWNWdsx1GTaEUoZIuVsw==}
+  '@cloudflare/workers-types@4.20251117.0':
+    resolution: {integrity: sha512-4U6phQE/qbmWuJX/0cTk3iOx9KyhWmo34okKb2BSS09UMRWLCwML+P3dnHxCHnSQij8c0orvdzMr9hyqgJGNgw==}
 
   '@coffic/active-app-monitor@1.0.2':
     resolution: {integrity: sha512-BcvDg1DStUZnNxO8OZUgsfoVD+X9faY6Oe5f24cG/iuJmGxI/lrroq7ynjg1P2+VfNJ15LOKPxS7YunU26Hfxw==}
@@ -1878,9 +1869,6 @@ packages:
   '@types/cacheable-request@6.0.3':
     resolution: {integrity: sha512-IQ3EbTzGxIigb1I3qPZc1rWJnH0BmSKv5QYTalEwweFvyBDLSAe24zP0le/hyi7ecGfZVlIVAg4BZqb8WBwKqw==}
 
-  '@types/cors@2.8.19':
-    resolution: {integrity: sha512-mFNylyeyqN93lfe/9CSxOGREz8cpzAhH+E93xJ4xWQf62V8sQ/24reV2nyzUWM6H6Xji+GGHpkbLe7pVoUEskg==}
-
   '@types/css-tree@2.3.11':
     resolution: {integrity: sha512-aEokibJOI77uIlqoBOkVbaQGC9zII0A+JH1kcTNKW2CwyYWD8KM6qdo+4c77wD3wZOQfJuNWAr9M4hdk+YhDIg==}
 
@@ -2591,8 +2579,8 @@ packages:
     resolution: {integrity: sha512-0LrrStPOdJj+SPCCrGhzryycLjwcgUSHBtxNA8aIDxf0GLsRh1cKYhB00Gd1lDOS4yGH69+SNn13+TWbVHETFQ==}
     engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0, npm: '>=7.0.0'}
 
-  csstype@3.2.1:
-    resolution: {integrity: sha512-98XGutrXoh75MlgLihlNxAGbUuFQc7l1cqcnEZlLNKc0UrVdPndgmaDmYTDDh929VS/eqTZV0rozmhu2qqT1/g==}
+  csstype@3.2.2:
+    resolution: {integrity: sha512-D80T+tiqkd/8B0xNlbstWDG4x6aqVfO52+OlSUNIdkTvmNw0uQpJLeos2J/2XvpyidAFuTPmpad+tUxLndwj6g==}
 
   daisyui@5.5.5:
     resolution: {integrity: sha512-ekvI93ZkWIJoCOtDl0D2QMxnWvTejk9V5nWBqRv+7t0xjiBXqAK5U6o6JE2RPvlIC3EqwNyUoIZSdHX9MZK3nw==}
@@ -3041,8 +3029,8 @@ packages:
     resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
     engines: {node: '>=14'}
 
-  form-data@4.0.4:
-    resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
+  form-data@4.0.5:
+    resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
     engines: {node: '>= 6'}
 
   forwarded@0.2.0:
@@ -5329,7 +5317,7 @@ snapshots:
       '@ai-sdk/provider-utils': 3.0.17(zod@4.1.12)
       zod: 4.1.12
 
-  '@ai-sdk/openai@2.0.67(zod@4.1.12)':
+  '@ai-sdk/openai@2.0.68(zod@4.1.12)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
       '@ai-sdk/provider-utils': 3.0.17(zod@4.1.12)
@@ -5352,11 +5340,11 @@ snapshots:
     dependencies:
       '@astrojs/internal-helpers': 0.7.4
       '@astrojs/underscore-redirects': 1.0.0
-      '@cloudflare/workers-types': 4.20251115.0
+      '@cloudflare/workers-types': 4.20251117.0
       astro: 5.15.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.2)(terser@5.42.0)(typescript@5.9.3)(yaml@2.8.1)
       tinyglobby: 0.2.15
       vite: 6.4.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.42.0)(yaml@2.8.1)
-      wrangler: 4.41.0(@cloudflare/workers-types@4.20251115.0)
+      wrangler: 4.41.0(@cloudflare/workers-types@4.20251117.0)
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -5703,7 +5691,7 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20251001.0':
     optional: true
 
-  '@cloudflare/workers-types@4.20251115.0': {}
+  '@cloudflare/workers-types@4.20251117.0': {}
 
   '@coffic/active-app-monitor@1.0.2':
     dependencies:
@@ -6835,10 +6823,6 @@ snapshots:
       '@types/node': 24.10.1
       '@types/responselike': 1.0.3
 
-  '@types/cors@2.8.19':
-    dependencies:
-      '@types/node': 24.10.1
-
   '@types/css-tree@2.3.11': {}
 
   '@types/csso@5.0.4':
@@ -7072,7 +7056,7 @@ snapshots:
       '@vue/reactivity': 3.5.24
       '@vue/runtime-core': 3.5.24
       '@vue/shared': 3.5.24
-      csstype: 3.2.1
+      csstype: 3.2.2
 
   '@vue/server-renderer@3.5.24(vue@3.5.24(typescript@5.9.3))':
     dependencies:
@@ -7462,7 +7446,7 @@ snapshots:
   axios@1.13.2:
     dependencies:
       follow-redirects: 1.15.11
-      form-data: 4.0.4
+      form-data: 4.0.5
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
@@ -7848,7 +7832,7 @@ snapshots:
     dependencies:
       css-tree: 2.2.1
 
-  csstype@3.2.1: {}
+  csstype@3.2.2: {}
 
   daisyui@5.5.5: {}
 
@@ -8049,7 +8033,7 @@ snapshots:
       builder-util: 26.0.11
       builder-util-runtime: 9.3.1
       chalk: 4.1.2
-      form-data: 4.0.4
+      form-data: 4.0.5
       fs-extra: 10.1.0
       lazy-val: 1.0.5
       mime: 2.6.0
@@ -8461,7 +8445,7 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  form-data@4.0.4:
+  form-data@4.0.5:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
@@ -11057,7 +11041,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20251001.0
       '@cloudflare/workerd-windows-64': 1.20251001.0
 
-  wrangler@4.41.0(@cloudflare/workers-types@4.20251115.0):
+  wrangler@4.41.0(@cloudflare/workers-types@4.20251117.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
       '@cloudflare/unenv-preset': 2.7.5(unenv@2.0.0-rc.21)(workerd@1.20251001.0)
@@ -11068,7 +11052,7 @@ snapshots:
       unenv: 2.0.0-rc.21
       workerd: 1.20251001.0
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20251115.0
+      '@cloudflare/workers-types': 4.20251117.0
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil
