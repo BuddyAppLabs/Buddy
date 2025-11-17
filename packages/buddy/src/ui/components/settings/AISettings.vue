@@ -4,7 +4,14 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue';
   import { aiIpc } from '@/ui/ipc/ai-ipc';
-  import { EyeIcon, EyeOffIcon, CheckIcon } from '@/ui/icons';
+  import {
+    EyeIcon,
+    EyeOffIcon,
+    CheckIcon,
+    SuccessIcon,
+    ErrorIcon,
+    InfoIcon,
+  } from '@/ui/icons';
 
   interface AIProvider {
     type: string;
@@ -159,34 +166,27 @@
 
 <template>
   <div>
+    <!-- 帮助信息 - 移到顶部 -->
+    <div class="alert alert-info mb-6">
+      <InfoIcon class="stroke-current shrink-0 w-6 h-6" />
+      <div>
+        <h3 class="font-bold">💡 提示</h3>
+        <div class="text-sm mt-1">
+          <p>• API 密钥将安全地保存在本地</p>
+          <p>• 点击"测试连接"可以验证密钥是否有效</p>
+          <p>• 至少配置一个供应商的密钥才能使用 AI 聊天功能</p>
+        </div>
+      </div>
+    </div>
+
     <!-- 消息提示 -->
     <div v-if="successMessage" class="alert alert-success mb-4">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current shrink-0 h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+      <SuccessIcon class="stroke-current shrink-0 h-6 w-6" />
       <span>{{ successMessage }}</span>
     </div>
 
     <div v-if="errorMessage" class="alert alert-error mb-4">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current shrink-0 h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+      <ErrorIcon class="stroke-current shrink-0 h-6 w-6" />
       <span>{{ errorMessage }}</span>
     </div>
 
@@ -284,29 +284,6 @@
                 class="loading loading-spinner loading-sm"></span>
               <span v-else>保存</span>
             </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 帮助信息 -->
-      <div class="alert alert-info">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          class="stroke-current shrink-0 w-6 h-6">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <div>
-          <h3 class="font-bold">💡 提示</h3>
-          <div class="text-sm mt-1">
-            <p>• API 密钥将安全地保存在本地</p>
-            <p>• 点击"测试连接"可以验证密钥是否有效</p>
-            <p>• 至少配置一个供应商的密钥才能使用 AI 聊天功能</p>
           </div>
         </div>
       </div>

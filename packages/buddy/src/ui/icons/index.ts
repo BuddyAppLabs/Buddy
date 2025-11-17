@@ -12,3 +12,6 @@ export { default as InfoIcon } from './InfoIcon.vue';
 export { default as EyeIcon } from './EyeIcon.vue';
 export { default as EyeOffIcon } from './EyeOffIcon.vue';
 export { default as CheckIcon } from './CheckIcon.vue';
+export { default as FolderOpenIcon } from './FolderOpenIcon.vue';
+export { default as SuccessIcon } from './SuccessIcon.vue';
+export { default as ErrorIcon } from './ErrorIcon.vue';

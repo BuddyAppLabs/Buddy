@@ -3,15 +3,30 @@
 -->
 <script setup lang="ts">
   import { ref } from 'vue';
+  import { configIpc } from '@/ui/ipc/config-ipc';
+  import { FolderOpenIcon } from '@/ui/icons';
 
   interface SettingItem {
     id: string;
     title: string;
     description: string;
-    type: 'toggle' | 'input' | 'select';
-    value: any;
+    type: 'toggle' | 'input' | 'select' | 'action';
+    value?: any;
     options?: Array<{ label: string; value: any }>;
+    action?: () => void;
   }
+
+  // 打开配置文件夹
+  const openConfigFolder = async () => {
+    try {
+      const response = await configIpc.openConfigFolder();
+      if (!response.success) {
+        console.error('打开配置文件夹失败:', response.error);
+      }
+    } catch (error) {
+      console.error('打开配置文件夹失败:', error);
+    }
+  };
 
   const settings = ref<SettingItem[]>([
     {
@@ -50,6 +65,13 @@
       description: '系统启动时自动运行 Buddy',
       type: 'toggle',
       value: false,
+    },
+    {
+      id: 'open-config',
+      title: '打开配置文件夹',
+      description: '在文件管理器中打开配置文件夹',
+      type: 'action',
+      action: openConfigFolder,
     },
   ]);
 </script>
@@ -104,6 +126,20 @@
             {{ option.label }}
           </option>
         </select>
+      </div>
+
+      <!-- Action 类型 -->
+      <div
+        v-else-if="item.type === 'action'"
+        @click="item.action?.()"
+        class="flex items-center justify-between cursor-pointer hover:bg-base-200 -mx-3 px-3 py-2 rounded-lg transition-colors">
+        <div class="flex-1">
+          <h3 class="font-medium">{{ item.title }}</h3>
+          <p class="text-sm text-base-content/70 mt-1">
+            {{ item.description }}
+          </p>
+        </div>
+        <FolderOpenIcon class="w-5 h-5 text-base-content/40" />
       </div>
     </div>
   </div>

@@ -5,6 +5,7 @@
 
 import { RouteFacade, SettingFacade, Config } from '@coffic/cosy-framework';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
+import { shell } from 'electron';
 
 const logger = console;
 
@@ -88,4 +89,22 @@ export function registerSettingRoutes(): void {
       return SettingFacade.getDirectoryPath();
     }
   ).description('获取用户数据文件夹路径');
+
+  // 打开配置文件夹
+  RouteFacade.handle(IPC_METHODS.OPEN_CONFIG_FOLDER, async (_event) => {
+    try {
+      const configPath = SettingFacade.getDirectoryPath();
+      await shell.openPath(configPath);
+      return {
+        success: true,
+        data: configPath,
+      };
+    } catch (error) {
+      logger.error('IPC打开配置文件夹失败:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }).description('在文件管理器中打开配置文件夹');
 }

@@ -78,6 +78,9 @@
 - `EyeIcon` - 显示密码图标
 - `EyeOffIcon` - 隐藏密码图标
 - `CheckIcon` - 勾选/确认图标
+- `FolderOpenIcon` - 打开文件夹图标
+- `SuccessIcon` - 成功/勾选圆圈图标
+- `ErrorIcon` - 错误/警告圆圈图标
 
 ## 添加新图标
 
