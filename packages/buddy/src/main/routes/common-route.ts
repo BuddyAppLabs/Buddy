@@ -51,4 +51,28 @@ export function registerCommonRoutes(): void {
   RouteFacade.handle(IPC_METHODS.CHECK_UPDATE, async (): Promise<string> => {
     return await UpdateFacade.checkForUpdates();
   }).description('检查更新');
+
+  // 打开外部链接
+  RouteFacade.handle(
+    'shell:openExternal',
+    async (_event, url: string): Promise<void> => {
+      if (typeof url !== 'string') {
+        throw new Error(`URL 必须是字符串，当前类型为: ${typeof url}`);
+      }
+
+      LogFacade.channel('app').info(`打开外部链接: ${url}`);
+
+      try {
+        await shell.openExternal(url);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        throw new Error(`打开链接失败: ${errorMessage}`);
+      }
+    }
+  )
+    .validation({
+      '0': { required: true, type: 'string' },
+    })
+    .description('在默认浏览器中打开外部链接');
 }
