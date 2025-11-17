@@ -65,8 +65,19 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   // 用户保存的配置
   let userSavedConfig: { provider: string; model: string } | null = null;
 
+  // 停止标志
+  let shouldStop = false;
+
   // 监听流式响应
   const handleStreamData = (textPart: string) => {
+    // 如果用户点击了停止，忽略后续数据
+    if (shouldStop) {
+      if (verbose) {
+        console.log('[useAIChat] 用户已停止，忽略数据');
+      }
+      return;
+    }
+
     if (verbose) {
       console.log('[useAIChat] 收到流式数据:', textPart.substring(0, 50));
     }
@@ -194,6 +205,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     input.value = '';
     isLoading.value = true;
     error.value = null;
+    shouldStop = false; // 重置停止标志
 
     // 创建助手消息占位符
     const assistantMessage: Message = {
@@ -528,6 +540,27 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     });
   });
 
+  // 停止生成
+  const stopGeneration = () => {
+    if (verbose) {
+      console.log('[useAIChat] 用户停止生成');
+    }
+    shouldStop = true;
+    isLoading.value = false;
+
+    // 如果最后一条消息是空的助手消息，移除它
+    const lastMessage = messages.value[messages.value.length - 1];
+    if (
+      lastMessage &&
+      lastMessage.role === 'assistant' &&
+      lastMessage.parts.length > 0 &&
+      lastMessage.parts[0].type === 'text' &&
+      !(lastMessage.parts[0] as any).text
+    ) {
+      messages.value = messages.value.slice(0, -1);
+    }
+  };
+
   return {
     messages,
     input,
@@ -539,6 +572,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     selectedProvider,
     selectedModel,
     sendMessage,
+    stopGeneration,
     clearMessages,
     retry,
     changeProvider,

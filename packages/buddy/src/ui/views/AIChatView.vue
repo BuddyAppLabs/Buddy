@@ -22,6 +22,7 @@
     selectedProvider,
     selectedModel,
     sendMessage,
+    stopGeneration,
     clearMessages,
     changeProvider,
     getProviderModels,
@@ -31,6 +32,10 @@
 
   const handleSend = () => {
     sendMessage();
+  };
+
+  const handleStop = () => {
+    stopGeneration();
   };
 
   // 处理重新发送
@@ -127,6 +132,7 @@
       :providers="providers"
       :models="models"
       @send="handleSend"
+      @stop="handleStop"
       @change-provider="changeProvider" />
   </div>
 </template>

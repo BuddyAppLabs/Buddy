@@ -30,6 +30,7 @@
     'update:selectedProvider': [value: string];
     'update:selectedModel': [value: string];
     send: [];
+    stop: [];
     changeProvider: [provider: string];
   }>();
 
@@ -43,6 +44,10 @@
         textareaRef.value.style.height = 'auto';
       }
     });
+  };
+
+  const handleStop = () => {
+    emit('stop');
   };
 
   const handleKeydown = (e: KeyboardEvent) => {
@@ -105,19 +110,19 @@
           rows="1"
           :disabled="isLoading"></textarea>
 
-        <!-- 发送按钮 -->
+        <!-- 发送/停止按钮 -->
         <button
+          v-if="!isLoading"
           @click="handleSend"
           class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           :class="
-            input.trim() && !isLoading
+            input.trim()
               ? 'bg-primary text-primary-content hover:bg-primary/90'
               : 'bg-base-300 text-base-content/40'
           "
-          :disabled="!input.trim() || isLoading">
+          :disabled="!input.trim()">
           <!-- 向上箭头图标 -->
           <svg
-            v-if="!isLoading"
             class="w-5 h-5"
             fill="none"
             stroke="currentColor"
@@ -128,7 +133,16 @@
               stroke-width="2"
               d="M5 10l7-7m0 0l7 7m-7-7v18" />
           </svg>
-          <span v-else class="loading loading-spinner loading-sm"></span>
+        </button>
+        <!-- 停止按钮 -->
+        <button
+          v-else
+          @click="handleStop"
+          class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 bg-error text-error-content hover:bg-error/90">
+          <!-- 停止图标 -->
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <rect x="6" y="6" width="12" height="12" rx="1" />
+          </svg>
         </button>
       </div>
 
