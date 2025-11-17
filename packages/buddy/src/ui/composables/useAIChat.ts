@@ -4,10 +4,24 @@ import { IPC_METHODS } from '@/types/ipc-methods';
 const ipc = window.ipc;
 const verbose = true;
 
-export interface MessagePart {
-  type: 'text';
-  text: string;
-}
+export type MessagePart =
+  | {
+      type: 'text';
+      text: string;
+    }
+  | {
+      type: 'tool-call';
+      toolCallId: string;
+      toolName: string;
+      args: any;
+      result?: any;
+    }
+  | {
+      type: 'tool-result';
+      toolCallId: string;
+      toolName: string;
+      result: any;
+    };
 
 export interface Message {
   id: string;
@@ -72,7 +86,8 @@ export function useAIChat(options: UseAIChatOptions = {}) {
     if (
       lastMessage &&
       lastMessage.role === 'assistant' &&
-      lastMessage.parts.length > 0
+      lastMessage.parts.length > 0 &&
+      lastMessage.parts[0].type === 'text'
     ) {
       if (verbose) {
         console.log(
@@ -81,13 +96,13 @@ export function useAIChat(options: UseAIChatOptions = {}) {
         );
       }
       // 直接修改对象属性来触发Vue的响应式更新
-      lastMessage.parts[0].text += textPart;
+      (lastMessage.parts[0] as any).text += textPart;
       // 强制触发响应式更新
       messages.value = [...messages.value];
       if (verbose) {
         console.log(
           '[useAIChat] 更新后长度:',
-          lastMessage.parts[0].text.length
+          (lastMessage.parts[0] as any).text.length
         );
       }
     } else {
@@ -136,12 +151,11 @@ export function useAIChat(options: UseAIChatOptions = {}) {
 
     // 移除空的助手消息
     const lastMessage = messages.value[messages.value.length - 1];
-    if (
-      lastMessage &&
-      lastMessage.role === 'assistant' &&
-      (!lastMessage.parts[0] || !lastMessage.parts[0].text)
-    ) {
-      messages.value = messages.value.slice(0, -1);
+    if (lastMessage && lastMessage.role === 'assistant') {
+      const textParts = lastMessage.parts.filter((p) => p.type === 'text');
+      if (textParts.length === 0 || !(textParts[0] as any).text) {
+        messages.value = messages.value.slice(0, -1);
+      }
     }
   };
 
@@ -207,17 +221,21 @@ export function useAIChat(options: UseAIChatOptions = {}) {
       // 转换为 UIMessage 格式（AI SDK 需要的格式）
       // UIMessage 格式需要 parts 数组，而不是简单的 content 字符串
       const uiMessages = messages.value
-        .filter(
-          (m) =>
-            m.role !== 'assistant' || (m.parts.length > 0 && m.parts[0].text)
-        )
+        .filter((m) => {
+          if (m.role !== 'assistant') return true;
+          // 过滤掉空的助手消息
+          const textParts = m.parts.filter((p) => p.type === 'text');
+          return textParts.length > 0 && textParts[0].text;
+        })
         .map((m) => ({
           id: m.id,
           role: m.role,
-          parts: m.parts.map((p) => ({
-            type: 'text' as const,
-            text: p.text,
-          })),
+          parts: m.parts
+            .filter((p) => p.type === 'text')
+            .map((p) => ({
+              type: 'text' as const,
+              text: (p as any).text,
+            })),
         }));
 
       if (verbose) {
@@ -257,7 +275,8 @@ export function useAIChat(options: UseAIChatOptions = {}) {
       }
 
       // 显示成功提示（如果助手有回复）
-      if (assistantMessage.parts.length > 0 && assistantMessage.parts[0].text) {
+      const textParts = assistantMessage.parts.filter((p) => p.type === 'text');
+      if (textParts.length > 0 && (textParts[0] as any).text) {
         successMessage.value = '✅ 回复完成';
         setTimeout(() => {
           successMessage.value = null;
@@ -292,7 +311,11 @@ export function useAIChat(options: UseAIChatOptions = {}) {
         .reverse()
         .find((m) => m.role === 'user');
       if (lastUserMessage && lastUserMessage.parts.length > 0) {
-        input.value = lastUserMessage.parts.map((p) => p.text).join('');
+        // 只获取 text 类型的 parts
+        const textParts = lastUserMessage.parts.filter(
+          (p) => p.type === 'text'
+        );
+        input.value = textParts.map((p) => (p as any).text).join('');
         // 移除最后的用户消息和可能的失败助手消息
         const lastUserIndex = messages.value.findIndex(
           (m) => m.id === lastUserMessage.id

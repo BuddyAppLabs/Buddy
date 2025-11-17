@@ -59,23 +59,31 @@ export function registerAIRoutes(): void {
 
             case 'tool-call':
               // 工具调用
-              console.log('[AI Route] 工具调用:', part.toolName, part.input);
+              console.log(
+                '[AI Route] 工具调用:',
+                part.toolName,
+                (part as any).input
+              );
               // 发送工具调用信息到前端
               event.sender.send('ai-chat-tool-call', {
                 toolName: part.toolName,
                 toolCallId: part.toolCallId,
-                args: part.args,
+                args: (part as any).input, // AI SDK 使用 input 而不是 args
               });
               break;
 
             case 'tool-result':
               // 工具结果
-              console.log('[AI Route] 工具结果:', part.toolName, part.result);
+              console.log(
+                '[AI Route] 工具结果:',
+                part.toolName,
+                (part as any).output
+              );
               // 发送工具结果到前端
               event.sender.send('ai-chat-tool-result', {
                 toolName: part.toolName,
                 toolCallId: part.toolCallId,
-                result: part.result,
+                result: (part as any).output, // AI SDK 使用 output 而不是 result
               });
               break;
 
